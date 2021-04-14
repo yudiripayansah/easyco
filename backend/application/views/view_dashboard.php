@@ -21,6 +21,9 @@
 		<link href="assets/css/themes/layout/aside/light.css" rel="stylesheet" type="text/css" />
 		<!--end::Layout Themes-->
 		<link rel="shortcut icon" href="assets/media/logos/favicon.ico" />
+		<!--begin::Page Stylesheet(used by this page)-->
+		<?php echo $this->load->view($csspage); ?>
+		<!--end::Page Stylesheet(used by this page)-->
 	</head>
 	<!--end::Head-->
 	<!--begin::Body-->
@@ -222,11 +225,9 @@
 		<script src="assets/plugins/custom/prismjs/prismjs.bundle.js"></script>
 		<script src="assets/js/scripts.bundle.js"></script>
 		<!--end::Global Theme Bundle-->
-		<!--begin::Page Vendors(used by this page)-->
-		<script src="assets/plugins/custom/fullcalendar/fullcalendar.bundle.js"></script>
-		<!--end::Page Vendors-->
-		<!--begin::Page Scripts(used by this page)-->
-		<script src="assets/js/pages/widgets.js"></script>
+		<!--begin::Page LibraryScripts(used by this page)-->
+		<?php echo $this->load->view($jslib); ?>
+		<?php echo $this->load->view($jsscript); ?>
 		<!--end::Page Scripts-->
 	</body>
 	<!--end::Body-->

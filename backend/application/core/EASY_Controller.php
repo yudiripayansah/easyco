@@ -112,7 +112,7 @@ class EASY_Controller extends CI_Controller {
 
     function privilleges($control){
         $isactive = '1';
-        $idgroup = $this->session->userdata('idgroup');
+        $idgroup = $this->session->userdata('id_group');
         $priv = $this->model_all->show_privilleges($isactive,$idgroup,$control);
 
         $jumlah = $priv['jumlah'];

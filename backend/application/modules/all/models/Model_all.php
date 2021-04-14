@@ -33,10 +33,11 @@ class Model_all extends CI_Model {
     function show_privilleges($isactive,$idgroup,$control){
         $sql = "SELECT
         COUNT(*) AS jumlah
-        FROM mst_menu AS menu
-        JOIN mst_role AS role ON (role.idmenu = menu.id AND role.idgroup = ?)
-        WHERE menu.isactive = ? AND menu.control = ?
-        ORDER BY menu.position ASC";
+        FROM kop_menu AS km
+        JOIN kop_role AS kr ON kr.id_menu = km.id_menu AND kr.id_group = ?
+        WHERE km.status_menu = ? AND km.url_link = ?
+        GROUP BY km.posisi
+        ORDER BY km.posisi ASC";
 
         $param = array($idgroup,$isactive,$control);
 

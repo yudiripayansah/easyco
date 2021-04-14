@@ -26,8 +26,8 @@ class Dashboard extends EASY_Controller {
         $data['jslib'] = 'dashboard/_js/jslib_dashboard';
         $data['jsscript'] = 'dashboard/_js/js_dashboard';
 
-        $data['menu'] = $this->show_menu(1);
         $data['uri'] = $uri;
+        $data['menu'] = $this->show_menu(1);
         $data['suburi'] = $this->getSubUri($uri);
 
         $this->load->vars($data);
