@@ -21,7 +21,7 @@
             <div id="pager_group"></div>
           </div>
           <div id="t_form_add">
-            <form action="setting/pagroup" method="post" id="form_add">
+            <form action="javascript:;" method="post" id="form_add">
               <div class="form-group row">
                 <label class="col-lg-1 col-form-label">Grup :</label>
                 <div class="col-lg-4">
@@ -45,7 +45,7 @@
             </form>
           </div>
           <div id="t_form_edit">
-            <form action="setting/pegroup" method="post" id="form_edit">
+            <form action="javascript:;" method="post" id="form_edit">
               <div class="form-group row">
                 <label class="col-lg-1 col-form-label">Grup :</label>
                 <div class="col-lg-4">

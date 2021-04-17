@@ -285,7 +285,7 @@ class Setting extends EASY_Controller {
             redirect(base_url('setting/group'));
         }
 
-        $table = 'mst_group';
+        $table = 'kop_group';
 
         $input_by = $this->session->userdata('id');
 
@@ -294,20 +294,16 @@ class Setting extends EASY_Controller {
 
         $param = 'id';
 
-        // CREATE LOG ACTIVITY
-        $keterangan = 'TAMPILKAN GRUP PADA TABEL '.$table;
-        $tipe = 6;
-
         $DBCore = $this->coreDB();
 
         // DATABASE TRANSACTION
         $DBCore->trans_begin();
 
         for($i = 0; $i < $count; $i++){
-            $data = array('isactive' => '1');
+            $data = array('status_grup' => '1');
+            $param = array('id_group' => $show[$i]);
 
-            $this->update($table,$data,$param,$show[$i],$DBCore);
-            $this->log_activity($show[$i],$keterangan,$tipe,$input_by,$DBCore);
+            $this->update2($table,$data,$param,$DBCore);
         }
 
         if($DBCore->trans_status() === TRUE){
@@ -334,18 +330,12 @@ class Setting extends EASY_Controller {
             redirect(base_url('setting/group'));
         }
 
-        $table = 'mst_group';
+        $table = 'kop_group';
 
         $input_by = $this->session->userdata('id');
 
         $hide = $this->input->post('object');
         $count = count($hide);
-
-        $param = 'id';
-
-        // CREATE LOG ACTIVITY
-        $keterangan = 'SEMBUNYIKAN GRUP PADA TABEL '.$table;
-        $tipe = 7;
 
         $DBCore = $this->coreDB();
 
@@ -353,10 +343,10 @@ class Setting extends EASY_Controller {
         $DBCore->trans_begin();
 
         for($i = 0; $i < $count; $i++){
-            $data = array('isactive' => '0');
+            $data = array('status_grup' => '0');
+            $param = array('id_group' => $hide[$i]);
 
-            $this->update($table,$data,$param,$hide[$i],$DBCore);
-            $this->log_activity($hide[$i],$keterangan,$tipe,$input_by,$DBCore);
+            $this->update2($table,$data,$param,$DBCore);
         }
 
         if($DBCore->trans_status() === TRUE){
@@ -383,18 +373,14 @@ class Setting extends EASY_Controller {
             redirect(base_url('setting/group'));
         }
 
-        $table = 'mst_group';
+        $table = 'kop_group';
 
         $input_by = $this->session->userdata('id');
 
         $del = $this->input->post('object');
         $count = count($del);
 
-        $param = 'id';
-
-        // CREATE LOG ACTIVITY
-        $keterangan = 'HAPUS GRUP PADA TABEL '.$table;
-        $tipe = 5;
+        $param = 'id_group';
 
         $DBCore = $this->coreDB();
 
@@ -403,7 +389,6 @@ class Setting extends EASY_Controller {
 
         for($i = 0; $i < $count; $i++){
             $this->delete($table,$param,$del[$i],$DBCore);
-            $this->log_activity($del[$i],$keterangan,$tipe,$input_by,$DBCore);
         }
 
         if($DBCore->trans_status() === TRUE){
