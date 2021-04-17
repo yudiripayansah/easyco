@@ -23,15 +23,19 @@ class Model_setting extends CI_Model {
         return $query->result_array();
     }
 
-    function apiuser($sidx,$sord,$limit_rows,$start){
+    function read_user($sidx,$sord,$limit_rows,$start){
         $sql = "SELECT
-        mu.id,
-        mu.name,
-        mu.email,
-        mg.group,
-        mu.isactive
-        FROM mst_user AS mu
-        JOIN mst_group AS mg ON mg.id = mu.idgroup ";
+        ku.id_user,
+        kg.nama_grup,
+        ku.nama_user,
+        kc.nama_cabang,
+        kp.nama_pgw,
+        ku.photo,
+        ku.status_user
+        FROM kop_user AS ku
+        JOIN kop_group AS kg ON kg.id_group = ku.id_group
+        JOIN kop_cabang AS kc ON kc.kode_cabang = ku.kode_cabang
+        JOIN kop_pegawai AS kp ON kp.kode_pgw = ku.kode_pgw ";
 
         if($sidx != ''){
             $sql .= 'ORDER BY '.$sidx.' '.$sord.' ';
@@ -147,7 +151,7 @@ class Model_setting extends CI_Model {
     }
 
     function get_user_by_username($username){
-        $sql = "SELECT COUNT(*) AS jumlah FROM mst_user WHERE username = ?";
+        $sql = "SELECT COUNT(*) AS jumlah FROM kop_user WHERE nama_user = ?";
 
         $param = array($username);
 

@@ -1,203 +1,209 @@
-<div class="kt-container kt-grid__item kt-grid__item--fluid">
-              <!-- BEGIN ROW -->
-              <div class="row">
-                <div class="col-xl-8 order-lg-1 order-xl-1">
-                  <div class="kt-portlet kt-portlet--height-fluid">
-                    <div class="kt-portlet__head">
-                      <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title">
-                          Pengaturan User
-                        </h3>
-                      </div>
-                      <div class="kt-portlet__head-toolbar" id="t_table">
-                        <div class="kt-portlet__head-wrapper">
-                          <div class="dropdown dropdown-inline">
-                            <a href="javascript:;" class="btn btn-primary" id="add_user"><i class="fa fa-plus"></i> Tambah</a>
-                            <a href="javascript:;" class="btn btn-success" id="show_user"><i class="fa fa-check"></i> Aktifkan</a>
-                            <a href="javascript:;" class="btn btn-warning" id="hide_user"><i class="fa fa-times"></i> Non-Aktifkan</a>
-                            <a href="javascript:;" class="btn btn-danger" id="delete_user"><i class="fa fa-trash-alt"></i> Hapus</a>
-                          </div>
-                        </div>
-                      </div>
+<!--begin::Row-->
+<div class="row">
+    <div class="col-lg-12">
+      <!--begin::Mixed Widget 14-->
+      <div class="card card-custom card-stretch gutter-b">
+        <div class="card-header">
+          <div class="card-title">
+            <h3 class="card-label" id="title_form">&nbsp;</h3>
+          </div>
+          <div class="card-toolbar" id="t_table">
+            <a href="javascript:;" id="add" class="btn btn-primary font-weight-bolder"><i class="icon-md fas fa-plus"></i> Tambah</a>&nbsp;
+            <a href="javascript:;" id="active" class="btn btn-success font-weight-bolder"><i class="icon-md far fa-eye"></i> Aktif</a>&nbsp;
+            <a href="javascript:;" id="inactive" class="btn btn-warning font-weight-bolder"><i class="icon-md far fa-eye-slash"></i> Non-Aktif</a>&nbsp;
+            <a href="javascript:;" id="delete" class="btn btn-danger font-weight-bolder"><i class="icon-md far fa-trash-alt"></i> Hapus</a>
+          </div>
+        </div>
+        <!--begin::Body-->
+        <div class="card-body d-flex flex-column">
+          <div id="t_table">
+            <table id="t_user"></table>
+            <div id="pager_user"></div>
+          </div>
+          <div id="t_form_add">
+            <form action="javascript:;" method="post" enctype="multipart/form-data" id="form_add">
+              <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Grup :</label>
+                <div class="col-lg-4">
+                  <select name="id_group" class="form-control" id="id_group" tabindex="1">
+                    <option value="" selected="selected">-- Pilih --</option>
+                    <?php
+                    foreach($group as $gr){
+                      $id = $gr['id_group'];
+                      $group = $gr['nama_grup'];
+                    ?>
+                    <option value="<?php echo $id; ?>"><?php echo $group; ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Username :</label>
+                <div class="col-lg-4">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="la la-users icon-lg"></i>
+                      </span>
                     </div>
-                    <div class="kt-portlet__body">
-                      <div id="t_table">
-                        <table id="t_user"></table>
-                        <div id="pager_user"></div>
-                      </div>
-                      <div id="t_form_add">
-                        <form class="kt-form kt-form--label-right" action="javascript:;" method="post" enctype="multipart/form-data" id="form_add">
-                          <div class="form-group row">
-                            <label class="col-lg-3 col-form-label">Grup :</label>
-                            <div class="col-lg-4">
-                              <select name="idgroup" class="form-control" id="idgroup">
-                                <option value="" selected="selected">-- Pilih --</option>
-                                <?php
-                                foreach($group as $gr){
-                                  $id = $gr['id'];
-                                  $group = $gr['group'];
-                                ?>
-                                <option value="<?php echo $id; ?>"><?php echo $group; ?></option>
-                                <?php } ?>
-                              </select>
-                            </div>
-                          </div>
-                          <div class="form-group row">
-                            <label class="col-lg-3 col-form-label">Email :</label>
-                            <div class="col-lg-4">
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="basic-addon2"><i class="fa fa-envelope"></i></span>
-                                </div>
-                                <input name="email" type="email" id="email" class="form-control">
-                              </div>
-                            </div>
-                          </div>
-                          <div class="form-group row">
-                            <label class="col-lg-3 col-form-label">Password :</label>
-                            <div class="col-lg-4">
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="basic-addon2"><i class="fa fa-ellipsis-h"></i></span>
-                                </div>
-                                <input name="password" type="password" id="password" class="form-control">
-                              </div>
-                            </div>
-                          </div>
-                          <div class="form-group row">
-                            <label class="col-lg-3 col-form-label">Ulang Password :</label>
-                            <div class="col-lg-4">
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="basic-addon2"><i class="fa fa-ellipsis-h"></i></span>
-                                </div>
-                                <input name="repassword" type="password" id="repassword" class="form-control">
-                              </div>
-                            </div>
-                          </div>
-                          <div class="form-group row">
-                            <label class="col-lg-3 col-form-label">Nama :</label>
-                            <div class="col-lg-4">
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="basic-addon2"><i class="fa fa-address-card"></i></span>
-                                </div>
-                                <input name="name" type="text" id="name" class="form-control">
-                              </div>
-                            </div>
-                          </div>
-                          <div class="form-group row">
-                            <label class="col-lg-3 col-form-label">Foto :</label>
-                            <div class="col-lg-4">
-                              <div class="custom-file">
-                                <input name="userfile" type="file" class="custom-file-input" id="userfile">
-                                <label class="custom-file-label" for="userfile" style="text-align:left;">Telusuri</label>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="kt-portlet__foot">
-                            <div class="kt-form__actions">
-                              <div class="row">
-                                <div class="col-lg-3">&nbsp;</div>
-                                <div class="col-lg-4">
-                                  <button type="button" class="btn btn-secondary" id="cancel1"><i class="fa fa-arrow-left"></i> Kembali</button>
-                                  <button type="submit" class="btn btn-success"><i class="fa fa-plus"></i> Tambah</button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                      <div id="t_form_edit">
-                        <form class="kt-form kt-form--label-right" action="javascript:;" method="post" enctype="multipart/form-data" id="form_edit">
-                          <div class="form-group row">
-                            <label class="col-lg-3 col-form-label">Grup :</label>
-                            <div class="col-lg-4">
-                              <input name="id" type="hidden" id="id">
-                              <select name="idgroup" class="form-control" id="idgroup">
-                                <option value="">-- Pilih --</option>
-                                <?php
-                                foreach($e_group as $e_gr){
-                                  $id = $e_gr['id'];
-                                  $group = $e_gr['group'];
-                                ?>
-                                <option value="<?php echo $id; ?>"><?php echo $group; ?></option>
-                                <?php } ?>
-                              </select>
-                            </div>
-                          </div>
-                          <div class="form-group row">
-                            <label class="col-lg-3 col-form-label">Email :</label>
-                            <div class="col-lg-4">
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="basic-addon2"><i class="fa fa-envelope"></i></span>
-                                </div>
-                                <input name="email" type="email" id="email" class="form-control" readonly="readonly">
-                              </div>
-                            </div>
-                          </div>
-                          <div class="form-group row">
-                            <label class="col-lg-3 col-form-label">Password :</label>
-                            <div class="col-lg-4">
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="basic-addon2"><i class="fa fa-ellipsis-h"></i></span>
-                                </div>
-                                <input name="password" type="password" id="password" class="form-control">
-                                <input name="oldpass" type="hidden" id="oldpass">
-                              </div>
-                            </div>
-                          </div>
-                          <div class="form-group row">
-                            <label class="col-lg-3 col-form-label">Ulang Password :</label>
-                            <div class="col-lg-4">
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="basic-addon2"><i class="fa fa-ellipsis-h"></i></span>
-                                </div>
-                                <input name="repassword" type="password" id="repassword" class="form-control">
-                              </div>
-                            </div>
-                          </div>
-                          <div class="form-group row">
-                            <label class="col-lg-3 col-form-label">Nama :</label>
-                            <div class="col-lg-4">
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="basic-addon2"><i class="fa fa-address-card"></i></span>
-                                </div>
-                                <input name="name" type="text" id="name" class="form-control">
-                              </div>
-                            </div>
-                          </div>
-                          <div class="form-group row">
-                            <label class="col-lg-3 col-form-label">Foto :</label>
-                            <div class="col-lg-4">
-                              <div class="custom-file">
-                                <input name="userfile" type="file" class="custom-file-input" id="userfile">
-                                <label class="custom-file-label" for="userfile" style="text-align:left;">Telusuri</label>
-                                <input name="oldp" type="hidden" id="oldp">
-                                <input name="olda" type="hidden" id="olda">
-                              </div>
-                            </div>
-                          </div>
-                          <div class="kt-portlet__foot">
-                            <div class="kt-form__actions">
-                              <div class="row">
-                                <div class="col-lg-3">&nbsp;</div>
-                                <div class="col-lg-4">
-                                  <button type="button" class="btn btn-secondary" id="cancel2"><i class="fa fa-arrow-left"></i> Kembali</button>
-                                  <button type="submit" class="btn btn-success"><i class="fa fa-edit"></i> Ubah</button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
+                    <input type="text" class="form-control" name="nama_user" id="nama_user" tabindex="2">
                   </div>
                 </div>
               </div>
-              <!-- END ROW -->
-            </div>
+              <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Password :</label>
+                <div class="col-lg-4">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="la la-users icon-lg"></i>
+                      </span>
+                    </div>
+                    <input type="password" class="form-control" name="password" id="password" tabindex="3">
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Kantor Cabang :</label>
+                <div class="col-lg-4">
+                  <select name="kode_cabang" class="form-control" id="kode_cabang" tabindex="4">
+                    <option value="" selected="selected">-- Pilih --</option>
+                    <?php
+                    foreach($branch as $br){
+                      $branch_code = $br['kode_cabang'];
+                      $branch_name = $br['nama_cabang'];
+                    ?>
+                    <option value="<?php echo $branch_code; ?>"><?php echo $branch_name; ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Nama Pegawai :</label>
+                <div class="col-lg-4">
+                  <select name="kode_pgw" class="form-control" id="kode_pgw" tabindex="5">
+                    <option value="" selected="selected">-- Pilih --</option>
+                    <?php
+                    foreach($staff as $st){
+                      $staff_code = $st['kode_pgw'];
+                      $staff_name = $st['nama_pgw'];
+                    ?>
+                    <option value="<?php echo $staff_code; ?>"><?php echo $staff_name; ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Foto :</label>
+                <div class="col-lg-4">
+                  <input name="userfile" type="file" id="userfile" tabindex="6">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-lg-2 col-form-label">&nbsp;</label>
+                <div class="col-lg-4">
+                  <button type="button" class="btn btn-secondary" id="cancel1" tabindex="7"><i class="icon-md fas fa-arrow-left"></i> Kembali</button>
+                  <button type="submit" class="btn btn-primary mr-2" tabindex="8"><i class="icon-md fas fa-save"></i> Simpan</button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div id="t_form_edit">
+            <form action="javascript:;" method="post" enctype="multipart/form-data" id="form_edit">
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Grup :</label>
+                <div class="col-lg-4">
+                  <select name="id_group" class="form-control" id="id_group" tabindex="1">
+                    <option value="">-- Pilih --</option>
+                    <?php
+                    foreach($group as $gr){
+                      $id = $gr['id_group'];
+                      $group = $gr['nama_grup'];
+                    ?>
+                    <option value="<?php echo $id; ?>"><?php echo $group; ?></option>
+                    <?php } ?>
+                  </select>
+                  <input name="id" type="hidden" id="id">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Username :</label>
+                <div class="col-lg-4">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="la la-users icon-lg"></i>
+                      </span>
+                    </div>
+                    <input type="text" class="form-control" name="nama_user" id="nama_user" tabindex="2">
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Password :</label>
+                <div class="col-lg-4">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="la la-users icon-lg"></i>
+                      </span>
+                    </div>
+                    <input type="password" class="form-control" name="password" id="password" tabindex="3">
+                    <input name="oldpass" type="hidden" id="oldpass">
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Kantor Cabang :</label>
+                <div class="col-lg-4">
+                  <select name="kode_cabang" class="form-control" id="kode_cabang" tabindex="4">
+                    <option value="">-- Pilih --</option>
+                    <?php
+                    foreach($branch as $br){
+                      $branch_code = $br['kode_cabang'];
+                      $branch_name = $br['nama_cabang'];
+                    ?>
+                    <option value="<?php echo $branch_code; ?>"><?php echo $branch_name; ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Nama Pegawai :</label>
+                <div class="col-lg-4">
+                  <select name="kode_pgw" class="form-control" id="kode_pgw" tabindex="5">
+                    <option value="">-- Pilih --</option>
+                    <?php
+                    foreach($staff as $st){
+                      $staff_code = $st['kode_pgw'];
+                      $staff_name = $st['nama_pgw'];
+                    ?>
+                    <option value="<?php echo $staff_code; ?>"><?php echo $staff_name; ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Foto :</label>
+                <div class="col-lg-4">
+                  <input name="userfile" type="file" id="userfile" tabindex="6">
+                  <input name="oldp" type="hidden" id="oldp">
+                  <input name="olda" type="hidden" id="olda">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-lg-2 col-form-label">&nbsp;</label>
+                <div class="col-lg-4">
+                  <button type="button" class="btn btn-secondary" id="cancel2" tabindex="7"><i class="icon-md fas fa-arrow-left"></i> Kembali</button>
+                  <button type="submit" class="btn btn-primary mr-2" tabindex="8"><i class="icon-md fas fa-save"></i> Simpan</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!--end::Body-->
+      </div>
+      <!--end::Mixed Widget 14-->
+    </div>
+  </div>
+  <!--end::Row-->

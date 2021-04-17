@@ -47,11 +47,27 @@ class Model_all extends CI_Model {
     }
 
     function show_group($isactive){
-        $sql = "SELECT * FROM mst_group WHERE isactive = ? ORDER BY `group`";
+        $sql = "SELECT * FROM kop_group WHERE status_grup = ? ORDER BY nama_grup";
 
         $param = array($isactive);
 
         $query = $this->db->query($sql,$param);
+
+        return $query->result_array();
+    }
+
+    function show_branch(){
+        $sql = "SELECT * FROM kop_cabang ORDER BY kode_cabang";
+
+        $query = $this->db->query($sql);
+
+        return $query->result_array();
+    }
+
+    function show_staff(){
+        $sql = "SELECT * FROM kop_pegawai ORDER BY kode_pgw";
+
+        $query = $this->db->query($sql);
 
         return $query->result_array();
     }

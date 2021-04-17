@@ -8,7 +8,7 @@
             <h3 class="card-label" id="title_form">&nbsp;</h3>
           </div>
           <div class="card-toolbar" id="t_table">
-            <a href="javascript:;" id="add_group" class="btn btn-primary font-weight-bolder"><i class="icon-md fas fa-plus"></i> Tambah</a>&nbsp;
+            <a href="javascript:;" id="add" class="btn btn-primary font-weight-bolder"><i class="icon-md fas fa-plus"></i> Tambah</a>&nbsp;
             <a href="javascript:;" id="active" class="btn btn-success font-weight-bolder"><i class="icon-md far fa-eye"></i> Aktif</a>&nbsp;
             <a href="javascript:;" id="inactive" class="btn btn-warning font-weight-bolder"><i class="icon-md far fa-eye-slash"></i> Non-Aktif</a>&nbsp;
             <a href="javascript:;" id="delete" class="btn btn-danger font-weight-bolder"><i class="icon-md far fa-trash-alt"></i> Hapus</a>
@@ -39,7 +39,7 @@
                 <label class="col-lg-1 col-form-label">&nbsp;</label>
                 <div class="col-lg-4">
                   <button type="button" class="btn btn-secondary" id="cancel1" tabindex="3"><i class="icon-md fas fa-arrow-left"></i> Kembali</button>
-                  <button type="submit" class="btn btn-primary mr-2" id="submit1" tabindex="2"><i class="icon-md fas fa-save"></i> Simpan</button>
+                  <button type="submit" class="btn btn-primary mr-2" tabindex="2"><i class="icon-md fas fa-save"></i> Simpan</button>
                 </div>
               </div>
             </form>
@@ -64,7 +64,7 @@
                 <label class="col-lg-1 col-form-label">&nbsp;</label>
                 <div class="col-lg-4">
                   <button type="button" class="btn btn-secondary" id="cancel2" tabindex="3"><i class="icon-md fas fa-arrow-left"></i> Kembali</button>
-                  <button type="submit" class="btn btn-primary mr-2" id="submit2" tabindex="2"><i class="icon-md fas fa-save"></i> Simpan</button>
+                  <button type="submit" class="btn btn-primary mr-2" tabindex="2"><i class="icon-md fas fa-save"></i> Simpan</button>
                 </div>
               </div>
             </form>

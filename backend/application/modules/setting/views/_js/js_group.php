@@ -27,7 +27,7 @@ $(document).ready(function(){
 	t_form_add.hide();
 	t_form_edit.hide();
 
-	$('#add_group').click(function(){
+	$('#add').click(function(){
 		t_table.fadeOut();
 		t_form_add.fadeIn();
 		form1.trigger('reset');
@@ -139,7 +139,7 @@ $(document).ready(function(){
 		colNames:['ID','Grup','Status','Tindakan'],
 		colModel:[
 			{name:'id',index:'id',hidden:true},
-			{name:'group',index:'group',align:'center'},
+			{name:'group',index:'nama_grup',align:'center'},
 			{name:'status',index:'status',align:'center'},
 			{name:'action',index:'action',align:'center'}
 		],

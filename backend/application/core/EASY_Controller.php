@@ -110,6 +110,18 @@ class EASY_Controller extends CI_Controller {
         return $group;
     }
 
+    function show_branch(){
+        $group = $this->model_all->show_branch();
+
+        return $group;
+    }
+
+    function show_staff(){
+        $group = $this->model_all->show_staff();
+
+        return $group;
+    }
+
     function privilleges($control){
         $isactive = '1';
         $idgroup = $this->session->userdata('id_group');
