@@ -132,7 +132,7 @@
 							<!--begin::Copyright-->
 							<div class="text-dark order-2 order-md-1">
 								<span class="text-muted font-weight-bold mr-2">2021 &copy;</span>
-								<a href="http://keenthemes.com/metronic" target="_blank" class="text-dark-75 text-hover-primary">Easy Coop</a>
+								<a href="." class="text-dark-75 text-hover-primary">Easy Coop</a>
 							</div>
 							<!--end::Copyright-->
 						</div>

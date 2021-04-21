@@ -131,7 +131,7 @@ class Model_setting extends CI_Model {
     }
 
     function get_user_by_id($id){
-        $sql = "SELECT * FROM mst_user WHERE id = ?";
+        $sql = "SELECT * FROM kop_user WHERE id_user = ?";
 
         $param = array($id);
 

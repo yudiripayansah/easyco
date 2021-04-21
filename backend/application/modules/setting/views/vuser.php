@@ -30,9 +30,9 @@
                     <?php
                     foreach($group as $gr){
                       $id = $gr['id_group'];
-                      $group = $gr['nama_grup'];
+                      $group_name = $gr['nama_grup'];
                     ?>
-                    <option value="<?php echo $id; ?>"><?php echo $group; ?></option>
+                    <option value="<?php echo $id; ?>"><?php echo $group_name; ?></option>
                     <?php } ?>
                   </select>
                 </div>
@@ -118,9 +118,9 @@
                     <?php
                     foreach($group as $gr){
                       $id = $gr['id_group'];
-                      $group = $gr['nama_grup'];
+                      $group_name = $gr['nama_grup'];
                     ?>
-                    <option value="<?php echo $id; ?>"><?php echo $group; ?></option>
+                    <option value="<?php echo $id; ?>"><?php echo $group_name; ?></option>
                     <?php } ?>
                   </select>
                   <input name="id" type="hidden" id="id">
@@ -188,7 +188,6 @@
                 <div class="col-lg-4">
                   <input name="userfile" type="file" id="userfile" tabindex="6">
                   <input name="oldp" type="hidden" id="oldp">
-                  <input name="olda" type="hidden" id="olda">
                 </div>
               </div>
               <div class="form-group row">

@@ -6,6 +6,7 @@ class Setting extends EASY_Controller {
     function __construct(){
         parent::__construct();
         $this->auth->restrict();
+        $this->load->config('path');
         $this->load->model('model_setting');
         @date_default_timezone_set('Asia/Jakarta');
     }
@@ -272,7 +273,7 @@ class Setting extends EASY_Controller {
 
                 $result = array(
                     'status' => 'failed',
-                    'message' => 'Koneksi internet Anda terputus.'
+                    'message' => 'Jaringan Anda tidak stabil.'
                 );
             }
         }
@@ -318,7 +319,7 @@ class Setting extends EASY_Controller {
 
             $result = array(
                 'result' => FALSE,
-                'message' => 'Koneksi internet Anda terputus.'
+                'message' => 'Jaringan Anda tidak stabil.'
             );
         }
 
@@ -361,7 +362,7 @@ class Setting extends EASY_Controller {
 
             $result = array(
                 'result' => FALSE,
-                'message' => 'Koneksi internet Anda terputus.'
+                'message' => 'Jaringan Anda tidak stabil.'
             );
         }
 
@@ -403,7 +404,7 @@ class Setting extends EASY_Controller {
 
             $result = array(
                 'result' => FALSE,
-                'message' => 'Koneksi internet Anda terputus.'
+                'message' => 'Jaringan Anda tidak stabil.'
             );
         }
 
@@ -504,13 +505,19 @@ class Setting extends EASY_Controller {
             $photo = $row['photo'];
             $isactive = $row['status_user'];
 
+            if($photo == NULL){
+                $photos = '<img src="'.base_url('assets/media/users/default.jpg').'">';
+            } else {
+                $photos = '<img src="'.base_url('assets/media/users/'.$photo).'">';
+            }
+
             if($isactive == '0'){
                 $status = '<span class="btn btn-link-danger font-weight-bold">Tidak Aktif</span>';
             } else {
                 $status = '<span class="btn btn-link-success font-weight-bold">Aktif</span>';
             }
 
-            $action = '<a href="javascript:;" id="edit_user" class="label label-lg label-light-info label-inline" title="Ubah" u_id="'.$id.'"><i class="icon-xs fas fa-pencil-alt"></i> Ubah</a>';
+            $action = '<a href="javascript:;" id="edit" class="label label-lg label-light-info label-inline" title="Ubah" u_id="'.$id.'"><i class="icon-xs fas fa-pencil-alt"></i> Ubah</a>';
 
             $response['rows'][] = array(
                 'id' => $id,
@@ -518,7 +525,7 @@ class Setting extends EASY_Controller {
                 'username' => $username,
                 'branch_name' => $branch_name,
                 'staff_name' => $staff_name,
-                'photo' => $photo,
+                'photo' => $photos,
                 'status' => $status,
                 'action' => $action
             );
@@ -551,6 +558,7 @@ class Setting extends EASY_Controller {
         $this->form_validation->set_rules('nama_user','Username','required|trim');
         $this->form_validation->set_rules('password','Password','required|trim');
         $this->form_validation->set_rules('kode_cabang','Kode Cabang','required|trim|numeric');
+        $this->form_validation->set_rules('kode_pgw','Nama Pegawai','required|trim');
 
         if($this->form_validation->run() == FALSE){
             // INVALID
@@ -641,7 +649,7 @@ class Setting extends EASY_Controller {
 
                 $result = array(
                     'status' => 'failed',
-                    'message' => 'Koneksi internet Anda terputus.'
+                    'message' => 'Jaringan Anda tidak stabil.'
                 );
             }
         }
@@ -658,24 +666,22 @@ class Setting extends EASY_Controller {
 
         $show = $this->model_setting->get_user_by_id($id);
 
-        $id = $show['id'];
-        $idgroup = $show['idgroup'];
-        $username = $show['username'];
+        $id = $show['id_user'];
+        $idgroup = $show['id_group'];
+        $username = $show['nama_user'];
         $password = $show['password'];
-        $name = $show['name'];
-        $email = $show['email'];
+        $branch_code = $show['kode_cabang'];
+        $staff_code = $show['kode_pgw'];
         $photo = $show['photo'];
-        $attach = $show['attach'];
 
         $result = array(
             'id' => $id,
             'idgroup' => $idgroup,
             'username' => $username,
             'password' => $password,
-            'name' => $name,
-            'email' => $email,
-            'photo' => $photo,
-            'attach' => $attach
+            'branch_code' => $branch_code,
+            'staff_code' => $staff_code,
+            'photo' => $photo
         );
 
         echo json_encode($result);
@@ -686,39 +692,35 @@ class Setting extends EASY_Controller {
             redirect(base_url('setting/user'));
         }
 
-        $iduser = $this->session->userdata('id');
-
         $id = $this->input->post('id');
-        $idgroup = $this->input->post('idgroup');
-        $username = $this->input->post('email');
+        $id_group = $this->input->post('id_group');
+        $username = $this->input->post('nama_user');
         $password = $this->input->post('password');
         $oldpass = $this->input->post('oldpass');
-        $repassword = $this->input->post('repassword');
-        $name = $this->input->post('name');
-        $email = $this->input->post('email');
+        $branch_code = $this->input->post('kode_cabang');
+        $staff_code = $this->input->post('kode_pgw');
         $oldp = $this->input->post('oldp');
-        $olda = $this->input->post('olda');
 
-        $name = strtoupper($name);
+        $username = strtolower($username);
 
-        $update_by = $this->session->userdata('id');
-        $update_date = date('Y-m-d H:i:s');
+        $modified_by = $this->session->userdata('id');
+        $modified_date = date('Y-m-d H:i:s');
 
         $confirm = TRUE;
 
         $DBCore = $this->coreDB();
 
-        $this->form_validation->set_rules('idgroup','Grup','required|trim');
-        $this->form_validation->set_rules('password','Password','trim');
-        $this->form_validation->set_rules('repassword','Ulang Password','matches[password]|trim');
-        $this->form_validation->set_rules('name','Nama','required|trim');
-        $this->form_validation->set_rules('email','Email','valid_email|trim');
+        $this->form_validation->set_rules('id','ID','required|trim');
+        $this->form_validation->set_rules('id_group','Grup','required|trim');
+        $this->form_validation->set_rules('nama_user','Username','required|trim');
+        $this->form_validation->set_rules('kode_cabang','Kode Cabang','required|trim|numeric');
+        $this->form_validation->set_rules('kode_pgw','Nama Pegawai','required|trim');
 
         if($this->form_validation->run() == FALSE){
             // INVALID
             $confirm = FALSE;
             $result = array(
-                'result' => FALSE,
+                'status' => 'failed',
                 'message' => strip_tags(validation_errors())
             );
         }
@@ -735,8 +737,7 @@ class Setting extends EASY_Controller {
             if($this->upload->do_upload()){
                 // UPLOAD SUCCESS
                 $detail = $this->upload->data();
-                @unlink($location.$olda);
-                $orig = $detail['orig_name'];
+                @unlink($location.$oldp);
                 $file = $detail['file_name'];
             } else {
                 // UPLOAD FAILED
@@ -744,13 +745,12 @@ class Setting extends EASY_Controller {
 
                 if($msg_err == '<p>You did not select a file to upload.</p>'){
                     // IT DOESN'T MATTER
-                    $orig = $oldp;
-                    $file = $olda;
+                    $file = $oldp;
                 } else {
                     //  FAILED
                     $confirm = FALSE;
                     $result = array(
-                        'result' => FALSE,
+                        'status' => 'failed',
                         'message' => $msg_err
                     );
                 }
@@ -759,41 +759,35 @@ class Setting extends EASY_Controller {
 
         if($confirm == TRUE){
             if(!empty($password)){
-                $password = sha1(md5(sha1('2016'.$password.'master')));
+                $password = sha1(md5(sha1('2021'.$password.'easyco')));
             } else {
                 $password = $oldpass;
             }
     
-            $table = 'mst_user';
+            $table = 'kop_user';
             $data = array(
-                'idgroup' => $idgroup,
-                'username' => $username,
+                'id_group' => $id_group,
+                'nama_user' => $username,
+                'kode_cabang' => $branch_code,
+                'kode_pgw' => $staff_code,
+                'photo' => $file,
                 'password' => $password,
-                'name' => $name,
-                'email' => $email,
-                'photo' => $orig,
-                'attach' => $file,
-                'update_by' => $update_by,
-                'update_date' => $update_date
+                'modified_by' => $modified_by,
+                'modified_date' => $modified_date
             );
     
-            $flag = $iduser;
-            $keterangan = 'UBAH USER PADA TABEL '.$table;
-            $tipe = 4;
-    
-            $param = 'id';
+            $param = array('id_user' => $id);
 
             // DATABASE TRANSACTION
             $DBCore->trans_begin();
 
-            $this->update($table,$data,$param,$id,$DBCore);
-            $this->log_activity($flag,$keterangan,$tipe,$iduser,$DBCore);
+            $this->update2($table,$data,$param,$DBCore);
 
             if($DBCore->trans_status() === TRUE){
                 $DBCore->trans_commit();
 
                 $result = array(
-                    'result' => TRUE,
+                    'status' => 'success',
                     'message' => 'User berhasil diubah.'
                 );
             } else {
@@ -802,8 +796,8 @@ class Setting extends EASY_Controller {
                 @unlink($location.$file_name);
 
                 $result = array(
-                    'result' => FALSE,
-                    'message' => 'Koneksi internet Anda terputus.'
+                    'status' => 'failed',
+                    'message' => 'Jaringan Anda tidak stabil.'
                 );
             }
         }
@@ -816,18 +810,10 @@ class Setting extends EASY_Controller {
             redirect(base_url('setting/user'));
         }
 
-        $table = 'mst_user';
-
-        $input_by = $this->session->userdata('id');
+        $table = 'kop_user';
 
         $show = $this->input->post('object');
         $count = count($show);
-
-        $param = 'id';
-
-        // CREATE LOG ACTIVITY
-        $keterangan = 'TAMPILKAN USER PADA TABEL '.$table;
-        $tipe = 6;
 
         $DBCore = $this->coreDB();
 
@@ -835,10 +821,10 @@ class Setting extends EASY_Controller {
         $DBCore->trans_begin();
 
         for($i = 0; $i < $count; $i++){
-            $data = array('isactive' => '1');
+            $data = array('status_user' => '1');
+            $param = array('id_user' => $show[$i]);
 
-            $this->update($table,$data,$param,$show[$i],$DBCore,$DBCore);
-            $this->log_activity($show[$i],$keterangan,$tipe,$input_by,$DBCore,$DBCore);
+            $this->update2($table,$data,$param,$DBCore);
         }
 
         if($DBCore->trans_status() === TRUE){
@@ -853,7 +839,7 @@ class Setting extends EASY_Controller {
 
             $result = array(
                 'result' => FALSE,
-                'message' => 'Koneksi internet Anda terputus.'
+                'message' => 'Jaringan Anda tidak stabil.'
             );
         }
 
@@ -865,18 +851,10 @@ class Setting extends EASY_Controller {
             redirect(base_url('setting/user'));
         }
 
-        $table = 'mst_user';
-
-        $input_by = $this->session->userdata('id');
+        $table = 'kop_user';
 
         $hide = $this->input->post('object');
         $count = count($hide);
-
-        $param = 'id';
-
-        // CREATE LOG ACTIVITY
-        $keterangan = 'SEMBUNYIKAN USER PADA TABEL '.$table;
-        $tipe = 7;
 
         $DBCore = $this->coreDB();
 
@@ -884,10 +862,10 @@ class Setting extends EASY_Controller {
         $DBCore->trans_begin();
 
         for($i = 0; $i < $count; $i++){
-            $data = array('isactive' => '0');
+            $data = array('status_user' => '0');
+            $param = array('id_user' => $hide[$i]);
 
-            $this->update($table,$data,$param,$hide[$i],$DBCore);
-            $this->log_activity($hide[$i],$keterangan,$tipe,$input_by,$DBCore);
+            $this->update2($table,$data,$param,$DBCore);
         }
 
         if($DBCore->trans_status() === TRUE){
@@ -902,7 +880,7 @@ class Setting extends EASY_Controller {
 
             $result = array(
                 'result' => FALSE,
-                'message' => 'Koneksi internet Anda terputus.'
+                'message' => 'Jaringan Anda tidak stabil.'
             );
         }
 
@@ -914,20 +892,14 @@ class Setting extends EASY_Controller {
             redirect(base_url('setting/user'));
         }
 
-        $table = 'mst_user';
-
-        $input_by = $this->session->userdata('id');
+        $table = 'kop_user';
 
         $location = $this->config->item('plocation');
 
         $del = $this->input->post('object');
         $count = count($del);
 
-        $param = 'id';
-
-        // CREATE LOG ACTIVITY
-        $keterangan = 'HAPUS USER PADA TABEL '.$table;
-        $tipe = 5;
+        $param = 'id_user';
 
         $DBCore = $this->coreDB();
 
@@ -937,11 +909,10 @@ class Setting extends EASY_Controller {
         for($i = 0; $i < $count; $i++){
             // DELETE USER
             $show = $this->model_setting->get_user_by_id($del[$i]);
-            $attach = $show['attach'];
+            $attach = $show['photo'];
             @unlink($location.$attach);
 
             $this->delete($table,$param,$del[$i],$DBCore);
-            $this->log_activity($del[$i],$keterangan,$tipe,$input_by,$DBCore);
         }
 
         if($DBCore->trans_status() === TRUE){
@@ -956,7 +927,7 @@ class Setting extends EASY_Controller {
 
             $result = array(
                 'result' => FALSE,
-                'message' => 'Koneksi internet Anda terputus.'
+                'message' => 'Jaringan Anda tidak stabil.'
             );
         }
 

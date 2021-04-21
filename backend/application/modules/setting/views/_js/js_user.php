@@ -68,6 +68,13 @@ $(document).ready(function(){
 							message: 'Kantor Cabang wajib dipilih'
 						}
 					}
+				},
+				kode_pgw: {
+					validators: {
+						notEmpty: {
+							message: 'Nama Pegawai wajib dipilih'
+						}
+					}
 				}
 			},
 			plugins: {
@@ -173,7 +180,7 @@ $(document).ready(function(){
 		sortname: 'nama_user'
 	});
 
-	$(document).on('click','a#edit_user',function(){
+	$(document).on('click','a#edit',function(){
 		t_table.fadeOut();
 		t_form_add.fadeOut();
 		t_form_edit.fadeIn();
@@ -186,13 +193,12 @@ $(document).ready(function(){
 		var u_id = $(this).attr('u_id');
 
 		var e_id = $('#id',form2);
-		var e_idgroup = $('#idgroup',form2);
-		var e_username = $('#username',form2);
+		var e_idgroup = $('#id_group',form2);
+		var e_username = $('#nama_user',form2);
 		var e_password = $('#oldpass',form2);
-		var e_name = $('#name',form2);
-		var e_email = $('#email',form2);
+		var e_branch_code = $('#kode_cabang',form2);
+		var e_staff_code = $('#kode_pgw',form2);
 		var e_photo = $('#oldp',form2);
-		var e_attach = $('#olda',form2);
 
 		$.ajax({
 			type: 'POST',
@@ -204,25 +210,29 @@ $(document).ready(function(){
 				var idgroup = response.idgroup;
 				var username = response.username;
 				var password = response.password;
-				var name = response.name;
-				var email = response.email;
+				var branch_code = response.branch_code;
+				var staff_code = response.staff_code;
 				var photo = response.photo;
-				var attach = response.attach;
 
 				e_id.val(id);
 				e_idgroup.val(idgroup).attr('selected',true);
 				e_username.val(username);
 				e_password.val(password);
-				e_name.val(name);
-				e_email.val(email);
+				e_branch_code.val(branch_code);
+				e_staff_code.val(staff_code);
 				e_photo.val(photo);
-				e_attach.val(attach);
 			},
 			error: function(){
-				swal.fire({
-				title: 'Maaf!',
-				text: 'Tidak ada koneksi internet.',
-				type: 'error'
+				Swal.fire({
+					text: 'Maaf! Jaringan Anda tidak stabil.',
+					icon: 'error',
+					buttonsStyling: false,
+					confirmButtonText: 'OK!',
+					customClass: {
+						confirmButton: 'btn font-weight-bold btn-light-primary'
+					}
+				}).then(function() {
+					KTUtil.scrollTop();
 				});
 
 				t_table.fadeIn();
@@ -237,115 +247,124 @@ $(document).ready(function(){
 		t_form_edit.fadeOut();
 	});
 
-	// BEGIN FORM EDIT VALIDATION
-	form2.validate({
-	// define validation rules
-	rules: {
-		idgroup: {
-			required: true 
-		},
-		email: {
-			required: true
-		},
-		nama: {
-			required: true
-		} 
-	},
-
-	//display error alert on form submit
-	invalidHandler: function(event, validator) {     
-		KTUtil.scrollTop();
-	},
-
-	submitHandler: function (form) {
-		form2.ajaxSubmit({
-			url: 'setting/peuser',
-			dataType: 'json',
-			data: 'POST',
-			success: function(response){
-				var result = response.result;
-				var message = response.message;
-
-				if(result == true){
-					swal.fire({
-						title: 'Sukses!',
-						text: response.message,
-						type: 'success'
-					});
-
-					cancel2.trigger('click');
-					dTreload(tableId);
-				} else {
-					swal.fire({
-						title: 'Maaf!',
-						text: response.message,
-						type: 'error'
-					});
+	FormValidation.formValidation(
+		form_edit, {
+			fields: {
+				id_group: {
+					validators: {
+						notEmpty: {
+							message: 'Grup wajib dipilih'
+						}
+					}
+				},
+				nama_user: {
+					validators: {
+						notEmpty: {
+							message: 'Username wajib diisi'
+						}
+					}
+				},
+				kode_cabang: {
+					validators: {
+						notEmpty: {
+							message: 'Kantor Cabang wajib dipilih'
+						}
+					}
+				},
+				kode_pgw: {
+					validators: {
+						notEmpty: {
+							message: 'Nama Pegawai wajib dipilih'
+						}
+					}
 				}
 			},
-			error: function(){
-				swal.fire({
-					title: 'Maaf!',
-					text: 'Mohon periksa kembali koneksi internet Anda!',
-					type: 'error'
-				});
+			plugins: {
+				trigger: new FormValidation.plugins.Trigger(),
+				submitButton: new FormValidation.plugins.SubmitButton(),
+				bootstrap: new FormValidation.plugins.Bootstrap({})
 			}
-		});
-	}
-	});
+		}).on('core.form.valid', function() {
+			form2.ajaxSubmit({
+				url: 'setting/peuser',
+				dataType: 'json',
+				data: 'POST',
+				success: function(response){
+					var status = response.status;
+					var message = response.message;
 
-	$('#delete_user').click(function(){
-		var rowKey = $('#'+tableId).getGridParam('selrow');
-
-		if(!rowKey){
-			alert('Item belum dipilih');
-		} else {
-			var conf = confirm('Data ingin dihapus?');
-			var selectedIDs = $('#'+tableId).getGridParam('selarrrow');
-
-			if(conf){
-				$.ajax({
-					type: 'POST',
-					url: 'setting/pduser',
-					data: {object:selectedIDs},
-					dataType: 'json',
-					success: function(response){
-						var result = response.result;
-						var message = response.message;
-
-						if(result == true){
-							swal.fire({
-							title: 'Sukses!',
-							text: response.message,
-							type: 'success'
-							});
-
-							dTreload(tableId);
-						} else {
-							swal.fire({
-							title: 'Maaf!',
-							text: response.message,
-							type: 'error'
-							});
-						}
-					},
-					error: function(){
-						swal.fire({
-						title: 'Maaf!',
-						text: 'Tidak ada koneksi internet.',
-						type: 'error'
+					if(status == 'success'){
+						Swal.fire({
+							text: message,
+							icon: 'success',
+							timer: 1000,
+							allowOutsideClick: false,
+							onOpen: function(){
+								Swal.showLoading()
+							}
+						}).then(function() {
+							$('#cancel2').trigger('click');
+						});
+					} else {
+						Swal.fire({
+							text: message,
+							icon: 'error',
+							buttonsStyling: false,
+							confirmButtonText: 'OK!',
+							allowOutsideClick: false,
+							customClass: {
+								confirmButton: 'btn font-weight-bold btn-light-primary'
+							}
+						}).then(function() {
+							KTUtil.scrollTop();
 						});
 					}
-				});
-			}
+				},
+				error: function(){
+					Swal.fire({
+						text: 'Maaf! Jaringan Anda tidak stabil.',
+						icon: 'error',
+						buttonsStyling: false,
+						confirmButtonText: 'OK!',
+						customClass: {
+							confirmButton: 'btn font-weight-bold btn-light-primary'
+						}
+					}).then(function() {
+						KTUtil.scrollTop();
+					});
+				}
+			});
+		}).on('core.form.invalid', function() {
+			Swal.fire({
+				text: 'Maaf! Pengisian form Anda belum lengkap. Silakkan dicoba lagi.',
+				icon: 'error',
+				buttonsStyling: false,
+				confirmButtonText: 'OK!',
+				customClass: {
+					confirmButton: 'btn font-weight-bold btn-light-primary'
+				}
+			}).then(function() {
+				KTUtil.scrollTop();
+			});
 		}
-	});
+	);
 
-	$('#show_user').click(function(){
+	$('#active').click(function(){
 		var rowKey = $('#'+tableId).getGridParam('selrow');
 
 		if(!rowKey){
-			alert('Item belum dipilih');
+			Swal.fire({
+				text: 'Item belum dipilih',
+				icon: 'error',
+				buttonsStyling: false,
+				confirmButtonText: 'OK!',
+				allowOutsideClick: false,
+				customClass: {
+					confirmButton: 'btn font-weight-bold btn-light-primary'
+				}
+			}).then(function() {
+				KTUtil.scrollTop();
+			});
 		} else {
 			var conf = confirm('Data ingin diaktifkan?');
 			var selectedIDs = $('#'+tableId).getGridParam('selarrrow');
@@ -361,26 +380,44 @@ $(document).ready(function(){
 						var message = response.message;
 
 						if(result == true){
-							swal.fire({
-							title: 'Sukses!',
-							text: response.message,
-							type: 'success'
+							Swal.fire({
+								text: message,
+								icon: 'success',
+								timer: 1000,
+								allowOutsideClick: false,
+								onOpen: function(){
+									Swal.showLoading()
+								}
+							}).then(function() {
+								dTreload(tableId);
 							});
-
-							dTreload(tableId);
 						} else {
-							swal.fire({
-							title: 'Maaf!',
-							text: response.message,
-							type: 'error'
+							Swal.fire({
+								text: message,
+								icon: 'error',
+								buttonsStyling: false,
+								confirmButtonText: 'OK!',
+								allowOutsideClick: false,
+								customClass: {
+									confirmButton: 'btn font-weight-bold btn-light-primary'
+								}
+							}).then(function() {
+								KTUtil.scrollTop();
 							});
 						}
 					},
 					error: function(){
-						swal.fire({
-						title: 'Maaf!',
-						text: 'Tidak ada koneksi internet.',
-						type: 'error'
+						Swal.fire({
+							text: 'Jaringan Anda tidak stabil',
+							icon: 'error',
+							buttonsStyling: false,
+							confirmButtonText: 'OK!',
+							allowOutsideClick: false,
+							customClass: {
+								confirmButton: 'btn font-weight-bold btn-light-primary'
+							}
+						}).then(function() {
+							KTUtil.scrollTop();
 						});
 					}
 				});
@@ -388,11 +425,22 @@ $(document).ready(function(){
 		}
 	});
 
-	$('#hide_user').click(function(){
+	$('#inactive').click(function(){
 		var rowKey = $('#'+tableId).getGridParam('selrow');
 
 		if(!rowKey){
-			alert('Item belum dipilih');
+			Swal.fire({
+				text: 'Item belum dipilih',
+				icon: 'error',
+				buttonsStyling: false,
+				confirmButtonText: 'OK!',
+				allowOutsideClick: false,
+				customClass: {
+					confirmButton: 'btn font-weight-bold btn-light-primary'
+				}
+			}).then(function() {
+				KTUtil.scrollTop();
+			});
 		} else {
 			var conf = confirm('Data ingin di-non-aktifkan?');
 			var selectedIDs = $('#'+tableId).getGridParam('selarrrow');
@@ -408,26 +456,120 @@ $(document).ready(function(){
 						var message = response.message;
 
 						if(result == true){
-							swal.fire({
-							title: 'Sukses!',
-							text: response.message,
-							type: 'success'
+							Swal.fire({
+								text: message,
+								icon: 'success',
+								timer: 1000,
+								allowOutsideClick: false,
+								onOpen: function(){
+									Swal.showLoading()
+								}
+							}).then(function() {
+								dTreload(tableId);
 							});
-
-							dTreload(tableId);
 						} else {
-							swal.fire({
-							title: 'Maaf!',
-							text: response.message,
-							type: 'error'
+							Swal.fire({
+								text: message,
+								icon: 'error',
+								buttonsStyling: false,
+								confirmButtonText: 'OK!',
+								allowOutsideClick: false,
+								customClass: {
+									confirmButton: 'btn font-weight-bold btn-light-primary'
+								}
+							}).then(function() {
+								KTUtil.scrollTop();
 							});
 						}
 					},
 					error: function(){
-						swal.fire({
-						title: 'Maaf!',
-						text: 'Tidak ada koneksi internet.',
-						type: 'error'
+						Swal.fire({
+							text: 'Jaringan Anda tidak stabil',
+							icon: 'error',
+							buttonsStyling: false,
+							confirmButtonText: 'OK!',
+							allowOutsideClick: false,
+							customClass: {
+								confirmButton: 'btn font-weight-bold btn-light-primary'
+							}
+						}).then(function() {
+							KTUtil.scrollTop();
+						});
+					}
+				});
+			}
+		}
+	});
+
+	$('#delete').click(function(){
+		var rowKey = $('#'+tableId).getGridParam('selrow');
+
+		if(!rowKey){
+			Swal.fire({
+				text: 'Item belum dipilih',
+				icon: 'error',
+				buttonsStyling: false,
+				confirmButtonText: 'OK!',
+				allowOutsideClick: false,
+				customClass: {
+					confirmButton: 'btn font-weight-bold btn-light-primary'
+				}
+			}).then(function() {
+				KTUtil.scrollTop();
+			});
+		} else {
+			var conf = confirm('Data ingin dihapus?');
+			var selectedIDs = $('#'+tableId).getGridParam('selarrrow');
+
+			if(conf){
+				$.ajax({
+					type: 'POST',
+					url: 'setting/pduser',
+					data: {object:selectedIDs},
+					dataType: 'json',
+					success: function(response){
+						var result = response.result;
+						var message = response.message;
+
+						if(result == true){
+							Swal.fire({
+								text: message,
+								icon: 'success',
+								timer: 1000,
+								allowOutsideClick: false,
+								onOpen: function(){
+									Swal.showLoading()
+								}
+							}).then(function() {
+								dTreload(tableId);
+							});
+						} else {
+							Swal.fire({
+								text: message,
+								icon: 'error',
+								buttonsStyling: false,
+								confirmButtonText: 'OK!',
+								allowOutsideClick: false,
+								customClass: {
+									confirmButton: 'btn font-weight-bold btn-light-primary'
+								}
+							}).then(function() {
+								KTUtil.scrollTop();
+							});
+						}
+					},
+					error: function(){
+						Swal.fire({
+							text: 'Jaringan Anda tidak stabil',
+							icon: 'error',
+							buttonsStyling: false,
+							confirmButtonText: 'OK!',
+							allowOutsideClick: false,
+							customClass: {
+								confirmButton: 'btn font-weight-bold btn-light-primary'
+							}
+						}).then(function() {
+							KTUtil.scrollTop();
 						});
 					}
 				});
