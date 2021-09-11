@@ -11,7 +11,7 @@
   },
   "loader": {
     "type": "spinner-logo",
-    "logo": "media/logos/logo-letter-1.png",
+    "logo": "media/logos/logo-dark.png",
     "message": "Please wait..."
   },
   "breakpoints": {
@@ -96,14 +96,14 @@
       },
       "mobile": {
         "submenu": {
-          "theme": "dark",
+          "theme": "light",
           "accordion": true
         }
       }
     }
   },
   "subheader": {
-    "display": true,
+    "display": false,
     "displayDesc": false,
     "displayDaterangepicker": true,
     "layout": "subheader-v1",
@@ -113,16 +113,16 @@
     "style": "solid"
   },
   "content": {
-    "width": "fixed"
+    "width": "fluid"
   },
   "brand": {
     "self": {
-      "theme": "dark"
+      "theme": "light"
     }
   },
   "aside": {
     "self": {
-      "theme": "dark",
+      "theme": "light",
       "display": true,
       "fixed": true,
       "minimize": {

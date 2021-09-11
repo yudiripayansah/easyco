@@ -36,5 +36,11 @@
 		.topbar-mobile-on & {
 			box-shadow: none !important;
 		}
+
+		a {
+			img {
+				height: 30px;
+			}
+		}
 	}
 }
