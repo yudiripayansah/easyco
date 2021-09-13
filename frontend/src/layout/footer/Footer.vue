@@ -2,10 +2,10 @@
   <!-- begin:: Footer -->
   <div class="footer bg-white py-4 d-flex flex-lg-column" id="kt_footer">
     <div
-      class="d-flex align-items-center justify-content-between"
+      class="d-flex align-items-center justify-content-between row"
       v-bind:class="{ 'container-fluid': widthFluid, container: !widthFluid }"
     >
-      <div class="text-dark">
+      <div class="text-dark pl-3 pl-sm-0">
         <span class="text-muted font-weight-bold mr-2">
           2021 &nbsp;&copy;&nbsp;
         </span>
@@ -17,7 +17,7 @@
           EASYCO BY KOPIKODING
         </a>
       </div>
-      <div class="nav nav-dark">
+      <div class="nav nav-dark pl-3 pl-sm-0">
         <a
           href="https://kopikoding.com"
           target="_blank"

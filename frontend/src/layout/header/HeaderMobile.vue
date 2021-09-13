@@ -21,13 +21,13 @@
       </button>
       <!--end::Aside Mobile Toggle-->
       <!--begin::Header Menu Mobile Toggle-->
-      <button
+      <!-- <button
         class="btn p-0 burger-icon ml-4"
         id="kt_header_mobile_toggle"
         ref="kt_header_mobile_toggle"
       >
         <span></span>
-      </button>
+      </button> -->
       <!--end::Header Menu Mobile Toggle-->
       <!--begin::Topbar Mobile Toggle-->
       <button
@@ -66,7 +66,7 @@ export default {
      * @returns {string}
      */
     headerLogo() {
-      return process.env.BASE_URL + this.layoutConfig("self.logo.dark");
+      return process.env.BASE_URL + this.layoutConfig("self.logo.light");
     },
 
     /**

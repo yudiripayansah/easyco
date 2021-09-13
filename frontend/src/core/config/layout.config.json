@@ -5,8 +5,8 @@
     "logo": {
       "dark": "media/logos/logo-light.png",
       "light": "media/logos/logo-dark.png",
-      "brand": "media/logos/logo-light.png",
-      "green": "media/logos/logo-light.png"
+      "brand": "media/logos/logo-dark.png",
+      "green": "media/logos/logo-dark.png"
     }
   },
   "loader": {

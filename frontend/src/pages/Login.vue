@@ -2,7 +2,7 @@
 <div class="d-flex flex-column flex-root">
   <div class="login login-1 d-flex flex-column flex-lg-row flex-column-fluid login-signin-on" style="background-color: #006165;" id="kt_login">
     <!--begin::Aside-->
-    <div class="login-aside d-flex flex-column flex-row-auto" style="background-color: #fff;">
+    <div class="login-aside d-flex flex-column flex-row-auto w-100" style="background-color: #fff;">
       <div class="d-flex flex-column-auto flex-column pt-lg-40 pt-15">
         <a href="#" class="text-center mb-10">
           <img src="media/logos/logo-dark.png" class="max-h-70px" alt="" />
@@ -19,7 +19,7 @@
       <div class="d-flex flex-column-fluid flex-center">
         <!--begin::Signin-->
         <div class="login-form login-signin">
-          <form class="form" novalidate="novalidate" id="kt_login_signin_form" @submit.prevent="doLogin()">
+          <form class="form w-100" novalidate="novalidate" id="kt_login_signin_form" @submit.prevent="doLogin()">
             <div class="pb-13 pt-lg-0 pt-5">
               <h3 class="font-weight-bolder text-light font-size-h4 font-size-h1-lg">
                 Welcome to EASYCO
@@ -79,8 +79,8 @@ export default {
   data() {
     return {
       form: {
-        email: 'admin',
-        password: 'admin',
+        email: 'superadmin@easyco.co',
+        password: '123',
       },
       loading: false
     };

@@ -602,7 +602,8 @@ $config['allow_any_cors_domain'] = true;
 | e.g. $config['allowed_origins'] = ['http://www.example.com', 'https://spa.example.com']
 |
 */
-$config['allowed_cors_origins'] = ['*'];
+$config['allowed_cors_origins'] = ['*','https://easyco.kopikoding.com'];
+$config['allowed_origins'] = ['*','https://easyco.kopikoding.com'];
 
 /*
 |--------------------------------------------------------------------------
