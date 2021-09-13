@@ -63,7 +63,7 @@ export default {
     }
   },
   mounted() {
-    this.getDashboard()
+    // this.getDashboard()
   },
   methods: {
     getDashboard() {

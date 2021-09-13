@@ -1,8 +1,8 @@
 export default (to, from, next) => {
-  if (localStorage.getItem('HseAdmUser') != null) {
+  if (localStorage.getItem('EasyCoAdmUser') != null) {
     next()
   } else {
-    localStorage.removeItem('HseAdmUser')
+    localStorage.removeItem('EasyCoAdmUser')
     next('/login')
   }
 }

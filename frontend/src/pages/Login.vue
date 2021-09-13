@@ -79,8 +79,8 @@ export default {
   data() {
     return {
       form: {
-        email: 'superadmin@easyco.co',
-        password: 'superadmin123easyco',
+        email: 'admin',
+        password: 'admin',
       },
       loading: false
     };
@@ -96,6 +96,7 @@ export default {
   watch: {
     currentUser(val) {
       if (val) {
+        this.loading = false
         this.$router.push({
           name: "Dashboard"
         })

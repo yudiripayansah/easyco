@@ -1,7 +1,9 @@
 import axios from 'axios'
-// const baseURL = 'http://localhost:8000/api/'
-const baseURL = 'https://labpcrapi.hseswadaya.co.id/api/'
+const baseURL = 'http://localhost:8000/'
 export default axios.create({
-  baseURL
+  baseURL,
   // You can add your headers here
+  headers: {
+    'Content-Type': 'application/json',
+  }
 })

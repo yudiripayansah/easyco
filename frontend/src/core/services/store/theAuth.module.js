@@ -1,12 +1,12 @@
 import axios from '../../plugins/axios'
 export default {
   state: {
-    currentUser: localStorage.getItem('HseAdmUser') != null && typeof localStorage.getItem('HseAdmUser') !== undefined ? JSON.parse(localStorage.getItem('HseAdmUser')) : null,
+    currentUser: localStorage.getItem('EasyCoAdmUser') != null && typeof localStorage.getItem('EasyCoAdmUser') !== undefined ? JSON.parse(localStorage.getItem('EasyCoAdmUser')) : null,
     loginError: null,
     processing: false,
     forgotMailSuccess: null,
     resetPasswordSuccess: null,
-    isAuthenticated: localStorage.getItem('HseAdmUser') != null && typeof localStorage.getItem('HseAdmUser') !== undefined ? true : false,
+    isAuthenticated: localStorage.getItem('EasyCoAdmUser') != null && typeof localStorage.getItem('EasyCoAdmUser') !== undefined ? true : false,
   },
   getters: {
     currentUser: state => state.currentUser,
@@ -60,7 +60,7 @@ export default {
     }, payload) {
       commit('clearError')
       commit('setProcessing', true)
-      if(payload.email == 'superadmin@easyco.co' && payload.password == 'superadmin123easyco'){
+      if(payload.email == 'superadmin@easyco.co' && payload.password == '123'){
         let item = {
           user: {
             id : '1',
@@ -72,23 +72,29 @@ export default {
             img: 'media/users/default.jpg',
           }
         }
-        localStorage.setItem('HseAdmUser', JSON.stringify(item))
+        localStorage.setItem('EasyCoAdmUser', JSON.stringify(item))
         commit('setUser', item)
       } else {
         let url = 'auth/login'
-        let data = {
-          email: payload.email,
-          password: payload.password
-        }
+        let data = new FormData()
+        data.append('email',payload.email)
+        data.append('password',payload.password)
         axios
         .post(url,data)
         .then((res)=>{
-          if(res.status){
-            let item = res.data
-            localStorage.setItem('HseAdmUser', JSON.stringify(item))
+          if(typeof res.data === 'object' && res.data.status){
+            let item = {
+              user: res.data.data,
+              token: res.data.token
+            }
+            localStorage.setItem('EasyCoAdmUser', JSON.stringify(item))
             commit('setUser', item)
           } else {
-            commit('setError', res.msg)
+            if(typeof res.data === 'object'){
+              commit('setError', res.data.msg)
+            } else {
+              commit('setError', 'Internal server error')
+            }
           }
         })
         .catch((e)=>{
@@ -99,13 +105,13 @@ export default {
     updateUser({
       commit
     }, payload) {
-        localStorage.setItem('HseAdmUser', JSON.stringify(payload.profile))
+        localStorage.setItem('EasyCoAdmUser', JSON.stringify(payload.profile))
         commit('setUser', payload.profile)
     },
     signOut({
       commit
     }) {
-      localStorage.removeItem('HseAdmUser')
+      localStorage.removeItem('EasyCoAdmUser')
       commit('setLogout')
     }
   }
