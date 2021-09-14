@@ -4,6 +4,7 @@ const menu = [
     label: 'Dashboard',
     icon: 'menu-icon flaticon2-architecture-and-city',
   },
+  // Keanggotaan
   {
     target: '/keanggotaan',
     label: 'Keanggotaan',
@@ -22,7 +23,7 @@ const menu = [
         label: 'Registrasi Anggota Keluar'
       },
       {
-        target: '/keanggotaan/registrasi-anggota',
+        target: '/keanggotaan/approval-registrasi-keluar',
         label: 'Approval Registrasi Anggota Keluar'
       },
       {
@@ -53,6 +54,7 @@ const menu = [
       },
     ]
   },
+  // Tabungan
   {
     target: '/tabungan',
     label: 'Tabungan',
@@ -98,6 +100,7 @@ const menu = [
       },
     ]
   },
+  // Pembiayaan
   {
     target: '/pembiayaan',
     label: 'Pembiayaan',
@@ -140,7 +143,7 @@ const menu = [
             label: 'Pencairan'
           },
           {
-            target: '/pembiayaan/laporan/ourstanding',
+            target: '/pembiayaan/laporan/outstanding',
             label: 'Outstanding'
           },
           {
@@ -163,6 +166,7 @@ const menu = [
       },
     ]
   },
+  // Keuangan
   {
     target: '/keuangan',
     label: 'Keuangan',
@@ -212,6 +216,7 @@ const menu = [
       },
     ]
   },
+  // Pengaturan
   {
     target: '/pengaturan',
     label: 'Pengaturan',
