@@ -176,7 +176,7 @@ export default new Router({
                 {
                   path: "pengajuan-pembiayaan",
                   name: "Laporan Pengajuan Pembiayaan",
-                  component: () => import("@/pages/Dummy.vue"),
+                  component: () => import("@/pages/Pembiayaan/Laporan/PengajuanPembiayaan.vue"),
                 },
                 {
                   path: "pencairan",
