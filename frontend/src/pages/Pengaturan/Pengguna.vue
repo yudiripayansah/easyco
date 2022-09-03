@@ -4,7 +4,7 @@
   <b-card>
     <b-row no-gutters>
       <b-col cols="12" class="d-flex justify-content-end mb-5 pb-5 border-bottom">
-        <b-button variant="success" @click="$bvModal.show('modal-form')" v-b-tooltip.hover title="Tambah Data Baru">
+        <b-button variant="success" @click="$bvModal.show('modal-form');doClearForm()" v-b-tooltip.hover title="Tambah Data Baru">
           <b-icon icon="plus"/>
           Tambah Baru
         </b-button>
@@ -12,7 +12,7 @@
       <b-col cols="12" class="mb-5">
         <b-row no-gutters>
           <b-col cols="6">
-            <div class="w-100 max-200">
+            <div class="w-100 max-200 pr-5">
               <b-input-group size="sm" prepend="Per Halaman">
                 <b-form-select v-model="paging.perPage" :options="opt.perPage"/>
               </b-input-group>
@@ -34,7 +34,7 @@
         </b-row>
       </b-col>
       <b-col cols="12">
-        <b-table bordered outlined small striped hover :fields="table.fields" :items="table.items" show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
+        <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items" show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
           <template #cell(no)="item">
             {{item.index + 1}}
           </template>
@@ -132,7 +132,7 @@
   <b-modal title="Delete" id="modal-delete" hide-footer size="sm" header-bg-variant="warning" body-bg-variant="warning" centered>
     <p class="text-center py-3">Anda yakin ingin menghapus data ini?</p>
     <div class="d-flex justify-content-end">
-      <b-button variant="light" type="button" :disabled="remove.loading">Tidak</b-button>
+      <b-button variant="light" type="button" :disabled="remove.loading" @click="$bvModal.hide('modal-delete')">Tidak</b-button>
       <b-button variant="danger" class="ml-3" type="button" :disabled="remove.loading" @click="doDelete(remove.data,false)">
         {{remove.loading ? 'Memproses...' : 'Ya' }}
       </b-button>
@@ -290,15 +290,17 @@ export default {
         this.table.loading = false
         this.table.items = [
           {
-            kode: 'Kode User',
+            kode: '123456789',
             nama: 'Nama User',
-            email: 'Email User',
-            role: 'Role User',
-            status: 'Status User',
-            cabang: 'Cabang User',
+            email: 'user@email.com',
+            role: 'user',
+            password: 'Password User',
+            status: 'aktif',
+            cabang: 'cabang 1',
             created_at: 'Tanggal Dibuat',
           },
         ]
+        this.doInfo('Data berhasil diambil','Berhasil','success')
       },5000)
     },
     async doSave() {
@@ -308,18 +310,54 @@ export default {
         setTimeout(() => {
           this.form.loading = false
           this.$bvModal.hide('modal-form')
+          let newItems = {...this.form.data}
+          let date = new Date()
+          newItems.created_at = date.toLocaleDateString() 
+          newItems.id = this.table.items.length + 1
+          this.table.items.push(newItems)
+          this.doClearForm()
+          this.doInfo('Data berhasil disimpan','Berhasil','success')
         }, 5000);
       }
     },
     async doUpdate(item) {
-      this.form.data = {...item}
+      console.log(item)
+      this.form.data = {...item.item}
       this.$bvModal.show('modal-form')
     },
     async doDelete(item,prompt) {
       if(prompt){
         this.remove.data = item
         this.$bvModal.show('modal-delete')
+      } else {
+        this.remove.loading = true
+        setTimeout(() => {
+          this.remove.loading = false
+          this.$bvModal.hide('modal-delete')
+          this.doInfo('Data berhasil dihapus','Berhasil','success')
+        }, 5000);
       }
+    },
+    doClearForm() {
+      this.form.data = {
+        id: null,
+        kode: 'Auto Generated',
+        nama: null,
+        email: null,
+        password: null,
+        role: null,
+        status: null,
+        cabang: null,
+      }
+      this.$v.form.$reset()
+    },
+    doInfo(msg,title,variant) {
+      this.$bvToast.toast(msg, {
+        title: title,
+        variant: variant,
+        solid: true,
+        toaster: 'b-toaster-bottom-right'
+      })
     }
   }
 };
