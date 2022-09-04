@@ -16,6 +16,8 @@
 
 // Main demo style scss
 @import "assets/sass/style.vue";
+// custom
+@import "assets/sass/custom.scss";
 
 // Check documentation for RTL css
 // Update HTML with RTL attribute at public/index.html
@@ -26,7 +28,7 @@
 import { OVERRIDE_LAYOUT_CONFIG } from "@/core/services/store/config.module";
 
 export default {
-  name: "MetronicVue",
+  name: "EasyCo",
   mounted() {
     /**
      * this is to override the layout config using saved data from localStorage
