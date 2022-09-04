@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 use \App\Models\KopGl;
 
 class GlSeeder extends Seeder
@@ -23,7 +24,9 @@ class GlSeeder extends Seeder
                 'tipe_gl' => 1,
                 'default_saldo' => 'D',
                 'nama_gl' => 'Kas Besar',
-                'created_by' => 1
+                'created_by' => 1,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
                 'kode_gl' => '10101012',
@@ -31,7 +34,9 @@ class GlSeeder extends Seeder
                 'tipe_gl' => 1,
                 'default_saldo' => 'D',
                 'nama_gl' => 'Kas Teller',
-                'created_by' => 1
+                'created_by' => 1,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
                 'kode_gl' => '10101013',
@@ -39,7 +44,9 @@ class GlSeeder extends Seeder
                 'tipe_gl' => 1,
                 'default_saldo' => 'D',
                 'nama_gl' => 'Kas Petugas',
-                'created_by' => 1
+                'created_by' => 1,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
                 'kode_gl' => '20103010',
@@ -47,7 +54,9 @@ class GlSeeder extends Seeder
                 'tipe_gl' => 2,
                 'default_saldo' => 'C',
                 'nama_gl' => 'Simpanan Sukarela',
-                'created_by' => 1
+                'created_by' => 1,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
                 'kode_gl' => '30101010',
@@ -55,7 +64,9 @@ class GlSeeder extends Seeder
                 'tipe_gl' => 3,
                 'default_saldo' => 'C',
                 'nama_gl' => 'Simpanan Pokok',
-                'created_by' => 1
+                'created_by' => 1,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
                 'kode_gl' => '40100010',
@@ -63,7 +74,9 @@ class GlSeeder extends Seeder
                 'tipe_gl' => 4,
                 'default_saldo' => 'C',
                 'nama_gl' => 'Pendapatan Margin Murabahah',
-                'created_by' => 1
+                'created_by' => 1,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
                 'kode_gl' => '50101010',
@@ -71,7 +84,9 @@ class GlSeeder extends Seeder
                 'tipe_gl' => 5,
                 'default_saldo' => 'D',
                 'nama_gl' => 'Bonus Simpanan',
-                'created_by' => 1
+                'created_by' => 1,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ]
         ];
 

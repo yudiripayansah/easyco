@@ -24,6 +24,7 @@ class CreateKopPegawaiTable extends Migration
             $table->string('no_hp', 15);
             $table->string('jabatan', 20);
             $table->date('tgl_gabung')->nullable(TRUE);
+            $table->string('created_by', 30);
             $table->timestamps();
             $table->string('updated_by', 30)->nullable(TRUE);
             $table->softDeletes();

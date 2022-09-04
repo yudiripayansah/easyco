@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use \App\Models\KopCabang;
 use Illuminate\Support\Carbon;
+use \App\Models\KopCabang;
 
 class CabangSeeder extends Seeder
 {

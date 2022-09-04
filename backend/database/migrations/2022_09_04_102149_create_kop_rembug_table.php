@@ -34,7 +34,7 @@ class CreateKopRembugTable extends Migration
 
             $table->foreign('kode_cabang')->references('kode_cabang')->on('kop_cabang')->cascadeOnUpdate()->restrictOnDelete();
             $table->foreign('kode_desa')->references('kode_desa')->on('kop_desa')->cascadeOnUpdate()->restrictOnDelete();
-            $table->foreign('kode_petugas')->references('kode_petugas')->on('kop_petugas')->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreign('kode_petugas')->references('kode_petugas')->on('kop_kas_petugas')->cascadeOnUpdate()->restrictOnDelete();
         });
     }
 

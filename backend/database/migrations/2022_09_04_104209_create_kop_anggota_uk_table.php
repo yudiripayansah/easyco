@@ -58,6 +58,7 @@ class CreateKopAnggotaUkTable extends Migration
             $table->decimal('by_telpon', 13, 0)->nullable(TRUE)->default(0);
             $table->decimal('by_sekolah', 13, 0)->nullable(TRUE)->default(0);
             $table->decimal('by_lain', 13, 0)->nullable(TRUE)->default(0);
+            $table->timestamps();
 
             $table->foreign('no_anggota')->references('no_anggota')->on('kop_anggota')->cascadeOnUpdate()->restrictOnDelete();
         });
