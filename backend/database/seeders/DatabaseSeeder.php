@@ -14,5 +14,22 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // \App\Models\User::factory(10)->create();
+
+        date_default_timezone_set('Asia/Jakarta');
+
+        $this->call([
+            CabangSeeder::class,
+            PegawaiSeeder::class,
+            UserSeeder::class,
+            KotaKabupatenSeeder::class,
+            KecamatanSeeder::class,
+            DesaSeeder::class,
+            GlSeeder::class,
+            KasPetugasSeeder::class,
+            RembugSeeder::class,
+            AnggotaSeeder::class,
+            AnggotaUkSeeder::class,
+            AnggotaMutasiSeeder::class
+        ]);
     }
 }
