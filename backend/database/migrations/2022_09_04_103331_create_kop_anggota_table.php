@@ -18,6 +18,7 @@ class CreateKopAnggotaTable extends Migration
             $table->id();
             $table->string('id_anggota', 32)->default(DB::raw('uuid()'))->unique();
             $table->string('kode_cabang', 6);
+            $table->string('kode_rembug', 20);
             $table->string('no_anggota', 20)->unique();
             $table->string('nama_anggota', 50);
             $table->string('jenis_kelamin', 1)->comment('P = Pria, W = Wanita');
@@ -51,6 +52,7 @@ class CreateKopAnggotaTable extends Migration
             $table->string('deleted_by', 30)->nullable(TRUE);
 
             $table->foreign('kode_cabang')->references('kode_cabang')->on('kop_cabang')->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreign('kode_rembug')->references('kode_rembug')->on('kop_rembug')->cascadeOnUpdate()->restrictOnDelete();
         });
     }
 

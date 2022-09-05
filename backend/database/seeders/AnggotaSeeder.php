@@ -16,6 +16,7 @@ class AnggotaSeeder extends Seeder
     {
         $anggota = new KopAnggota();
         $anggota->kode_cabang = '10101';
+        $anggota->kode_rembug = '101010001';
         $anggota->no_anggota = '101010001000122';
         $anggota->nama_anggota = 'Herlan Fahmi';
         $anggota->jenis_kelamin = 'P';

@@ -29,7 +29,10 @@ class DatabaseSeeder extends Seeder
             RembugSeeder::class,
             AnggotaSeeder::class,
             AnggotaUkSeeder::class,
-            AnggotaMutasiSeeder::class
+            AnggotaMutasiSeeder::class,
+            KatgoriParSeeder::class,
+            LembagaSeeder::class,
+            ListKodeSeeder::class
         ]);
     }
 }
