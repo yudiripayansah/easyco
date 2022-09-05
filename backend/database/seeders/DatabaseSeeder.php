@@ -32,7 +32,10 @@ class DatabaseSeeder extends Seeder
             AnggotaMutasiSeeder::class,
             KatgoriParSeeder::class,
             LembagaSeeder::class,
-            ListKodeSeeder::class
+            ListKodeSeeder::class,
+            PrdDepositoSeeder::class,
+            PrdPembiayaanSeeder::class,
+            PrdTabunganSeeder::class
         ]);
     }
 }

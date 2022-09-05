@@ -49,11 +49,61 @@ class GlSeeder extends Seeder
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
+                'kode_gl' => '10103010',
+                'group_gl' => '10103000',
+                'tipe_gl' => 1,
+                'default_saldo' => 'D',
+                'nama_gl' => 'Piutang Murobahah',
+                'created_by' => 1,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+            ],
+            [
+                'kode_gl' => '10103020',
+                'group_gl' => '10103000',
+                'tipe_gl' => 1,
+                'default_saldo' => 'D',
+                'nama_gl' => 'Piutang Istishna',
+                'created_by' => 1,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+            ],
+            [
+                'kode_gl' => '10103030',
+                'group_gl' => '10103000',
+                'tipe_gl' => 1,
+                'default_saldo' => 'D',
+                'nama_gl' => 'Piutang Ijarah',
+                'created_by' => 1,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+            ],
+            [
                 'kode_gl' => '20103010',
                 'group_gl' => '20103000',
                 'tipe_gl' => 2,
                 'default_saldo' => 'C',
                 'nama_gl' => 'Simpanan Sukarela',
+                'created_by' => 1,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+            ],
+            [
+                'kode_gl' => '20104010',
+                'group_gl' => '20104000',
+                'tipe_gl' => 2,
+                'default_saldo' => 'C',
+                'nama_gl' => 'Simpanan Berjangka',
+                'created_by' => 1,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+            ],
+            [
+                'kode_gl' => '20201010',
+                'group_gl' => '20201000',
+                'tipe_gl' => 2,
+                'default_saldo' => 'C',
+                'nama_gl' => 'Simpanan Masa Depan',
                 'created_by' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
