@@ -57,46 +57,37 @@
         </b-col>
       </b-row>
     </b-card>
-    <b-modal title="Form Pengguna" id="modal-form" hide-footer size="lg" centered>
+    <b-modal title="Form Cabang" id="modal-form" hide-footer size="lg" centered>
       <b-form @submit="doSave()">
         <b-row>
           <b-col cols="6">
-            <b-form-group label="Kode User" label-for="kode">
-              <b-form-input id="kode" v-model="form.data.kode" disabled />
+            <b-form-group label="Kode Cabang" label-for="kode_cabang">
+              <b-form-input id="kode_cabang" v-model="$v.form.data.kode_cabang.$model"
+                :state="validateState('kode_cabang')" />
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Nama" label-for="nama">
-              <b-form-input id="nama" v-model="$v.form.data.nama.$model" :state="validateState('nama')" />
+            <b-form-group label="Nama Cabang" label-for="nama cabang">
+              <b-form-input id="nama_cabang" v-model="$v.form.data.nama_cabang.$model"
+                :state="validateState('nama_cabang')" />
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Email" label-for="email">
-              <b-form-input id="email" v-model="$v.form.data.email.$model" :state="validateState('email')" />
+            <b-form-group label="Induk Cabang" label-for="induk_cabang">
+              <b-form-input id="induk_cabang" v-model="$v.form.data.induk_cabang.$model"
+                :state="validateState('induk_cabang')" />
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Password" label-for="password">
-              <b-form-input id="password" v-model="$v.form.data.password.$model" type="password"
-                :state="validateState('password')" />
+            <b-form-group label="Jenis Cabang" label-for="jenis_cabang">
+              <b-form-input id="jenis_cabang" v-model="$v.form.data.jenis_cabang.$model"
+                :state="validateState('jenis_cabang')" />
             </b-form-group>
           </b-col>
           <b-col cols="4">
-            <b-form-group label="Role" label-for="role">
-              <b-form-select id="role" v-model="$v.form.data.role.$model" :options="opt.role"
-                :state="validateState('role')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group label="Status" label-for="status">
-              <b-form-select id="status" v-model="$v.form.data.status.$model" :options="opt.status"
-                :state="validateState('status')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group label="Cabang" label-for="cabang">
-              <b-form-select id="cabang" v-model="$v.form.data.cabang.$model" :options="opt.cabang"
-                :state="validateState('cabang')" />
+            <b-form-group label="Pimpinan Cabang" label-for="pimpinan_cabang">
+              <b-form-input id="pimpinan_cabang" v-model="$v.form.data.pimpinan_cabang.$model"
+                :state="validateState('pimpinan_cabang')" />
             </b-form-group>
           </b-col>
           <b-col cols="12" class="d-flex justify-content-end border-top pt-5">
@@ -126,7 +117,7 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
+import { required } from 'vuelidate/lib/validators'
 export default {
   name: "Pengguna",
   components: {},
@@ -135,13 +126,11 @@ export default {
       form: {
         data: {
           id: null,
-          kode: 'Auto Generated',
-          nama: null,
-          email: null,
-          password: null,
-          role: null,
-          status: null,
-          cabang: null,
+          kode_cabang: null,
+          nama_cabang: null,
+          induk_cabang: null,
+          jenis_cabang: null,
+          pimpinan_cabang: null,
         },
         loading: false,
       },
@@ -155,44 +144,37 @@ export default {
             tdClass: 'text-center'
           },
           {
-            key: 'kode',
+            key: 'kode_cabang',
             sortable: true,
-            label: 'Kode User',
+            label: 'Kode Cabang',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'nama',
+            key: 'nama_cabang',
             sortable: true,
-            label: 'Nama',
+            label: 'Nama Cabang',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'email',
+            key: 'induk_cabang',
             sortable: true,
-            label: 'Email',
+            label: 'Induk Cabang',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'role',
+            key: 'jenis_cabang',
             sortable: true,
-            label: 'Role',
+            label: 'Jenis Cabang',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'status',
+            key: 'pimpinan_cabang',
             sortable: true,
-            label: 'Status',
-            thClass: 'text-center',
-            tdClass: ''
-          },
-          {
-            key: 'cabang',
-            sortable: true,
-            label: 'Cabang',
+            label: 'Pimpinan Cabang',
             thClass: 'text-center',
             tdClass: ''
           },
@@ -236,24 +218,19 @@ export default {
   validations: {
     form: {
       data: {
-        nama: {
+        kode_cabang: {
           required
         },
-        email: {
-          required,
-          email
-        },
-        password: {
-          required,
-          minLength: minLength(6)
-        },
-        role: {
+        nama_cabang: {
           required
         },
-        status: {
+        induk_cabang: {
           required
         },
-        cabang: {
+        jenis_cabang: {
+          required
+        },
+        pimpinan_cabang: {
           required
         },
       }
@@ -273,13 +250,11 @@ export default {
         this.table.loading = false
         this.table.items = [
           {
-            kode: '123456789',
-            nama: 'Nama User',
-            email: 'user@email.com',
-            role: 'user',
-            password: 'Password User',
-            status: 'aktif',
-            cabang: 'cabang 1',
+            kode_cabang: 'Kode Cabang User',
+            nama_cabang: 'Nama Cabang User',
+            induk_cabang: 'Data Induk Cabang',
+            jenis_cabang: 'Data Jenis Cabang',
+            pimpinan_cabang: 'Data Pimpinan Cabang',
             created_at: 'Tanggal Dibuat',
           },
         ]
@@ -324,13 +299,11 @@ export default {
     doClearForm() {
       this.form.data = {
         id: null,
-        kode: 'Auto Generated',
-        nama: null,
-        email: null,
-        password: null,
-        role: null,
-        status: null,
-        cabang: null,
+        kode_cabang: null,
+        nama_cabang: null,
+        induk_cabang: null,
+        jenis_cabang: null,
+        pimpinan_cabang: null,
       }
       this.$v.form.$reset()
     },
@@ -345,4 +318,3 @@ export default {
   }
 };
 </script>
-  

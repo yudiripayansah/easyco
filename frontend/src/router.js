@@ -9,7 +9,7 @@ export default new Router({
     {
       path: "/",
       redirect: "/dashboard",
-      beforeEnter : AuthRequired,
+      beforeEnter: AuthRequired,
       component: () => import("@/layout/Layout"),
       children: [
         {
@@ -301,67 +301,67 @@ export default new Router({
                 {
                   path: 'gl',
                   name: 'Gl',
-                  component: () => import("@/pages/Dummy.vue")
+                  component: () => import("@/pages/Pengaturan/MasterData/Gl.vue")
                 },
                 {
                   path: 'kategori-par',
                   name: 'Kategori PAR',
-                  component: () => import("@/pages/Dummy.vue")
+                  component: () => import("@/pages/Pengaturan/MasterData/KategoriPar.vue")
                 },
                 {
                   path: 'list-kode',
                   name: 'List Kode',
-                  component: () => import("@/pages/Dummy.vue")
+                  component: () => import("@/pages/Pengaturan/MasterData/ListKode.vue")
                 },
                 {
                   path: 'produk-pembiayaan',
                   name: 'Produk Pembiayaan',
-                  component: () => import("@/pages/Dummy.vue")
+                  component: () => import("@/pages/Pengaturan/MasterData/ProdukPembiayaan.vue")
                 },
                 {
                   path: 'produk-tabungan',
                   name: 'Produk Tabungan',
-                  component: () => import("@/pages/Dummy.vue")
+                  component: () => import("@/pages/Pengaturan/MasterData/ProdukTabungan.vue")
                 },
                 {
                   path: 'produk-deposito',
                   name: 'Produk Deposito',
-                  component: () => import("@/pages/Dummy.vue")
+                  component: () => import("@/pages/Pengaturan/MasterData/ProdukDeposito.vue")
                 },
                 {
                   path: 'pegawai',
                   name: 'Pegawai',
-                  component: () => import("@/pages/Dummy.vue")
+                  component: () => import("@/pages/Pengaturan/MasterData/Pegawai.vue")
                 },
                 {
                   path: 'rembug',
                   name: 'Rembug',
-                  component: () => import("@/pages/Dummy.vue")
+                  component: () => import("@/pages/Pengaturan/MasterData/Rembug.vue")
                 },
                 {
                   path: 'lembaga',
                   name: 'Lembaga',
-                  component: () => import("@/pages/Dummy.vue")
+                  component: () => import("@/pages/Pengaturan/MasterData/Lembaga.vue")
                 },
                 {
                   path: 'cabang',
                   name: 'Cabang',
-                  component: () => import("@/pages/Dummy.vue")
+                  component: () => import("@/pages/Pengaturan/MasterData/Cabang.vue")
                 },
                 {
                   path: 'desa',
                   name: 'Desa',
-                  component: () => import("@/pages/Dummy.vue")
+                  component: () => import("@/pages/Pengaturan/MasterData/Desa.vue")
                 },
                 {
                   path: 'kecamatan',
                   name: 'Kecamatan',
-                  component: () => import("@/pages/Dummy.vue")
+                  component: () => import("@/pages/Pengaturan/MasterData/Kecamatan.vue")
                 },
                 {
                   path: 'kota-kabupaten',
                   name: 'Kota Kabupaten',
-                  component: () => import("@/pages/Dummy.vue")
+                  component: () => import("@/pages/Pengaturan/MasterData/KotaKabupaten.vue")
                 },
               ]
             }

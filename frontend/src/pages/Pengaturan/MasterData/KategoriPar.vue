@@ -57,46 +57,30 @@
         </b-col>
       </b-row>
     </b-card>
-    <b-modal title="Form Pengguna" id="modal-form" hide-footer size="lg" centered>
+    <b-modal title="Form Kategori Par" id="modal-form" hide-footer size="lg" centered>
       <b-form @submit="doSave()">
         <b-row>
           <b-col cols="6">
-            <b-form-group label="Kode User" label-for="kode">
-              <b-form-input id="kode" v-model="form.data.kode" disabled />
+            <b-form-group label="Jumlah Hari 1" label-for="jumlah_hari_1">
+              <b-form-input id="jumlah_hari_1" v-model="form.data.jumlah_hari_1"
+                :state="validateState('jumlah_hari_1')" />
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Nama" label-for="nama">
-              <b-form-input id="nama" v-model="$v.form.data.nama.$model" :state="validateState('nama')" />
+            <b-form-group label="Jumlah Hari 2" label-for="jumlah_hari_2">
+              <b-form-input id="jumlah_hari_2" v-model="$v.form.data.jumlah_hari_2.$model"
+                :state="validateState('jumlah_hari_2')" />
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Email" label-for="email">
-              <b-form-input id="email" v-model="$v.form.data.email.$model" :state="validateState('email')" />
+            <b-form-group label="Kategori Par" label-for="kategori_par">
+              <b-form-input id="kategori_par" v-model="$v.form.data.kategori_par.$model"
+                :state="validateState('kategori_par')" />
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Password" label-for="password">
-              <b-form-input id="password" v-model="$v.form.data.password.$model" type="password"
-                :state="validateState('password')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group label="Role" label-for="role">
-              <b-form-select id="role" v-model="$v.form.data.role.$model" :options="opt.role"
-                :state="validateState('role')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group label="Status" label-for="status">
-              <b-form-select id="status" v-model="$v.form.data.status.$model" :options="opt.status"
-                :state="validateState('status')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group label="Cabang" label-for="cabang">
-              <b-form-select id="cabang" v-model="$v.form.data.cabang.$model" :options="opt.cabang"
-                :state="validateState('cabang')" />
+            <b-form-group label="Cpp" label-for="cpp">
+              <b-form-input id="cpp" v-model="$v.form.data.cpp.$model" :state="validateState('cpp')" />
             </b-form-group>
           </b-col>
           <b-col cols="12" class="d-flex justify-content-end border-top pt-5">
@@ -125,8 +109,9 @@
 </template>
 
 <script>
+import { isNullOrUndefined } from "util";
 import { validationMixin } from "vuelidate";
-import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
+import { required } from 'vuelidate/lib/validators'
 export default {
   name: "Pengguna",
   components: {},
@@ -135,13 +120,10 @@ export default {
       form: {
         data: {
           id: null,
-          kode: 'Auto Generated',
-          nama: null,
-          email: null,
-          password: null,
-          role: null,
-          status: null,
-          cabang: null,
+          jumlah_hari_1: null,
+          jumlah_hari_2: null,
+          kategori_par: null,
+          cpp: null,
         },
         loading: false,
       },
@@ -155,44 +137,30 @@ export default {
             tdClass: 'text-center'
           },
           {
-            key: 'kode',
+            key: 'jumlah_hari_1',
             sortable: true,
-            label: 'Kode User',
+            label: 'Jumlah Hari 1',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'nama',
+            key: 'jumlah_hari_2',
             sortable: true,
-            label: 'Nama',
+            label: 'Jumlah Hari 2',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'email',
+            key: 'kategori_par',
             sortable: true,
-            label: 'Email',
+            label: 'Kategori Par',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'role',
+            key: 'cpp',
             sortable: true,
-            label: 'Role',
-            thClass: 'text-center',
-            tdClass: ''
-          },
-          {
-            key: 'status',
-            sortable: true,
-            label: 'Status',
-            thClass: 'text-center',
-            tdClass: ''
-          },
-          {
-            key: 'cabang',
-            sortable: true,
-            label: 'Cabang',
+            label: 'Cpp',
             thClass: 'text-center',
             tdClass: ''
           },
@@ -236,24 +204,16 @@ export default {
   validations: {
     form: {
       data: {
-        nama: {
+        jumlah_hari_1: {
           required
         },
-        email: {
-          required,
-          email
-        },
-        password: {
-          required,
-          minLength: minLength(6)
-        },
-        role: {
+        jumlah_hari_2: {
           required
         },
-        status: {
+        kategori_par: {
           required
         },
-        cabang: {
+        cpp: {
           required
         },
       }
@@ -273,13 +233,10 @@ export default {
         this.table.loading = false
         this.table.items = [
           {
-            kode: '123456789',
-            nama: 'Nama User',
-            email: 'user@email.com',
-            role: 'user',
-            password: 'Password User',
-            status: 'aktif',
-            cabang: 'cabang 1',
+            jumlah_hari_1: 'Jumlah Hari ke 1',
+            jumlah_hari_2: 'Jumlah Hari ke 2',
+            kategori_par: 'Data Kategori Par',
+            cpp: 'Data Cpp',
             created_at: 'Tanggal Dibuat',
           },
         ]
@@ -324,13 +281,10 @@ export default {
     doClearForm() {
       this.form.data = {
         id: null,
-        kode: 'Auto Generated',
-        nama: null,
-        email: null,
-        password: null,
-        role: null,
-        status: null,
-        cabang: null,
+        jumlah_hari_1: null,
+        jumlah_hari_2 : null,
+        kategori_par: null,
+        cpp: null,
       }
       this.$v.form.$reset()
     },

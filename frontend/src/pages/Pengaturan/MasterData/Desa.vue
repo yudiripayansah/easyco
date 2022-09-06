@@ -57,46 +57,25 @@
         </b-col>
       </b-row>
     </b-card>
-    <b-modal title="Form Pengguna" id="modal-form" hide-footer size="lg" centered>
+    <b-modal title="Form Desa" id="modal-form" hide-footer size="lg" centered>
       <b-form @submit="doSave()">
         <b-row>
           <b-col cols="6">
-            <b-form-group label="Kode User" label-for="kode">
-              <b-form-input id="kode" v-model="form.data.kode" disabled />
+            <b-form-group label="Kode Kecamatan" label-for="kode_kecamatan">
+              <b-form-input id="kode_kecamtan" v-model="$v.form.data.kode_kecamatan.$model"
+                :state="validateState('kode_kecamatan')" />
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Nama" label-for="nama">
-              <b-form-input id="nama" v-model="$v.form.data.nama.$model" :state="validateState('nama')" />
+            <b-form-group label="Kode Desa" label-for="kode_desa">
+              <b-form-input id="kode_desa" v-model="$v.form.data.kode_desa.$model"
+                :state="validateState('kode_desa')" />
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Email" label-for="email">
-              <b-form-input id="email" v-model="$v.form.data.email.$model" :state="validateState('email')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group label="Password" label-for="password">
-              <b-form-input id="password" v-model="$v.form.data.password.$model" type="password"
-                :state="validateState('password')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group label="Role" label-for="role">
-              <b-form-select id="role" v-model="$v.form.data.role.$model" :options="opt.role"
-                :state="validateState('role')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group label="Status" label-for="status">
-              <b-form-select id="status" v-model="$v.form.data.status.$model" :options="opt.status"
-                :state="validateState('status')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group label="Cabang" label-for="cabang">
-              <b-form-select id="cabang" v-model="$v.form.data.cabang.$model" :options="opt.cabang"
-                :state="validateState('cabang')" />
+            <b-form-group label="Nama Desa" label-for="nama_desa">
+              <b-form-input id="nama_desa" v-model="$v.form.data.nama_desa.$model"
+                :state="validateState('nama_desa')" />
             </b-form-group>
           </b-col>
           <b-col cols="12" class="d-flex justify-content-end border-top pt-5">
@@ -126,7 +105,7 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
+import { required } from 'vuelidate/lib/validators'
 export default {
   name: "Pengguna",
   components: {},
@@ -135,13 +114,9 @@ export default {
       form: {
         data: {
           id: null,
-          kode: 'Auto Generated',
-          nama: null,
-          email: null,
-          password: null,
-          role: null,
-          status: null,
-          cabang: null,
+          kode_kecamatan: null,
+          kode_desa: null,
+          nama_desa: null,
         },
         loading: false,
       },
@@ -155,44 +130,23 @@ export default {
             tdClass: 'text-center'
           },
           {
-            key: 'kode',
+            key: 'kode_kecamatan',
             sortable: true,
-            label: 'Kode User',
+            label: 'Kode Kecamatan',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'nama',
+            key: 'kode_desa',
             sortable: true,
-            label: 'Nama',
+            label: 'Kode Desa',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'email',
+            key: 'nama_desa',
             sortable: true,
-            label: 'Email',
-            thClass: 'text-center',
-            tdClass: ''
-          },
-          {
-            key: 'role',
-            sortable: true,
-            label: 'Role',
-            thClass: 'text-center',
-            tdClass: ''
-          },
-          {
-            key: 'status',
-            sortable: true,
-            label: 'Status',
-            thClass: 'text-center',
-            tdClass: ''
-          },
-          {
-            key: 'cabang',
-            sortable: true,
-            label: 'Cabang',
+            label: 'Nama Desa',
             thClass: 'text-center',
             tdClass: ''
           },
@@ -236,24 +190,13 @@ export default {
   validations: {
     form: {
       data: {
-        nama: {
+        kode_kecamatan: {
           required
         },
-        email: {
-          required,
-          email
-        },
-        password: {
-          required,
-          minLength: minLength(6)
-        },
-        role: {
+        kode_desa: {
           required
         },
-        status: {
-          required
-        },
-        cabang: {
+        nama_desa: {
           required
         },
       }
@@ -273,13 +216,9 @@ export default {
         this.table.loading = false
         this.table.items = [
           {
-            kode: '123456789',
-            nama: 'Nama User',
-            email: 'user@email.com',
-            role: 'user',
-            password: 'Password User',
-            status: 'aktif',
-            cabang: 'cabang 1',
+            kode_kecamatan: 'Kode Kecamatan User',
+            kode_desa: 'Kode Desa User',
+            nama_desa: 'Nama Desa User',
             created_at: 'Tanggal Dibuat',
           },
         ]
@@ -324,13 +263,9 @@ export default {
     doClearForm() {
       this.form.data = {
         id: null,
-        kode: 'Auto Generated',
-        nama: null,
-        email: null,
-        password: null,
-        role: null,
-        status: null,
-        cabang: null,
+        kode_kecamatan: null,
+        kode_desa: null,
+        nama_desa: null,
       }
       this.$v.form.$reset()
     },

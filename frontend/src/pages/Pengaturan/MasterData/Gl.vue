@@ -57,12 +57,12 @@
         </b-col>
       </b-row>
     </b-card>
-    <b-modal title="Form Pengguna" id="modal-form" hide-footer size="lg" centered>
+    <b-modal title="Form GL" id="modal-form" hide-footer size="lg" centered>
       <b-form @submit="doSave()">
         <b-row>
           <b-col cols="6">
-            <b-form-group label="Kode User" label-for="kode">
-              <b-form-input id="kode" v-model="form.data.kode" disabled />
+            <b-form-group label="Kode GL" label-for="kode_gl">
+              <b-form-input id="kode_gl" v-model="$v.form.data.kode_gl.$model" :state="validateState('kode_gl')" />
             </b-form-group>
           </b-col>
           <b-col cols="6">
@@ -71,32 +71,19 @@
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Email" label-for="email">
-              <b-form-input id="email" v-model="$v.form.data.email.$model" :state="validateState('email')" />
+            <b-form-group label="Tipe" label-for="tipe">
+              <b-form-input id="tipe" v-model="$v.form.data.tipe.$model" :state="validateState('tipe')" />
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Password" label-for="password">
-              <b-form-input id="password" v-model="$v.form.data.password.$model" type="password"
-                :state="validateState('password')" />
+            <b-form-group label="Group" label-for="group">
+              <b-form-input id="group" v-model="$v.form.data.group.$model" :state="validateState('group')" />
             </b-form-group>
           </b-col>
           <b-col cols="4">
-            <b-form-group label="Role" label-for="role">
-              <b-form-select id="role" v-model="$v.form.data.role.$model" :options="opt.role"
-                :state="validateState('role')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group label="Status" label-for="status">
-              <b-form-select id="status" v-model="$v.form.data.status.$model" :options="opt.status"
-                :state="validateState('status')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group label="Cabang" label-for="cabang">
-              <b-form-select id="cabang" v-model="$v.form.data.cabang.$model" :options="opt.cabang"
-                :state="validateState('cabang')" />
+            <b-form-group label="Default Saldo" label-for="default_saldo">
+              <b-form-input id="default_saldo" v-model="$v.form.data.default_saldo.$model"
+                :state="validateState('default_saldo')" />
             </b-form-group>
           </b-col>
           <b-col cols="12" class="d-flex justify-content-end border-top pt-5">
@@ -126,7 +113,7 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
+import { required } from 'vuelidate/lib/validators'
 export default {
   name: "Pengguna",
   components: {},
@@ -135,13 +122,11 @@ export default {
       form: {
         data: {
           id: null,
-          kode: 'Auto Generated',
+          kode_gl: null,
           nama: null,
-          email: null,
-          password: null,
-          role: null,
-          status: null,
-          cabang: null,
+          tipe: null,
+          group: null,
+          default_saldo: null,
         },
         loading: false,
       },
@@ -155,9 +140,9 @@ export default {
             tdClass: 'text-center'
           },
           {
-            key: 'kode',
+            key: 'kode_gl',
             sortable: true,
-            label: 'Kode User',
+            label: 'Kode GL',
             thClass: 'text-center',
             tdClass: ''
           },
@@ -169,30 +154,23 @@ export default {
             tdClass: ''
           },
           {
-            key: 'email',
+            key: 'tipe',
             sortable: true,
-            label: 'Email',
+            label: 'Tipe',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'role',
+            key: 'group',
             sortable: true,
-            label: 'Role',
+            label: 'group',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'status',
+            key: 'default_saldo',
             sortable: true,
-            label: 'Status',
-            thClass: 'text-center',
-            tdClass: ''
-          },
-          {
-            key: 'cabang',
-            sortable: true,
-            label: 'Cabang',
+            label: 'Default Saldo',
             thClass: 'text-center',
             tdClass: ''
           },
@@ -236,24 +214,19 @@ export default {
   validations: {
     form: {
       data: {
+        kode_gl: {
+          required
+        },
         nama: {
           required
         },
-        email: {
-          required,
-          email
-        },
-        password: {
-          required,
-          minLength: minLength(6)
-        },
-        role: {
+        tipe: {
           required
         },
-        status: {
+        group: {
           required
         },
-        cabang: {
+        default_saldo: {
           required
         },
       }
@@ -273,13 +246,11 @@ export default {
         this.table.loading = false
         this.table.items = [
           {
-            kode: '123456789',
+            kode_gl: '123456789',
             nama: 'Nama User',
-            email: 'user@email.com',
-            role: 'user',
-            password: 'Password User',
-            status: 'aktif',
-            cabang: 'cabang 1',
+            tipe: 'Tipe Data',
+            default_saldo: 'Data Saldo',
+            group: 'Data Group',
             created_at: 'Tanggal Dibuat',
           },
         ]
@@ -324,13 +295,11 @@ export default {
     doClearForm() {
       this.form.data = {
         id: null,
-        kode: 'Auto Generated',
+        kode_gl: null,
         nama: null,
-        email: null,
-        password: null,
-        role: null,
-        status: null,
-        cabang: null,
+        tipe: null,
+        group: null,
+        default_saldo: null,
       }
       this.$v.form.$reset()
     },
