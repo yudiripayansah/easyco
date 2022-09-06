@@ -37,7 +37,8 @@ class DatabaseSeeder extends Seeder
             PrdPembiayaanSeeder::class,
             PrdTabunganSeeder::class,
             PengajuanSeeder::class,
-            MapSeeder::class
+            MapSeeder::class,
+            PembiayaanSeeder::class
         ]);
     }
 }

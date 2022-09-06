@@ -23,7 +23,7 @@ class CreateKopPengajuanTable extends Migration
             $table->date('tanggal_pengajuan');
             $table->decimal('jumlah_pengajuan', 14, 2)->nullable(TRUE)->default(0);
             $table->integer('pengajuan_ke');
-            $table->integer('peruntukan')->comment('Based on List Kode');
+            $table->integer('peruntukan')->comment('Referensi Tabel List Kode');
             $table->string('keterangan_peruntukan', 100);
             $table->date('rencana_droping');
             $table->integer('rencana_periode_jwaktu')->nullable(TRUE)->default(1)->comment('0 = Harian, 1 = Mingguan, 2 = Bulanan, 3 = Tempo');
