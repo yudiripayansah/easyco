@@ -15,9 +15,20 @@ class AnggotaUkSeeder extends Seeder
     public function run()
     {
         $anggotauk = new KopAnggotaUk();
-        $anggotauk->no_anggota = '101010001000122';
 
-        $anggotauk->save();
+        $data = [
+            [
+                'no_anggota' => '101010001000122'
+            ],
+            [
+                'no_anggota' => '101010001000222'
+            ],
+            [
+                'no_anggota' => '101010001000322'
+            ]
+        ];
+
+        $anggotauk::insert($data);
 
         $this->command->info('Anggota UK berhasil diinput');
     }

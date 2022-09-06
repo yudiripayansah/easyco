@@ -15,7 +15,7 @@ class CreateKopListKodeTable extends Migration
     {
         Schema::create('kop_list_kode', function (Blueprint $table) {
             $table->id();
-            $table->integer('kode_value')->unique();
+            $table->integer('kode_value');
             $table->string('nama_kode', 30);
             $table->string('kode_display', 100);
             $table->string('created_by', 30);

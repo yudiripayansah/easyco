@@ -21,9 +21,9 @@ class CreateKopPrdDepositoTable extends Migration
             $table->string('nama_singkat', 20);
             $table->integer('periode_setoran')->nullable(TRUE)->default(0)->comment('0 = Tahunan, 1 = Bulanan');
             $table->integer('jangka_waktu');
-            $table->decimal('minimal_setoran', 12, 0)->nullable(TRUE)->default(0);
+            $table->decimal('minimal_setoran', 14, 2)->nullable(TRUE)->default(0);
             $table->decimal('nisbah', 6, 2)->nullable(TRUE)->default(0);
-            $table->decimal('persen_pajak', 10, 2)->nullable(TRUE)->default(0);
+            $table->decimal('persen_pajak', 14, 2)->nullable(TRUE)->default(0);
             $table->string('created_by', 30);
             $table->timestamps();
             $table->string('updated_by', 30)->nullable(TRUE);

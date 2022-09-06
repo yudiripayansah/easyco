@@ -22,7 +22,7 @@ class CreateKopPrdPembiayaanTable extends Migration
             $table->string('nama_singkat', 20);
             $table->integer('periode_angsuran')->comment('0 = Harian, 1 = Mingguan, 2 = Bulanan, 3 = Jatuh Tempo, 4 = Skema Khusus');
             $table->integer('jangka_waktu');
-            $table->decimal('biaya_adm', 7, 0)->nullable(TRUE)->default(0);
+            $table->decimal('biaya_adm', 14, 2)->nullable(TRUE)->default(0);
             $table->integer('flag_wakalah')->nullable(TRUE)->comment('Khusus Akad Murobahah, 0 = Tanpa Wakalah (Persediaan), 1 = Dengan Wakalah');
             $table->integer('flag_pdd')->nullable(TRUE);
             $table->string('created_by', 30);

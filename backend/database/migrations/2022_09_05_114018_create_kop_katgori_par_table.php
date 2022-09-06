@@ -20,7 +20,7 @@ class CreateKopKatgoriParTable extends Migration
             $table->integer('jumlah_hari_1');
             $table->integer('jumlah_hari_2');
             $table->string('kategori_par', 10);
-            $table->decimal('cpp', 10, 2)->nullable(TRUE)->default(0);
+            $table->decimal('cpp', 14, 2)->nullable(TRUE)->default(0);
             $table->string('created_by', 30);
             $table->timestamps();
             $table->string('updated_by', 30)->nullable(TRUE);

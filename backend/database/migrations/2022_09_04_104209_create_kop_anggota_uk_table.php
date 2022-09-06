@@ -27,7 +27,7 @@ class CreateKopAnggotaUkTable extends Migration
             $table->integer('p_pendidikan')->nullable(TRUE)->default(0)->comment('0 = Tidak Diketahui, 1 = SD / MI, 2 = SMP / MTs, 3 = SMK / SMA / MA, 4 = D1, 5 = D2, 6 = D3, 7 = S1, 8 = S2, 9 = S3');
             $table->integer('p_pekerjaan')->nullable(TRUE)->default(0)->comment('0 = Tidak Diketahui, 1 = Ibu Rumah Tangga, 2 = Buruh, 3 = Petani, 4 = Pedagang, 5 = Wiraswasta, 6 = Karyawan Swasta, 7 = PNS');
             $table->string('p_ketpekerjaan', 50)->nullable(TRUE);
-            $table->decimal('p_pendapatan', 13, 2)->nullable(TRUE)->default(0);
+            $table->decimal('p_pendapatan', 14, 2)->nullable(TRUE)->default(0);
             $table->integer('jml_anak')->nullable(TRUE);
             $table->integer('jml_tanggungan')->nullable(TRUE);
             $table->integer('rumah_status')->nullable(TRUE)->default(0)->comment('0 = Tidak Diketahui, 1 = Rumah Sendiri, 2 = Sewa, 3 = Numpang');
@@ -51,13 +51,13 @@ class CreateKopAnggotaUkTable extends Migration
             $table->integer('ush_rumahtangga')->nullable(TRUE)->default(0);
             $table->string('ush_komoditi', 50)->nullable(TRUE);
             $table->string('ush_lokasi', 50)->nullable(TRUE);
-            $table->decimal('ush_omset', 13, 0)->nullable(TRUE)->default(0);
+            $table->decimal('ush_omset', 14, 2)->nullable(TRUE)->default(0);
             $table->integer('by_beras')->nullable(TRUE)->default(0);
-            $table->decimal('by_dapur', 13, 0)->nullable(TRUE)->default(0);
-            $table->decimal('by_listrik', 13, 0)->nullable(TRUE)->default(0);
-            $table->decimal('by_telpon', 13, 0)->nullable(TRUE)->default(0);
-            $table->decimal('by_sekolah', 13, 0)->nullable(TRUE)->default(0);
-            $table->decimal('by_lain', 13, 0)->nullable(TRUE)->default(0);
+            $table->decimal('by_dapur', 14, 2)->nullable(TRUE)->default(0);
+            $table->decimal('by_listrik', 14, 2)->nullable(TRUE)->default(0);
+            $table->decimal('by_telpon', 14, 2)->nullable(TRUE)->default(0);
+            $table->decimal('by_sekolah', 14, 2)->nullable(TRUE)->default(0);
+            $table->decimal('by_lain', 14, 2)->nullable(TRUE)->default(0);
             $table->timestamps();
 
             $table->foreign('no_anggota')->references('no_anggota')->on('kop_anggota')->cascadeOnUpdate()->restrictOnDelete();

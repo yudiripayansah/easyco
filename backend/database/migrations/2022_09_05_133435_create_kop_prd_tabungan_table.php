@@ -20,11 +20,11 @@ class CreateKopPrdTabunganTable extends Migration
             $table->string('nama_produk', 50);
             $table->string('nama_singkat', 20);
             $table->integer('jenis_akad')->nullable(TRUE)->default(0);
-            $table->decimal('saldo_minimal', 10, 0)->nullable(TRUE)->default(0);
-            $table->decimal('biaya_adm', 10, 0)->nullable(TRUE)->default(0);
+            $table->decimal('saldo_minimal', 14, 2)->nullable(TRUE)->default(0);
+            $table->decimal('biaya_adm', 14, 2)->nullable(TRUE)->default(0);
             $table->integer('jenis_tabungan')->nullable(TRUE)->default(0)->comment('0 = Reguler, 1 = Berencana');
-            $table->decimal('minimal_setoran', 10, 0)->nullable(TRUE)->default(0);
-            $table->integer('periode_setoran')->nullable(TRUE)->default(2)->comment('0 = Harian, 1 = Mingguan, 2 = Bulanan');
+            $table->decimal('minimal_setoran', 14, 2)->nullable(TRUE)->default(0);
+            $table->integer('periode_setoran')->nullable(TRUE)->default(1)->comment('0 = Harian, 1 = Mingguan, 2 = Bulanan');
             $table->integer('minimal_kontrak')->nullable(TRUE)->default(1);
             $table->decimal('nisbah', 6, 2)->nullable(TRUE)->default(0);
             $table->string('created_by', 30);

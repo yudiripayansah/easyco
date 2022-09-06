@@ -25,7 +25,7 @@ class CreateKopRembugTable extends Migration
             $table->date('tgl_pembentukan');
             $table->integer('hari_transaksi')->comment('0 = Minggu, 1 = Senin, 2 = Selasa, 3 = Rabu, 4 = Kamis, 5 = Jumat, 6 = Sabtu');
             $table->string('jam_transaksi', 5);
-            $table->integer('status_aktif')->nullable(TRUE)->default(1)->comment('1 = Aktif, 2 = Tidak Aktif');
+            $table->integer('status_aktif')->nullable(TRUE)->default(1)->comment('0 = Tidak Aktif, 1 = Aktif');
             $table->string('created_by', 30);
             $table->timestamps();
             $table->string('updated_by', 30)->nullable(TRUE);
