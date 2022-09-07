@@ -58,7 +58,7 @@ class CreateKopPembiayaanTable extends Migration
             $table->integer('ujroh_kreditur_carabayar')->nullable(TRUE)->default(0);
             $table->integer('status_pyd_kreditur')->nullable(TRUE)->default(0)->comment('0 = Registrasi, 1 = Aktif, 2 = Tolak, 3 = Pengajuan');
             $table->string('no_batch_upload', 25)->nullable(TRUE);
-            $table->integer('status_rekening')->nullable(TRUE)->default(0)->comment('0 = Registrasi 1 = Aktif 2 = Lunas, 3 = Verifikasi Anggota Keluar');
+            $table->integer('status_rekening')->nullable(TRUE)->default(0)->comment('0 = Registrasi, 1 = Aktif, 2 = Lunas, 3 = Verifikasi Anggota Keluar');
             $table->integer('status_kolektibilitas')->nullable(TRUE)->default(0)->comment('1 = Lancar, 2 = Dalam Pengawasan, 3 = Kurang Lancar, 4 = Diragukan, 5 = Macet');
             $table->integer('status_par')->nullable(TRUE)->default(0);
             $table->integer('iswakalah')->nullable(TRUE)->default(0)->comment('0 = Tidak, 1 = Ya');
