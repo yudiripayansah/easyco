@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\KopTrxAnggota;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -41,7 +42,10 @@ class DatabaseSeeder extends Seeder
             PembiayaanSeeder::class,
             ParSeeder::class,
             TabunganSeeder::class,
-            TrxRembugSeeder::class
+            TrxRembugSeeder::class,
+            TrxAnggotaSeeder::class,
+            PelunasanSeeder::class,
+            TrxKasPetugasSeeder::class
         ]);
     }
 }

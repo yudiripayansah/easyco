@@ -31,7 +31,7 @@ class CreateKopKasPetugasTable extends Migration
             $table->softDeletes();
             $table->string('deleted_by', 30)->nullable(TRUE);
 
-            $table->foreign('id_user')->references('nama_user')->on('kop_user')->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreign('id_user')->references('id_user')->on('kop_user')->cascadeOnUpdate()->restrictOnDelete();
             $table->foreign('kode_gl')->references('kode_gl')->on('kop_gl')->cascadeOnUpdate()->restrictOnDelete();
         });
     }

@@ -15,6 +15,7 @@ class TrxRembugSeeder extends Seeder
     public function run()
     {
         $trxrembug = new KopTrxRembug();
+        $trxrembug->id_trx_rembug = '75150b84ca4b4e9f82855c914ae67923';
         $trxrembug->kode_rembug = '101010001';
         $trxrembug->kode_petugas = '101010001';
         $trxrembug->trx_date = '2022-07-25';

@@ -16,6 +16,7 @@ class UserSeeder extends Seeder
     public function run()
     {
         $user = new KopUser;
+        $user->id_user = '08c3ead1abc849149478a0011791ea84';
         $user->nama_user = 'ummar';
         $user->role_user = 1;
         $user->akses_user = 1;
