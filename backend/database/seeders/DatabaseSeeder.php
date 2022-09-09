@@ -45,7 +45,9 @@ class DatabaseSeeder extends Seeder
             TrxRembugSeeder::class,
             TrxAnggotaSeeder::class,
             PelunasanSeeder::class,
-            TrxKasPetugasSeeder::class
+            TrxKasPetugasSeeder::class,
+            TrxGlSeeder::class,
+            TrxGlDetailSeeder::class
         ]);
     }
 }
