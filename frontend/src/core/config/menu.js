@@ -3,292 +3,382 @@ const menu = [
     target: '/dashboard',
     label: 'Dashboard',
     icon: 'menu-icon flaticon2-architecture-and-city',
+    component: import('@/pages/Dummy.vue')
   },
   // Keanggotaan
-  // {
-  //   target: '/keanggotaan',
-  //   label: 'Keanggotaan',
-  //   icon: 'menu-icon far fa-user',
-  //   children: [
-  //     {
-  //       target: '/keanggotaan/registrasi-anggota',
-  //       label: 'Registrasi Anggota'
-  //     },
-  //     {
-  //       target: '/keanggotaan/approval-registrasi',
-  //       label: 'Approval Registrasi'
-  //     },
-  //     {
-  //       target: '/keanggotaan/registrasi-anggota-keluar',
-  //       label: 'Registrasi Anggota Keluar'
-  //     },
-  //     {
-  //       target: '/keanggotaan/approval-registrasi-keluar',
-  //       label: 'Approval Registrasi Anggota Keluar'
-  //     },
-  //     {
-  //       target: '/keanggotaan/transaksi-anggota',
-  //       label: 'Transaksi Anggota'
-  //     },
-  //     {
-  //       target: '/keanggotaan/laporan',
-  //       label: 'Laporan',
-  //       children: [
-  //         {
-  //           target: '/keanggotaan/laporan/registrasi-anggota',
-  //           label: 'Registrasi Anggota'
-  //         },
-  //         {
-  //           target: '/keanggotaan/laporan/profil-anggota',
-  //           label: 'Profil Anggota'
-  //         },
-  //         {
-  //           target: '/keanggotaan/laporan/saldo-anggota',
-  //           label: 'Saldo Anggota'
-  //         },
-  //         {
-  //           target: '/keanggotaan/laporan/anggota-keluar',
-  //           label: 'Anggota Keluar'
-  //         },
-  //       ],
-  //     },
-  //   ]
-  // },
+  {
+    target: '/keanggotaan',
+    label: 'Keanggotaan',
+    icon: 'menu-icon far fa-user',
+    component: import('@/pages/Keanggotaan'),
+    children: [
+      {
+        target: 'registrasi-anggota',
+        label: 'Registrasi Anggota',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'approval-registrasi',
+        label: 'Approval Registrasi',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'registrasi-anggota-keluar',
+        label: 'Registrasi Anggota Keluar',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'approval-registrasi-keluar',
+        label: 'Approval Registrasi Anggota Keluar',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'laporan',
+        label: 'Laporan',
+        component: import('@/pages/Keanggotaan'),
+        children: [
+          {
+            target: 'registrasi-anggota',
+            label: 'Registrasi Anggota',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'profil-anggota',
+            label: 'Profil Anggota',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'saldo-anggota',
+            label: 'Saldo Anggota',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'anggota-keluar',
+            label: 'Anggota Keluar',
+            component: import('@/pages/Dummy.vue'),
+          },
+        ],
+      },
+    ]
+  },
   // Tabungan
-  // {
-  //   target: '/tabungan',
-  //   label: 'Tabungan',
-  //   icon: 'menu-icon fas fa-money-check-alt',
-  //   children: [
-  //     {
-  //       target: '/tabungan/pembukaan-rekening-tabungan',
-  //       label: 'Pembukaan Rekening Tabungan'
-  //     },
-  //     {
-  //       target: '/tabungan/transaksi-tabungan',
-  //       label: 'Transaksi Tabungan'
-  //     },
-  //     {
-  //       target: '/tabungan/penutupan-rekening-tabungan',
-  //       label: 'Penutupan Rekening Tabungan'
-  //     },
-  //     {
-  //       target: '/tabungan/laporan',
-  //       label: 'Laporan',
-  //       children: [
-  //         {
-  //           target: '/tabungan/laporan/pembukaan-rekening-tabungan',
-  //           label: 'Pembukaan Rekening Tabungan'
-  //         },
-  //         {
-  //           target: '/tabungan/laporan/transaksi-tabungan',
-  //           label: 'Transaksi Tabungan'
-  //         },
-  //         {
-  //           target: '/tabungan/laporan/saldo-tabungan',
-  //           label: 'Saldo Tabungan'
-  //         },
-  //         {
-  //           target: '/tabungan/laporan/statement-tabungan',
-  //           label: 'Statement Tabungan'
-  //         },
-  //         {
-  //           target: '/tabungan/laporan/penutupan-rekening-tabungan',
-  //           label: 'Penutupan Rekening Tabungan'
-  //         },
-  //       ],
-  //     },
-  //   ]
-  // },
+  {
+    target: '/tabungan',
+    label: 'Tabungan',
+    icon: 'menu-icon fas fa-money-check-alt',
+    component: import('@/pages/Tabungan'),
+    children: [
+      {
+        target: 'pembukaan-rekening-tabungan',
+        label: 'Pembukaan Rekening Tabungan',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'penutupan-rekening-tabungan',
+        label: 'Penutupan Rekening Tabungan',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'laporan',
+        label: 'Laporan',
+        component: import('@/pages/Tabungan'),
+        children: [
+          {
+            target: 'pembukaan-rekening-tabungan',
+            label: 'Pembukaan Rekening Tabungan',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'saldo-tabungan',
+            label: 'Saldo Tabungan',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'statement-tabungan',
+            label: 'Statement Tabungan',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'penutupan-rekening-tabungan',
+            label: 'Penutupan Rekening Tabungan',
+            component: import('@/pages/Dummy.vue'),
+          },
+        ],
+      },
+    ]
+  },
   // Pembiayaan
-  // {
-  //   target: '/pembiayaan',
-  //   label: 'Pembiayaan',
-  //   icon: 'menu-icon fas fa-wallet',
-  //   children: [
-  //     {
-  //       target: '/pembiayaan/pengajuan-pembiayaan',
-  //       label: 'Pengajuan Pembiayaan'
-  //     },
-  //     {
-  //       target: '/pembiayaan/registrasi-akad',
-  //       label: 'Registrasi Akad'
-  //     },
-  //     {
-  //       target: '/pembiayaan/pencairan',
-  //       label: 'Pencairan'
-  //     },
-  //     {
-  //       target: '/pembiayaan/transaksi-pembiayaan',
-  //       label: 'Transaksi Pembiayaan'
-  //     },
-  //     {
-  //       target: '/pembiayaan/angsuran-pembiayaan',
-  //       label: 'Angsuran Pembiayaan'
-  //     },
-  //     {
-  //       target: '/pembiayaan/pelunasan-pembiayaan',
-  //       label: 'Pelunasan Pembiayaan'
-  //     },
-  //     {
-  //       target: '/pembiayaan/laporan',
-  //       label: 'Laporan',
-  //       children: [
-  //         {
-  //           target: '/pembiayaan/laporan/pengajuan-pembiayaan',
-  //           label: 'Pengajuan Pembiayaan'
-  //         },
-  //         {
-  //           target: '/pembiayaan/laporan/pencairan',
-  //           label: 'Pencairan'
-  //         },
-  //         {
-  //           target: '/pembiayaan/laporan/outstanding',
-  //           label: 'Outstanding'
-  //         },
-  //         {
-  //           target: '/pembiayaan/laporan/penerimaan-angsuran',
-  //           label: 'Penerimaaan Angsuran'
-  //         },
-  //         {
-  //           target: '/pembiayaan/laporan/kartu-angsuran',
-  //           label: 'Kartu Angsuran'
-  //         },
-  //         {
-  //           target: '/pembiayaan/laporan/pelunasan',
-  //           label: 'Pelunasan'
-  //         },
-  //         {
-  //           target: '/pembiayaan/laporan/kolektibilitas',
-  //           label: 'Kolektibilitas'
-  //         },
-  //       ],
-  //     },
-  //   ]
-  // },
+  {
+    target: '/pembiayaan',
+    label: 'Pembiayaan',
+    icon: 'menu-icon fas fa-wallet',
+    component: import('@/pages/Pembiayaan'),
+    children: [
+      {
+        target: 'pengajuan-pembiayaan',
+        label: 'Pengajuan Pembiayaan',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'update-status-komite',
+        label: 'Update Status Komite',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'registrasi-akad',
+        label: 'Registrasi Akad',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'cetak-akad',
+        label: 'Cetak Akad',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'pencairan',
+        label: 'Pencairan',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'laporan',
+        label: 'Laporan',
+        component: import('@/pages/Pembiayaan'),
+        children: [
+          {
+            target: 'pengajuan-pembiayaan',
+            label: 'Pengajuan Pembiayaan',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'registrasi-akad',
+            label: 'Registrasi Akad',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'pencairan',
+            label: 'Pencairan',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'kartu-angsuran',
+            label: 'Kartu Angsuran',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'list-outstanding',
+            label: 'List Outstanding',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'list-penerimaan-angsuran',
+            label: 'List Penerimaaan Angsuran',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'list-pelunasan',
+            label: 'List Pelunasan',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'par-kolektibilitas',
+            label: 'PAR/ Kolektibilitas',
+            component: import('@/pages/Dummy.vue'),
+          },
+        ],
+      },
+    ]
+  },
+  // Transaksi
+  {
+    target: '/transaksi',
+    label: 'Transaksi',
+    icon: 'menu-icon fas fa-random',
+    component: import('@/pages/Transaksi'),
+    children: [
+      {
+        target: 'transaksi-rembug',
+        label: 'Transaksi Rembug',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'verifikasi-transaksi-rembug',
+        label: 'Verifikasi Transaksi Rembug',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'transaksi-kas-petugas',
+        label: 'Transaksi Kas Petugas',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'verifikasi-transaksi-kas-petugas',
+        label: 'Verifikasi Transaksi Kas Petugas',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'transaksi-jurnal',
+        label: 'Transaksi Jurnal',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'verifikasi-transaksi-jurnal',
+        label: 'Verifikasi Transaksi Jurnal',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'laporan',
+        label: 'Laporan',
+        component: import('@/pages/Transaksi'),
+        children: [
+          {
+            target: 'transaksi-rembug',
+            label: 'Transaksi Rembug',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'transaksi-kas-petugas',
+            label: 'Transaksi Kas Petugas',
+            component: import('@/pages/Dummy.vue'),
+          },
+          {
+            target: 'jurnal-transaksi',
+            label: 'Jurnal Transaksi',
+            component: import('@/pages/Dummy.vue'),
+          },
+        ]
+      },
+    ]
+  },
   // Keuangan
-  // {
-  //   target: '/keuangan',
-  //   label: 'Keuangan',
-  //   icon: 'menu-icon fas fa-coins',
-  //   children: [
-  //     {
-  //       target: '/keuangan/pengaturan-ledger',
-  //       label: 'Pengaturan Ledger'
-  //     },
-  //     {
-  //       target: '/keuangan/pengaturan-laporan-keuangan',
-  //       label: 'Pengaturan Laporan Keuangan'
-  //     },
-  //     {
-  //       target: '/keuangan/jurnal-transaksi',
-  //       label: 'Jurnal Transaksi'
-  //     },
-  //     {
-  //       target: '/keuangan/laporan',
-  //       label: 'Laporan',
-  //       children: [
-  //         {
-  //           target: '/keuangan/laporan/jurnal',
-  //           label: 'Jurnal'
-  //         },
-  //         {
-  //           target: '/keuangan/laporan/arus-kas',
-  //           label: 'Arus Kas'
-  //         },
-  //         {
-  //           target: '/keuangan/laporan/buku-besar',
-  //           label: 'Buku Besar'
-  //         },
-  //         {
-  //           target: '/keuangan/laporan/neraca-saldo',
-  //           label: 'Neraca Saldo'
-  //         },
-  //         {
-  //           target: '/keuangan/laporan/neraca',
-  //           label: 'Neraca'
-  //         },
-  //         {
-  //           target: '/keuangan/laporan/laba-rugi',
-  //           label: 'Laba Rugi'
-  //         },
-  //       ],
-  //     },
-  //   ]
-  // },
+  {
+    target: '/laporan-keuangan',
+    label: 'Laporan Keuangan',
+    icon: 'menu-icon fas fa-coins',
+    component: import('@/pages/Keuangan'),
+    children: [
+      {
+        target: 'laporan-cash-flow',
+        label: 'Laporan Cash Flow',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'laporan-jurnal-transaksi',
+        label: 'Laporan Jurnal Transaksi',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'laporan-buku-besar',
+        label: 'Laporan Buku Besar',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'laporan-neraca-saldo',
+        label: 'Laporan Neraca Saldo',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'laporan-nreaca',
+        label: 'Laporan Neraca',
+        component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'laporan-labarugi',
+        label: 'Laporan Laba Rugi',
+        component: import('@/pages/Dummy.vue'),
+      },
+    ]
+  },
   // Pengaturan
   {
     target: '/pengaturan',
     label: 'Pengaturan',
     icon: 'menu-icon fas fa-cogs',
+    component: import('@/pages/Pengaturan'),
     children: [
       {
-        target: '/pengaturan/pengguna',
-        label: 'Pengguna'
+        target: 'pengguna',
+        label: 'Pengguna',
+        component: import('@/pages/Pengaturan/Pengguna'),
       },
       {
-        target: '/pengaturan/grup-pengguna',
-        label: 'Grup Pengguna'
+        target: 'grup-pengguna',
+        label: 'Grup Pengguna',
+        component: import('@/pages/Dummy.vue'),
       },
       {
-        target: '/pengaturan/menu',
-        label: 'Menu'
+        target: 'menu',
+        label: 'Menu',
+        component: import('@/pages/Dummy.vue'),
       },
       {
-        target: '/pengaturan/master-data',
+        target: 'master-data',
         label: 'Master Data',
+        component: import('@/pages/Pengaturan/MasterData'),
         children: [
           {
-            target: '/pengaturan/master-data/gl',
-            label: 'Gl'
+            target: 'gl',
+            label: 'Gl',
+            component: import('@/pages/Pengaturan/MasterData/Gl'),
           },
           {
-            target: '/pengaturan/master-data/kategori-par',
-            label: 'Kategori PAR'
+            target: 'kategori-par',
+            label: 'Kategori PAR',
+            component: import('@/pages/Pengaturan/MasterData/KategoriPar'),
           },
           {
-            target: '/pengaturan/master-data/list-kode',
-            label: 'List Kode'
+            target: 'list-kode',
+            label: 'List Kode',
+            component: import('@/pages/Pengaturan/MasterData/ListKode'),
           },
           {
-            target: '/pengaturan/master-data/produk-pembiayaan',
-            label: 'Produk Pembiayaan'
+            target: 'produk-pembiayaan',
+            label: 'Produk Pembiayaan',
+            component: import('@/pages/Pengaturan/MasterData/ProdukPembiayaan'),
           },
           {
-            target: '/pengaturan/master-data/produk-tabungan',
-            label: 'Produk Tabungan'
+            target: 'produk-tabungan',
+            label: 'Produk Tabungan',
+            component: import('@/pages/Pengaturan/MasterData/ProdukTabungan'),
           },
           {
-            target: '/pengaturan/master-data/produk-deposito',
-            label: 'Produk Deposito'
+            target: 'produk-deposito',
+            label: 'Produk Deposito',
+            component: import('@/pages/Pengaturan/MasterData/ProdukDeposito'),
           },
           {
-            target: '/pengaturan/master-data/pegawai',
-            label: 'Pegawai'
+            target: 'pegawai',
+            label: 'Pegawai',
+            component: import('@/pages/Pengaturan/MasterData/Pegawai'),
           },
           {
-            target: '/pengaturan/master-data/rembug',
-            label: 'Rembug'
+            target: 'rembug',
+            label: 'Rembug',
+            component: import('@/pages/Pengaturan/MasterData/Rembug'),
           },
           {
-            target: '/pengaturan/master-data/lembaga',
-            label: 'Lembaga'
+            target: 'lembaga',
+            label: 'Lembaga',
+            component: import('@/pages/Pengaturan/MasterData/Lembaga'),
           },
           {
-            target: '/pengaturan/master-data/cabang',
-            label: 'Cabang'
+            target: 'cabang',
+            label: 'Cabang',
+            component: import('@/pages/Pengaturan/MasterData/Cabang'),
           },
           {
-            target: '/pengaturan/master-data/desa',
-            label: 'Desa'
+            target: 'desa',
+            label: 'Desa',
+            component: import('@/pages/Pengaturan/MasterData/Desa'),
           },
           {
-            target: '/pengaturan/master-data/kecamatan',
-            label: 'Kecamatan'
+            target: 'kecamatan',
+            label: 'Kecamatan',
+            component: import('@/pages/Pengaturan/MasterData/Kecamatan'),
           },
           {
-            target: '/pengaturan/master-data/kota-kabupaten',
-            label: 'Kota Kabupaten'
+            target: 'kota-kabupaten',
+            label: 'Kota Kabupaten',
+            component: import('@/pages/Pengaturan/MasterData/KotaKabupaten'),
           },
         ]
       }

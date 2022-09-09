@@ -9,7 +9,7 @@
     </a>
     <div class="menu-submenu" v-if="mn.children && mn.children.length > 0">
       <ul class="menu-subnav">
-        <router-link :to="mnc.target" v-slot="{ href, navigate, isActive, isExactActive }" v-for="(mnc,mncIndex) in mn.children" :key="mncIndex">
+        <router-link :to="mn.target+'/'+mnc.target" v-slot="{ href, navigate, isActive, isExactActive }" v-for="(mnc,mncIndex) in mn.children" :key="mncIndex">
           <li aria-haspopup="true" data-menu-toggle="hover" class="menu-item" :class="[
                 isActive && 'menu-item-active',
                 isExactActive && 'menu-item-active'
@@ -23,7 +23,7 @@
             </a>
             <div class="menu-submenu" v-if="mnc.children && mnc.children.length > 0">
               <ul class="menu-subnav">
-                <router-link :to="mncc.target" v-slot="{ href, navigate, isActive, isExactActive }" v-for="(mncc,mnccIndex) in mnc.children" :key="mnccIndex">
+                <router-link :to="mn.target+'/'+mnc.target+'/'+mncc.target" v-slot="{ href, navigate, isActive, isExactActive }" v-for="(mncc,mnccIndex) in mnc.children" :key="mnccIndex">
                   <li aria-haspopup="true" data-menu-toggle="hover" class="menu-item" :class="[
                         isActive && 'menu-item-active',
                         isExactActive && 'menu-item-active'
