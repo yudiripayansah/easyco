@@ -17,7 +17,7 @@ class CreateKopTrxAnggotaTable extends Migration
         Schema::create('kop_trx_anggota', function (Blueprint $table) {
             $table->id();
             $table->string('id_trx_anggota', 32)->default(DB::raw('uuid()'))->unique();
-            $table->string('id_trx_rembug', 32);
+            $table->string('id_trx_rembug', 32)->nullable(TRUE);
             $table->string('no_anggota', 20);
             $table->date('trx_date');
             $table->decimal('amount', 14, 2)->nullable(TRUE)->default(0);
@@ -32,7 +32,6 @@ class CreateKopTrxAnggotaTable extends Migration
             $table->softDeletes();
             $table->string('deleted_by', 30)->nullable(TRUE);
 
-            $table->foreign('id_trx_rembug')->references('id_trx_rembug')->on('kop_trx_rembug')->cascadeOnUpdate()->restrictOnDelete();
             $table->foreign('no_anggota')->references('no_anggota')->on('kop_anggota')->cascadeOnUpdate()->restrictOnDelete();
         });
     }
