@@ -15,7 +15,6 @@ class TrxAnggotaSeeder extends Seeder
     public function run()
     {
         $trxanggota = new KopTrxAnggota();
-        $trxanggota->id_trx_rembug = '75150b84ca4b4e9f82855c914ae67923';
         $trxanggota->no_anggota = '101010001000322';
         $trxanggota->trx_date = '2022-07-25';
         $trxanggota->amount = 50000;
