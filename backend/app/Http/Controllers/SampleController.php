@@ -46,18 +46,18 @@ class SampleController extends Controller
       $listData->skip($offset)->take($perPage);
     }
     if ($search != null) {
-      $listData->whereRaw('(promo.title LIKE "%'.$search.'%")');
+      $listData->whereRaw('(promo.title LIKE "%' . $search . '%")');
     }
 
     $listData = $listData->get();
-    foreach($listData as $ld){
+    foreach ($listData as $ld) {
       $useCount = 'used count diubah datanya disini';
       $ld->used_count = $useCount;
     }
     if ($search || $id_user || $type) {
       $total = Sample::orderBy($sortBy, $sortDir);
       if ($search) {
-        $total->whereRaw('(promo.title LIKE "%'.$search.'%")');
+        $total->whereRaw('(promo.title LIKE "%' . $search . '%")');
       }
       $total = $total->count();
     } else {
@@ -86,14 +86,14 @@ class SampleController extends Controller
       $getData = Sample::find($request->id);
       if ($getData) {
         $res = array(
-        'status' => true,
-        'data' => $getData,
-        'msg' => 'Data available'
+          'status' => true,
+          'data' => $getData,
+          'msg' => 'Data available'
         );
       } else {
         $res = array(
-        'status' => false,
-        'msg' => 'Data not found'
+          'status' => false,
+          'msg' => 'Data not found'
         );
       }
     } else {
