@@ -45,7 +45,7 @@ class KopCabang extends Model
     public function validateUpdate($validate)
     {
         $rule = [
-            'id' => 'required',
+            'id' => 'required|numeric',
             'nama_cabang' => 'required'
         ];
 

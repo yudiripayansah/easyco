@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KopCabang;
+use App\Models\KopPegawai;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class CabangController extends Controller
+class PegawaiController extends Controller
 {
     public function create(Request $request)
     {
         $data = $request->all();
 
-        $validate = KopCabang::validateAdd($data);
+        $validate = KopPegawai::validateAdd($data);
 
         DB::beginTransaction();
 
         if ($validate['status'] == TRUE) {
             try {
-                $create = KopCabang::create($data);
-                $id = KopCabang::find($create->id);
+                $create = KopPegawai::create($data);
+                $id = KopPegawai::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
@@ -58,7 +58,7 @@ class CabangController extends Controller
         $page = 1;
         $perPage = '~';
         $sortDir = 'ASC';
-        $sortBy = 'kode_cabang';
+        $sortBy = 'tgl_gabung';
         $search = NULL;
         $total = 0;
         $totalPage = 1;
@@ -89,14 +89,14 @@ class CabangController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopCabang::select('*')->orderBy($sortBy, $sortDir);
+        $read = KopPegawai::select('*')->orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
         }
 
         if ($search != NULL) {
-            $read->whereRaw("(kode_cabang LIKE '%" . $search . "%' OR nama_cabang LIKE '%" . $search . "%')");
+            $read->whereRaw("(kode_pgw LIKE '%" . $search . "%' OR nama_pgw LIKE '%" . $search . "%')");
         }
 
         $read = $read->get();
@@ -107,15 +107,15 @@ class CabangController extends Controller
         }
 
         if ($search || $id_cabang || $type) {
-            $total = KopCabang::orderBy($sortBy, $sortDir);
+            $total = KopPegawai::orderBy($sortBy, $sortDir);
 
             if ($search) {
-                $total->whereRaw("(kode_cabang LIKE '%" . $search . "%' OR nama_cabang LIKE '%" . $search . "%')");
+                $total->whereRaw("(kode_pgw LIKE '%" . $search . "%' OR nama_pgw LIKE '%" . $search . "%')");
             }
 
             $total = $total->count();
         } else {
-            $total = KopCabang::all()->count();
+            $total = KopPegawai::all()->count();
         }
 
         if ($perPage != '~') {
@@ -145,7 +145,7 @@ class CabangController extends Controller
         $id = $request->id;
 
         if ($id) {
-            $get = KopCabang::find($id);
+            $get = KopPegawai::find($id);
 
             if ($get) {
                 $res = array(
@@ -173,11 +173,17 @@ class CabangController extends Controller
 
     public function update(Request $request)
     {
-        $get = KopCabang::find($request->id);
-        $validate = KopCabang::validateUpdate($request->all());
+        $get = KopPegawai::find($request->id);
+        $validate = KopPegawai::validateUpdate($request->all());
 
-        $get->nama_cabang = $request->nama_cabang;
-        $get->pimpinan_cabang = $request->pimpinan_cabang;
+        $get->kode_cabang = $request->kode_cabang;
+        $get->nama_pgw = $request->nama_pgw;
+        $get->jenis_kelamin = $request->jenis_kelamin;
+        $get->alamat_pgw = $request->alamat_pgw;
+        $get->no_ktp = $request->no_ktp;
+        $get->no_hp = $request->no_hp;
+        $get->jabatan = $request->jabatan;
+        $get->tgl_gabung = $request->tgl_gabung;
 
         DB::beginTransaction();
 
@@ -220,7 +226,7 @@ class CabangController extends Controller
         $id = $request->id;
 
         if ($id) {
-            $data = KopCabang::find($id);
+            $data = KopPegawai::find($id);
 
             try {
                 $data->delete();
@@ -242,7 +248,7 @@ class CabangController extends Controller
         } else {
             $res = array(
                 'status' => FALSE,
-                'msg' => 'Maaf! Cabang tidak ditemukan'
+                'msg' => 'Maaf! Pegawai tidak ditemukan'
             );
         }
 
