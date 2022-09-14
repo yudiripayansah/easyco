@@ -13,23 +13,41 @@ class KopCabang extends Model
     protected $table = 'kop_cabang';
     protected $fillable = ['kode_cabang', 'nama_cabang', 'induk_cabang', 'jenis_cabang', 'pimpinan_cabang', 'created_by'];
 
-    public static function validate($validate)
+    public function validateAdd($validate)
     {
-        if (isset($validate['id'])) {
-            $rule = [
-                'kode_cabang' => 'required|numeric|unique:kode_cabang,' . $validate['id'],
-                'nama_cabang' => 'required',
-                'jenis_cabang' => 'numeric',
-                'created_by' => 'required'
+        $rule = [
+            'kode_cabang' => 'required|numeric|unique:kop_cabang',
+            'nama_cabang' => 'required',
+            'jenis_cabang' => 'numeric'
+        ];
+
+        $validator = Validator::make($validate, $rule);
+
+        if ($validator->fails()) {
+            $errors =  $validator->errors()->all();
+
+            $res = [
+                'status' => FALSE,
+                'errors' => $errors,
+                'msg' => 'Validation Error'
             ];
         } else {
-            $rule = [
-                'kode_cabang' => 'required|numeric|unique:kode_cabang',
-                'nama_cabang' => 'required',
-                'jenis_cabang' => 'numeric',
-                'created_by' => 'required'
+            $res = [
+                'status' => TRUE,
+                'errors' => NULL,
+                'msg' => 'Validation OK'
             ];
         }
+
+        return $res;
+    }
+
+    public function validateUpdate($validate)
+    {
+        $rule = [
+            'id' => 'required',
+            'nama_cabang' => 'required'
+        ];
 
         $validator = Validator::make($validate, $rule);
 

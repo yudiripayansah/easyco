@@ -30,4 +30,8 @@ Route::prefix('promo')->group(function () {
 
 Route::prefix('cabang')->group(function () {
   Route::post('/create', [CabangController::class, 'create']);
+  Route::post('/read', [CabangController::class, 'read']);
+  Route::get('/search', [CabangController::class, 'search']);
+  Route::post('/update', [CabangController::class, 'update']);
+  Route::get('/delete', [CabangController::class, 'delete']);
 });
