@@ -15,8 +15,8 @@ class CreateKopPegawaiTable extends Migration
     {
         Schema::create('kop_pegawai', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_pgw', 20)->unique();
             $table->string('kode_cabang', 6);
+            $table->string('kode_pgw', 20)->unique();
             $table->string('nama_pgw', 50);
             $table->string('jenis_kelamin', 1)->comment('P = Pria, W = Wanita');
             $table->text('alamat_pgw')->nullable(TRUE);

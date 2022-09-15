@@ -162,7 +162,7 @@ class PegawaiController extends Controller
         } else {
             $res = array(
                 'status' => FALSE,
-                'msg' => 'Maaf! Cabang tidak bisa ditampilkan'
+                'msg' => 'Maaf! Pegawai tidak bisa ditampilkan'
             );
         }
 

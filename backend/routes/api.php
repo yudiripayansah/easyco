@@ -3,6 +3,7 @@
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\SampleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -43,4 +44,12 @@ Route::prefix('pegawai')->group(function () {
   Route::get('/detail', [PegawaiController::class, 'detail']);
   Route::post('/update', [PegawaiController::class, 'update']);
   Route::get('/delete', [PegawaiController::class, 'delete']);
+});
+
+Route::prefix('user')->group(function () {
+  Route::post('/create', [UserController::class, 'create']);
+  Route::post('/read', [UserController::class, 'read']);
+  Route::get('/detail', [UserController::class, 'detail']);
+  Route::post('/update', [UserController::class, 'update']);
+  Route::get('/delete', [UserController::class, 'delete']);
 });

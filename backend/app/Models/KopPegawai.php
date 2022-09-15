@@ -2,18 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Validator;
 
 class KopPegawai extends Model
 {
-    use HasFactory;
     use SoftDeletes;
 
     protected $table = 'kop_pegawai';
-    protected $fillable = ['kode_pgw', 'kode_cabang', 'nama_pgw', 'jenis_kelamin', 'alamat_pgw', 'no_ktp', 'no_hp', 'jabatan', 'tgl_gabung', 'created_by'];
+    protected $fillable = ['kode_cabang', 'kode_pgw', 'nama_pgw', 'jenis_kelamin', 'alamat_pgw', 'no_ktp', 'no_hp', 'jabatan', 'tgl_gabung', 'created_by'];
 
     public function validateAdd($validate)
     {

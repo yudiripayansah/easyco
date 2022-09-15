@@ -22,7 +22,7 @@ class CreateKopUserTable extends Migration
             $table->string('nama_user', 25)->unique();
             $table->integer('role_user');
             $table->integer('akses_user');
-            $table->integer('status_user')->default(1)->comment('0 = Tidak Aktif, 1 = Aktif');
+            $table->integer('status_user')->nullable(TRUE)->default(1)->comment('0 = Tidak Aktif, 1 = Aktif');
             $table->string('photo', 150)->nullable(TRUE);
             $table->string('password');
             $table->string('created_by', 30);
