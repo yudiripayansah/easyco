@@ -25,6 +25,8 @@ class CreateKopUserTable extends Migration
             $table->integer('status_user')->nullable(TRUE)->default(1)->comment('0 = Tidak Aktif, 1 = Aktif');
             $table->string('photo', 150)->nullable(TRUE);
             $table->string('password');
+            $table->dateTime('last_login')->nullable(TRUE);
+            $table->text('token')->nullable(TRUE);
             $table->string('created_by', 30);
             $table->timestamps();
             $table->string('updated_by', 30)->nullable(TRUE);

@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class CabangController extends Controller
 {
+    protected $user;
+
     public function create(Request $request)
     {
         $data = $request->all();
@@ -54,6 +56,8 @@ class CabangController extends Controller
 
     public function read(Request $request)
     {
+        $token = $request->headers->get('Token');
+
         $offset = 0;
         $page = 1;
         $perPage = '~';
