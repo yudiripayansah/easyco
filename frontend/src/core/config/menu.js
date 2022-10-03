@@ -18,8 +18,8 @@ const menu = [
         component: import('@/pages/Keanggotaan/RegistrasiAnggota'),
       },
       {
-        target: 'approval-registrasi',
-        label: 'Approval Registrasi',
+        target: 'registrasi-anggota-rembug',
+        label: 'Registrasi Anggota Rembug',
         component: import('@/pages/Keanggotaan/ApprovalRegistrasi.vue'),
       },
       {

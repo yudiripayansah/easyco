@@ -40,7 +40,7 @@
           </b-col>
         </b-row>
       </b-card>
-      <b-modal title="Form Approval Registrasi" id="modal-form" hide-footer size="lg" centered>
+      <b-modal title="Form Registrasi Anggota Rembug" id="modal-form" hide-footer size="lg" centered>
         <b-form @submit="doSave()">
           <b-row>
             <b-col cols="12">
@@ -61,15 +61,15 @@
               </b-form-group>
             </b-col>
             <b-col cols="8">
-              <b-form-group label="Tempat" label-for="tempat_tgl_lahir">
-                <b-form-input id="tempat_tgl_lagir" v-model="$v.form.data.tempat_tgl_lahir.$model"
-                  :state="validateState('tempat_tgl_lahir')" />
+              <b-form-group label="Tempat" label-for="tempat">
+                <b-form-input id="tempat" v-model="$v.form.data.tempat.$model"
+                  :state="validateState('tempat')" />
               </b-form-group>
             </b-col>
             <b-col cols="4">
-              <b-form-group label="Tanggal Lahir" label-for="tempat_tgl_lahir">
-                <b-form-input type="date" id="tempat_tgl_lagir" v-model="$v.form.data.tempat_tgl_lahir.$model"
-                  :state="validateState('tempat_tgl_lahir')" />
+              <b-form-group label="Tanggal Lahir" label-for="tgl_lahir">
+                <b-form-input type="date" id="tgl_lahir" v-model="$v.form.data.tgl_lahir.$model"
+                  :state="validateState('tgl_lahir')" />
               </b-form-group>
             </b-col>
             <b-col cols="12">
@@ -85,20 +85,20 @@
               </b-form-group>
             </b-col>
             <b-col cols="12">
-              <b-form-group label="Alamat" label-for="desa">
-                <b-form-select class="mb-3" id="desa" v-model="$v.form.data.desa.$model" :options="opt.kota_kab"
-                  :state="validateState('desa')" />
-                  <b-form-select class="mb-3" id="desa" v-model="$v.form.data.desa.$model" :options="opt.kecamatan"
+              <b-form-group label="Alamat" label-for="alamat">
+                <b-form-select class="mb-3" id="kota_kab" v-model="$v.form.data.kota_kab.$model" :options="opt.kota_kab"
+                  :state="validateState('kota_kab')" />
+                  <b-form-select class="mb-3" id="kecamatan" v-model="$v.form.data.kecamatan.$model" :options="opt.kecamatan"
                   :state="validateState('desa')" />
                   <b-form-select class="mb-3" id="desa" v-model="$v.form.data.desa.$model" :options="opt.desa"
                   :state="validateState('desa')" />
-                  <b-form-input id="desa" v-model="$v.form.data.desa.$model"
-                  :state="validateState('desa')" />
+                  <b-form-input id="jl_no_rt_rw" v-model="$v.form.data.jl_no_rt_rw.$model" placeholder="Jl:.....,No......Rt...,Rw..."
+                  :state="validateState('jl_no_rt_rw')" />
               </b-form-group>
             </b-col>
             <b-col cols="12">
               <b-form-group label="No HP" label-for="no_hp">
-                <b-form-input id="no_hp" v-model="$v.form.data.no_hp.$model"
+                <b-form-input id="no_hp" v-model="$v.form.data.no_hp.$model" placeholder="0858-XXXX-XXXX"
                   :state="validateState('no_hp')" />
               </b-form-group>
             </b-col>
@@ -185,10 +185,15 @@
             id: null,
             nama: null,
             jenis_kelamin: null,
-            tempat_tgl_lahir: null,
+            tempat: null,
+            tgl_lahir: null,
             nama_ibu_kdg: null,
             nik: null,
+            alamat: null,
+            kota_kab: null,
+            kecamatan: null,
             desa: null,
+            jl_no_rt_rw: null,
             no_hp: null,
             pendidikan_tkr: null,
             pekerjaan: null,
@@ -266,11 +271,11 @@
           loading: false
         },
         opt: {
-          kota_kab: ['kota bogor','kabupaten bogor'],
-          kecamatan: ['kecamatan Cibinong','Kecamatan Ciawi'],
-          desa: ['sukahati','karadenan'],
-          cabang: ['cabang 1','cabang 2','cabang 3'],
-          pendidikan_tkr: ['SD','SMP','SMA/SMK','Sarjana'],
+          kota_kab: ['Kota / Kabupaten :','kota bogor','kabupaten bogor'],
+          kecamatan: ['Kecamatan :','kecamatan Cibinong','Kecamatan Ciawi'],
+          desa: ['Desa :','sukahati','karadenan'],
+          cabang: ['Enter Text','Cimauk','Cabang 1'],
+          pendidikan_tkr: ['SLTA','SD','SMP','SMA/SMK','Sarjana'],
           pekerjaan: ['Buruh Lepas','Karyawan Swasta','Dokter','Atlet'],
           rembug: ['Melati','Mawar'],
           kas_petugas: ['Ujang','Udin'],
@@ -287,13 +292,25 @@
           nama: {
             required
           },
+          kota_kab: {
+            required
+          },
+          kecamatan: {
+            required
+          },
           desa: {
+            required
+          },
+          jl_no_rt_rw: {
             required
           },
           jenis_kelamin: {
             required
           },
-          tempat_tgl_lahir: {
+          tempat: {
+            required
+          },
+          tgl_lahir: {
             required
           },
           nama_ibu_kdg: {
@@ -406,10 +423,14 @@
           cabang: null,
           nama: null,
           jenis_kelamin: null,
-          tempat_tgl_lahir: null,
+          tempat: null,
+          tgl_lahir: null,
           nama_ibu_kdg: null,
           nik: null,
+          kota_kab: null,
+          kecamatan: null,
           desa: null,
+          jl_no_rt_rw: null,
           no_hp: null,
           pendidikan_tkr: null,
           pekerjaan: null,
