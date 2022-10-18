@@ -15,7 +15,7 @@ jobs:
       run: |
           cd /repository/easyco
           git pull
-          composer install
+          COMPOSER_ALLOW_SUPERUSER=1 composer install
           rm -r -f /var/www/easyco.kopikoding.com/public_html/api/*
           cp -R /repository/easyco/backend/* /var/www/easyco.kopikoding.com/public_html/api/
           cp -R /repository/easyco/backend/public/* /var/www/easyco.kopikoding.com/public_html/api/
