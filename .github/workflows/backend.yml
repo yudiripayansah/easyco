@@ -13,7 +13,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Deploy Backend
       run: |
-          cd /
+          cd /var/www
           ls -la
           git pull
           cp /repository/easyco/backend/ /var/www/easyco.kopikoding.com/public_html/api/
