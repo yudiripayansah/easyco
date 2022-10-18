@@ -15,12 +15,12 @@ const menu = [
       {
         target: 'registrasi-anggota',
         label: 'Registrasi Anggota',
-        component: import('@/pages/Dummy.vue'),
+        component: import('@/pages/Keanggotaan/RegistrasiAnggota'),
       },
       {
-        target: 'approval-registrasi',
-        label: 'Approval Registrasi',
-        component: import('@/pages/Dummy.vue'),
+        target: 'registrasi-anggota-rembug',
+        label: 'Registrasi Anggota Rembug',
+        component: import('@/pages/Keanggotaan/ApprovalRegistrasi.vue'),
       },
       {
         target: 'registrasi-anggota-keluar',
@@ -122,7 +122,7 @@ const menu = [
       {
         target: 'update-status-komite',
         label: 'Update Status Komite',
-        component: import('@/pages/Dummy.vue'),
+        component: import('@/pages/Pembiayaan/UpdateStatusPengajuan.vue'),
       },
       {
         target: 'registrasi-akad',
