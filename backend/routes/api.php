@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CabangController;
+use App\Http\Controllers\KotKabController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -43,4 +44,20 @@ Route::prefix('user')->middleware('checkToken')->group(function () {
   Route::get('/detail', [UserController::class, 'detail']);
   Route::post('/update', [UserController::class, 'update']);
   Route::get('/delete', [UserController::class, 'delete']);
+});
+
+Route::prefix('kotakab')->middleware('checkToken')->group(function () {
+  Route::post('/create', [KotKabController::class, 'create']);
+  Route::post('/read', [KotKabController::class, 'read']);
+  Route::get('/detail', [KotKabController::class, 'detail']);
+  Route::post('/update', [KotKabController::class, 'update']);
+  Route::get('/delete', [KotKabController::class, 'delete']);
+});
+
+Route::prefix('kecamatan')->middleware('checkToken')->group(function () {
+  Route::post('/create', [KotKabController::class, 'create']);
+  Route::post('/read', [KotKabController::class, 'read']);
+  Route::get('/detail', [KotKabController::class, 'detail']);
+  Route::post('/update', [KotKabController::class, 'update']);
+  Route::get('/delete', [KotKabController::class, 'delete']);
 });
