@@ -12,7 +12,7 @@ jobs:
     steps: 
     - uses: actions/checkout@v2
     - name: Deploy Backend
-      script: |
+      run: |
           cd /repository/easyco
           git pull
           cp /repository/easyco/backend /var/www/easyco.kopikoding.com/public_html/api
