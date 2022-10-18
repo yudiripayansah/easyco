@@ -1,4 +1,4 @@
-name: Frontend Deploy
+name: Easyco Deploy
 
 on:
   push: 
@@ -27,3 +27,12 @@ jobs:
           rm -r -f /var/www/easyco.kopikoding.com/public_html/index.html
           rm -r -f /var/www/easyco.kopikoding.com/public_html/favicon.ico
           cp -R /repository/easyco/frontend/dist/* /var/www/easyco.kopikoding.com/public_html/
+    - name: Deploy Backend
+      run: |
+          cd /repository/easyco
+          git pull
+          cd backend
+          COMPOSER_ALLOW_SUPERUSER=1 composer install
+          rm -r -f /var/www/easyco.kopikoding.com/public_html/api/*
+          cp -R /repository/easyco/backend/* /var/www/easyco.kopikoding.com/public_html/api/
+          cp -R /repository/easyco/backend/public/* /var/www/easyco.kopikoding.com/public_html/api/
