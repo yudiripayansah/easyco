@@ -3,7 +3,6 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\PegawaiController;
-use App\Http\Controllers\SampleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,7 +21,7 @@ Route::prefix('authenticate')->group(function () {
   Route::post('/login', [AuthController::class, 'authentication']);
 });
 
-Route::prefix('cabang')->group(function () {
+Route::prefix('cabang')->middleware('checkToken')->group(function () {
   Route::post('/create', [CabangController::class, 'create']);
   Route::post('/read', [CabangController::class, 'read']);
   Route::get('/detail', [CabangController::class, 'detail']);
@@ -30,7 +29,7 @@ Route::prefix('cabang')->group(function () {
   Route::get('/delete', [CabangController::class, 'delete']);
 });
 
-Route::prefix('pegawai')->group(function () {
+Route::prefix('pegawai')->middleware('checkToken')->group(function () {
   Route::post('/create', [PegawaiController::class, 'create']);
   Route::post('/read', [PegawaiController::class, 'read']);
   Route::get('/detail', [PegawaiController::class, 'detail']);
@@ -38,7 +37,7 @@ Route::prefix('pegawai')->group(function () {
   Route::get('/delete', [PegawaiController::class, 'delete']);
 });
 
-Route::prefix('user')->group(function () {
+Route::prefix('user')->middleware('checkToken')->group(function () {
   Route::post('/create', [UserController::class, 'create']);
   Route::post('/read', [UserController::class, 'read']);
   Route::get('/detail', [UserController::class, 'detail']);
