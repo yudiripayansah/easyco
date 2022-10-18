@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KopUser;
+use DateTime;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,47 +14,90 @@ class UserController extends Controller
 {
     function create(Request $request)
     {
+        $token = $request->header('token');
+
         $data = $request->all();
 
-        $validate = KopUser::validateAdd($data);
+        $now = date('Y-m-d');
 
-        $filePhoto = $request->photo;
+        if ($token) {
+            $check_token = KopUser::where('token', $token)->first();
 
-        if (empty($filePhoto)) {
-            $photo = NULL;
+            if ($check_token) {
+                $from_date = date('Y-m-d', strtotime($check_token->last_login));
+                $thru_date = $now;
+
+                $date1 = new DateTime($from_date);
+                $date2 = new DateTime($thru_date);
+
+                $interval = $date1->diff($date2);
+
+                $expired = $interval->format('%a');
+
+                if ($expired > 7) {
+                    $res = array(
+                        'status' => FALSE,
+                        'data' => $data,
+                        'msg' => 'Token Expired',
+                        'error' => NULL
+                    );
+                } else {
+                    $validate = KopUser::validateAdd($data);
+
+                    $filePhoto = $request->photo;
+
+                    if (empty($filePhoto)) {
+                        $photo = NULL;
+                    } else {
+                        $name = time() . '-user.png';
+                        $path = 'user/' . $name;
+
+                        Storage::disk('public')->put($path, file_get_contents($filePhoto));
+
+                        $photo = $name;
+                    }
+
+                    $data['photo'] = $photo;
+                    $data['password'] = Hash::make($request->password);
+
+                    DB::beginTransaction();
+
+                    if ($validate['status'] == TRUE) {
+                        $create = KopUser::create($data);
+                        $id = KopUser::find($create->id);
+
+                        $res = array(
+                            'status' => TRUE,
+                            'data' => $id,
+                            'msg' => 'Berhasil!'
+                        );
+
+                        DB::commit();
+                    } else {
+                        DB::rollBack();
+
+                        $res = array(
+                            'status' => FALSE,
+                            'data' => $data,
+                            'msg' => $validate['msg'],
+                            'error' => $validate['errors']
+                        );
+                    }
+                }
+            } else {
+                $res = array(
+                    'status' => FALSE,
+                    'data' => $data,
+                    'msg' => 'Token Invalid',
+                    'error' => NULL
+                );
+            }
         } else {
-            $name = time() . '-user.png';
-            $path = 'user/' . $name;
-
-            Storage::disk('public')->put($path, file_get_contents($filePhoto));
-
-            $photo = $name;
-        }
-
-        $data['photo'] = $photo;
-        $data['password'] = Hash::make($request->password);
-
-        DB::beginTransaction();
-
-        if ($validate['status'] == TRUE) {
-            $create = KopUser::create($data);
-            $id = KopUser::find($create->id);
-
-            $res = array(
-                'status' => TRUE,
-                'data' => $id,
-                'msg' => 'Berhasil!'
-            );
-
-            DB::commit();
-        } else {
-            DB::rollBack();
-
             $res = array(
                 'status' => FALSE,
                 'data' => $data,
-                'msg' => $validate['msg'],
-                'error' => $validate['errors']
+                'msg' => 'No Token Provided',
+                'error' => NULL
             );
         }
 
@@ -64,86 +108,129 @@ class UserController extends Controller
 
     public function read(Request $request)
     {
-        $offset = 0;
-        $page = 1;
-        $perPage = '~';
-        $sortDir = 'ASC';
-        $sortBy = 'id';
-        $search = NULL;
-        $total = 0;
-        $totalPage = 1;
-        $type = NULL;
-        $id_cabang = NULL;
+        $token = $request->header('token');
 
-        if ($request->page) {
-            $page = $request->page;
-        }
+        $now = date('Y-m-d');
 
-        if ($request->perPage) {
-            $perPage = $request->perPage;
-        }
+        if ($token) {
+            $check_token = KopUser::where('token', $token)->first();
 
-        if ($request->sortDir) {
-            $sortDir = $request->sortDir;
-        }
+            if ($check_token) {
+                $from_date = date('Y-m-d', strtotime($check_token->last_login));
+                $thru_date = $now;
 
-        if ($request->sortBy) {
-            $sortBy = $request->sortBy;
-        }
+                $date1 = new DateTime($from_date);
+                $date2 = new DateTime($thru_date);
 
-        if ($request->search) {
-            $search = $request->search;
-        }
+                $interval = $date1->diff($date2);
 
-        if ($page > 1) {
-            $offset = ($page - 1) * $perPage;
-        }
+                $expired = $interval->format('%a');
 
-        $read = KopUser::select('*')->orderBy($sortBy, $sortDir);
+                if ($expired > 7) {
+                    $res = array(
+                        'status' => FALSE,
+                        'data' => $request->all(),
+                        'msg' => 'Token Expired',
+                        'error' => NULL
+                    );
+                } else {
+                    $offset = 0;
+                    $page = 1;
+                    $perPage = '~';
+                    $sortDir = 'ASC';
+                    $sortBy = 'id';
+                    $search = NULL;
+                    $total = 0;
+                    $totalPage = 1;
+                    $type = NULL;
+                    $id_cabang = NULL;
 
-        if ($perPage != '~') {
-            $read->skip($offset)->take($perPage);
-        }
+                    if ($request->page) {
+                        $page = $request->page;
+                    }
 
-        if ($search != NULL) {
-            $read->whereRaw("(nama_user LIKE '%" . $search . "%')");
-        }
+                    if ($request->perPage) {
+                        $perPage = $request->perPage;
+                    }
 
-        $read = $read->get();
+                    if ($request->sortDir) {
+                        $sortDir = $request->sortDir;
+                    }
 
-        foreach ($read as $rd) {
-            $useCount = 'used count diubah datanya disini';
-            $rd->used_count = $useCount;
-        }
+                    if ($request->sortBy) {
+                        $sortBy = $request->sortBy;
+                    }
 
-        if ($search || $id_cabang || $type) {
-            $total = KopUser::orderBy($sortBy, $sortDir);
+                    if ($request->search) {
+                        $search = $request->search;
+                    }
 
-            if ($search) {
-                $total->whereRaw("(nama_user LIKE '%" . $search . "%')");
+                    if ($page > 1) {
+                        $offset = ($page - 1) * $perPage;
+                    }
+
+                    $read = KopUser::select('*')->orderBy($sortBy, $sortDir);
+
+                    if ($perPage != '~') {
+                        $read->skip($offset)->take($perPage);
+                    }
+
+                    if ($search != NULL) {
+                        $read->whereRaw("(nama_user LIKE '%" . $search . "%')");
+                    }
+
+                    $read = $read->get();
+
+                    foreach ($read as $rd) {
+                        $useCount = 'used count diubah datanya disini';
+                        $rd->used_count = $useCount;
+                    }
+
+                    if ($search || $id_cabang || $type) {
+                        $total = KopUser::orderBy($sortBy, $sortDir);
+
+                        if ($search) {
+                            $total->whereRaw("(nama_user LIKE '%" . $search . "%')");
+                        }
+
+                        $total = $total->count();
+                    } else {
+                        $total = KopUser::all()->count();
+                    }
+
+                    if ($perPage != '~') {
+                        $totalPage = ceil($total / $perPage);
+                    }
+
+                    $res = array(
+                        'status' => true,
+                        'data' => $read,
+                        'page' => $page,
+                        'perPage' => $perPage,
+                        'sortDir' => $sortDir,
+                        'sortBy' => $sortBy,
+                        'search' => $search,
+                        'total' => $total,
+                        'totalPage' => $totalPage,
+                        'msg' => 'List data available'
+                    );
+                }
+            } else {
+                $res = array(
+                    'status' => FALSE,
+                    'data' => $request->all(),
+                    'msg' => 'Token Invalid',
+                    'error' => NULL
+                );
             }
-
-            $total = $total->count();
         } else {
-            $total = KopUser::all()->count();
+            $res = array(
+                'status' => FALSE,
+                'data' => $request->all(),
+                'msg' => 'No Token Provided',
+                'error' => NULL
+            );
         }
-
-        if ($perPage != '~') {
-            $totalPage = ceil($total / $perPage);
-        }
-
-        $res = array(
-            'status' => true,
-            'data' => $read,
-            'page' => $page,
-            'perPage' => $perPage,
-            'sortDir' => $sortDir,
-            'sortBy' => $sortBy,
-            'search' => $search,
-            'total' => $total,
-            'totalPage' => $totalPage,
-            'msg' => 'List data available'
-        );
 
         $response = response()->json($res, 200);
 
@@ -152,27 +239,70 @@ class UserController extends Controller
 
     public function detail(Request $request)
     {
-        $id = $request->id;
+        $token = $request->header('token');
 
-        if ($id) {
-            $get = KopUser::find($id);
+        $now = date('Y-m-d');
 
-            if ($get) {
-                $res = array(
-                    'status' => TRUE,
-                    'data' => $get,
-                    'msg' => 'Berhasil!'
-                );
+        if ($token) {
+            $check_token = KopUser::where('token', $token)->first();
+
+            if ($check_token) {
+                $from_date = date('Y-m-d', strtotime($check_token->last_login));
+                $thru_date = $now;
+
+                $date1 = new DateTime($from_date);
+                $date2 = new DateTime($thru_date);
+
+                $interval = $date1->diff($date2);
+
+                $expired = $interval->format('%a');
+
+                if ($expired > 7) {
+                    $res = array(
+                        'status' => FALSE,
+                        'data' => $request->all(),
+                        'msg' => 'Token Expired',
+                        'error' => NULL
+                    );
+                } else {
+                    $id = $request->id;
+
+                    if ($id) {
+                        $get = KopUser::find($id);
+
+                        if ($get) {
+                            $res = array(
+                                'status' => TRUE,
+                                'data' => $get,
+                                'msg' => 'Berhasil!'
+                            );
+                        } else {
+                            $res = array(
+                                'status' => FALSE,
+                                'msg' => 'Maaf! Data tidak ditemukan'
+                            );
+                        }
+                    } else {
+                        $res = array(
+                            'status' => FALSE,
+                            'msg' => 'Maaf! Username tidak bisa ditampilkan'
+                        );
+                    }
+                }
             } else {
                 $res = array(
                     'status' => FALSE,
-                    'msg' => 'Maaf! Data tidak ditemukan'
+                    'data' => $request->all(),
+                    'msg' => 'Token Invalid',
+                    'error' => NULL
                 );
             }
         } else {
             $res = array(
                 'status' => FALSE,
-                'msg' => 'Maaf! Username tidak bisa ditampilkan'
+                'data' => $request->all(),
+                'msg' => 'No Token Provided',
+                'error' => NULL
             );
         }
 
@@ -183,66 +313,109 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-        $get = KopUser::find($request->id);
-        $validate = KopUser::validateUpdate($request->all());
+        $token = $request->header('token');
 
-        $get->kode_cabang = $request->kode_cabang;
-        $get->kode_pgw = $request->kode_pgw;
-        $get->role_user = $request->role_user;
-        $get->akses_user = $request->akses_user;
-        $get->status_user = $request->status_user;
+        $now = date('Y-m-d');
 
-        if (empty($request->password)) {
-            $password = $get->password;
-        } else {
-            $password = Hash::make($request->password);
-        }
+        if ($token) {
+            $check_token = KopUser::where('token', $token)->first();
 
-        $get->password = $password;
+            if ($check_token) {
+                $from_date = date('Y-m-d', strtotime($check_token->last_login));
+                $thru_date = $now;
 
-        if (empty($request->photo)) {
-            $photo = $get->photo;
-        } else {
-            $name = time() . '-user.png';
-            $path = 'user/' . $name;
-            $old = 'user/' . $get->photo;
+                $date1 = new DateTime($from_date);
+                $date2 = new DateTime($thru_date);
 
-            Storage::disk('public')->delete($old);
-            Storage::disk('public')->put($path, file_get_contents($request->photo));
+                $interval = $date1->diff($date2);
 
-            $photo = $name;
-        }
+                $expired = $interval->format('%a');
 
-        $get->photo = $photo;
+                if ($expired > 7) {
+                    $res = array(
+                        'status' => FALSE,
+                        'data' => $request->all(),
+                        'msg' => 'Token Expired',
+                        'error' => NULL
+                    );
+                } else {
+                    $get = KopUser::find($request->id);
+                    $validate = KopUser::validateUpdate($request->all());
 
-        DB::beginTransaction();
+                    $get->kode_cabang = $request->kode_cabang;
+                    $get->kode_pgw = $request->kode_pgw;
+                    $get->role_user = $request->role_user;
+                    $get->akses_user = $request->akses_user;
+                    $get->status_user = $request->status_user;
 
-        if ($validate['status'] == TRUE) {
-            try {
-                $get->save();
+                    if (empty($request->password)) {
+                        $password = $get->password;
+                    } else {
+                        $password = Hash::make($request->password);
+                    }
 
-                $res = array(
-                    'status' => TRUE,
-                    'data' => NULL,
-                    'msg' => 'Berhasil!'
-                );
+                    $get->password = $password;
 
-                DB::commit();
-            } catch (Exception $e) {
-                DB::rollBack();
+                    if (empty($request->photo)) {
+                        $photo = $get->photo;
+                    } else {
+                        $name = time() . '-user.png';
+                        $path = 'user/' . $name;
+                        $old = 'user/' . $get->photo;
 
+                        Storage::disk('public')->delete($old);
+                        Storage::disk('public')->put($path, file_get_contents($request->photo));
+
+                        $photo = $name;
+                    }
+
+                    $get->photo = $photo;
+
+                    DB::beginTransaction();
+
+                    if ($validate['status'] == TRUE) {
+                        try {
+                            $get->save();
+
+                            $res = array(
+                                'status' => TRUE,
+                                'data' => NULL,
+                                'msg' => 'Berhasil!'
+                            );
+
+                            DB::commit();
+                        } catch (Exception $e) {
+                            DB::rollBack();
+
+                            $res = array(
+                                'status' => FALSE,
+                                'data' => $request->all(),
+                                'msg' => $e->getMessage()
+                            );
+                        }
+                    } else {
+                        $res = array(
+                            'status' => FALSE,
+                            'data' => $request->all(),
+                            'msg' => $validate['msg'],
+                            'error' => $validate['errors']
+                        );
+                    }
+                }
+            } else {
                 $res = array(
                     'status' => FALSE,
                     'data' => $request->all(),
-                    'msg' => $e->getMessage()
+                    'msg' => 'Token Invalid',
+                    'error' => NULL
                 );
             }
         } else {
             $res = array(
                 'status' => FALSE,
                 'data' => $request->all(),
-                'msg' => $validate['msg'],
-                'error' => $validate['errors']
+                'msg' => 'No Token Provided',
+                'error' => NULL
             );
         }
 
@@ -253,32 +426,75 @@ class UserController extends Controller
 
     public function delete(Request $request)
     {
-        $id = $request->id;
+        $token = $request->header('token');
 
-        if ($id) {
-            $data = KopUser::find($id);
+        $now = date('Y-m-d');
 
-            try {
-                $data->delete();
+        if ($token) {
+            $check_token = KopUser::where('token', $token)->first();
 
-                $res = array(
-                    'status' => true,
-                    'data' => NULL,
-                    'msg' => 'Berhasil!'
-                );
-            } catch (Exception $e) {
-                DB::rollBack();
+            if ($check_token) {
+                $from_date = date('Y-m-d', strtotime($check_token->last_login));
+                $thru_date = $now;
 
+                $date1 = new DateTime($from_date);
+                $date2 = new DateTime($thru_date);
+
+                $interval = $date1->diff($date2);
+
+                $expired = $interval->format('%a');
+
+                if ($expired > 7) {
+                    $res = array(
+                        'status' => FALSE,
+                        'data' => $request->all(),
+                        'msg' => 'Token Expired',
+                        'error' => NULL
+                    );
+                } else {
+                    $id = $request->id;
+
+                    if ($id) {
+                        $data = KopUser::find($id);
+
+                        try {
+                            $data->delete();
+
+                            $res = array(
+                                'status' => true,
+                                'data' => NULL,
+                                'msg' => 'Berhasil!'
+                            );
+                        } catch (Exception $e) {
+                            DB::rollBack();
+
+                            $res = array(
+                                'status' => FALSE,
+                                'data' => $request->all(),
+                                'msg' => $e->getMessage()
+                            );
+                        }
+                    } else {
+                        $res = array(
+                            'status' => FALSE,
+                            'msg' => 'Maaf! User tidak ditemukan'
+                        );
+                    }
+                }
+            } else {
                 $res = array(
                     'status' => FALSE,
                     'data' => $request->all(),
-                    'msg' => $e->getMessage()
+                    'msg' => 'Token Invalid',
+                    'error' => NULL
                 );
             }
         } else {
             $res = array(
                 'status' => FALSE,
-                'msg' => 'Maaf! User tidak ditemukan'
+                'data' => $request->all(),
+                'msg' => 'No Token Provided',
+                'error' => NULL
             );
         }
 
