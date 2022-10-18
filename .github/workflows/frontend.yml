@@ -1,0 +1,29 @@
+name: Frontend Deploy
+
+on:
+  push: 
+    branches:
+      - master
+      
+jobs:
+  build: 
+    runs-on: self-hosted
+    
+    steps: 
+    - uses: actions/checkout@v2
+    - name: Deploy Backend
+      run: |
+          cd /repository/easyco
+          git pull
+          cd frontend
+          npm install
+          yarn build
+          rm -r -f /var/www/easyco.kopikoding.com/public_html/css
+          rm -r -f /var/www/easyco.kopikoding.com/public_html/fonts
+          rm -r -f /var/www/easyco.kopikoding.com/public_html/img
+          rm -r -f /var/www/easyco.kopikoding.com/public_html/js
+          rm -r -f /var/www/easyco.kopikoding.com/public_html/media
+          rm -r -f /var/www/easyco.kopikoding.com/public_html/.htaccess
+          rm -r -f /var/www/easyco.kopikoding.com/public_html/index.html
+          rm -r -f /var/www/easyco.kopikoding.com/public_html/favicon.ico
+          cp -R /repository/easyco/frontend/dist/* /var/www/easyco.kopikoding.com/public_html/
