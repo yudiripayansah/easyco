@@ -1,0 +1,18 @@
+name: Deploy
+
+on:
+  push: 
+    branches:
+      - master
+      
+jobs:
+  build: 
+    runs-on: ubuntu-latest
+    
+    steps: 
+    - uses: actions/checkout@v2
+    - name: Deploy Backend
+      script: |
+          cd /repository/easyco
+          git pull
+          cp /repository/easyco/backend /var/www/easyco.kopikoding.com/public_html/api
