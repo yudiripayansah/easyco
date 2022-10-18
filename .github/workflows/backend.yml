@@ -16,5 +16,5 @@ jobs:
           cd /repository/easyco
           git pull
           rm -r -f /var/www/easyco.kopikoding.com/public_html/api/*
-          cp /repository/easyco/backend/ /var/www/easyco.kopikoding.com/public_html/api/
-          cp /repository/easyco/backend/public /var/www/easyco.kopikoding.com/public_html/api/
+          cp -R /repository/easyco/backend/ /var/www/easyco.kopikoding.com/public_html/api/
+          cp -R /repository/easyco/backend/public /var/www/easyco.kopikoding.com/public_html/api/
