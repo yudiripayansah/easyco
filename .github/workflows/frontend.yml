@@ -17,7 +17,7 @@ jobs:
           git pull
           cd frontend
           npm install
-          yarn build
+          npm run build
           rm -r -f /var/www/easyco.kopikoding.com/public_html/css
           rm -r -f /var/www/easyco.kopikoding.com/public_html/fonts
           rm -r -f /var/www/easyco.kopikoding.com/public_html/img
