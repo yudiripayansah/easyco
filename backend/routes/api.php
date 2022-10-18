@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CabangController;
+use App\Http\Controllers\DesaController;
+use App\Http\Controllers\GlController;
 use App\Http\Controllers\KecamatanController;
 use App\Http\Controllers\KotKabController;
 use App\Http\Controllers\PegawaiController;
@@ -61,4 +63,20 @@ Route::prefix('kecamatan')->middleware('checkToken')->group(function () {
   Route::get('/detail', [KecamatanController::class, 'detail']);
   Route::post('/update', [KecamatanController::class, 'update']);
   Route::get('/delete', [KecamatanController::class, 'delete']);
+});
+
+Route::prefix('desa')->middleware('checkToken')->group(function () {
+  Route::post('/create', [DesaController::class, 'create']);
+  Route::post('/read', [DesaController::class, 'read']);
+  Route::get('/detail', [DesaController::class, 'detail']);
+  Route::post('/update', [DesaController::class, 'update']);
+  Route::get('/delete', [DesaController::class, 'delete']);
+});
+
+Route::prefix('gl')->middleware('checkToken')->group(function () {
+  Route::post('/create', [GlController::class, 'create']);
+  Route::post('/read', [GlController::class, 'read']);
+  Route::get('/detail', [GlController::class, 'detail']);
+  Route::post('/update', [GlController::class, 'update']);
+  Route::get('/delete', [GlController::class, 'delete']);
 });
