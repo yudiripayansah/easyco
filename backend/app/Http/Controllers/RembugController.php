@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KopKasPetugas;
+use App\Models\KopRembug;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class KasPetugasController extends Controller
+class RembugController extends Controller
 {
     function create(Request $request)
     {
         $data = $request->all();
 
-        $validate = KopKasPetugas::validateAdd($data);
+        $validate = KopRembug::validateAdd($data);
 
         DB::beginTransaction();
 
         if ($validate['status'] == TRUE) {
             try {
-                $create = KopKasPetugas::create($data);
-                $id = KopKasPetugas::find($create->id);
+                $create = KopRembug::create($data);
+                $id = KopRembug::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
@@ -58,7 +58,7 @@ class KasPetugasController extends Controller
         $page = 1;
         $perPage = '~';
         $sortDir = 'ASC';
-        $sortBy = 'kode_kas_petugas';
+        $sortBy = 'kode_rembug';
         $search = NULL;
         $total = 0;
         $totalPage = 1;
@@ -89,14 +89,14 @@ class KasPetugasController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopKasPetugas::select('*')->orderBy($sortBy, $sortDir);
+        $read = KopRembug::select('*')->orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
         }
 
         if ($search != NULL) {
-            $read->whereRaw("(kode_kas_petugas LIKE '%" . $search . "%' OR kode_petugas LIKE '%" . $search . "%' OR nama_kas_petugas LIKE '%" . $search . "%')");
+            $read->whereRaw("(kode_rembug LIKE '%" . $search . "%' OR nama_rembug LIKE '%" . $search . "%')");
         }
 
         $read = $read->get();
@@ -107,15 +107,15 @@ class KasPetugasController extends Controller
         }
 
         if ($search || $id_cabang || $type) {
-            $total = KopKasPetugas::orderBy($sortBy, $sortDir);
+            $total = KopRembug::orderBy($sortBy, $sortDir);
 
             if ($search) {
-                $total->whereRaw("(kode_kas_petugas LIKE '%" . $search . "%' OR kode_petugas LIKE '%" . $search . "%' OR nama_kas_petugas LIKE '%" . $search . "%')");
+                $total->whereRaw("(kode_rembug LIKE '%" . $search . "%' OR nama_rembug LIKE '%" . $search . "%')");
             }
 
             $total = $total->count();
         } else {
-            $total = KopKasPetugas::all()->count();
+            $total = KopRembug::all()->count();
         }
 
         if ($perPage != '~') {
@@ -145,7 +145,7 @@ class KasPetugasController extends Controller
         $id = $request->id;
 
         if ($id) {
-            $get = KopKasPetugas::find($id);
+            $get = KopRembug::find($id);
 
             if ($get) {
                 $res = array(
@@ -162,7 +162,7 @@ class KasPetugasController extends Controller
         } else {
             $res = array(
                 'status' => FALSE,
-                'msg' => 'Maaf! Kas Petugas tidak bisa ditampilkan'
+                'msg' => 'Maaf! Rembug tidak bisa ditampilkan'
             );
         }
 
@@ -173,14 +173,17 @@ class KasPetugasController extends Controller
 
     public function update(Request $request)
     {
-        $get = KopKasPetugas::find($request->id);
-        $validate = KopKasPetugas::validateUpdate($request->all());
+        $get = KopRembug::find($request->id);
+        $validate = KopRembug::validateUpdate($request->all());
 
-        $get->id_user = $request->id_user;
-        $get->kode_gl = $request->kode_gl;
-        $get->nama_kas_petugas = $request->nama_kas_petugas;
-        $get->jenis_kas_petugas = $request->jenis_kas_petugas;
-        $get->status_kas_petugas = $request->status_kas_petugas;
+        $get->kode_cabang = $request->kode_cabang;
+        $get->kode_desa = $request->kode_desa;
+        $get->kode_petugas = $request->kode_petugas;
+        $get->nama_rembug = $request->nama_rembug;
+        $get->tgl_pembentukan = $request->tgl_pembentukan;
+        $get->hari_transaksi = $request->hari_transaksi;
+        $get->jam_transaksi = $request->jam_transaksi;
+        $get->status_aktif = $request->status_aktif;
 
         DB::beginTransaction();
 
@@ -223,7 +226,7 @@ class KasPetugasController extends Controller
         $id = $request->id;
 
         if ($id) {
-            $data = KopKasPetugas::find($id);
+            $data = KopRembug::find($id);
 
             try {
                 $data->delete();
@@ -245,7 +248,7 @@ class KasPetugasController extends Controller
         } else {
             $res = array(
                 'status' => FALSE,
-                'msg' => 'Maaf! Kas Petugas tidak ditemukan'
+                'msg' => 'Maaf! Rembug tidak ditemukan'
             );
         }
 

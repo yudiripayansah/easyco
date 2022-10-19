@@ -53,8 +53,6 @@ class KopKasPetugas extends Model
         $rule = [
             'id' => 'required|numeric',
             'id_user' => 'required',
-            'kode_kas_petugas' => 'required',
-            'kode_petugas' => 'required|numeric',
             'kode_gl' => 'required|numeric',
             'nama_kas_petugas' => 'required',
             'jenis_kas_petugas' => 'required|numeric'

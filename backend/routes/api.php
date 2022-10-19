@@ -8,6 +8,7 @@ use App\Http\Controllers\KasPetugasController;
 use App\Http\Controllers\KecamatanController;
 use App\Http\Controllers\KotKabController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\RembugController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -88,4 +89,12 @@ Route::prefix('kaspetugas')->middleware('checkToken')->group(function () {
   Route::get('/detail', [KasPetugasController::class, 'detail']);
   Route::post('/update', [KasPetugasController::class, 'update']);
   Route::get('/delete', [KasPetugasController::class, 'delete']);
+});
+
+Route::prefix('rembug')->middleware('checkToken')->group(function () {
+  Route::post('/create', [RembugController::class, 'create']);
+  Route::post('/read', [RembugController::class, 'read']);
+  Route::get('/detail', [RembugController::class, 'detail']);
+  Route::post('/update', [RembugController::class, 'update']);
+  Route::get('/delete', [RembugController::class, 'delete']);
 });

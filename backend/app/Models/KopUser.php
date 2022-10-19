@@ -53,7 +53,8 @@ class KopUser extends Model
             'kode_cabang' => 'required|numeric',
             'kode_pgw' => 'required|numeric',
             'role_user' => 'required|numeric',
-            'akses_user' => 'required|numeric'
+            'akses_user' => 'required|numeric',
+            'status_user' => 'numeric'
         ];
 
         $validator = Validator::make($validate, $rule);

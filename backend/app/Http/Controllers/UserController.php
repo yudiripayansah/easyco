@@ -192,14 +192,6 @@ class UserController extends Controller
         $get->akses_user = $request->akses_user;
         $get->status_user = $request->status_user;
 
-        if (empty($request->password)) {
-            $password = $get->password;
-        } else {
-            $password = Hash::make($request->password);
-        }
-
-        $get->password = $password;
-
         if (empty($request->photo)) {
             $photo = $get->photo;
         } else {
@@ -214,6 +206,14 @@ class UserController extends Controller
         }
 
         $get->photo = $photo;
+
+        if (empty($request->password)) {
+            $password = $get->password;
+        } else {
+            $password = Hash::make($request->password);
+        }
+
+        $get->password = $password;
 
         DB::beginTransaction();
 
