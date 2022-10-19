@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\DesaController;
 use App\Http\Controllers\GlController;
+use App\Http\Controllers\KasPetugasController;
 use App\Http\Controllers\KecamatanController;
 use App\Http\Controllers\KotKabController;
 use App\Http\Controllers\PegawaiController;
@@ -79,4 +80,12 @@ Route::prefix('gl')->middleware('checkToken')->group(function () {
   Route::get('/detail', [GlController::class, 'detail']);
   Route::post('/update', [GlController::class, 'update']);
   Route::get('/delete', [GlController::class, 'delete']);
+});
+
+Route::prefix('kaspetugas')->middleware('checkToken')->group(function () {
+  Route::post('/create', [KasPetugasController::class, 'create']);
+  Route::post('/read', [KasPetugasController::class, 'read']);
+  Route::get('/detail', [KasPetugasController::class, 'detail']);
+  Route::post('/update', [KasPetugasController::class, 'update']);
+  Route::get('/delete', [KasPetugasController::class, 'delete']);
 });
