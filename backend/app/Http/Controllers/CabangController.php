@@ -186,6 +186,8 @@ class CabangController extends Controller
         $validate = KopCabang::validateUpdate($request->all());
 
         $get->nama_cabang = $request->nama_cabang;
+        $get->induk_cabang = $request->induk_cabang;
+        $get->jenis_cabang = $request->jenis_cabang;
         $get->pimpinan_cabang = $request->pimpinan_cabang;
 
         DB::beginTransaction();

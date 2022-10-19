@@ -176,7 +176,6 @@ class GlController extends Controller
         $get = KopGl::find($request->id);
         $validate = KopGl::validateUpdate($request->all());
 
-        $get->kode_gl = $request->kode_gl;
         $get->group_gl = $request->group_gl;
         $get->tipe_gl = $request->tipe_gl;
         $get->default_saldo = $request->default_saldo;

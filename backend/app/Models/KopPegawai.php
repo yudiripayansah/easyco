@@ -58,7 +58,7 @@ class KopPegawai extends Model
             'no_ktp' => 'required|numeric',
             'no_hp' => 'required|numeric',
             'jabatan' => 'required',
-            'tgl_gabung' => 'date'
+            'tgl_gabung' => 'date_format:Y-m-d'
         ];
 
         $validator = Validator::make($validate, $rule);

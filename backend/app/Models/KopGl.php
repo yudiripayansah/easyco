@@ -51,7 +51,6 @@ class KopGl extends Model
     {
         $rule = [
             'id' => 'required|numeric',
-            'kode_gl' => 'required|numeric',
             'group_gl' => 'required|numeric',
             'tipe_gl' => 'required|numeric',
             'default_saldo' => 'required',
