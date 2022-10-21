@@ -15,7 +15,7 @@ class TrxAnggotaSeeder extends Seeder
     public function run()
     {
         $trxanggota = new KopTrxAnggota();
-        $trxanggota->no_anggota = '101010001000322';
+        $trxanggota->no_anggota = '1010100000001';
         $trxanggota->trx_date = '2022-07-25';
         $trxanggota->amount = 50000;
         $trxanggota->flag_debet_credit = 'C';

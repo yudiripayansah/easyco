@@ -19,7 +19,7 @@ class CreateKopAnggotaTable extends Migration
             $table->string('id_anggota', 32)->default(DB::raw('uuid()'))->unique();
             $table->string('kode_cabang', 6);
             $table->string('kode_rembug', 20);
-            $table->string('no_anggota', 20)->unique();
+            $table->string('no_anggota', 20)->nullable(TRUE)->unique();
             $table->string('nama_anggota', 50);
             $table->string('jenis_kelamin', 1)->comment('P = Pria, W = Wanita');
             $table->string('ibu_kandung', 50);
@@ -34,7 +34,7 @@ class CreateKopAnggotaTable extends Migration
             $table->string('no_npwp', 30)->nullable(TRUE);
             $table->string('no_telp', 20)->nullable(TRUE);
             $table->integer('pendidikan')->nullable(TRUE)->default(0)->comment('0 = Tidak Diketahui, 1 = SD / MI, 2 = SMP / MTs, 3 = SMK / SMA / MA, 4 = D1, 5 = D2, 6 = D3, 7 = S1, 8 = S2, 9 = S3');
-            $table->integer('status_perkawinan')->nullable(TRUE)->default(0)->comment('0 = Tidak Dikerahui, 1 = Sudah, 2 = Belum');
+            $table->integer('status_perkawinan')->nullable(TRUE)->default(0)->comment('0 = Tidak Diketahui, 1 = Sudah, 2 = Belum');
             $table->string('nama_pasangan', 50)->nullable(TRUE);
             $table->integer('pekerjaan')->nullable(TRUE)->default(0)->comment('0 = Tidak Diketahui, 1 = Ibu Rumah Tangga, 2 = Buruh, 3 = Petani, 4 = Pedagang, 5 = Wiraswasta, 6 = Karyawan Swasta, 7 = PNS');
             $table->string('ket_pekerjaan', 50)->nullable(TRUE);

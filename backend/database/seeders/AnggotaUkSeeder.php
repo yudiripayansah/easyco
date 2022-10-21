@@ -18,13 +18,13 @@ class AnggotaUkSeeder extends Seeder
 
         $data = [
             [
-                'no_anggota' => '101010001000122'
+                'no_anggota' => '1010100000001'
             ],
             [
-                'no_anggota' => '101010001000222'
+                'no_anggota' => '1010100000002'
             ],
             [
-                'no_anggota' => '101010001000322'
+                'no_anggota' => '1010100000003'
             ]
         ];
 

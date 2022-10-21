@@ -20,8 +20,8 @@ class TabunganSeeder extends Seeder
         $data = [
             [
                 'kode_produk' => '001',
-                'no_anggota' => '101010001000122',
-                'no_rekening' => '1010100010001220010001',
+                'no_anggota' => '1010100000001',
+                'no_rekening' => '10101000000010010001',
                 'jangka_waktu' => 0,
                 'periode_setoran' => 1,
                 'setoran' => 0,
@@ -32,8 +32,8 @@ class TabunganSeeder extends Seeder
             ],
             [
                 'kode_produk' => '002',
-                'no_anggota' => '101010001000122',
-                'no_rekening' => '1010100010002220020001',
+                'no_anggota' => '1010100000002',
+                'no_rekening' => '10101000000020020001',
                 'jangka_waktu' => 36,
                 'periode_setoran' => 2,
                 'setoran' => 500000,

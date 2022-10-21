@@ -21,7 +21,7 @@ class AnggotaSeeder extends Seeder
             [
                 'kode_cabang' => '10101',
                 'kode_rembug' => '101010001',
-                'no_anggota' => '101010001000122',
+                'no_anggota' => '1010100000001',
                 'nama_anggota' => 'Amin Hasan',
                 'jenis_kelamin' => 'P',
                 'ibu_kandung' => 'Siti Sholehah',
@@ -36,7 +36,7 @@ class AnggotaSeeder extends Seeder
             [
                 'kode_cabang' => '10101',
                 'kode_rembug' => '101010001',
-                'no_anggota' => '101010001000222',
+                'no_anggota' => '1010100000002',
                 'nama_anggota' => 'Yudi Ripayansah',
                 'jenis_kelamin' => 'P',
                 'ibu_kandung' => 'Fathonah',
@@ -51,7 +51,7 @@ class AnggotaSeeder extends Seeder
             [
                 'kode_cabang' => '10101',
                 'kode_rembug' => '101010001',
-                'no_anggota' => '101010001000322',
+                'no_anggota' => '1010100000003',
                 'nama_anggota' => 'Danu Atmadja',
                 'jenis_kelamin' => 'P',
                 'ibu_kandung' => 'Marlin',
