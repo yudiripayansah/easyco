@@ -18,7 +18,7 @@ class CreateKopCabangTable extends Migration
             $table->string('kode_cabang', 6)->unique();
             $table->string('nama_cabang', 30);
             $table->string('induk_cabang', 6)->nullable(TRUE);
-            $table->integer('jenis_cabang')->nullable(TRUE);
+            $table->integer('jenis_cabang')->nullable(TRUE)->comment('1 = Area, 2 = Cabang, 3 = Unit');
             $table->string('pimpinan_cabang', 50)->nullable(TRUE);
             $table->string('created_by', 30);
             $table->timestamps();

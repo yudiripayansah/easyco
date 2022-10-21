@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\DesaController;
@@ -97,4 +98,12 @@ Route::prefix('rembug')->middleware('checkToken')->group(function () {
   Route::get('/detail', [RembugController::class, 'detail']);
   Route::post('/update', [RembugController::class, 'update']);
   Route::get('/delete', [RembugController::class, 'delete']);
+});
+
+Route::prefix('anggota')->middleware('checkToken')->group(function () {
+  Route::post('/create', [AnggotaController::class, 'create']);
+  Route::post('/read', [AnggotaController::class, 'read']);
+  Route::get('/detail', [AnggotaController::class, 'detail']);
+  Route::post('/update', [AnggotaController::class, 'update']);
+  Route::get('/delete', [AnggotaController::class, 'delete']);
 });

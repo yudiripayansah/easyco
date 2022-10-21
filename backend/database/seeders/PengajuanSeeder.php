@@ -19,7 +19,7 @@ class PengajuanSeeder extends Seeder
 
         $data = [
             [
-                'no_anggota' => '101010001000122',
+                'no_anggota' => '1010100000001',
                 'kode_petugas' => '101010001',
                 'no_pengajuan' => '22.10101.0001',
                 'tanggal_pengajuan' => '2022-09-01',
@@ -37,7 +37,7 @@ class PengajuanSeeder extends Seeder
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
-                'no_anggota' => '101010001000222',
+                'no_anggota' => '1010100000002',
                 'kode_petugas' => '101010001',
                 'no_pengajuan' => '22.10101.0002',
                 'tanggal_pengajuan' => '2022-08-25',
@@ -55,7 +55,7 @@ class PengajuanSeeder extends Seeder
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
-                'no_anggota' => '101010001000322',
+                'no_anggota' => '1010100000003',
                 'kode_petugas' => '101010001',
                 'no_pengajuan' => '22.10101.0003',
                 'tanggal_pengajuan' => '2021-08-02',
