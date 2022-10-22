@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnggotaController;
+use App\Http\Controllers\AnggotaUkController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\DesaController;
@@ -106,4 +107,12 @@ Route::prefix('anggota')->middleware('checkToken')->group(function () {
   Route::get('/detail', [AnggotaController::class, 'detail']);
   Route::post('/update', [AnggotaController::class, 'update']);
   Route::get('/delete', [AnggotaController::class, 'delete']);
+});
+
+Route::prefix('anggotauk')->middleware('checkToken')->group(function () {
+  Route::post('/create', [AnggotaUkController::class, 'create']);
+  Route::post('/read', [AnggotaUkController::class, 'read']);
+  Route::get('/detail', [AnggotaUkController::class, 'detail']);
+  Route::post('/update', [AnggotaUkController::class, 'update']);
+  Route::get('/delete', [AnggotaUkController::class, 'delete']);
 });
