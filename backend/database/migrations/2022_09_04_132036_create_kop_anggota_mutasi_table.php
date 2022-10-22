@@ -36,10 +36,10 @@ class CreateKopAnggotaMutasiTable extends Migration
             $table->decimal('bonus_bagihasil', 14, 2)->nullable(TRUE)->default(0);
             $table->decimal('setoran_tambahan', 14, 2)->nullable(TRUE)->default(0);
             $table->decimal('penarikan_sukarela', 14, 2)->nullable(TRUE)->default(0);
-            $table->integer('flag_saldo_margin')->nullable(TRUE)->comment('0 = Tidak Ada Margin, 1 = Ada Margin');
-            $table->integer('flag_saldo_catab')->nullable(TRUE)->comment('0 = Tidak Ada Catab, 1 = Ada Catab');
+            $table->integer('flag_saldo_margin')->nullable(TRUE)->default(0)->comment('0 = Tidak Ada Margin, 1 = Ada Margin');
+            $table->integer('flag_saldo_catab')->nullable(TRUE)->default(0)->comment('0 = Tidak Ada Catab, 1 = Ada Catab');
             $table->integer('status_mutasi')->nullable(TRUE)->default(0)->comment('0 = Registrasi, 1 = Verifikasi');
-            $table->string('kode_petugas', 20);
+            $table->string('kode_petugas', 20)->nullable(TRUE);
             $table->string('created_by', 30);
             $table->timestamps();
             $table->string('verified_by', 30)->nullable(TRUE);
