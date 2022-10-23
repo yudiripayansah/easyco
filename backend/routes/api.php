@@ -8,6 +8,7 @@ use App\Http\Controllers\CabangController;
 use App\Http\Controllers\DesaController;
 use App\Http\Controllers\GlController;
 use App\Http\Controllers\KasPetugasController;
+use App\Http\Controllers\KatgoriParController;
 use App\Http\Controllers\KecamatanController;
 use App\Http\Controllers\KotKabController;
 use App\Http\Controllers\PegawaiController;
@@ -124,4 +125,12 @@ Route::prefix('anggotamutasi')->middleware('checkToken')->group(function () {
   Route::get('/detail', [AnggotaMutasiController::class, 'detail']);
   Route::post('/update', [AnggotaMutasiController::class, 'update']);
   Route::get('/delete', [AnggotaMutasiController::class, 'delete']);
+});
+
+Route::prefix('katgoripar')->middleware('checkToken')->group(function () {
+  Route::post('/create', [KatgoriParController::class, 'create']);
+  Route::post('/read', [KatgoriParController::class, 'read']);
+  Route::get('/detail', [KatgoriParController::class, 'detail']);
+  Route::post('/update', [KatgoriParController::class, 'update']);
+  Route::get('/delete', [KatgoriParController::class, 'delete']);
 });
