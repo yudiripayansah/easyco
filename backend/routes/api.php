@@ -12,6 +12,7 @@ use App\Http\Controllers\KatgoriParController;
 use App\Http\Controllers\KecamatanController;
 use App\Http\Controllers\KotKabController;
 use App\Http\Controllers\LembagaController;
+use App\Http\Controllers\ListKodeController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\RembugController;
 use App\Http\Controllers\UserController;
@@ -142,4 +143,12 @@ Route::prefix('lembaga')->middleware('checkToken')->group(function () {
   Route::get('/detail', [LembagaController::class, 'detail']);
   Route::post('/update', [LembagaController::class, 'update']);
   Route::get('/delete', [LembagaController::class, 'delete']);
+});
+
+Route::prefix('listkode')->middleware('checkToken')->group(function () {
+  Route::post('/create', [ListKodeController::class, 'create']);
+  Route::post('/read', [ListKodeController::class, 'read']);
+  Route::get('/detail', [ListKodeController::class, 'detail']);
+  Route::post('/update', [ListKodeController::class, 'update']);
+  Route::get('/delete', [ListKodeController::class, 'delete']);
 });
