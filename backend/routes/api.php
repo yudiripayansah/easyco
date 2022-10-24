@@ -11,6 +11,7 @@ use App\Http\Controllers\KasPetugasController;
 use App\Http\Controllers\KatgoriParController;
 use App\Http\Controllers\KecamatanController;
 use App\Http\Controllers\KotKabController;
+use App\Http\Controllers\LembagaController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\RembugController;
 use App\Http\Controllers\UserController;
@@ -133,4 +134,12 @@ Route::prefix('katgoripar')->middleware('checkToken')->group(function () {
   Route::get('/detail', [KatgoriParController::class, 'detail']);
   Route::post('/update', [KatgoriParController::class, 'update']);
   Route::get('/delete', [KatgoriParController::class, 'delete']);
+});
+
+Route::prefix('lembaga')->middleware('checkToken')->group(function () {
+  Route::post('/create', [LembagaController::class, 'create']);
+  Route::post('/read', [LembagaController::class, 'read']);
+  Route::get('/detail', [LembagaController::class, 'detail']);
+  Route::post('/update', [LembagaController::class, 'update']);
+  Route::get('/delete', [LembagaController::class, 'delete']);
 });
