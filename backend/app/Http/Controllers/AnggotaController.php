@@ -27,7 +27,7 @@ class AnggotaController extends Controller
 
         DB::beginTransaction();
 
-        if ($validate['status'] == TRUE) {
+        if ($validate['status'] === TRUE) {
             try {
                 $create = KopAnggota::create($data);
                 $id = KopAnggota::find($create->id);
@@ -133,7 +133,7 @@ class AnggotaController extends Controller
         }
 
         $res = array(
-            'status' => true,
+            'status' => TRUE,
             'data' => $read,
             'page' => $page,
             'perPage' => $perPage,
@@ -209,7 +209,7 @@ class AnggotaController extends Controller
 
         DB::beginTransaction();
 
-        if ($validate['status'] == TRUE) {
+        if ($validate['status'] === TRUE) {
             try {
                 $get->save();
 
@@ -254,7 +254,7 @@ class AnggotaController extends Controller
                 $data->delete();
 
                 $res = array(
-                    'status' => true,
+                    'status' => TRUE,
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );

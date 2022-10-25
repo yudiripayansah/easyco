@@ -30,7 +30,7 @@ class AuthController extends Controller
 
         $validate = KopAuth::validateLogin($data);
 
-        if ($validate['status'] == TRUE) {
+        if ($validate['status'] === TRUE) {
             try {
                 if ($token) {
                     $param = array(

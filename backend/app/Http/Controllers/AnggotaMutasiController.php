@@ -19,7 +19,7 @@ class AnggotaMutasiController extends Controller
 
         DB::beginTransaction();
 
-        if ($validate['status'] == TRUE) {
+        if ($validate['status'] === TRUE) {
             try {
                 $create = KopAnggotaMutasi::create($data);
                 $id = KopAnggotaMutasi::find($create->id);
@@ -125,7 +125,7 @@ class AnggotaMutasiController extends Controller
         }
 
         $res = array(
-            'status' => true,
+            'status' => TRUE,
             'data' => $read,
             'page' => $page,
             'perPage' => $perPage,
@@ -203,7 +203,7 @@ class AnggotaMutasiController extends Controller
 
         DB::beginTransaction();
 
-        if ($validate['status'] == TRUE) {
+        if ($validate['status'] === TRUE) {
             try {
                 $get->save();
 
@@ -248,7 +248,7 @@ class AnggotaMutasiController extends Controller
                 $data->delete();
 
                 $res = array(
-                    'status' => true,
+                    'status' => TRUE,
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
