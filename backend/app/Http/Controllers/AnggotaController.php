@@ -13,6 +13,16 @@ class AnggotaController extends Controller
     {
         $data = $request->all();
 
+        $data['nama_anggota'] = strtoupper($request->nama_anggota);
+        $data['ibu_kandung'] = strtoupper($request->ibu_kandung);
+        $data['tempat_lahir'] = strtoupper($request->tempat_lahir);
+        $data['alamat'] = strtoupper($request->alamat);
+        $data['desa'] = strtoupper($request->desa);
+        $data['kecamatan'] = strtoupper($request->kecamatan);
+        $data['kabupaten'] = strtoupper($request->kabupaten);
+        $data['nama_pasangan'] = strtoupper($request->nama_pasangan);
+        $data['ket_pekerjaan'] = strtoupper($request->ket_pekerjaan);
+
         $validate = KopAnggota::validateAdd($data);
 
         DB::beginTransaction();
@@ -82,7 +92,7 @@ class AnggotaController extends Controller
         }
 
         if ($request->search) {
-            $search = $request->search;
+            $search = strtoupper($request->search);
         }
 
         if ($page > 1) {
@@ -176,22 +186,22 @@ class AnggotaController extends Controller
         $get = KopAnggota::find($request->id);
         $validate = KopAnggota::validateUpdate($request->all());
 
-        $get->nama_anggota = $request->nama_anggota;
+        $get->nama_anggota = strtoupper($request->nama_anggota);
         $get->jenis_kelamin = $request->jenis_kelamin;
-        $get->ibu_kandung = $request->ibu_kandung;
-        $get->tempat_lahir = $request->tempat_lahir;
+        $get->ibu_kandung = strtoupper($request->ibu_kandung);
+        $get->tempat_lahir = strtoupper($request->tempat_lahir);
         $get->tgl_lahir = $request->tgl_lahir;
-        $get->alamat = $request->alamat;
-        $get->desa = $request->desa;
-        $get->kecamatan = $request->kecamatan;
-        $get->kabupaten = $request->kabupaten;
+        $get->alamat = strtoupper($request->alamat);
+        $get->desa = strtoupper($request->desa);
+        $get->kecamatan = strtoupper($request->kecamatan);
+        $get->kabupaten = strtoupper($request->kabupaten);
         $get->kodepos = $request->kodepos;
         $get->no_ktp = $request->no_ktp;
         $get->no_npwp = $request->no_npwp;
         $get->no_telp = $request->no_telp;
         $get->pendidikan = $request->pendidikan;
         $get->status_perkawinan = $request->status_perkawinan;
-        $get->nama_pasangan = $request->nama_pasangan;
+        $get->nama_pasangan = strtoupper($request->nama_pasangan);
         $get->pekerjaan = $request->pekerjaan;
         $get->ket_pekerjaan = $request->ket_pekerjaan;
         $get->pendapatan_perbulan = $request->pendapatan_perbulan;

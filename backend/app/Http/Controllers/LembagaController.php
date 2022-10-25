@@ -13,6 +13,10 @@ class LembagaController extends Controller
     {
         $data = $request->all();
 
+        $data['nama_kop'] = strtoupper($request->nama_kop);
+        $data['alamat_kop'] = strtoupper($request->alamat_kop);
+        $data['tagline_kop'] = strtoupper($request->tagline_kop);
+
         $validate = KopLembaga::validateAdd($data);
 
         DB::beginTransaction();
@@ -82,7 +86,7 @@ class LembagaController extends Controller
         }
 
         if ($request->search) {
-            $search = $request->search;
+            $search = strtoupper($request->search);
         }
 
         if ($page > 1) {
@@ -176,15 +180,15 @@ class LembagaController extends Controller
         $get = KopLembaga::find($request->id);
         $validate = KopLembaga::validateUpdate($request->all());
 
-        $get->nama_kop = $request->nama_kop;
-        $get->alamat_kop = $request->alamat_kop;
+        $get->nama_kop = strtoupper($request->nama_kop);
+        $get->alamat_kop = strtoupper($request->alamat_kop);
         $get->nik_kop = $request->nik_kop;
         $get->simpok = $request->simpok;
         $get->simwa = $request->simwa;
         $get->gl_simpok = $request->gl_simpok;
         $get->gl_simwa = $request->gl_simwa;
         $get->gl_simsuk = $request->gl_simsuk;
-        $get->tagline_kop = $request->tagline_kop;
+        $get->tagline_kop = strtoupper($request->tagline_kop);
 
         DB::beginTransaction();
 

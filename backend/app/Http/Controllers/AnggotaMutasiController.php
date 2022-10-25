@@ -13,6 +13,8 @@ class AnggotaMutasiController extends Controller
     {
         $data = $request->all();
 
+        $data['keterangan_mutasi'] = strtoupper($request->keterangan_mutasi);
+
         $validate = KopAnggotaMutasi::validateAdd($data);
 
         DB::beginTransaction();
@@ -82,7 +84,7 @@ class AnggotaMutasiController extends Controller
         }
 
         if ($request->search) {
-            $search = $request->search;
+            $search = strtoupper($request->search);
         }
 
         if ($page > 1) {
@@ -178,7 +180,7 @@ class AnggotaMutasiController extends Controller
 
         $get->jenis_mutasi = $request->jenis_mutasi;
         $get->alasan_mutasi = $request->alasan_mutasi;
-        $get->keterangan_mutasi = $request->keterangan_mutasi;
+        $get->keterangan_mutasi = strtoupper($request->keterangan_mutasi);
         $get->kode_rembug = $request->kode_rembug;
         $get->kode_rembug_baru = $request->kode_rembug_baru;
         $get->tanggal_mutasi = $request->tanggal_mutasi;

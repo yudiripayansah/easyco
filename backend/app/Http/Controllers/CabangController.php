@@ -15,6 +15,9 @@ class CabangController extends Controller
     {
         $data = $request->all();
 
+        $data['nama_cabang'] = strtoupper($request->nama_cabang);
+        $data['pimpinan_cabang'] = strtoupper($request->pimpinan_cabang);
+
         $validate = KopCabang::validateAdd($data);
 
         DB::beginTransaction();
@@ -86,7 +89,7 @@ class CabangController extends Controller
         }
 
         if ($request->search) {
-            $search = $request->search;
+            $search = strtoupper($request->search);
         }
 
         if ($page > 1) {
@@ -100,7 +103,7 @@ class CabangController extends Controller
         }
 
         if ($search != NULL) {
-            $read->whereRaw("(kode_cabang LIKE '%" . $search . "%' OR nama_cabang LIKE '%" . $search . "%')");
+            $read->whereRaw("(kode_cabang LIKE '%" . $search . "%' OR nama_cabang LIKE '%" . $search . "%' OR pimpinan_cabang LIKE '%" . $search . "%')");
         }
 
         $read = $read->get();
@@ -114,7 +117,7 @@ class CabangController extends Controller
             $total = KopCabang::orderBy($sortBy, $sortDir);
 
             if ($search) {
-                $total->whereRaw("(kode_cabang LIKE '%" . $search . "%' OR nama_cabang LIKE '%" . $search . "%')");
+                $total->whereRaw("(kode_cabang LIKE '%" . $search . "%' OR nama_cabang LIKE '%" . $search . "%' OR pimpinan_cabang LIKE '%" . $search . "%')");
             }
 
             $total = $total->count();
@@ -185,10 +188,10 @@ class CabangController extends Controller
         $get = KopCabang::find($request->id);
         $validate = KopCabang::validateUpdate($request->all());
 
-        $get->nama_cabang = $request->nama_cabang;
+        $get->nama_cabang = strtoupper($request->nama_cabang);
         $get->induk_cabang = $request->induk_cabang;
         $get->jenis_cabang = $request->jenis_cabang;
-        $get->pimpinan_cabang = $request->pimpinan_cabang;
+        $get->pimpinan_cabang = strtoupper($request->pimpinan_cabang);
 
         DB::beginTransaction();
 
