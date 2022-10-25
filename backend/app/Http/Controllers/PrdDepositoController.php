@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KopRembug;
+use App\Models\KopPrdDeposito;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class RembugController extends Controller
+class PrdDepositoController extends Controller
 {
     function create(Request $request)
     {
         $data = $request->all();
 
-        $data['nama_rembug'] = strtoupper($request->nama_rembug);
+        $validate = KopPrdDeposito::validateAdd($data);
 
-        $validate = KopRembug::validateAdd($data);
+        $data['nama_produk'] = strtoupper($request->nama_produk);
+        $data['nama_singkat'] = strtoupper($request->nama_singkat);
 
         DB::beginTransaction();
 
         if ($validate['status'] == TRUE) {
             try {
-                $create = KopRembug::create($data);
-                $id = KopRembug::find($create->id);
+                $create = KopPrdDeposito::create($data);
+                $id = KopPrdDeposito::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
@@ -60,7 +61,7 @@ class RembugController extends Controller
         $page = 1;
         $perPage = '~';
         $sortDir = 'ASC';
-        $sortBy = 'kode_rembug';
+        $sortBy = 'kode_produk';
         $search = NULL;
         $total = 0;
         $totalPage = 1;
@@ -91,14 +92,14 @@ class RembugController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopRembug::select('*')->orderBy($sortBy, $sortDir);
+        $read = KopPrdDeposito::select('*')->orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
         }
 
         if ($search != NULL) {
-            $read->whereRaw("(kode_rembug LIKE '%" . $search . "%' OR nama_rembug LIKE '%" . $search . "%')");
+            $read->whereRaw("(kode_produk LIKE '%" . $search . "%' OR nama_produk LIKE '%" . $search . "%' OR nama_singkat LIKE '%" . $search . "%')");
         }
 
         $read = $read->get();
@@ -109,15 +110,15 @@ class RembugController extends Controller
         }
 
         if ($search || $id_cabang || $type) {
-            $total = KopRembug::orderBy($sortBy, $sortDir);
+            $total = KopPrdDeposito::orderBy($sortBy, $sortDir);
 
             if ($search) {
-                $total->whereRaw("(kode_rembug LIKE '%" . $search . "%' OR nama_rembug LIKE '%" . $search . "%')");
+                $total->whereRaw("(kode_produk LIKE '%" . $search . "%' OR nama_produk LIKE '%" . $search . "%' OR nama_singkat LIKE '%" . $search . "%')");
             }
 
             $total = $total->count();
         } else {
-            $total = KopRembug::all()->count();
+            $total = KopPrdDeposito::all()->count();
         }
 
         if ($perPage != '~') {
@@ -147,7 +148,7 @@ class RembugController extends Controller
         $id = $request->id;
 
         if ($id) {
-            $get = KopRembug::find($id);
+            $get = KopPrdDeposito::find($id);
 
             if ($get) {
                 $res = array(
@@ -164,7 +165,7 @@ class RembugController extends Controller
         } else {
             $res = array(
                 'status' => FALSE,
-                'msg' => 'Maaf! Rembug tidak bisa ditampilkan'
+                'msg' => 'Maaf! Produk Deposito tidak bisa ditampilkan'
             );
         }
 
@@ -175,17 +176,17 @@ class RembugController extends Controller
 
     public function update(Request $request)
     {
-        $get = KopRembug::find($request->id);
-        $validate = KopRembug::validateUpdate($request->all());
+        $get = KopPrdDeposito::find($request->id);
+        $validate = KopPrdDeposito::validateUpdate($request->all());
 
-        $get->kode_cabang = $request->kode_cabang;
-        $get->kode_desa = $request->kode_desa;
-        $get->kode_petugas = $request->kode_petugas;
-        $get->nama_rembug = strtoupper($request->nama_rembug);
-        $get->tgl_pembentukan = $request->tgl_pembentukan;
-        $get->hari_transaksi = $request->hari_transaksi;
-        $get->jam_transaksi = $request->jam_transaksi;
-        $get->status_aktif = $request->status_aktif;
+        $get->kode_gl = $request->kode_gl;
+        $get->nama_produk = strtoupper($request->nama_produk);
+        $get->nama_singkat = strtoupper($request->nama_singkat);
+        $get->periode_setoran = $request->periode_setoran;
+        $get->jangka_waktu = $request->jangka_waktu;
+        $get->minimal_setoran = $request->minimal_setoran;
+        $get->nisbah = $request->nisbah;
+        $get->persen_pajak = $request->persen_pajak;
 
         DB::beginTransaction();
 
@@ -228,7 +229,7 @@ class RembugController extends Controller
         $id = $request->id;
 
         if ($id) {
-            $data = KopRembug::find($id);
+            $data = KopPrdDeposito::find($id);
 
             try {
                 $data->delete();
@@ -250,7 +251,7 @@ class RembugController extends Controller
         } else {
             $res = array(
                 'status' => FALSE,
-                'msg' => 'Maaf! Rembug tidak ditemukan'
+                'msg' => 'Maaf! Produk Deposito tidak ditemukan'
             );
         }
 

@@ -13,6 +13,8 @@ class DesaController extends Controller
     {
         $data = $request->all();
 
+        $data['nama_desa'] = strtoupper($request->nama_desa);
+
         $validate = KopDesa::validateAdd($data);
 
         DB::beginTransaction();
@@ -82,7 +84,7 @@ class DesaController extends Controller
         }
 
         if ($request->search) {
-            $search = $request->search;
+            $search = strtoupper($request->search);
         }
 
         if ($page > 1) {
@@ -177,7 +179,7 @@ class DesaController extends Controller
         $validate = KopDesa::validateUpdate($request->all());
 
         $get->kode_kecamatan = $request->kode_kecamatan;
-        $get->nama_desa = $request->nama_desa;
+        $get->nama_desa = strtoupper($request->nama_desa);
 
         DB::beginTransaction();
 

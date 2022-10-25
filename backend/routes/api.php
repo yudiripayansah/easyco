@@ -14,6 +14,7 @@ use App\Http\Controllers\KotKabController;
 use App\Http\Controllers\LembagaController;
 use App\Http\Controllers\ListKodeController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\PrdDepositoController;
 use App\Http\Controllers\RembugController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -151,4 +152,12 @@ Route::prefix('listkode')->middleware('checkToken')->group(function () {
   Route::get('/detail', [ListKodeController::class, 'detail']);
   Route::post('/update', [ListKodeController::class, 'update']);
   Route::get('/delete', [ListKodeController::class, 'delete']);
+});
+
+Route::prefix('prddeposito')->middleware('checkToken')->group(function () {
+  Route::post('/create', [PrdDepositoController::class, 'create']);
+  Route::post('/read', [PrdDepositoController::class, 'read']);
+  Route::get('/detail', [PrdDepositoController::class, 'detail']);
+  Route::post('/update', [PrdDepositoController::class, 'update']);
+  Route::get('/delete', [PrdDepositoController::class, 'delete']);
 });

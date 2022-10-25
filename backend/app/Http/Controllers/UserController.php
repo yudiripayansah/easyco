@@ -15,6 +15,8 @@ class UserController extends Controller
     {
         $data = $request->all();
 
+        $data['nama_user'] = strtolower($request->nama_user);
+
         $validate = KopUser::validateAdd($data);
 
         $filePhoto = $request->photo;
@@ -92,7 +94,7 @@ class UserController extends Controller
         }
 
         if ($request->search) {
-            $search = $request->search;
+            $search = strtolower($request->search);
         }
 
         if ($page > 1) {

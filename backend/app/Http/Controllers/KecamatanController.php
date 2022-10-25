@@ -13,6 +13,8 @@ class KecamatanController extends Controller
     {
         $data = $request->all();
 
+        $data['nama_kecamatan'] = strtoupper($request->nama_kecamatan);
+
         $validate = KopKecamatan::validateAdd($data);
 
         DB::beginTransaction();
@@ -82,7 +84,7 @@ class KecamatanController extends Controller
         }
 
         if ($request->search) {
-            $search = $request->search;
+            $search = strtoupper($request->search);
         }
 
         if ($page > 1) {
@@ -177,7 +179,7 @@ class KecamatanController extends Controller
         $validate = KopKecamatan::validateUpdate($request->all());
 
         $get->kode_kota = $request->kode_kota;
-        $get->nama_kecamatan = $request->nama_kecamatan;
+        $get->nama_kecamatan = strtoupper($request->nama_kecamatan);
 
         DB::beginTransaction();
 

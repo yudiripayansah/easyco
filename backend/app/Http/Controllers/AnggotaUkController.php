@@ -13,6 +13,12 @@ class AnggotaUkController extends Controller
     {
         $data = $request->all();
 
+        $data['p_nama'] = strtoupper($request->p_nama);
+        $data['p_tmplahir'] = strtoupper($request->p_tmplahir);
+        $data['p_ketpekerjaan'] = strtoupper($request->p_ketpekerjaan);
+        $data['ush_komoditi'] = strtoupper($request->ush_komoditi);
+        $data['ush_lokasi'] = strtoupper($request->ush_lokasi);
+
         $validate = KopAnggotaUk::validateAdd($data);
 
         DB::beginTransaction();
@@ -82,7 +88,7 @@ class AnggotaUkController extends Controller
         }
 
         if ($request->search) {
-            $search = $request->search;
+            $search = strtoupper($request->search);
         }
 
         if ($page > 1) {
@@ -176,15 +182,15 @@ class AnggotaUkController extends Controller
         $get = KopAnggotaUk::find($request->id);
         $validate = KopAnggotaUk::validateUpdate($request->all());
 
-        $get->p_nama = $request->p_nama;
-        $get->p_tmplahir = $request->p_tmplahir;
+        $get->p_nama = strtoupper($request->p_nama);
+        $get->p_tmplahir = strtoupper($request->p_tmplahir);
         $get->p_tglahir = $request->p_tglahir;
         $get->usia = $request->usia;
         $get->p_noktp = $request->p_noktp;
         $get->p_nohp = $request->p_nohp;
         $get->p_pendidikan = $request->p_pendidikan;
         $get->p_pekerjaan = $request->p_pekerjaan;
-        $get->p_ketpekerjaan = $request->p_ketpekerjaan;
+        $get->p_ketpekerjaan = strtoupper($request->p_ketpekerjaan);
         $get->p_pendapatan = $request->p_pendapatan;
         $get->jml_anak = $request->jml_anak;
         $get->jml_tanggungan = $request->jml_tanggungan;
@@ -207,8 +213,8 @@ class AnggotaUkController extends Controller
         $get->kend_sepeda = $request->kend_sepeda;
         $get->kend_motor = $request->kend_motor;
         $get->ush_rumahtangga = $request->ush_rumahtangga;
-        $get->ush_komoditi = $request->ush_komoditi;
-        $get->ush_lokasi = $request->ush_lokasi;
+        $get->ush_komoditi = strtoupper($request->ush_komoditi);
+        $get->ush_lokasi = strtoupper($request->ush_lokasi);
         $get->ush_omset = $request->ush_omset;
         $get->by_beras = $request->by_beras;
         $get->by_dapur = $request->by_dapur;

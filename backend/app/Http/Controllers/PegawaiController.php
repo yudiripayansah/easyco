@@ -13,6 +13,10 @@ class PegawaiController extends Controller
     {
         $data = $request->all();
 
+        $data['nama_pgw'] = strtoupper($request->nama_pgw);
+        $data['alamat_pgw'] = strtoupper($request->alamat_pgw);
+        $data['jabatan'] = strtoupper($request->jabatan);
+
         $validate = KopPegawai::validateAdd($data);
 
         DB::beginTransaction();
@@ -82,7 +86,7 @@ class PegawaiController extends Controller
         }
 
         if ($request->search) {
-            $search = $request->search;
+            $search = strtoupper($request->search);
         }
 
         if ($page > 1) {
@@ -96,7 +100,7 @@ class PegawaiController extends Controller
         }
 
         if ($search != NULL) {
-            $read->whereRaw("(kode_pgw LIKE '%" . $search . "%' OR nama_pgw LIKE '%" . $search . "%')");
+            $read->whereRaw("(kode_pgw LIKE '%" . $search . "%' OR nama_pgw LIKE '%" . $search . "%' OR jabatan LIKE '%" . $search . "%')");
         }
 
         $read = $read->get();
@@ -110,7 +114,7 @@ class PegawaiController extends Controller
             $total = KopPegawai::orderBy($sortBy, $sortDir);
 
             if ($search) {
-                $total->whereRaw("(kode_pgw LIKE '%" . $search . "%' OR nama_pgw LIKE '%" . $search . "%')");
+                $total->whereRaw("(kode_pgw LIKE '%" . $search . "%' OR nama_pgw LIKE '%" . $search . "%' OR jabatan LIKE '%" . $search . "%')");
             }
 
             $total = $total->count();
@@ -177,12 +181,12 @@ class PegawaiController extends Controller
         $validate = KopPegawai::validateUpdate($request->all());
 
         $get->kode_cabang = $request->kode_cabang;
-        $get->nama_pgw = $request->nama_pgw;
+        $get->nama_pgw = strtoupper($request->nama_pgw);
         $get->jenis_kelamin = $request->jenis_kelamin;
-        $get->alamat_pgw = $request->alamat_pgw;
+        $get->alamat_pgw = strtoupper($request->alamat_pgw);
         $get->no_ktp = $request->no_ktp;
         $get->no_hp = $request->no_hp;
-        $get->jabatan = $request->jabatan;
+        $get->jabatan = strtoupper($request->jabatan);
         $get->tgl_gabung = $request->tgl_gabung;
 
         DB::beginTransaction();

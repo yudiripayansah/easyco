@@ -13,6 +13,8 @@ class KotKabController extends Controller
     {
         $data = $request->all();
 
+        $data['nama_kota'] = strtoupper($request->nama_kota);
+
         $validate = KopKotaKabupaten::validateAdd($data);
 
         DB::beginTransaction();
@@ -82,7 +84,7 @@ class KotKabController extends Controller
         }
 
         if ($request->search) {
-            $search = $request->search;
+            $search = strtoupper($request->search);
         }
 
         if ($page > 1) {
@@ -176,7 +178,7 @@ class KotKabController extends Controller
         $get = KopKotaKabupaten::find($request->id);
         $validate = KopKotaKabupaten::validateUpdate($request->all());
 
-        $get->nama_kota = $request->nama_kota;
+        $get->nama_kota = strtoupper($request->nama_kota);
 
         DB::beginTransaction();
 

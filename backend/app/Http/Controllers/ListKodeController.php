@@ -13,6 +13,8 @@ class ListKodeController extends Controller
     {
         $data = $request->all();
 
+        $data['nama_kode'] = strtolower($request->nama_kode);
+
         $validate = KopListKode::validateAdd($data);
 
         DB::beginTransaction();
@@ -82,7 +84,7 @@ class ListKodeController extends Controller
         }
 
         if ($request->search) {
-            $search = $request->search;
+            $search = strtolower($request->search);
         }
 
         if ($page > 1) {
@@ -96,7 +98,7 @@ class ListKodeController extends Controller
         }
 
         if ($search != NULL) {
-            $read->whereRaw("(kode_value LIKE '%" . $search . "%' OR nama_kode LIKE '%" . $search . "%')");
+            $read->whereRaw("(CAST(kode_value AS VARCHAR) LIKE '%" . $search . "%' OR nama_kode LIKE '%" . $search . "%')");
         }
 
         $read = $read->get();
@@ -110,7 +112,7 @@ class ListKodeController extends Controller
             $total = KopListKode::orderBy($sortBy, $sortDir);
 
             if ($search) {
-                $total->whereRaw("(kode_value LIKE '%" . $search . "%' OR nama_kode LIKE '%" . $search . "%')");
+                $total->whereRaw("(CAST(kode_value AS VARCHAR) LIKE '%" . $search . "%' OR nama_kode LIKE '%" . $search . "%')");
             }
 
             $total = $total->count();
@@ -177,7 +179,7 @@ class ListKodeController extends Controller
         $validate = KopListKode::validateUpdate($request->all());
 
         $get->kode_value = $request->kode_value;
-        $get->nama_kode = $request->nama_kode;
+        $get->nama_kode = strtolower($request->nama_kode);
         $get->kode_display = $request->kode_display;
 
         DB::beginTransaction();
