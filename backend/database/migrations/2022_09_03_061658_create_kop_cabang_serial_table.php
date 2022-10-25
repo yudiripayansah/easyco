@@ -18,6 +18,7 @@ class CreateKopCabangSerialTable extends Migration
             $table->id();
             $table->string('kode_cabang', 6)->nullable(FALSE);
             $table->integer('no_serial')->nullable(TRUE)->default(0);
+            $table->integer('reg_pyd')->nullable(TRUE)->default(0);
             $table->timestamps();
             $table->softDeletes();
 

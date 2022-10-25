@@ -14,7 +14,10 @@ class CreateTriggerAnggota extends Migration
      */
     public function up()
     {
-        DB::unprepared('CREATE TRIGGER ins_kop_anggota AFTER INSERT ON kop_anggota FOR EACH ROW EXECUTE PROCEDURE insert_anggota();');
+        DB::unprepared('
+            CREATE TRIGGER ins_kop_anggota AFTER INSERT ON kop_anggota FOR EACH ROW EXECUTE PROCEDURE insert_anggota();
+            CREATE TRIGGER ins_kop_pengajuan AFTER INSERT ON kop_pengajuan FOR EACH ROW EXECUTE PROCEDURE insert_reg_pembiayaan();
+        ');
     }
 
     /**
@@ -24,6 +27,9 @@ class CreateTriggerAnggota extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('DROP TRIGGER ins_kop_anggota ON kop_anggota;');
+        Schema::dropIfExists('
+            DROP TRIGGER ins_kop_anggota ON kop_anggota;
+            DROP TRIGGER ins_kop_pengajuan ON kop_pengajuan;
+        ');
     }
 }

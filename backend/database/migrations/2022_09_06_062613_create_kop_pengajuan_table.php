@@ -19,7 +19,7 @@ class CreateKopPengajuanTable extends Migration
             $table->string('id_pengajuan', 32)->default(DB::raw('uuid()'))->unique();
             $table->string('no_anggota', 20);
             $table->string('kode_petugas', 20);
-            $table->string('no_pengajuan', 20)->unique()->comment('yy.branc_code.xxxx');
+            $table->string('no_pengajuan', 20)->nullable(TRUE)->unique()->comment('yy.branc_code.xxxx');
             $table->date('tanggal_pengajuan');
             $table->decimal('jumlah_pengajuan', 14, 2)->nullable(TRUE)->default(0);
             $table->integer('pengajuan_ke');
@@ -27,7 +27,7 @@ class CreateKopPengajuanTable extends Migration
             $table->string('keterangan_peruntukan', 100);
             $table->date('rencana_droping');
             $table->integer('rencana_periode_jwaktu')->nullable(TRUE)->default(1)->comment('0 = Harian, 1 = Mingguan, 2 = Bulanan, 3 = Tempo');
-            $table->integer('status_pengajuan')->comment('0 = Registrasi, 1 = Aktivasi, 2 = Tolak, 3 = Batal');
+            $table->integer('status_pengajuan')->nullable(TRUE)->default(0)->comment('0 = Registrasi, 1 = Aktivasi, 2 = Tolak, 3 = Batal');
             $table->integer('jenis_pembiayaan')->nullable(TRUE)->default(0)->comment('0 = Kelompok, 1 = Individu');
             $table->integer('sumber_pengembalian')->nullable(TRUE)->default(0)->comment('0 = Sumber Usaha, 1 = Non Usaha');
             $table->text('doc_ktp')->nullable(TRUE);
