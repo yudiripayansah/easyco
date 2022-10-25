@@ -19,7 +19,7 @@ class CreateKopPrdTabunganTable extends Migration
             $table->string('kode_gl', 20);
             $table->string('nama_produk', 50);
             $table->string('nama_singkat', 20);
-            $table->integer('jenis_akad')->nullable(TRUE)->default(0);
+            $table->integer('jenis_akad')->nullable(TRUE)->default(0)->comment('0 = Wadiah, 1 = Mudhorobah');
             $table->decimal('saldo_minimal', 14, 2)->nullable(TRUE)->default(0);
             $table->decimal('biaya_adm', 14, 2)->nullable(TRUE)->default(0);
             $table->integer('jenis_tabungan')->nullable(TRUE)->default(0)->comment('0 = Reguler, 1 = Berencana');
