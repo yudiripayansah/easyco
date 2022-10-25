@@ -16,7 +16,7 @@ class CreateKopKatgoriParTable extends Migration
     {
         Schema::create('kop_katgori_par', function (Blueprint $table) {
             $table->id();
-            $table->string('id_katgori_par', 32)->default(DB::raw('uuid()'))->unique();
+            $table->string('id_katgori_par', 32)->unique();
             $table->integer('jumlah_hari_1');
             $table->integer('jumlah_hari_2');
             $table->string('kategori_par', 10);

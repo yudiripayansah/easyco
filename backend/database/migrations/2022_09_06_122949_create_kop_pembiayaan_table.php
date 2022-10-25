@@ -16,7 +16,7 @@ class CreateKopPembiayaanTable extends Migration
     {
         Schema::create('kop_pembiayaan', function (Blueprint $table) {
             $table->id();
-            $table->string('id_pembiayaan', 32)->default(DB::raw('uuid()'))->unique();
+            $table->string('id_pembiayaan', 32)->unique();
             $table->string('kode_produk', 3);
             $table->integer('kode_akad')->comment('0 = Wadiah, 1 = Mudhorobah, 2 = Musyarokah, 3 = Ijarah, 4 = Murobahah, 5 = Istishna, 6 = Qordh');
             $table->string('kode_petugas', 20)->nullable(TRUE);

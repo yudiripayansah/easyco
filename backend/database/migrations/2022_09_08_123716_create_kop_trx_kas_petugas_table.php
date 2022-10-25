@@ -16,7 +16,7 @@ class CreateKopTrxKasPetugasTable extends Migration
     {
         Schema::create('kop_trx_kas_petugas', function (Blueprint $table) {
             $table->id();
-            $table->string('id_trx_kas_petugas', 32)->default(DB::raw('uuid()'))->unique();
+            $table->string('id_trx_kas_petugas', 32)->unique();
             $table->string('kode_kas_petugas', 20);
             $table->string('id_trx_rembug', 32)->nullable(TRUE);
             $table->integer('jenis_trx')->nullable(TRUE)->comment('1 = Droping Kas, 2 = Setoran Rembug, 3 = Penarikan Rembug, 4 = Setor ke Teller, 5 = Setoran Individu, 6 = Penarikan Individu');

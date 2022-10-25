@@ -16,7 +16,7 @@ class CreateKopTrxAnggotaTable extends Migration
     {
         Schema::create('kop_trx_anggota', function (Blueprint $table) {
             $table->id();
-            $table->string('id_trx_anggota', 32)->default(DB::raw('uuid()'))->unique();
+            $table->string('id_trx_anggota', 32)->unique();
             $table->string('id_trx_rembug', 32)->nullable(TRUE);
             $table->string('no_anggota', 20);
             $table->date('trx_date');

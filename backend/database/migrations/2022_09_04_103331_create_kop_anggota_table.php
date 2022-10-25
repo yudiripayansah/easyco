@@ -16,7 +16,7 @@ class CreateKopAnggotaTable extends Migration
     {
         Schema::create('kop_anggota', function (Blueprint $table) {
             $table->id();
-            $table->string('id_anggota', 32)->default(DB::raw('uuid()'))->unique();
+            $table->string('id_anggota', 32)->unique();
             $table->string('kode_cabang', 6);
             $table->string('kode_rembug', 20);
             $table->string('no_anggota', 20)->nullable(TRUE)->unique();

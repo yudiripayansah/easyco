@@ -15,6 +15,7 @@ class PelunasanSeeder extends Seeder
     public function run()
     {
         $pelunasan = new KopPelunasan();
+        $pelunasan->id_pelunasan = 'b3b5b2b0b1b2b3b4b5b6b7b8b9b0b1b2';
         $pelunasan->id_trx_rembug = '75150b84ca4b4e9f82855c914ae67923';
         $pelunasan->no_rekening = '1010100010003220010001';
         $pelunasan->status_pelunasan = 1;

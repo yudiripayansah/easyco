@@ -19,6 +19,7 @@ class CabangSerialSeeder extends Seeder
 
         $data = [
             [
+                'id_cabang_serial' => bin2hex(random_bytes(16)),
                 'kode_cabang' => '10101',
                 'no_serial' => 3,
                 'reg_pyd' => 3,

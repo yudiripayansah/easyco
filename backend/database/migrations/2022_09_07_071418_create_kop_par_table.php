@@ -16,7 +16,7 @@ class CreateKopParTable extends Migration
     {
         Schema::create('kop_par', function (Blueprint $table) {
             $table->id();
-            $table->string('id_par', 32)->default(DB::raw('uuid()'))->unique();
+            $table->string('id_par', 32)->unique();
             $table->string('no_rekening', 25);
             $table->string('kategori_par', 10)->nullable(TRUE);
             $table->date('tanggal_hitung');

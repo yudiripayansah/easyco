@@ -16,7 +16,7 @@ class CreateKopAnggotaUkTable extends Migration
     {
         Schema::create('kop_anggota_uk', function (Blueprint $table) {
             $table->id();
-            $table->string('id_anggota_uk', 32)->default(DB::raw('uuid()'))->unique();
+            $table->string('id_anggota_uk', 32)->unique();
             $table->string('no_anggota', 20);
             $table->string('p_nama', 50)->nullable(TRUE);
             $table->string('p_tmplahir', 30)->nullable(TRUE);

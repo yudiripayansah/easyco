@@ -15,6 +15,7 @@ class ParSeeder extends Seeder
     public function run()
     {
         $par = new KopPar();
+        $par->id_par = 'b3b5b2b0b1b2b3b4b5b6b7b8b9b0b1b2';
         $par->no_rekening = '1010100010003220010001';
         $par->tanggal_hitung = '2022-07-18';
         $par->angsuran_terbayar = 49;

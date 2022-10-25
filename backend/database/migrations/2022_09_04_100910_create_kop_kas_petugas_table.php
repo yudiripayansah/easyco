@@ -16,7 +16,7 @@ class CreateKopKasPetugasTable extends Migration
     {
         Schema::create('kop_kas_petugas', function (Blueprint $table) {
             $table->id();
-            $table->string('id_kas_petugas', 32)->default(DB::raw('uuid()'))->unique();
+            $table->string('id_kas_petugas', 32)->unique();
             $table->string('id_user', 32);
             $table->string('kode_kas_petugas', 20)->unique();
             $table->string('kode_petugas', 20)->unique();

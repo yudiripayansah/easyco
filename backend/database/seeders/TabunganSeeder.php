@@ -19,6 +19,7 @@ class TabunganSeeder extends Seeder
 
         $data = [
             [
+                'id_tabungan' => bin2hex(random_bytes(16)),
                 'kode_produk' => '001',
                 'no_anggota' => '1010100000001',
                 'no_rekening' => '10101000000010010001',
@@ -31,6 +32,7 @@ class TabunganSeeder extends Seeder
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
+                'id_tabungan' => bin2hex(random_bytes(16)),
                 'kode_produk' => '002',
                 'no_anggota' => '1010100000002',
                 'no_rekening' => '10101000000020020001',

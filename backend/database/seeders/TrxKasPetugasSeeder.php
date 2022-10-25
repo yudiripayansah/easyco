@@ -15,6 +15,7 @@ class TrxKasPetugasSeeder extends Seeder
     public function run()
     {
         $trxkaspetugas = new KopTrxKasPetugas();
+        $trxkaspetugas->id_trx_kas_petugas = bin2hex(random_bytes(16));
         $trxkaspetugas->kode_kas_petugas = '101010001.01';
         $trxkaspetugas->id_trx_rembug = '75150b84ca4b4e9f82855c914ae67923';
         $trxkaspetugas->jenis_trx = 2;

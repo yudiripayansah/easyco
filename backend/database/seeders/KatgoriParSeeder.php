@@ -19,6 +19,7 @@ class KatgoriParSeeder extends Seeder
 
         $data = [
             [
+                'id_katgori_par' => bin2hex(random_bytes(16)),
                 'jumlah_hari_1' => '8',
                 'jumlah_hari_2' => '37',
                 'kategori_par' => '1 - 30',
@@ -28,6 +29,7 @@ class KatgoriParSeeder extends Seeder
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
+                'id_katgori_par' => bin2hex(random_bytes(16)),
                 'jumlah_hari_1' => '38',
                 'jumlah_hari_2' => '97',
                 'kategori_par' => '31 - 90',
@@ -37,6 +39,7 @@ class KatgoriParSeeder extends Seeder
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
+                'id_katgori_par' => bin2hex(random_bytes(16)),
                 'jumlah_hari_1' => '98',
                 'jumlah_hari_2' => '999999999',
                 'kategori_par' => '> 90',

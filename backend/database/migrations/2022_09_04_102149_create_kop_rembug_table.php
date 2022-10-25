@@ -16,7 +16,7 @@ class CreateKopRembugTable extends Migration
     {
         Schema::create('kop_rembug', function (Blueprint $table) {
             $table->id();
-            $table->string('id_rembug', 32)->default(DB::raw('uuid()'))->unique();
+            $table->string('id_rembug', 32)->unique();
             $table->string('kode_rembug', 20)->unique();
             $table->string('kode_cabang', 6);
             $table->string('kode_desa', 10);

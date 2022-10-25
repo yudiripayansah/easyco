@@ -19,6 +19,7 @@ class PembiayaanSeeder extends Seeder
 
         $data = [
             [
+                'id_pembiayaan' => bin2hex(random_bytes(16)),
                 'kode_produk' => '001',
                 'kode_akad' => 4,
                 'kode_petugas' => '101010001',
@@ -54,6 +55,7 @@ class PembiayaanSeeder extends Seeder
                 'verified_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
+                'id_pembiayaan' => bin2hex(random_bytes(16)),
                 'kode_produk' => '001',
                 'kode_akad' => 4,
                 'kode_petugas' => '101010001',

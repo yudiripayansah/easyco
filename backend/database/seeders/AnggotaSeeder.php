@@ -19,6 +19,7 @@ class AnggotaSeeder extends Seeder
 
         $data = [
             [
+                'id_anggota' => bin2hex(random_bytes(16)),
                 'kode_cabang' => '10101',
                 'kode_rembug' => '101010001',
                 'no_anggota' => '1010100000001',
@@ -34,6 +35,7 @@ class AnggotaSeeder extends Seeder
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
+                'id_anggota' => bin2hex(random_bytes(16)),
                 'kode_cabang' => '10101',
                 'kode_rembug' => '101010001',
                 'no_anggota' => '1010100000002',
@@ -49,6 +51,7 @@ class AnggotaSeeder extends Seeder
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
+                'id_anggota' => bin2hex(random_bytes(16)),
                 'kode_cabang' => '10101',
                 'kode_rembug' => '101010001',
                 'no_anggota' => '1010100000003',

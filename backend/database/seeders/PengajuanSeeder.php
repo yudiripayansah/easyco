@@ -19,6 +19,7 @@ class PengajuanSeeder extends Seeder
 
         $data = [
             [
+                'id_pengajuan' => bin2hex(random_bytes(16)),
                 'no_anggota' => '1010100000001',
                 'kode_petugas' => '101010001',
                 'no_pengajuan' => '22.10101.0001',
@@ -37,6 +38,7 @@ class PengajuanSeeder extends Seeder
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
+                'id_pengajuan' => bin2hex(random_bytes(16)),
                 'no_anggota' => '1010100000002',
                 'kode_petugas' => '101010001',
                 'no_pengajuan' => '22.10101.0002',
@@ -55,6 +57,7 @@ class PengajuanSeeder extends Seeder
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
             [
+                'id_pengajuan' => bin2hex(random_bytes(16)),
                 'no_anggota' => '1010100000003',
                 'kode_petugas' => '101010001',
                 'no_pengajuan' => '22.10101.0003',

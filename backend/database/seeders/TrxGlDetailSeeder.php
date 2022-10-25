@@ -18,6 +18,7 @@ class TrxGlDetailSeeder extends Seeder
 
         $data = [
             [
+                'id_trx_gl_detail' => bin2hex(random_bytes(16)),
                 'id_trx_gl' => '651e4771319843468d0a7974be549f0a',
                 'kode_gl' => '10101012',
                 'flag_dc' => 'D',
@@ -26,6 +27,7 @@ class TrxGlDetailSeeder extends Seeder
                 'trx_sequence' => 1
             ],
             [
+                'id_trx_gl_detail' => bin2hex(random_bytes(16)),
                 'id_trx_gl' => '651e4771319843468d0a7974be549f0a',
                 'kode_gl' => '10101013',
                 'flag_dc' => 'C',

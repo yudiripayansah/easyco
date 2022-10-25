@@ -15,6 +15,7 @@ class KasPetugasSeeder extends Seeder
     public function run()
     {
         $kaspetugas = new KopKasPetugas();
+        $kaspetugas->id_kas_petugas = bin2hex(random_bytes(16));
         $kaspetugas->id_user = '08c3ead1abc849149478a0011791ea84';
         $kaspetugas->kode_kas_petugas = '101010001.01';
         $kaspetugas->kode_petugas = '101010001';

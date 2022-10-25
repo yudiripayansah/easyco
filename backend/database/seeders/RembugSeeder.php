@@ -15,6 +15,7 @@ class RembugSeeder extends Seeder
     public function run()
     {
         $rembug = new KopRembug();
+        $rembug->id_rembug = bin2hex(random_bytes(16));
         $rembug->kode_rembug = '101010001';
         $rembug->kode_cabang = '10101';
         $rembug->kode_desa = '36710102';

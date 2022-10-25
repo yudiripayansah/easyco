@@ -18,12 +18,15 @@ class AnggotaUkSeeder extends Seeder
 
         $data = [
             [
+                'id_anggota_uk' => bin2hex(random_bytes(16)),
                 'no_anggota' => '1010100000001'
             ],
             [
+                'id_anggota_uk' => bin2hex(random_bytes(16)),
                 'no_anggota' => '1010100000002'
             ],
             [
+                'id_anggota_uk' => bin2hex(random_bytes(16)),
                 'no_anggota' => '1010100000003'
             ]
         ];

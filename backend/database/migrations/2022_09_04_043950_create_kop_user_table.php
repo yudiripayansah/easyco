@@ -16,7 +16,7 @@ class CreateKopUserTable extends Migration
     {
         Schema::create('kop_user', function (Blueprint $table) {
             $table->id();
-            $table->string('id_user', 32)->default(DB::raw('uuid()'))->unique();
+            $table->string('id_user', 32)->unique();
             $table->string('kode_cabang', 6);
             $table->string('kode_pgw', 20);
             $table->string('nama_user', 25)->unique();

@@ -16,7 +16,7 @@ class CreateKopMapTable extends Migration
     {
         Schema::create('kop_map', function (Blueprint $table) {
             $table->id();
-            $table->string('id_map', 32)->default(DB::raw('uuid()'))->unique();
+            $table->string('id_map', 32)->unique();
             $table->string('no_pengajuan', 20);
             $table->string('no_map', 50)->comment('cif_no+yyyy+mm+dd+hh+mm+ss');
             $table->string('no_telp', 20)->nullable(TRUE);
