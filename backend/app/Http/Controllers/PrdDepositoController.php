@@ -20,7 +20,7 @@ class PrdDepositoController extends Controller
 
         DB::beginTransaction();
 
-        if ($validate['status'] == TRUE) {
+        if ($validate['status'] === TRUE) {
             try {
                 $create = KopPrdDeposito::create($data);
                 $id = KopPrdDeposito::find($create->id);
@@ -126,7 +126,7 @@ class PrdDepositoController extends Controller
         }
 
         $res = array(
-            'status' => true,
+            'status' => TRUE,
             'data' => $read,
             'page' => $page,
             'perPage' => $perPage,
@@ -190,7 +190,7 @@ class PrdDepositoController extends Controller
 
         DB::beginTransaction();
 
-        if ($validate['status'] == TRUE) {
+        if ($validate['status'] === TRUE) {
             try {
                 $get->save();
 
@@ -235,7 +235,7 @@ class PrdDepositoController extends Controller
                 $data->delete();
 
                 $res = array(
-                    'status' => true,
+                    'status' => TRUE,
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );

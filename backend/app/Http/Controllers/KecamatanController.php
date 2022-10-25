@@ -19,7 +19,7 @@ class KecamatanController extends Controller
 
         DB::beginTransaction();
 
-        if ($validate['status'] == TRUE) {
+        if ($validate['status'] === TRUE) {
             try {
                 $create = KopKecamatan::create($data);
                 $id = KopKecamatan::find($create->id);
@@ -125,7 +125,7 @@ class KecamatanController extends Controller
         }
 
         $res = array(
-            'status' => true,
+            'status' => TRUE,
             'data' => $read,
             'page' => $page,
             'perPage' => $perPage,
@@ -183,7 +183,7 @@ class KecamatanController extends Controller
 
         DB::beginTransaction();
 
-        if ($validate['status'] == TRUE) {
+        if ($validate['status'] === TRUE) {
             try {
                 $get->save();
 
@@ -228,7 +228,7 @@ class KecamatanController extends Controller
                 $data->delete();
 
                 $res = array(
-                    'status' => true,
+                    'status' => TRUE,
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );

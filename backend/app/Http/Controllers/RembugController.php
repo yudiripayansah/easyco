@@ -19,7 +19,7 @@ class RembugController extends Controller
 
         DB::beginTransaction();
 
-        if ($validate['status'] == TRUE) {
+        if ($validate['status'] === TRUE) {
             try {
                 $create = KopRembug::create($data);
                 $id = KopRembug::find($create->id);
@@ -125,7 +125,7 @@ class RembugController extends Controller
         }
 
         $res = array(
-            'status' => true,
+            'status' => TRUE,
             'data' => $read,
             'page' => $page,
             'perPage' => $perPage,
@@ -189,7 +189,7 @@ class RembugController extends Controller
 
         DB::beginTransaction();
 
-        if ($validate['status'] == TRUE) {
+        if ($validate['status'] === TRUE) {
             try {
                 $get->save();
 
@@ -234,7 +234,7 @@ class RembugController extends Controller
                 $data->delete();
 
                 $res = array(
-                    'status' => true,
+                    'status' => TRUE,
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );

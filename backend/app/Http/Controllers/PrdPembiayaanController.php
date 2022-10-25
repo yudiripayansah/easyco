@@ -2,25 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KopKasPetugas;
+use App\Models\KopPrdPembiayaan;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class KasPetugasController extends Controller
+class PrdPembiayaanController extends Controller
 {
     function create(Request $request)
     {
         $data = $request->all();
 
-        $validate = KopKasPetugas::validateAdd($data);
+        $validate = KopPrdPembiayaan::validateAdd($data);
+
+        $data['nama_produk'] = strtoupper($request->nama_produk);
+        $data['nama_singkat'] = strtoupper($request->nama_singkat);
 
         DB::beginTransaction();
 
         if ($validate['status'] === TRUE) {
             try {
-                $create = KopKasPetugas::create($data);
-                $id = KopKasPetugas::find($create->id);
+                $create = KopPrdPembiayaan::create($data);
+                $id = KopPrdPembiayaan::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
@@ -58,7 +61,7 @@ class KasPetugasController extends Controller
         $page = 1;
         $perPage = '~';
         $sortDir = 'ASC';
-        $sortBy = 'kode_kas_petugas';
+        $sortBy = 'kode_produk';
         $search = NULL;
         $total = 0;
         $totalPage = 1;
@@ -82,21 +85,21 @@ class KasPetugasController extends Controller
         }
 
         if ($request->search) {
-            $search = $request->search;
+            $search = strtoupper($request->search);
         }
 
         if ($page > 1) {
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopKasPetugas::select('*')->orderBy($sortBy, $sortDir);
+        $read = KopPrdPembiayaan::select('*')->orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
         }
 
         if ($search != NULL) {
-            $read->whereRaw("(kode_kas_petugas LIKE '%" . $search . "%' OR kode_petugas LIKE '%" . $search . "%' OR nama_kas_petugas LIKE '%" . $search . "%')");
+            $read->whereRaw("(kode_produk LIKE '%" . $search . "%' OR nama_produk LIKE '%" . $search . "%' OR nama_singkat LIKE '%" . $search . "%')");
         }
 
         $read = $read->get();
@@ -107,15 +110,15 @@ class KasPetugasController extends Controller
         }
 
         if ($search || $id_cabang || $type) {
-            $total = KopKasPetugas::orderBy($sortBy, $sortDir);
+            $total = KopPrdPembiayaan::orderBy($sortBy, $sortDir);
 
             if ($search) {
-                $total->whereRaw("(kode_kas_petugas LIKE '%" . $search . "%' OR kode_petugas LIKE '%" . $search . "%' OR nama_kas_petugas LIKE '%" . $search . "%')");
+                $total->whereRaw("(kode_produk LIKE '%" . $search . "%' OR nama_produk LIKE '%" . $search . "%' OR nama_singkat LIKE '%" . $search . "%')");
             }
 
             $total = $total->count();
         } else {
-            $total = KopKasPetugas::all()->count();
+            $total = KopPrdPembiayaan::all()->count();
         }
 
         if ($perPage != '~') {
@@ -145,7 +148,7 @@ class KasPetugasController extends Controller
         $id = $request->id;
 
         if ($id) {
-            $get = KopKasPetugas::find($id);
+            $get = KopPrdPembiayaan::find($id);
 
             if ($get) {
                 $res = array(
@@ -162,7 +165,7 @@ class KasPetugasController extends Controller
         } else {
             $res = array(
                 'status' => FALSE,
-                'msg' => 'Maaf! Kas Petugas tidak bisa ditampilkan'
+                'msg' => 'Maaf! Produk Pembiayaan tidak bisa ditampilkan'
             );
         }
 
@@ -173,14 +176,18 @@ class KasPetugasController extends Controller
 
     public function update(Request $request)
     {
-        $get = KopKasPetugas::find($request->id);
-        $validate = KopKasPetugas::validateUpdate($request->all());
+        $get = KopPrdPembiayaan::find($request->id);
+        $validate = KopPrdPembiayaan::validateUpdate($request->all());
 
-        $get->id_user = $request->id_user;
+        $get->kode_akad = $request->kode_akad;
         $get->kode_gl = $request->kode_gl;
-        $get->nama_kas_petugas = $request->nama_kas_petugas;
-        $get->jenis_kas_petugas = $request->jenis_kas_petugas;
-        $get->status_kas_petugas = $request->status_kas_petugas;
+        $get->nama_produk = strtoupper($request->nama_produk);
+        $get->nama_singkat = strtoupper($request->nama_singkat);
+        $get->periode_angsuran = $request->periode_angsuran;
+        $get->jangka_waktu = $request->jangka_waktu;
+        $get->biaya_adm = $request->biaya_adm;
+        $get->flag_wakalah = $request->flag_wakalah;
+        $get->flag_pdd = $request->flag_pdd;
 
         DB::beginTransaction();
 
@@ -223,7 +230,7 @@ class KasPetugasController extends Controller
         $id = $request->id;
 
         if ($id) {
-            $data = KopKasPetugas::find($id);
+            $data = KopPrdPembiayaan::find($id);
 
             try {
                 $data->delete();
@@ -245,7 +252,7 @@ class KasPetugasController extends Controller
         } else {
             $res = array(
                 'status' => FALSE,
-                'msg' => 'Maaf! Kas Petugas tidak ditemukan'
+                'msg' => 'Maaf! Produk Pembiayaan tidak ditemukan'
             );
         }
 
