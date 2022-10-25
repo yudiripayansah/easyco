@@ -16,6 +16,7 @@ use App\Http\Controllers\ListKodeController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PrdDepositoController;
 use App\Http\Controllers\PrdPembiayaanController;
+use App\Http\Controllers\PrdTabunganController;
 use App\Http\Controllers\RembugController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -169,4 +170,12 @@ Route::prefix('prdpembiayaan')->middleware('checkToken')->group(function () {
   Route::get('/detail', [PrdPembiayaanController::class, 'detail']);
   Route::post('/update', [PrdPembiayaanController::class, 'update']);
   Route::get('/delete', [PrdPembiayaanController::class, 'delete']);
+});
+
+Route::prefix('prdtabungan')->middleware('checkToken')->group(function () {
+  Route::post('/create', [PrdTabunganController::class, 'create']);
+  Route::post('/read', [PrdTabunganController::class, 'read']);
+  Route::get('/detail', [PrdTabunganController::class, 'detail']);
+  Route::post('/update', [PrdTabunganController::class, 'update']);
+  Route::get('/delete', [PrdTabunganController::class, 'delete']);
 });
