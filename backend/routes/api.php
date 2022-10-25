@@ -14,6 +14,7 @@ use App\Http\Controllers\KotKabController;
 use App\Http\Controllers\LembagaController;
 use App\Http\Controllers\ListKodeController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PrdDepositoController;
 use App\Http\Controllers\PrdPembiayaanController;
 use App\Http\Controllers\PrdTabunganController;
@@ -178,4 +179,12 @@ Route::prefix('prdtabungan')->middleware('checkToken')->group(function () {
   Route::get('/detail', [PrdTabunganController::class, 'detail']);
   Route::post('/update', [PrdTabunganController::class, 'update']);
   Route::get('/delete', [PrdTabunganController::class, 'delete']);
+});
+
+Route::prefix('pengajuan')->middleware('checkToken')->group(function () {
+  Route::post('/create', [PengajuanController::class, 'create']);
+  Route::post('/read', [PengajuanController::class, 'read']);
+  Route::get('/detail', [PengajuanController::class, 'detail']);
+  Route::post('/update', [PengajuanController::class, 'update']);
+  Route::get('/delete', [PengajuanController::class, 'delete']);
 });
