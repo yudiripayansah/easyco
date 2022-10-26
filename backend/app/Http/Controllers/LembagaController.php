@@ -24,11 +24,11 @@ class LembagaController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopLembaga::create($data);
-                $id = KopLembaga::find($create->id);
+                $find = KopLembaga::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!'
                 );
 
@@ -233,6 +233,8 @@ class LembagaController extends Controller
         if ($id) {
             $data = KopLembaga::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -241,6 +243,8 @@ class LembagaController extends Controller
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 

@@ -22,11 +22,11 @@ class DesaController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopDesa::create($data);
-                $id = KopDesa::find($create->id);
+                $find = KopDesa::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!'
                 );
 
@@ -224,6 +224,8 @@ class DesaController extends Controller
         if ($id) {
             $data = KopDesa::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -232,6 +234,8 @@ class DesaController extends Controller
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 

@@ -39,11 +39,11 @@ class UserController extends Controller
 
         if ($validate['status'] === TRUE) {
             $create = KopUser::create($data);
-            $id = KopUser::find($create->id);
+            $find = KopUser::find($create->id);
 
             $res = array(
                 'status' => TRUE,
-                'data' => $id,
+                'data' => $find,
                 'msg' => 'Berhasil!'
             );
 
@@ -260,6 +260,8 @@ class UserController extends Controller
         if ($id) {
             $data = KopUser::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -268,6 +270,8 @@ class UserController extends Controller
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 

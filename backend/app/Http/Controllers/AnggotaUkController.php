@@ -26,11 +26,11 @@ class AnggotaUkController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopAnggotaUk::create($data);
-                $id = KopAnggotaUk::find($create->id);
+                $find = KopAnggotaUk::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!'
                 );
 

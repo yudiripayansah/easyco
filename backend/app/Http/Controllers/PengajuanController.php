@@ -22,11 +22,11 @@ class PengajuanController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopPengajuan::create($data);
-                $id = KopPengajuan::find($create->id);
+                $find = KopPengajuan::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!'
                 );
 
@@ -239,6 +239,8 @@ class PengajuanController extends Controller
         if ($id) {
             $data = KopPengajuan::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -247,6 +249,8 @@ class PengajuanController extends Controller
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 

@@ -22,11 +22,11 @@ class ListKodeController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopListKode::create($data);
-                $id = KopListKode::find($create->id);
+                $find = KopListKode::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!'
                 );
 
@@ -225,6 +225,8 @@ class ListKodeController extends Controller
         if ($id) {
             $data = KopListKode::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -233,6 +235,8 @@ class ListKodeController extends Controller
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 
