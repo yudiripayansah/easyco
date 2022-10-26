@@ -25,11 +25,11 @@ class CabangController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopCabang::create($data);
-                $id = KopCabang::find($create->id);
+                $find = KopCabang::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!',
                     'error' => NULL
                 );
@@ -238,6 +238,8 @@ class CabangController extends Controller
         if ($id) {
             $data = KopCabang::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -247,6 +249,8 @@ class CabangController extends Controller
                     'msg' => 'Berhasil!',
                     'error' => NULL
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 

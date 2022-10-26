@@ -54,9 +54,8 @@ class AuthController extends Controller
                             if ($save) {
                                 $res = array(
                                     'status' => TRUE,
-                                    'data' => $data,
+                                    'data' => $get,
                                     'msg' => 'Berhasil!',
-                                    'token' => $token,
                                     'error' => NULL
                                 );
                             } else {
@@ -64,7 +63,6 @@ class AuthController extends Controller
                                     'status' => FALSE,
                                     'data' => $data,
                                     'msg' => 'Maaf! Expired Token gagal diset',
-                                    'token' => NULL,
                                     'error' => $validate['errors']
                                 );
                             }
@@ -73,7 +71,6 @@ class AuthController extends Controller
                                 'status' => FALSE,
                                 'data' => $data,
                                 'msg' => 'Maaf! Password masih salah',
-                                'token' => NULL,
                                 'error' => $validate['errors']
                             );
                         }
@@ -82,7 +79,6 @@ class AuthController extends Controller
                             'status' => FALSE,
                             'data' => $data,
                             'msg' => 'Maaf! Username tidak ditemukan',
-                            'token' => NULL,
                             'error' => $validate['errors']
                         );
                     }
@@ -91,7 +87,6 @@ class AuthController extends Controller
                         'status' => FALSE,
                         'data' => $data,
                         'msg' => 'Maaf! Login tidak berhasil',
-                        'token' => NULL,
                         'error' => $validate['errors']
                     );
                 }
@@ -100,7 +95,6 @@ class AuthController extends Controller
                     'status' => FALSE,
                     'data' => $data,
                     'msg' => $e->getMessage(),
-                    'token' => NULL,
                     'error' => $validate['errors']
                 );
             }
@@ -109,7 +103,6 @@ class AuthController extends Controller
                 'status' => FALSE,
                 'data' => $data,
                 'msg' => $validate['msg'],
-                'token' => NULL,
                 'error' => $validate['errors']
             );
         }

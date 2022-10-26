@@ -23,11 +23,11 @@ class PrdDepositoController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopPrdDeposito::create($data);
-                $id = KopPrdDeposito::find($create->id);
+                $find = KopPrdDeposito::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!'
                 );
 
@@ -231,6 +231,8 @@ class PrdDepositoController extends Controller
         if ($id) {
             $data = KopPrdDeposito::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -239,6 +241,8 @@ class PrdDepositoController extends Controller
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 

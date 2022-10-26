@@ -52,7 +52,7 @@ class CreateKopAnggotaUkTable extends Migration
             $table->string('ush_komoditi', 50)->nullable(TRUE);
             $table->string('ush_lokasi', 50)->nullable(TRUE);
             $table->decimal('ush_omset', 14, 2)->nullable(TRUE)->default(0);
-            $table->integer('by_beras')->nullable(TRUE)->default(0);
+            $table->decimal('by_beras', 14, 2)->nullable(TRUE)->default(0);
             $table->decimal('by_dapur', 14, 2)->nullable(TRUE)->default(0);
             $table->decimal('by_listrik', 14, 2)->nullable(TRUE)->default(0);
             $table->decimal('by_telpon', 14, 2)->nullable(TRUE)->default(0);

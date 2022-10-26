@@ -20,11 +20,11 @@ class KasPetugasController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopKasPetugas::create($data);
-                $id = KopKasPetugas::find($create->id);
+                $find = KopKasPetugas::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!'
                 );
 
@@ -225,6 +225,8 @@ class KasPetugasController extends Controller
         if ($id) {
             $data = KopKasPetugas::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -233,6 +235,8 @@ class KasPetugasController extends Controller
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 

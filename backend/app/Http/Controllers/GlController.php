@@ -20,11 +20,11 @@ class GlController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopGl::create($data);
-                $id = KopGl::find($create->id);
+                $find = KopGl::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!'
                 );
 
@@ -225,6 +225,8 @@ class GlController extends Controller
         if ($id) {
             $data = KopGl::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -233,6 +235,8 @@ class GlController extends Controller
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 
