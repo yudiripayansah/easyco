@@ -9,6 +9,40 @@ use Illuminate\Support\Facades\DB;
 
 class PengajuanController extends Controller
 {
+    function member()
+    {
+        $show = DB::table('kop_anggota')
+            ->leftJoin('kop_rembug', 'kop_rembug.kode_rembug', '=', 'kop_anggota.kode_rembug')
+            ->where('status', 1)
+            ->get();
+
+        $data = array();
+
+        foreach ($show as $sh) {
+            $no_anggota = $sh->no_anggota;
+            $nama_anggota = $sh->nama_anggota;
+            $no_ktp = $sh->no_ktp;
+            $nama_rembug = $sh->nama_rembug;
+
+            $data[] = array(
+                'no_anggota' => $no_anggota,
+                'nama_anggota' => $nama_anggota,
+                'no_ktp' => $no_ktp,
+                'nama_rembug' => $nama_rembug
+            );
+        }
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $data,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
     function create(Request $request)
     {
         $data = $request->all();
