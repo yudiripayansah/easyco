@@ -18,7 +18,7 @@ class CreateKopAnggotaTable extends Migration
             $table->id();
             $table->string('id_anggota', 32)->default(DB::raw('uuid()'))->unique();
             $table->string('kode_cabang', 6);
-            $table->string('kode_rembug', 20);
+            $table->string('kode_rembug', 20)->nullable(TRUE);
             $table->string('no_anggota', 20)->nullable(TRUE)->unique();
             $table->string('nama_anggota', 50);
             $table->string('jenis_kelamin', 1)->comment('P = Pria, W = Wanita');

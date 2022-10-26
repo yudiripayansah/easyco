@@ -56,14 +56,16 @@ class AuthController extends Controller
                                     'status' => TRUE,
                                     'data' => $get,
                                     'msg' => 'Berhasil!',
-                                    'error' => NULL
+                                    'error' => NULL,
+                                    'token' => $token
                                 );
                             } else {
                                 $res = array(
                                     'status' => FALSE,
                                     'data' => $data,
                                     'msg' => 'Maaf! Expired Token gagal diset',
-                                    'error' => $validate['errors']
+                                    'error' => $validate['errors'],
+                                    'token' => $token
                                 );
                             }
                         } else {
@@ -71,7 +73,8 @@ class AuthController extends Controller
                                 'status' => FALSE,
                                 'data' => $data,
                                 'msg' => 'Maaf! Password masih salah',
-                                'error' => $validate['errors']
+                                'error' => $validate['errors'],
+                                'token' => $token
                             );
                         }
                     } else {
@@ -79,7 +82,8 @@ class AuthController extends Controller
                             'status' => FALSE,
                             'data' => $data,
                             'msg' => 'Maaf! Username tidak ditemukan',
-                            'error' => $validate['errors']
+                            'error' => $validate['errors'],
+                            'token' => $token
                         );
                     }
                 } else {
@@ -87,7 +91,8 @@ class AuthController extends Controller
                         'status' => FALSE,
                         'data' => $data,
                         'msg' => 'Maaf! Login tidak berhasil',
-                        'error' => $validate['errors']
+                        'error' => $validate['errors'],
+                        'token' => $token
                     );
                 }
             } catch (JWTException $e) {
@@ -95,7 +100,8 @@ class AuthController extends Controller
                     'status' => FALSE,
                     'data' => $data,
                     'msg' => $e->getMessage(),
-                    'error' => $validate['errors']
+                    'error' => $validate['errors'],
+                    'token' => $token
                 );
             }
         } else {
@@ -103,7 +109,8 @@ class AuthController extends Controller
                 'status' => FALSE,
                 'data' => $data,
                 'msg' => $validate['msg'],
-                'error' => $validate['errors']
+                'error' => $validate['errors'],
+                'token' => $token
             );
         }
 

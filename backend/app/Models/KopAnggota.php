@@ -17,7 +17,6 @@ class KopAnggota extends Model
     {
         $rule = [
             'kode_cabang' => 'required|numeric',
-            'kode_rembug' => 'required|numeric',
             'nama_anggota' => 'required',
             'jenis_kelamin' => 'required',
             'ibu_kandung' => 'required',
