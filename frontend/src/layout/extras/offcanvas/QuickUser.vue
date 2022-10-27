@@ -12,7 +12,7 @@
       <span
         class="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-3"
       >
-        {{ currentUser.user.name }}
+        {{ user.nama_user }}
       </span>
     </div>
     <b-button variant="danger" @click="onLogout()"><i class="fas fa-sign-out-alt"></i> Keluar</b-button>
@@ -71,11 +71,13 @@ export default {
     KTLayoutQuickUser.init(this.$refs["kt_quick_user"]);
   },
   methods: {
-    ...mapActions(["signOut"]),
+    ...mapActions(["removeUser"]),
     onLogout() {
-      this.signOut()
+      this.removeUser()
       this.$router.push({
-        name: "login"
+        name: "Login"
+      }).catch(err => {
+        console.log(err)
       })
     },
     closeOffcanvas() {
@@ -83,7 +85,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["currentUser"]),
+    ...mapGetters(["user"]),
   }
 };
 </script>

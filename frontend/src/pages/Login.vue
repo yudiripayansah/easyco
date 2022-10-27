@@ -28,7 +28,7 @@
             <div class="form-group">
               <label class="font-size-h6 font-weight-bolder text-light">Username</label>
               <div id="example-input-group-1" label="" label-for="example-input-1">
-                <input class="form-control form-control-solid h-auto py-7 px-6 rounded-lg" type="text" name="email" ref="email" v-model="form.email" />
+                <input class="form-control form-control-solid h-auto py-7 px-6 rounded-lg" type="text" name="nama_user" ref="nama_user" v-model="form.nama_user" />
               </div>
             </div>
             <div class="form-group">
@@ -70,6 +70,7 @@
 <script>
 // email superadmin@hseswadaya.co.id
 // password admin123labpcr
+import easycoApi from '@/core/services/easyco.service'
 import {
   mapGetters,
   mapActions
@@ -79,14 +80,14 @@ export default {
   data() {
     return {
       form: {
-        email: 'superadmin@easyco.co',
-        password: '123',
+        nama_user: 'ummar',
+        password: 'easycoOk',
       },
       loading: false
     };
   },
   computed: {
-    ...mapGetters(["currentUser", "processing", "loginError"]),
+    ...mapGetters(["user"]),
     backgroundImage() {
       return (
         process.env.BASE_URL + "media/svg/illustrations/data-points.svg"
@@ -110,22 +111,34 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["login"]),
-    doLogin() {
+    ...mapActions(["setUser"]),
+    async doLogin() {
       this.loading = true
-      let email = this.form.email
-      let password = this.form.password
-      this.login({
-        email: email,
-        password: password
-      });
-    },
-    checkLogin() {
-      let val = this.currentUser
-      if (val) {
-        this.$router.push({
-          name: "Dashboard"
-        })
+      let payload = this.form
+      try {
+        let req = await easycoApi.login(payload)
+        if(req.status === 200){
+          let {data, status, msg, token} = req.data
+          if(status) {
+            data.token = token
+            this.setUser(data)
+            this.notify('success','Login Success',msg)
+            this.$router.push({
+              name: "Dashboard"
+            }).catch(err => {
+              console.log(err)
+            })
+          } else {
+            this.notify('danger','Login Error',msg)
+          }
+        } else {
+          this.notify('danger','Login Error',req.data.message)
+        }
+        this.loading = false
+      } catch (error) {
+        this.loading = false
+        console.log(error)
+        this.notify('danger','Login Error',error)
       }
     },
     notify(type, title, msg) {
@@ -138,8 +151,5 @@ export default {
       })
     }
   },
-  mounted(){
-    this.checkLogin()
-  }
 };
 </script>
