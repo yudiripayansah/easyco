@@ -23,11 +23,11 @@ class PrdPembiayaanController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopPrdPembiayaan::create($data);
-                $id = KopPrdPembiayaan::find($create->id);
+                $find = KopPrdPembiayaan::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!'
                 );
 
@@ -232,6 +232,8 @@ class PrdPembiayaanController extends Controller
         if ($id) {
             $data = KopPrdPembiayaan::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -240,6 +242,8 @@ class PrdPembiayaanController extends Controller
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 

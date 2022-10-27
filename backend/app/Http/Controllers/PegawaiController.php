@@ -24,11 +24,11 @@ class PegawaiController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopPegawai::create($data);
-                $id = KopPegawai::find($create->id);
+                $find = KopPegawai::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!'
                 );
 
@@ -232,6 +232,8 @@ class PegawaiController extends Controller
         if ($id) {
             $data = KopPegawai::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -240,6 +242,8 @@ class PegawaiController extends Controller
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 

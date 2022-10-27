@@ -20,11 +20,11 @@ class KatgoriParController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopKatgoriPar::create($data);
-                $id = KopKatgoriPar::find($create->id);
+                $find = KopKatgoriPar::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!'
                 );
 
@@ -224,6 +224,8 @@ class KatgoriParController extends Controller
         if ($id) {
             $data = KopKatgoriPar::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -232,6 +234,8 @@ class KatgoriParController extends Controller
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 

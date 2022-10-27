@@ -22,11 +22,11 @@ class KecamatanController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopKecamatan::create($data);
-                $id = KopKecamatan::find($create->id);
+                $find = KopKecamatan::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!'
                 );
 
@@ -224,6 +224,8 @@ class KecamatanController extends Controller
         if ($id) {
             $data = KopKecamatan::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -232,6 +234,8 @@ class KecamatanController extends Controller
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 

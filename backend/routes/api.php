@@ -13,6 +13,7 @@ use App\Http\Controllers\KecamatanController;
 use App\Http\Controllers\KotKabController;
 use App\Http\Controllers\LembagaController;
 use App\Http\Controllers\ListKodeController;
+use App\Http\Controllers\MapController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PrdDepositoController;
@@ -182,9 +183,18 @@ Route::prefix('prdtabungan')->middleware('checkToken')->group(function () {
 });
 
 Route::prefix('pengajuan')->middleware('checkToken')->group(function () {
+  Route::post('/member', [PengajuanController::class, 'member']);
   Route::post('/create', [PengajuanController::class, 'create']);
   Route::post('/read', [PengajuanController::class, 'read']);
   Route::get('/detail', [PengajuanController::class, 'detail']);
   Route::post('/update', [PengajuanController::class, 'update']);
   Route::get('/delete', [PengajuanController::class, 'delete']);
+});
+
+Route::prefix('map')->middleware('checkToken')->group(function () {
+  Route::post('/create', [MapController::class, 'create']);
+  Route::post('/read', [MapController::class, 'read']);
+  Route::get('/detail', [MapController::class, 'detail']);
+  Route::post('/update', [MapController::class, 'update']);
+  Route::get('/delete', [MapController::class, 'delete']);
 });

@@ -18,7 +18,6 @@ class KopAnggotaUk extends Model
     public function validateAdd($validate)
     {
         $rule = [
-            'no_anggota' => 'required|numeric',
             'p_tglahir' => 'date',
             'usia' => 'numeric',
             'p_pendidikan' => 'numeric',

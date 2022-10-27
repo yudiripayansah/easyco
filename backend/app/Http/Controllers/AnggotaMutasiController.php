@@ -22,11 +22,11 @@ class AnggotaMutasiController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopAnggotaMutasi::create($data);
-                $id = KopAnggotaMutasi::find($create->id);
+                $find = KopAnggotaMutasi::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!'
                 );
 
@@ -244,6 +244,8 @@ class AnggotaMutasiController extends Controller
         if ($id) {
             $data = KopAnggotaMutasi::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -252,6 +254,8 @@ class AnggotaMutasiController extends Controller
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 

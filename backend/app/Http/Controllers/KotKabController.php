@@ -22,11 +22,11 @@ class KotKabController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopKotaKabupaten::create($data);
-                $id = KopKotaKabupaten::find($create->id);
+                $find = KopKotaKabupaten::find($create->id);
 
                 $res = array(
                     'status' => TRUE,
-                    'data' => $id,
+                    'data' => $find,
                     'msg' => 'Berhasil!'
                 );
 
@@ -223,6 +223,8 @@ class KotKabController extends Controller
         if ($id) {
             $data = KopKotaKabupaten::find($id);
 
+            DB::beginTransaction();
+
             try {
                 $data->delete();
 
@@ -231,6 +233,8 @@ class KotKabController extends Controller
                     'data' => NULL,
                     'msg' => 'Berhasil!'
                 );
+
+                DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
 
