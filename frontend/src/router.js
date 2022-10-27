@@ -19,7 +19,6 @@ const appRouter = (menu) => {
   return routes;
 }
 Vue.use(Router);
-console.log(appRouter(menu));
 export default new Router({
   routes: [
     {

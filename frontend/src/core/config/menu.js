@@ -34,12 +34,12 @@ const menu = [
       },
       {
         target: 'laporan',
-        label: 'Laporan',
+        label: 'Laporan Keanggotaan',
         component: import('@/pages/Keanggotaan'),
         children: [
           {
             target: 'registrasi-anggota',
-            label: 'Registrasi Anggota',
+            label: 'Laporan Registrasi Anggota',
             component: import('@/pages/Dummy.vue'),
           },
           {
@@ -80,12 +80,12 @@ const menu = [
       },
       {
         target: 'laporan',
-        label: 'Laporan',
+        label: 'Laporan Tabungan',
         component: import('@/pages/Tabungan'),
         children: [
           {
             target: 'pembukaan-rekening-tabungan',
-            label: 'Pembukaan Rekening Tabungan',
+            label: 'Laporan Pembukaan Rekening Tabungan',
             component: import('@/pages/Dummy.vue'),
           },
           {
@@ -100,7 +100,7 @@ const menu = [
           },
           {
             target: 'penutupan-rekening-tabungan',
-            label: 'Penutupan Rekening Tabungan',
+            label: 'Laporan Penutupan Rekening Tabungan',
             component: import('@/pages/Dummy.vue'),
           },
         ],
@@ -146,17 +146,17 @@ const menu = [
         children: [
           {
             target: 'pengajuan-pembiayaan',
-            label: 'Pengajuan Pembiayaan',
+            label: 'Laporan Pengajuan Pembiayaan',
             component: import('@/pages/Dummy.vue'),
           },
           {
             target: 'registrasi-akad',
-            label: 'Registrasi Akad',
+            label: 'Laporan Registrasi Akad',
             component: import('@/pages/Dummy.vue'),
           },
           {
             target: 'pencairan',
-            label: 'Pencairan',
+            label: 'Laporan Pencairan',
             component: import('@/pages/Dummy.vue'),
           },
           {
@@ -227,17 +227,17 @@ const menu = [
       },
       {
         target: 'laporan',
-        label: 'Laporan',
+        label: 'Laporan Transaksi',
         component: import('@/pages/Transaksi'),
         children: [
           {
             target: 'transaksi-rembug',
-            label: 'Transaksi Rembug',
+            label: 'Laporan Transaksi Rembug',
             component: import('@/pages/Dummy.vue'),
           },
           {
             target: 'transaksi-kas-petugas',
-            label: 'Transaksi Kas Petugas',
+            label: 'Laporan Transaksi Kas Petugas',
             component: import('@/pages/Dummy.vue'),
           },
           {
