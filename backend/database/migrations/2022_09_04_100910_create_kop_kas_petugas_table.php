@@ -24,7 +24,7 @@ class CreateKopKasPetugasTable extends Migration
             $table->string('nama_kas_petugas', 100);
             $table->decimal('saldo', 14, 2)->nullable(TRUE)->default(0);
             $table->integer('jenis_kas_petugas')->comment('0 = Kas Petugas, 1 = Kas Teller');
-            $table->integer('status_kas_petugas')->nullable(TRUE)->default(0)->comment('0 = Tidak Aktif, 1 = Aktif');
+            $table->integer('status_kas_petugas')->nullable(TRUE)->default(1)->comment('0 = Tidak Aktif, 1 = Aktif');
             $table->string('created_by', 30);
             $table->timestamps();
             $table->string('updated_by', 30)->nullable(TRUE);

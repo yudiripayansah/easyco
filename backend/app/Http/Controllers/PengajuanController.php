@@ -3,18 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\KopPengajuan;
+use App\Models\KopUser;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PengajuanController extends Controller
 {
-    function member()
+    function member(Request $request)
     {
-        $show = DB::table('kop_anggota')
-            ->leftJoin('kop_rembug', 'kop_rembug.kode_rembug', '=', 'kop_anggota.kode_rembug')
-            ->where('status', 1)
-            ->get();
+        $token = $request->header('token');
+
+        $param = array('token' => $token);
+
+        $get = KopUser::where($param)->first();
+
+        $show = KopPengajuan::member($get->kode_cabang);
 
         $data = array();
 
@@ -29,6 +33,66 @@ class PengajuanController extends Controller
                 'nama_anggota' => $nama_anggota,
                 'no_ktp' => $no_ktp,
                 'nama_rembug' => $nama_rembug
+            );
+        }
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $data,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function fa(Request $request)
+    {
+        $token = $request->header('token');
+
+        $param = array('token' => $token);
+
+        $get = KopUser::where($param)->first();
+
+        $show = KopPengajuan::fa($get->kode_cabang);
+
+        $data = array();
+
+        foreach ($show as $sh) {
+            $kode_petugas = $sh->kode_petugas;
+            $nama_kas_petugas = $sh->nama_kas_petugas;
+
+            $data[] = array(
+                'kode_petugas' => $kode_petugas,
+                'nama_kas_petugas' => $nama_kas_petugas
+            );
+        }
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $data,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function peruntukan()
+    {
+        $show = KopPengajuan::peruntukan('peruntukan');
+
+        $data = array();
+
+        foreach ($show as $sh) {
+            $kode_value = $sh->kode_value;
+            $kode_display = $sh->kode_display;
+
+            $data[] = array(
+                'kode_value' => $kode_value,
+                'kode_display' => $kode_display
             );
         }
 

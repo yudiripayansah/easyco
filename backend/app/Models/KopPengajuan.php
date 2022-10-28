@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class KopPengajuan extends Model
@@ -88,5 +89,52 @@ class KopPengajuan extends Model
         }
 
         return $res;
+    }
+
+    public function member($kode_cabang)
+    {
+        $param = array();
+
+        if ($kode_cabang <> '00000') {
+            $param['kc.kode_cabang'] = $kode_cabang;
+        }
+
+        $param['ka.status'] = 1;
+
+        $show = DB::table('kop_anggota AS ka')
+            ->select('ka.no_anggota', 'ka.nama_anggota', 'ka.no_ktp', 'kr.nama_rembug')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', '=', 'ka.kode_cabang')
+            ->leftJoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'ka.kode_rembug')
+            ->where($param)
+            ->get();
+
+        return $show;
+    }
+
+    public function fa($kode_cabang)
+    {
+        $param = array();
+
+        if ($kode_cabang <> '00000') {
+            $param['kc.kode_cabang'] = $kode_cabang;
+        }
+
+        $param['kkp.status_kas_petugas'] = 1;
+
+        $show = DB::table('kop_kas_petugas AS kkp')
+            ->select('kkp.kode_petugas', 'kkp.nama_kas_petugas')
+            ->join('kop_user AS ku', 'ku.id_user', '=', 'kkp.id_user')
+            ->leftJoin('kop_cabang AS kc', 'kc.kode_cabang', '=', 'ku.kode_cabang')
+            ->where($param)
+            ->get();
+
+        return $show;
+    }
+
+    public function peruntukan($nama_kode)
+    {
+        $show = DB::table('kop_list_kode')->where('nama_kode', $nama_kode)->orderBy('id', 'ASC')->get();
+
+        return $show;
     }
 }

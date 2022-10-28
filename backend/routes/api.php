@@ -184,6 +184,8 @@ Route::prefix('prdtabungan')->middleware('checkToken')->group(function () {
 
 Route::prefix('pengajuan')->middleware('checkToken')->group(function () {
   Route::post('/member', [PengajuanController::class, 'member']);
+  Route::post('/fa', [PengajuanController::class, 'fa']);
+  Route::post('/peruntukan', [PengajuanController::class, 'peruntukan']);
   Route::post('/create', [PengajuanController::class, 'create']);
   Route::post('/read', [PengajuanController::class, 'read']);
   Route::get('/detail', [PengajuanController::class, 'detail']);

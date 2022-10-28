@@ -26,6 +26,7 @@ class CreateKopPengajuanTable extends Migration
             $table->integer('peruntukan')->comment('Referensi Tabel List Kode');
             $table->string('keterangan_peruntukan', 100);
             $table->date('rencana_droping');
+            $table->integer('jangka_waktu');
             $table->integer('rencana_periode_jwaktu')->nullable(TRUE)->default(1)->comment('0 = Harian, 1 = Mingguan, 2 = Bulanan, 3 = Tempo');
             $table->integer('status_pengajuan')->nullable(TRUE)->default(0)->comment('0 = Registrasi, 1 = Aktivasi, 2 = Tolak, 3 = Batal');
             $table->integer('jenis_pembiayaan')->nullable(TRUE)->default(0)->comment('0 = Kelompok, 1 = Individu');
