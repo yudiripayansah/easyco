@@ -112,6 +112,7 @@ Route::prefix('rembug')->middleware('checkToken')->group(function () {
 });
 
 Route::prefix('anggota')->middleware('checkToken')->group(function () {
+  Route::post('/rembug', [AnggotaController::class, 'rembug']);
   Route::post('/create', [AnggotaController::class, 'create']);
   Route::post('/read', [AnggotaController::class, 'read']);
   Route::get('/detail', [AnggotaController::class, 'detail']);

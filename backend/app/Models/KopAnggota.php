@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\softDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class KopAnggota extends Model
@@ -23,7 +24,6 @@ class KopAnggota extends Model
             'tempat_lahir' => 'required',
             'tgl_lahir' => 'required',
             'no_ktp' => 'required|numeric',
-            'tgl_gabung' => 'required',
             'created_by' => 'required'
         ];
 
@@ -57,8 +57,7 @@ class KopAnggota extends Model
             'ibu_kandung' => 'required',
             'tempat_lahir' => 'required',
             'tgl_lahir' => 'required',
-            'no_ktp' => 'required|numeric',
-            'tgl_gabung' => 'required'
+            'no_ktp' => 'required|numeric'
         ];
 
         $validator = Validator::make($validate, $rule);
@@ -80,5 +79,12 @@ class KopAnggota extends Model
         }
 
         return $res;
+    }
+
+    public function rembug($kode_cabang)
+    {
+        $show = DB::table('kop_rembug')->where('kode_cabang', $kode_cabang)->orderBy('id', 'ASC')->get();
+
+        return $show;
     }
 }
