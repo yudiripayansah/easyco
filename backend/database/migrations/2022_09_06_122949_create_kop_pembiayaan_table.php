@@ -41,7 +41,7 @@ class CreateKopPembiayaanTable extends Migration
             $table->date('tanggal_akad');
             $table->date('tanggal_mulai_angsur');
             $table->date('tanggal_jtempo');
-            $table->integer('counter_angsuran');
+            $table->integer('counter_angsuran')->nullable(TRUE)->default(0);
             $table->decimal('saldo_pokok', 14, 2)->nullable(TRUE)->default(0);
             $table->decimal('saldo_margin', 14, 2)->nullable(TRUE)->default(0);
             $table->decimal('saldo_catab', 14, 2)->nullable(TRUE)->default(0);
@@ -65,7 +65,7 @@ class CreateKopPembiayaanTable extends Migration
             $table->integer('proses_wakalah')->nullable(TRUE)->default(0)->comment('0 = Belum Diproses, 1 = Sudah Diproses');
             $table->integer('angsuran_jadwal_khusus')->nullable(TRUE)->default(0)->comment('0 = Tidak, 1 = Ya');
             $table->integer('rescheduling')->nullable(TRUE)->default(0)->comment('0 = Tidak, 1 = Ya');
-            $table->integer('peruntukan')->nullable(TRUE)->comment('Referensi Tabel List Kode');
+            $table->integer('peruntukan')->comment('Referensi Tabel List Kode');
             $table->string('norek_tabungan', 20)->nullable(TRUE);
             $table->string('no_rekening_o', 20)->nullable(TRUE);
             $table->string('id_anggota_o', 20)->nullable(TRUE);

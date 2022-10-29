@@ -19,6 +19,7 @@ use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PrdDepositoController;
 use App\Http\Controllers\PrdPembiayaanController;
 use App\Http\Controllers\PrdTabunganController;
+use App\Http\Controllers\RegistrasiAkadController;
 use App\Http\Controllers\RembugController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -199,4 +200,17 @@ Route::prefix('map')->middleware('checkToken')->group(function () {
   Route::get('/detail', [MapController::class, 'detail']);
   Route::post('/update', [MapController::class, 'update']);
   Route::get('/delete', [MapController::class, 'delete']);
+});
+
+Route::prefix('registrasiakad')->middleware('checkToken')->group(function () {
+  Route::post('/rembug', [RegistrasiAkadController::class, 'rembug']);
+  Route::post('/pengajuan', [RegistrasiAkadController::class, 'pengajuan']);
+  Route::post('/fa', [RegistrasiAkadController::class, 'fa']);
+  Route::post('/peruntukan', [RegistrasiAkadController::class, 'peruntukan']);
+  Route::post('/product', [RegistrasiAkadController::class, 'product']);
+  Route::post('/create', [RegistrasiAkadController::class, 'create']);
+  Route::post('/read', [RegistrasiAkadController::class, 'read']);
+  Route::get('/detail', [RegistrasiAkadController::class, 'detail']);
+  Route::post('/update', [RegistrasiAkadController::class, 'update']);
+  Route::get('/delete', [RegistrasiAkadController::class, 'delete']);
 });
