@@ -10,6 +10,35 @@ use Illuminate\Support\Facades\DB;
 
 class AnggotaController extends Controller
 {
+    function rembug(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+
+        $show = KopAnggota::rembug($kode_cabang);
+
+        $data = array();
+
+        foreach ($show as $sh) {
+            $kode_rembug = $sh->kode_rembug;
+            $nama_rembug = $sh->nama_rembug;
+
+            $data[] = array(
+                'kode_rembug' => $kode_rembug,
+                'nama_rembug' => $nama_rembug
+            );
+        }
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $data,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
     function create(Request $request)
     {
         $data = $request->all();
@@ -66,6 +95,7 @@ class AnggotaController extends Controller
         $data['kabupaten'] = strtoupper($request->kabupaten);
         $data['nama_pasangan'] = strtoupper($request->nama_pasangan);
         $data['ket_pekerjaan'] = strtoupper($request->ket_pekerjaan);
+        $data['tgl_gabung'] = date('Y-m-d');
 
         $validate = KopAnggota::validateAdd($data);
         $validate2 = KopAnggotaUk::validateAdd($data2);
