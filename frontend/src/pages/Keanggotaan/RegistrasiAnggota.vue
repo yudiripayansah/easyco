@@ -4,8 +4,7 @@
   <b-card>
     <b-row no-gutters>
       <b-col cols="12" class="d-flex justify-content-end mb-5 pb-5 border-bottom">
-        <b-button variant="success" @click="$bvModal.show('modal-form');doClearForm()" v-b-tooltip.hover
-          title="Tambah Data Baru">
+        <b-button variant="success" @click="$bvModal.show('modal-form');doClearForm()">
           <b-icon icon="plus" />
           Tambah Baru
         </b-button>
@@ -15,16 +14,16 @@
           <b-col cols="6">
             <div class="w-100 max-200 pr-5">
               <b-input-group size="sm" prepend="Per Halaman">
-                <b-form-select v-model="paging.perPage" :options="opt.perPage" />
+                <b-form-select v-model="paging.perPage" :options="opt.perPage" @change="doGet()"/>
               </b-input-group>
             </div>
           </b-col>
           <b-col cols="6" class="d-flex justify-content-end">
             <div class="w-100 max-300">
               <b-input-group size="sm">
-                <b-form-input />
+                <b-form-input v-model="paging.search"/>
                 <b-input-group-append>
-                  <b-button size="sm" text="Button" variant="primary">
+                  <b-button size="sm" text="Button" variant="primary" @click="doGet()">
                     <b-icon icon="search" />
                     Cari
                   </b-button>
@@ -35,17 +34,23 @@
         </b-row>
       </b-col>
       <b-col cols="12">
-        <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
-          show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
+        <b-table 
+          responsive bordered outlined small striped hover 
+          :fields="table.fields" 
+          :items="table.items"
+          :sort-by.sync="paging.sortBy"
+          :sort-desc.sync="paging.sortDesc"
+          show-empty 
+          @filtered="onTableUpdate"
+          :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
           <template #cell(no)="item">
             {{item.index + 1}}
           </template>
           <template #cell(action)="item">
-            <b-button variant="danger" size="xs" class="mx-1" @click="doDelete(item,true)" v-b-tooltip.hover
-              title="Hapus">
+            <b-button variant="danger" size="xs" class="mx-1" @click="doDelete(item,true)">
               <b-icon icon="trash" />
             </b-button>
-            <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Ubah">
+            <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item)">
               <b-icon icon="pencil" />
             </b-button>
           </template>
@@ -59,25 +64,35 @@
   </b-card>
   <b-modal title="Form Registrasi Anggota" id="modal-form" hide-footer size="xl" centered>
     <b-form @submit="doSave()">
-      <b-row>
+      <b-row v-show="form.activeStep === 1">
         <b-col cols="12" class="mb-3">
-          <h4 class="mb-3">Step 1</h4>
+          <h4 class="mb-3">Data Anggota</h4>
           <hr>
         </b-col>
         <b-col cols="6">
+          <b-form-group label="Cabang">
+            <b-select v-model="form.data.kode_cabang" :options="opt.cabang" @change="doGetRembug()"/>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6">
+          <b-form-group label="Rembug">
+            <b-select v-model="form.data.kode_rembug" :options="opt.rembug"/>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6">
           <b-form-group label="Nama">
-            <b-input v-model="form.data.nama" />
+            <b-input v-model="form.data.nama_anggota" />
           </b-form-group>
         </b-col>
         <b-col cols="6">
           <b-form-group label="Jenis Kelamin">
-            <input class="form-check-input ml-2" type="radio" name="flexRadioDefault">
+            <input class="form-check-input ml-2" type="radio" name="flexRadioDefault" value="W" v-model="form.data.jenis_kelamin">
               <label class="form-check-label ml-7">
-                Perempuan
+                Wanita
               </label>
-            <input class="form-check-input ml-7" type="radio" name="flexRadioDefault" checked>
+            <input class="form-check-input ml-7" type="radio" name="flexRadioDefault" value="P" v-model="form.data.jenis_kelamin" checked>
               <label class="form-check-label ml-12">
-                Laki-Laki
+                Pria
               </label>
           </b-form-group>
         </b-col>
@@ -85,164 +100,178 @@
           <b-form-group label="Tempat / Tanggal Lahir">
             <b-row>
               <b-col cols="6">
-                <b-input />
+                <b-input v-model="form.data.tempat_lahir"/>
               </b-col>
               <b-col cols="6">
-                <b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" />
+                <b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" v-model="form.data.tgl_lahir"/>
+              </b-col>
+            </b-row>
+          </b-form-group>
+        </b-col>
+        <b-col cols="2">
+          <b-form-group label="Nama Ibu Kandung">
+            <b-input v-model="form.data.ibu_kandung"/>
+          </b-form-group>
+        </b-col>
+        <b-col cols="2">
+          <b-form-group label="NIK">
+            <b-input v-model="form.data.no_ktp"/>
+          </b-form-group>
+        </b-col>
+        <b-col cols="2">
+          <b-form-group label="NPWP">
+            <b-input v-model="form.data.no_npwp"/>
+          </b-form-group>
+        </b-col>
+        <b-col cols="12">
+          <b-form-group label="Alamat">
+            <b-textarea v-model="form.data.alamat"/>
+            <b-row class="mt-3">
+              <b-col cols="3">
+                <b-form-group label="Desa">
+                  <b-input v-model="form.data.desa"/>
+                </b-form-group>
+              </b-col>
+              <b-col cols="3">
+                <b-form-group label="Kecamatan">
+                  <b-input v-model="form.data.kecamatan"/>
+                </b-form-group>
+              </b-col>
+              <b-col cols="3">
+                <b-form-group label="Kabupaten">
+                  <b-input v-model="form.data.kabupaten"/>
+                </b-form-group>
+              </b-col>
+              <b-col cols="3">
+                <b-form-group label="Kode Pos">
+                  <b-input v-model="form.data.kodepos"/>
+                </b-form-group>
               </b-col>
             </b-row>
           </b-form-group>
         </b-col>
         <b-col cols="6">
-          <b-form-group label="Nama Ibu Kandung">
-            <b-input />
-          </b-form-group>
-        </b-col>
-        <b-col cols="6">
-          <b-form-group label="NIK">
-            <b-input />
-          </b-form-group>
-        </b-col>
-        <b-col cols="6">
-          <b-form-group label="Alamat">
-            <b-select :options="opt.kota_kabupaten" class="mb-3" />
-            <b-select :options="opt.kecamatan" class="mb-3" />
-            <b-select :options="opt.desa" class="mb-3" />
-            <b-input placeholder="Jl:.............................,No...........,Rt.....,Rw......"/>
-          </b-form-group>
-        </b-col>
-        <b-col cols="6">
           <b-form-group label="No.Telp / HP">
-            <b-input placeholder="0858123456" />
+            <b-input placeholder="0858123456" v-model="form.data.no_telp" />
           </b-form-group>
         </b-col>
         <b-col cols="6">
           <b-form-group label="Pendidikan Terakhir">
-            <b-select :options="opt.pendidikan_terakhir" />
+            <b-select :options="opt.pendidikan" v-model="form.data.pendidikan"/>
           </b-form-group>
         </b-col>
         <b-col cols="6">
           <b-form-group label="Pekerjaan">
-            <b-select :options="opt.pekerjaan" />
+            <b-select :options="opt.pekerjaan" v-model="form.data.pekerjaan"/>
           </b-form-group>
         </b-col>
         <b-col cols="6">
           <b-form-group label="Keterangan Pekerjaan">
-            <b-input />
+            <b-input v-model="form.data.ket_pekerjaan"/>
           </b-form-group>
         </b-col>
       </b-row>
-      <b-row>
+      <b-row v-show="form.activeStep === 2">
         <b-col cols="12" class="mb-3">
-          <h4 class="mb-3">Step 2</h4>
+          <h4 class="mb-3">Data Pasangan</h4>
           <hr>
         </b-col>
         <b-col cols="6">
           <b-form-group label="Status Pernikahan">
-            <b-select :options="opt.status_pernikahan" />
+            <b-select :options="opt.status_perkawinan" v-model="form.data.status_perkawinan"/>
           </b-form-group>
         </b-col>
         <b-col cols="6">
           <b-form-group label="Nama Pasangan">
-            <b-input />
+            <b-input v-model="form.data.p_nama"/>
           </b-form-group>
         </b-col>
         <b-col cols="6">
           <b-form-group label="Tempat / Tanggal Lahir">
             <b-row>
               <b-col cols="6">
-                <b-input />
+                <b-input v-model="form.data.p_tmplahir"/>
               </b-col>
               <b-col cols="6">
-                <b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" />
+                <b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" v-model="form.data.p_tglahir"/>
               </b-col>
             </b-row>
           </b-form-group>
         </b-col>
         <b-col cols="6">
           <b-form-group label="NIK">
-            <b-input />
+            <b-input v-model="form.data.p_noktp"/>
           </b-form-group>
         </b-col>
         <b-col cols="6">
           <b-form-group label="Pendidikan Terakhir">
-            <b-select :options="opt.pendidikan_terakhir" />
+            <b-select :options="opt.pendidikan" v-model="form.data.p_pendidikan"/>
           </b-form-group>
         </b-col>
         <b-col cols="6">
           <b-form-group label="Pekerjaan">
-          <b-select :options="opt.pekerjaan" />
+          <b-select :options="opt.pekerjaan" v-model="form.data.p_pekerjaan"/>
           </b-form-group>
         </b-col>
         <b-col cols="6">
           <b-form-group label="Keterangan Pekerjaan">
-            <b-input />
+            <b-input v-model="form.data.p_ketpekerjaan"/>
           </b-form-group>
         </b-col>
         <b-col cols="6">
           <b-form-group label="No.Telp / HP">
-            <b-input placeholder="0858123456" />
+            <b-input placeholder="0858123456" v-model="form.data.p_nohp"/>
           </b-form-group>
         </b-col>
         <b-col cols="6">
           <b-form-group label="Jumlah Anak">
-            <b-input />
+            <b-input v-model="form.data.jml_anak" type="number"/>
           </b-form-group>
         </b-col>
         <b-col cols="6">
-          <b-form-group label="Keterangan">
-            <b-input />
-          </b-form-group>
-        </b-col>
-        <b-col cols="6">
-          <b-form-group label="Jml Tanggungan Lain">
-            <b-input />
-          </b-form-group>
-        </b-col>
-        <b-col cols="6">
-          <b-form-group label="Keterangan">
-            <b-input />
+          <b-form-group label="Jumlah Tanggungan Lain">
+            <b-input v-model="form.data.jml_tanggungan" type="number"/>
           </b-form-group>
         </b-col>
       </b-row>
-      <b-row>
+      <b-row v-show="form.activeStep === 3">
         <b-col cols="12" class="mb-3">
-          <h4 class="mb-3">Step 3</h4>
+          <h4 class="mb-3">Data Tempat Tinggal dan Harta</h4>
           <hr>
         </b-col>
         <b-col cols="4">
           <b-form-group label="Status Rumah">
-            <b-select :options="opt.status_rumah" />
+            <b-select :options="opt.rumah_status" v-model="form.data.rumah_status"/>
           </b-form-group>
         </b-col>
         <b-col cols="4">
           <b-form-group label="Ukuran Rumah">
-            <b-select :options="opt.ukuran_rumah" />
+            <b-select :options="opt.rumah_ukuran" v-model="form.data.rumah_ukuran"/>
           </b-form-group>
         </b-col>
         <b-col cols="4">
           <b-form-group label="Dinding">
-            <b-select :options="opt.dinding" />
+            <b-select :options="opt.rumah_dinding" v-model="form.data.rumah_dinding"/>
           </b-form-group>
         </b-col>
         <b-col cols="3">
           <b-form-group label="Atap">
-            <b-select :options="opt.atap" />
+            <b-select :options="opt.rumah_atap" v-model="form.data.rumah_atap"/>
           </b-form-group>
         </b-col>
         <b-col cols="3">
           <b-form-group label="Lantai">
-            <b-select :options="opt.lantai" />
+            <b-select :options="opt.rumah_lantai" v-model="form.data.rumah_lantai"/>
           </b-form-group>
         </b-col>
         <b-col cols="3">
           <b-form-group label="Jamban">
-            <b-select :options="opt.jamban" />
+            <b-select :options="opt.rumah_jamban" v-model="form.data.rumah_jamban"/>
           </b-form-group>
         </b-col>
         <b-col cols="3">
           <b-form-group label="Sumber Air">
-            <b-select :options="opt.sumber_air" />
+            <b-select :options="opt.rumah_air" v-model="form.data.rumah_air"/>
           </b-form-group>
         </b-col>
         <b-col cols="6">
@@ -251,17 +280,17 @@
             <b-row cols="3">
                 <b-col>
                   <b-form-group label="Sawah">
-                    <b-input />
+                    <b-input v-model="form.data.lahan_sawah" type="number"/>
                   </b-form-group>
                 </b-col>
                 <b-col>
                   <b-form-group label="Kebun">
-                    <b-input />
+                    <b-input v-model="form.data.lahan_kebun" type="number"/>
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Pekalangan">
-                    <b-input />
+                  <b-form-group label="Pekarangan">
+                    <b-input v-model="form.data.lahan_pekarangan" type="number"/>
                   </b-form-group>
                 </b-col>
             </b-row>
@@ -272,18 +301,18 @@
             <p>Ternak</p>
             <b-row cols="3">
                 <b-col>
-                  <b-form-group label="Sawah">
-                    <b-input />
+                  <b-form-group label="Sapi">
+                    <b-input v-model="form.data.ternak_sapi" type="number"/>
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Kebun">
-                    <b-input />
+                  <b-form-group label="Domba">
+                    <b-input v-model="form.data.ternak_domba" type="number"/>
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Pekalangan">
-                    <b-input />
+                  <b-form-group label="Unggas">
+                    <b-input v-model="form.data.ternak_unggas" type="number"/>
                   </b-form-group>
                 </b-col>
             </b-row>
@@ -295,12 +324,12 @@
             <b-row cols="3">
                 <b-col>
                   <b-form-group label="Sepeda">
-                    <b-input />
+                    <b-input v-model="form.data.kend_sepeda" type="number"/>
                   </b-form-group>
                 </b-col>
                 <b-col>
                   <b-form-group label="Motor">
-                    <b-input />
+                    <b-input v-model="form.data.kend_motor" type="number"/>
                   </b-form-group>
                 </b-col>
             </b-row>
@@ -312,41 +341,41 @@
             <b-row cols="3">
               <b-col>
                 <b-form-group label="Kulkas">
-                  <b-input />
+                  <b-input v-model="form.data.elc_kulkas" type="number"/>
                 </b-form-group>
               </b-col>
               <b-col>
                 <b-form-group label="Tv">
-                  <b-input />
+                  <b-input v-model="form.data.elc_tv" type="number"/>
                 </b-form-group>
               </b-col>
               <b-col>
                 <b-form-group label="Handphone">
-                  <b-input />
+                  <b-input v-model="form.data.elc_hp" type="number"/>
                 </b-form-group>
               </b-col>
             </b-row>
           </b-container>
         </b-col>
       </b-row>
-      <b-row>
+      <b-row v-show="form.activeStep >= 4">
         <b-col cols="12" class="mb-3">
-          <h4 class="mb-3">Step 4</h4>
+          <h4 class="mb-3">Data Pendapatan</h4>
           <hr>
         </b-col>
         <b-col cols="4">
           <b-form-group label="Pendapatan Usaha">
-            <b-input />
+            <b-input v-model="form.data.pendapatan_perbulan" type="number"/>
           </b-form-group>
         </b-col>
         <b-col cols="4">
           <b-form-group label="Pendapatan Pasangan">
-            <b-input />
+            <b-input v-model="form.data.p_pendapatan" type="number"/>
           </b-form-group>
         </b-col>
         <b-col cols="4">
           <b-form-group label="Total Pendapatan">
-            <b-input />
+            <b-input disabled :value="Number(form.data.pendapatan_perbulan) + Number(form.data.p_pendapatan)"/>
           </b-form-group>
         </b-col>
         <b-col cols="12">
@@ -355,42 +384,37 @@
             <b-row>
               <b-col cols="3">
                 <b-form-group label="Beras">
-                  <b-input />
+                  <b-input v-model="form.data.by_beras" type="number"/>
                 </b-form-group>
               </b-col>
               <b-col cols="3">
                 <b-form-group label="Biaya Pendidikan">
-                  <b-input />
+                  <b-input v-model="form.data.by_sekolah" type="number"/>
                 </b-form-group>
               </b-col>
               <b-col cols="3">
                 <b-form-group label="Belanja Dapur">
-                  <b-input />
-                </b-form-group>
-              </b-col>
-              <b-col cols="3">
-                <b-form-group label="Hutang Pihak Lain">
-                  <b-input />
+                  <b-input v-model="form.data.by_dapur" type="number"/>
                 </b-form-group>
               </b-col>
               <b-col cols="3">
                 <b-form-group label="Biaya Listrik">
-                  <b-input />
+                  <b-input v-model="form.data.by_listrik" type="number"/>
                 </b-form-group>
               </b-col>
               <b-col cols="3">
                 <b-form-group label="Biaya Lainnya">
-                  <b-input />
+                  <b-input v-model="form.data.by_lain" type="number"/>
                 </b-form-group>
               </b-col>
               <b-col cols="3">
                 <b-form-group label="Biaya Telp">
-                  <b-input />
+                  <b-input v-model="form.data.by_telpon" type="number"/>
                 </b-form-group>
               </b-col>
               <b-col cols="3">
                 <b-form-group label="Total Biaya">
-                  <b-input />
+                  <b-input disabled :value="Number(form.data.by_beras)+Number(form.data.by_sekolah)+Number(form.data.by_dapur)+Number(form.data.by_listrik)+Number(form.data.by_lain)+Number(form.data.by_telpon)"/>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -399,10 +423,17 @@
       </b-row>
       <b-row>
         <b-col cols="12" class="d-flex justify-content-end border-top pt-5">
-          <b-button variant="secondary" @click="$bvModal.hide('modal-form')" :disabled="form.loading">Cancel
+          <b-button 
+            variant="secondary" 
+            @click="(form.activeStep == 1) ? $bvModal.hide('modal-form') : moveStep('Back')" :disabled="form.loading">{{(form.activeStep == 1) ? 'Cancel' : 'Prev'}}
           </b-button>
-          <b-button variant="primary" type="submit" :disabled="form.loading" class="ml-3">
-            {{form.loading ? 'Memproses...' : 'Simpan' }}
+          <b-button 
+            variant="primary" 
+            type="button"
+            :disabled="form.loading" 
+            class="ml-3" 
+            @click="moveStep('Next')">
+            {{form.loading ? 'Memproses...' : (form.activeStep == form.steps) ? 'Simpan': 'Next' }}
           </b-button>
         </b-col>
       </b-row>
@@ -438,7 +469,7 @@ export default {
           kode_cabang: null,
           kode_rembug: null,
           nama_anggota: null,
-          jenis_kelamin: null,
+          jenis_kelamin: 'W',
           ibu_kandung: null,
           tempat_lahir: null,
           tgl_lahir: null,
@@ -488,10 +519,10 @@ export default {
           elc_hp: null,
           kend_sepeda: null,
           kend_motor: null,
-          ush_rumahtangga: null,
-          ush_komoditi: null,
-          ush_lokasi: null,
-          ush_omset: null,
+          ush_rumahtangga: 0,
+          ush_komoditi: 0,
+          ush_lokasi: 0,
+          ush_omset: 0,
           by_beras: null,
           by_dapur: null,
           by_listrik: null,
@@ -499,6 +530,8 @@ export default {
           by_sekolah: null,
           by_lain: null
         },
+        steps: 4,
+        activeStep: 1,
         loading: false,
       },
       table: {
@@ -555,195 +588,255 @@ export default {
         ],
         items: [],
         loading: false,
+        totalRows: 0
       },
       paging: {
         page: 1,
         perPage: 10,
-        sorDir: 'desc',
+        sortDesc: true,
         sortBy: 'id',
         search: ''
       },
       remove: {
-        data: {
-
-        },
+        data: Object,
         loading: false
       },
       opt: {
-        jenis_kelamin: [{
-            text: 'Laki-Laki',
-            value: 'Laki-Laki'
+        cabang: [],
+        rembug: [],
+        pendidikan: [
+          {
+            text: 'Tidak Diketahui',
+            value: '0'
           },
           {
-            text: 'Perempuan',
-            value: 'Perempuan'
+            text: 'SD / MI',
+            value: '1'
           },
           {
-            text: 'Lainnya',
-            value: 'Lainnya'
+            text: 'SMP / MTs',
+            value: '2'
+          },
+          {
+            text: 'SMK / SMA / MA',
+            value: '3'
+          },
+          {
+            text: 'D1',
+            value: '4'
+          },
+          {
+            text: 'D2',
+            value: '5'
+          },
+          {
+            text: 'D3',
+            value: '6'
+          },
+          {
+            text: 'S1',
+            value: '7'
+          },
+          {
+            text: 'S2',
+            value: '8'
+          },
+          {
+            text: 'S3',
+            value: '9'
           }
         ],
-        pendidikan_terakhir: [{
-            text: 'SD Sederajat',
-            label: 'SD Sederajat',
+        status_perkawinan: [
+          {
+            text: 'Tidak Diketahui',
+            value: '0'
           },
           {
-            text: 'SMP Sederajat',
-            label: 'SMP Sederajat',
+            text: 'Sudah',
+            value: '1'
           },
           {
-            text: 'SMA Sederajat',
-            label: 'SMA Sederajat',
-          },
-          {
-            text: 'Diploma',
-            label: 'Diploma',
-          },
-          {
-            text: 'Sarjana',
-            label: 'Sarjana',
-          },
-          {
-            text: 'Magister',
-            label: 'Magister',
-          },
-          {
-            text: 'Professor',
-            label: 'Professor',
+            text: 'Belum',
+            value: '2'
           }
         ],
-        status_pernikahan: [{
-            text: '1.Menikah',
-            value: '1.Menikah',
+        kota_kabupaten: [],
+        kecamatan: [],
+        desa: [],
+        pekerjaan: [
+          {
+            text: 'Tidak Diketahui',
+            value: '0'
           },
           {
-            text: '2.Belum Menikah',
-            value: '2.Belum Menikah',
+            text: 'Ibu Rumah Tangga',
+            value: '1'
           },
           {
-            text: '3.Cerai',
-            value: '3.Cerai',
+            text: 'Buruh',
+            value: '2'
+          },
+          {
+            text: 'Petani',
+            value: '3'
+          },
+          {
+            text: 'Pedagang',
+            value: '4'
+          },
+          {
+            text: 'Wiraswasta',
+            value: '5'
+          },
+          {
+            text: 'Karyawan Swasta',
+            value: '6'
+          },
+          {
+            text: 'PNS',
+            value: '7'
           }
         ],
-        kota_kabupaten: [{
-          text: 'Kota / Kabupaten:',
-          value: 'Kota / Kabupaten:',
-        },
-        {
-          text: 'Kota Bogor',
-          value: 'Kota Bogor',
-        },
-        {
-          text: 'Kabupaten Bogor',
-          value: 'Kabupaten Bogor',
-        }
-      ],
-      kecamatan: [{
-        text: 'Kecamatan:',
-        value: 'Kecamatan:',
-      },
-      {
-        text: 'Kecamatan Pakuan',
-        value: 'Kecamatan Pakuan',
-      },
-      {
-        text: 'Kecamatan Cibinong',
-        value: 'Kecamatan Cibinong',
-      }
-    ],
-    desa: [{
-        text: 'Desa:',
-        value: 'Desa:',
-      },
-      {
-        text: 'Desa Sukasari',
-        value: 'Desa Sukasari',
-      },
-      {
-        text: 'Desa Sukahati',
-        value: 'Desa Sukahati',
-      }
-    ],
-    pekerjaan: [{
-        text: 'Buruh:',
-        value: 'Buruh:',
-      },
-      {
-        text: 'Dokter',
-        value: 'Dokter',
-      },
-      {
-        text: 'Atlet',
-        value: 'Atlet',
-      }
-    ],
-    status_rumah: [{
-        text: 'Milik Sendiri:',
-        value: 'Milik Sendiri:',
-      },
-      {
-        text: 'Saudara',
-        value: 'Saudara',
-      },
-      {
-        text: 'Orang Tua',
-        value: 'Orang Tua',
-      }
-    ],
-    ukuran_rumah: [{
-        text: 'Besar:',
-        value: 'Besar:',
-      },
-      {
-        text: 'Sedang',
-        value: 'Sedang',
-      },
-      {
-        text: 'Kecil',
-        value: 'Kecil',
-      }
-    ],
-    dinding: [{
-        text: 'Papan Kayu',
-        value: 'Papan Kayu',
-      },
-      {
-        text: 'Tembok',
-        value: 'Tembok',
-      }
-    ],
-    atap: [{
-        text: 'Asbes',
-        value: 'Asbes',
-      },
-      {
-        text: 'Genteng',
-        value: 'Genteng',
-      }
-    ],
-    lantai: [{
-        text: 'Plester Semen',
-        value: 'Plester Semen',
-      },
-      {
-        text: 'Keramik',
-        value: 'Keramik',
-      }
-    ],
-    jamban: [{
-        text: 'Sungai',
-        value: 'Sungai',
-      }
-    ],
-    sumber_air: [{
-        text: 'Sumur Sendiri',
-        value: 'Sumur Sendiri',
-      },
-      {
-        text : 'Air Pam',
-        value : 'Air Pam',
-      }
-    ],
+        rumah_status: [
+          {
+            text: 'Tidak Diketahui',
+            value: '0'
+          },
+          {
+            text: 'Rumah Sendiri',
+            value: '1'
+          },
+          {
+            text: 'Sewa',
+            value: '2'
+          },
+          {
+            text: 'Numpang',
+            value: '3'
+          }
+        ],
+        rumah_ukuran: [
+          {
+            text: 'Tidak Diketahui',
+            value: '0'
+          },
+          {
+            text: 'Kecil',
+            value: '1'
+          },
+          {
+            text: 'Sedang',
+            value: '2'
+          },
+          {
+            text: 'Besar',
+            value: '3'
+          }
+        ],
+        rumah_dinding: [
+          // 0 = Tidak Diketahui, 1 = Tembok, 2 = Semi Tembok, 3 = Papan, 4 = Bambu
+          {
+            text: 'Tidak Diketahui',
+            value: '0'
+          },
+          {
+            text: 'Tembok',
+            value: '1'
+          },
+          {
+            text: 'Semi Tembok',
+            value: '2'
+          },
+          {
+            text: 'Papan',
+            value: '3'
+          },
+          {
+            text: 'Bambu',
+            value: '4'
+          }
+        ],
+        rumah_atap: [
+          // 0 = Tidak Diketahui, 1 = Genteng, 2 = Asbes, 3 = Rumbia
+          {
+            text: 'Tidak Diketahui',
+            value: '0'
+          },
+          {
+            text: 'Genteng',
+            value: '1'
+          },
+          {
+            text: 'Asbes',
+            value: '2'
+          },
+          {
+            text: 'Rumbia',
+            value: '3'
+          }
+        ],
+        rumah_lantai: [
+          // 0 = Tidak Diketahui, 1 = Tanah, 2 = Semen, 3 = Keramik
+          {
+            text: 'Tidak Diketahui',
+            value: '0'
+          },
+          {
+            text: 'Tanah',
+            value: '1'
+          },
+          {
+            text: 'Semen',
+            value: '2'
+          },
+          {
+            text: 'Keramik',
+            value: '3'
+          }
+        ],
+        rumah_jamban: [
+          // 0 = Tidak Diketahui, 1 = Sungai, 2 = Jamban Terbuka, 3 = WC
+          {
+            text: 'Tidak Diketahui',
+            value: '0'
+          },
+          {
+            text: 'Sungai',
+            value: '1'
+          },
+          {
+            text: 'Jamban Terbuka',
+            value: '2'
+          },
+          {
+            text: 'WC',
+            value: '3'
+          }
+        ],
+        rumah_air: [
+          // 0 = Tidak Diketahui, 1 = Sumur Sendiri, 2 = Sumur Bersama, 3 = Sungai, 4 = PDAM / PAMSIMAS
+          {
+            text: 'Tidak Diketahui',
+            value: '0'
+          },
+          {
+            text: 'Sumur Sendiri',
+            value: '1'
+          },
+          {
+            text: 'Sumur Bersama',
+            value: '2'
+          },
+          {
+            text: 'Sungai',
+            value: '3'
+          },
+          {
+            text: 'PDAM/ PAMSIMAS',
+            value: '4'
+          }
+        ],
+        perPage: [10,20,50,100,200]
       },
       loading: false
     }
@@ -751,35 +844,241 @@ export default {
   computed: {
     ...mapGetters(["user"]),
   },
+  watch: {
+    paging: {
+      handler(val){
+        this.doGet()
+      },
+      deep: true
+    }
+  },
   mounted() {
     this.doGet()
+    this.doGetCabang()
   },
   methods: {
-    async doGet() {
-      let payload = this.paging
+    async doGetCabang() {
+      let payload = {
+        perPage: '~',
+        page: 1,
+        sortBy: 'nama_cabang',
+        sortDir: 'ASC',
+        search: ''
+      }
       try {
-        this.table.loading = true
-        let req = await  easycoApi.anggotaRead(payload, this.user.token)
+        let req = await  easycoApi.cabangRead(payload, this.user.token)
         let { data, status, msg } = req.data
         if(status){
+          this.opt.cabang = []
+          data.map((item) => {
+            this.opt.cabang.push({
+              value: item.kode_cabang,
+              text: item.nama_cabang
+            })
+          })
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async doGetRembug() {
+      let payload = {
+        kode_cabang: this.form.data.kode_cabang
+      }
+      try {
+        let req = await  easycoApi.anggotaRembug(payload, this.user.token)
+        let { data, status, msg } = req.data
+        if(status){
+          this.opt.rembug = []
+          data.map((item) => {
+            this.opt.rembug.push({
+              value: item.kode_rembug,
+              text: item.nama_rembug
+            })
+          })
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async doGet() {
+      let payload = this.paging
+      payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
+      this.table.loading = true
+      try {
+        let req = await  easycoApi.anggotaRead(payload, this.user.token)
+        let { data, status, msg, total } = req.data
+        if(status){
           this.table.items = data
-          this.notify('success','Success',msg)
+          this.table.totalRows = total
         } else {
           this.notify('danger','Error',msg)
         }
         this.table.loading = false
       } catch (error) {
         this.table.loading = false
-        console.log(error)
+        console.error(error)
         this.notify('danger','Login Error',error)
       }
     },
-    doSave() {
-      let vm = this
+    async doSave() {
       this.form.loading = true
-      setTimeout(() => {
-        vm.form.loading = false
-      }, 5000)
+      try {
+        let payload = this.form.data
+        let tgl_lahir = new Date(this.form.data.tgl_lahir)
+        payload.usia = Number(this.calculateAge(tgl_lahir))
+        payload.ktp = Number(payload.ktp)
+        payload.created_by = this.user.id
+        let req = false
+        if(payload.id){
+          req = await easycoApi.anggotaUpdate(payload, this.user.token) 
+        } else {
+          req = await easycoApi.anggotaCreate(payload, this.user.token) 
+        }
+        let {data, status, msg} = req.data
+        if(status){
+          this.doGet()
+          this.$bvModal.hide('modal-form')
+          this.doClearForm()
+          this.notify('success','Success',msg)
+        } else {
+          this.notify('danger','Error',msg)
+        }
+        this.form.loading = false
+      } catch (error) {
+        this.form.loading = false
+        console.error(error)
+        this.notify('danger','Login Error',error)         
+      }
+    },
+    async doUpdate(data) {
+      let id = data.item.id
+      try {
+        let req = await easycoApi.anggotaDetail(`?id=${id}`,this.user.token)
+        let {data, status, msg} = req.data
+        if(status){
+          this.form.data = {...data.anggotauk,...data.anggota}
+          this.doGetRembug()
+          this.$bvModal.show('modal-form')
+        } else {
+          this.notify('danger','Error',msg)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async doDelete(data, dialog) {
+      if(dialog){
+        console.log('dialog:',data)
+        this.$bvModal.show('modal-delete')
+        this.remove.data = data.item
+      } else {
+        console.log('on delete:',data)
+        try {
+          this.remove.loading = true
+          let req = await easycoApi.anggotaDelete(`?id=${this.remove.data.id}`,this.user.token)
+          let {data, status, msg} = req.data
+          if(status){
+            this.$bvModal.hide('modal-delete')
+            this.doGet()
+            this.remove.data = Object
+            this.notify('success','Success',msg)
+          } else {
+            this.notify('danger','Error',msg)
+          }
+          this.remove.loading = false
+        } catch (error) {
+          console.log(error)
+          this.notify('danger','Error',error)
+        }
+      }
+    },  
+    onTableUpdate(v){
+      console.log(v)
+    },
+    calculateAge(birthday) { // birthday is a date
+      var ageDifMs = Date.now() - birthday;
+      var ageDate = new Date(ageDifMs); // miliseconds from epoch
+      return Math.abs(ageDate.getUTCFullYear() - 1970);
+    },
+    moveStep(dir) {
+      if(dir == 'Next'){
+        this.form.activeStep++
+        if(this.form.activeStep > this.form.steps){
+          this.doSave()
+        }
+      } else {
+        this.form.activeStep--
+      }
+    },
+    doClearForm(){
+      this.form.data = {
+          id: null,
+          kode_cabang: null,
+          kode_rembug: null,
+          nama_anggota: null,
+          jenis_kelamin: 'W',
+          ibu_kandung: null,
+          tempat_lahir: null,
+          tgl_lahir: null,
+          alamat: null,
+          desa: null,
+          kecamatan: null,
+          kabupaten: null,
+          kodepos: null,
+          no_ktp: null,
+          no_npwp: null,
+          no_telp: null,
+          pendidikan: null,
+          status_perkawinan: null,
+          nama_pasangan: null,
+          pekerjaan: null,
+          ket_pekerjaan: null,
+          pendapatan_perbulan: null,
+          tgl_gabung: null,
+          created_by: null,
+          p_nama: null,
+          p_tmplahir: null,
+          p_tglahir: null,
+          usia: null,
+          p_noktp: null,
+          p_nohp: null,
+          p_pendidikan: null,
+          p_pekerjaan: null,
+          p_ketpekerjaan: null,
+          p_pendapatan: null,
+          jml_anak: null,
+          jml_tanggungan: null,
+          rumah_status: null,
+          rumah_ukuran: null,
+          rumah_atap: null,
+          rumah_dinding: null,
+          rumah_lantai: null,
+          rumah_jamban: null,
+          rumah_air: null,
+          lahan_sawah: null,
+          lahan_kebun: null,
+          lahan_pekarangan: null,
+          ternak_sapi: null,
+          ternak_domba: null,
+          ternak_unggas: null,
+          elc_kulkas: null,
+          elc_tv: null,
+          elc_hp: null,
+          kend_sepeda: null,
+          kend_motor: null,
+          ush_rumahtangga: 0,
+          ush_komoditi: 0,
+          ush_lokasi: 0,
+          ush_omset: 0,
+          by_beras: null,
+          by_dapur: null,
+          by_listrik: null,
+          by_telpon: null,
+          by_sekolah: null,
+          by_lain: null
+        }
+        this.form.activeStep = 1
     },
     notify(type, title, msg) {
       this.$bvToast.toast(msg, {
