@@ -23,7 +23,7 @@ class KopPegawai extends Model
             'no_ktp' => 'required|numeric',
             'no_hp' => 'required|numeric',
             'jabatan' => 'required',
-            'tgl_gabung' => 'date',
+            //'tgl_gabung' => 'date',
             'created_by' => 'required'
         ];
 
@@ -57,8 +57,8 @@ class KopPegawai extends Model
             'jenis_kelamin' => 'required',
             'no_ktp' => 'required|numeric',
             'no_hp' => 'required|numeric',
-            'jabatan' => 'required',
-            'tgl_gabung' => 'date'
+            'jabatan' => 'required'
+            //'tgl_gabung' => 'date'
         ];
 
         $validator = Validator::make($validate, $rule);

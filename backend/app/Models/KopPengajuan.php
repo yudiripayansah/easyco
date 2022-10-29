@@ -14,19 +14,20 @@ class KopPengajuan extends Model
     use SoftDeletes;
 
     protected $table = 'kop_pengajuan';
-    protected $fillable = ['no_anggota', 'kode_petugas', 'no_pengajuan', 'tanggal_pengajuan', 'jumlah_pengajuan', 'pengajuan_ke', 'peruntukan', 'keterangan_peruntukan', 'rencana_droping', 'rencana_periode_jwaktu', 'status_pengajuan', 'jenis_pembiayaan', 'sumber_pengembalian', 'doc_ktp', 'doc_kk', 'doc_pendukung', 'ttd_anggota', 'ttd_suami', 'ttd_ketua_majelis', 'ttd_tpl', 'no_pengajuan_o', 'no_anggota_o', 'created_by'];
+    protected $fillable = ['no_anggota', 'kode_petugas', 'no_pengajuan', 'tanggal_pengajuan', 'jumlah_pengajuan', 'pengajuan_ke', 'peruntukan', 'keterangan_peruntukan', 'rencana_droping', 'jangka_waktu', 'rencana_periode_jwaktu', 'status_pengajuan', 'jenis_pembiayaan', 'sumber_pengembalian', 'doc_ktp', 'doc_kk', 'doc_pendukung', 'ttd_anggota', 'ttd_suami', 'ttd_ketua_majelis', 'ttd_tpl', 'no_pengajuan_o', 'no_anggota_o', 'created_by'];
 
     public function validateAdd($validate)
     {
         $rule = [
             'no_anggota' => 'required|numeric',
             'kode_petugas' => 'required|numeric',
-            'tanggal_pengajuan' => 'required|date',
+            'tanggal_pengajuan' => 'required',
             'jumlah_pengajuan' => 'numeric',
             'pengajuan_ke' => 'required|numeric',
             'peruntukan' => 'required|numeric',
             'keterangan_peruntukan' => 'required',
-            'rencana_droping' => 'required|date',
+            'rencana_droping' => 'required',
+            'jangka_waktu' => 'required|numeric',
             'rencana_periode_jwaktu' => 'numeric',
             'jenis_pembiayaan' => 'numeric',
             'sumber_pengembalian' => 'numeric',
@@ -59,12 +60,13 @@ class KopPengajuan extends Model
         $rule = [
             'id' => 'required|numeric',
             'kode_petugas' => 'required|numeric',
-            'tanggal_pengajuan' => 'required|date',
+            'tanggal_pengajuan' => 'required',
             'jumlah_pengajuan' => 'numeric',
             'pengajuan_ke' => 'required|numeric',
             'peruntukan' => 'required|numeric',
             'keterangan_peruntukan' => 'required',
-            'rencana_droping' => 'required|date',
+            'rencana_droping' => 'required',
+            'jangka_waktu' => 'required|numeric',
             'rencana_periode_jwaktu' => 'numeric',
             'jenis_pembiayaan' => 'numeric',
             'sumber_pengembalian' => 'numeric'

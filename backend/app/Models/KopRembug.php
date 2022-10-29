@@ -23,7 +23,7 @@ class KopRembug extends Model
             'kode_desa' => 'required|numeric',
             'kode_petugas' => 'required|numeric',
             'nama_rembug' => 'required',
-            'tgl_pembentukan' => 'required|date',
+            'tgl_pembentukan' => 'required',
             'hari_transaksi' => 'required|numeric',
             'jam_transaksi' => 'required|date_format:H:i',
             'created_by' => 'required'
@@ -58,7 +58,7 @@ class KopRembug extends Model
             'kode_desa' => 'required|numeric',
             'kode_petugas' => 'required|numeric',
             'nama_rembug' => 'required',
-            'tgl_pembentukan' => 'required|date',
+            'tgl_pembentukan' => 'required',
             'hari_transaksi' => 'required|numeric',
             'jam_transaksi' => 'required|date_format:H:i'
         ];

@@ -21,9 +21,9 @@ class KopAnggota extends Model
             'jenis_kelamin' => 'required',
             'ibu_kandung' => 'required',
             'tempat_lahir' => 'required',
-            'tgl_lahir' => 'required|date',
+            'tgl_lahir' => 'required',
             'no_ktp' => 'required|numeric',
-            'tgl_gabung' => 'required|date',
+            'tgl_gabung' => 'required',
             'created_by' => 'required'
         ];
 
@@ -56,9 +56,9 @@ class KopAnggota extends Model
             'jenis_kelamin' => 'required',
             'ibu_kandung' => 'required',
             'tempat_lahir' => 'required',
-            'tgl_lahir' => 'required|date',
+            'tgl_lahir' => 'required',
             'no_ktp' => 'required|numeric',
-            'tgl_gabung' => 'required|date'
+            'tgl_gabung' => 'required'
         ];
 
         $validator = Validator::make($validate, $rule);

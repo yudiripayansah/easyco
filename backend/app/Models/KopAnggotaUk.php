@@ -18,7 +18,7 @@ class KopAnggotaUk extends Model
     public function validateAdd($validate)
     {
         $rule = [
-            'p_tglahir' => 'date',
+            //'p_tglahir' => 'date',
             'usia' => 'numeric',
             'p_pendidikan' => 'numeric',
             'p_pekerjaan' => 'numeric',
@@ -78,7 +78,7 @@ class KopAnggotaUk extends Model
     {
         $rule = [
             'id' => 'required|numeric',
-            'p_tglahir' => 'date',
+            //'p_tglahir' => 'date',
             'usia' => 'numeric',
             'p_pendidikan' => 'numeric',
             'p_pekerjaan' => 'numeric',
