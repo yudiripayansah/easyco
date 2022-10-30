@@ -50,7 +50,65 @@ const easycoApi = {
       }
     }
     return axios.get(url, config)
-  }
+  },
+  // Petugas
+  petugasRead(payload, token) {
+    let url = 'pengajuan/fa'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  // Peruntukan
+  peruntukanRead(payload, token) {
+    let url = 'pengajuan/peruntukan'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  // Pengajuan Pembiayaan
+  pengajuanAnggotaRead(payload, token){
+    let url = 'pengajuan/member'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  pengajuanPembiayaanCreate(payload, token) {
+    let url = 'pengajuan/create'
+    let config = {
+      headers: {
+        'token': token,
+        'Content-Type' : 'multipart/form-data'
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  pengajuanRead(payload, token) {
+    let url = 'pengajuan/read'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  pengajuanUpdate(payload, token) {
+    let url = 'pengajuan/update'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
 }
 
 export default easycoApi
