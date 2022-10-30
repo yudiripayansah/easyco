@@ -221,6 +221,8 @@ class RegistrasiAkadController extends Controller
 
     public function read(Request $request)
     {
+        $token = $request->header('token');
+
         $offset = 0;
         $page = 1;
         $perPage = '~';
@@ -256,16 +258,24 @@ class RegistrasiAkadController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
+        $param = array('token' => $token);
+
+        $gets = KopUser::where($param)->first();
+
         $read = KopPembiayaan::select('*')->orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
         }
 
+        if ($gets->kode_cabang <> '00000') {
+            $read->where(DB::raw('SUBSTR(no_rekening,1,5)'), $gets->kode_cabang);
+        }
+
         if ($search != NULL) {
-            $read->whereRaw("status_rekening = '0' AND (no_rekening LIKE '%" . $search . "%')");
+            $read->where('status_rekening', 0)->where('no_rekening', 'LIKE', '%' . $search . '%');
         } else {
-            $read->whereRaw("status_rekening = '0'");
+            $read->where('status_rekening', 0);
         }
 
         $read = $read->get();
@@ -279,9 +289,9 @@ class RegistrasiAkadController extends Controller
             $total = KopPembiayaan::orderBy($sortBy, $sortDir);
 
             if ($search) {
-                $total->whereRaw("status_rekening = '0' AND (no_rekening LIKE '%" . $search . "%')");
+                $total->where('status_rekening', 0)->where('no_rekening', 'LIKE', '%' . $search . '%');
             } else {
-                $read->whereRaw("status_rekening = '0'");
+                $read->where('status_rekening', 0);
             }
 
             $total = $total->count();
@@ -433,6 +443,94 @@ class RegistrasiAkadController extends Controller
             DB::beginTransaction();
 
             try {
+                $data->delete();
+
+                $res = array(
+                    'status' => TRUE,
+                    'data' => NULL,
+                    'msg' => 'Berhasil!'
+                );
+
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+
+                $res = array(
+                    'status' => FALSE,
+                    'data' => $request->all(),
+                    'msg' => $e->getMessage()
+                );
+            }
+        } else {
+            $res = array(
+                'status' => FALSE,
+                'msg' => 'Maaf! Registrasi Akad tidak ditemukan'
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    public function approve(Request $request)
+    {
+        $id = $request->id;
+
+        if ($id) {
+            $data = KopPembiayaan::find($id);
+            $data->status_rekening = 1;
+            $data->verified_at = date('Y-m-d H:i:s');
+
+            DB::beginTransaction();
+
+            try {
+                $data->save();
+
+                $res = array(
+                    'status' => TRUE,
+                    'data' => NULL,
+                    'msg' => 'Berhasil!'
+                );
+
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+
+                $res = array(
+                    'status' => FALSE,
+                    'data' => $request->all(),
+                    'msg' => $e->getMessage()
+                );
+            }
+        } else {
+            $res = array(
+                'status' => FALSE,
+                'msg' => 'Maaf! Registrasi Akad tidak ditemukan'
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    public function reject(Request $request)
+    {
+        $id = $request->id;
+
+        if ($id) {
+            $data = KopPembiayaan::find($id);
+
+            $param = array('no_pengajuan' => $data->no_pengajuan);
+
+            $update = KopPengajuan::where($param)->first();
+            $update->status_pengajuan = 0;
+
+            DB::beginTransaction();
+
+            try {
+                $update->save();
                 $data->delete();
 
                 $res = array(
