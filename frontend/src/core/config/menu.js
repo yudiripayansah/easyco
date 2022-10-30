@@ -3,7 +3,7 @@ const menu = [
     target: '/dashboard',
     label: 'Dashboard',
     icon: 'menu-icon flaticon2-architecture-and-city',
-    component: import('@/pages/Dummy.vue')
+    component: import('@/pages/Dashboard.vue')
   },
   // Keanggotaan
   {
@@ -14,13 +14,13 @@ const menu = [
     children: [
       {
         target: 'registrasi-anggota',
-        label: 'Registrasi Anggota',
+        label: 'Registrasi Calon Anggota',
         component: import('@/pages/Keanggotaan/RegistrasiAnggota'),
       },
       {
         target: 'registrasi-anggota-rembug',
         label: 'Registrasi Anggota Rembug',
-        component: import('@/pages/Keanggotaan/ApprovalRegistrasi.vue'),
+        component: import('@/pages/Keanggotaan/RegistrasiAnggotaRembug.vue'),
       },
       {
         target: 'registrasi-anggota-keluar',

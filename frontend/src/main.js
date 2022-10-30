@@ -26,7 +26,8 @@ import "@/core/plugins/treeselect";
 import "@/core/plugins/metronic";
 import "@mdi/font/css/materialdesignicons.css";
 import "@/core/plugins/formvalidation";
-
+import VueNumeric from 'vue-numeric'
+Vue.use(VueNumeric)
 
 new Vue({
   router,

@@ -60,6 +60,15 @@ const easycoApi = {
     }
     return axios.post(url, payload, config)
   },
+  anggotaSimpanan(token) {
+    let url = 'anggota/simpanan_anggota/'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
   kotakabCreate(payload, token) {
     let url = 'kotakab/create'
     let config = {

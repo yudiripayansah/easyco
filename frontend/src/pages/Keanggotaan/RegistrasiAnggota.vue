@@ -50,9 +50,12 @@
             <b-button variant="danger" size="xs" class="mx-1" @click="doDelete(item,true)">
               <b-icon icon="trash" />
             </b-button>
-            <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item)">
+            <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item,false)">
               <b-icon icon="pencil" />
             </b-button>
+            <!-- <b-button variant="info" size="xs" class="mx-1" @click="doUpdate(item,true)">
+              <b-icon icon="check" />
+            </b-button> -->
           </template>
         </b-table>
       </b-col>
@@ -62,29 +65,29 @@
       </b-col>
     </b-row>
   </b-card>
-  <b-modal title="Form Registrasi Anggota" id="modal-form" hide-footer size="xl" centered>
+  <b-modal title="Form Registrasi Calon Anggota" id="modal-form" hide-footer size="xl" centered>
     <b-form @submit="doSave()">
       <b-row v-show="form.activeStep === 1">
-        <b-col cols="12" class="mb-3">
+        <b-col cols="12" sm="12" class="mb-3">
           <h4 class="mb-3">Data Anggota</h4>
           <hr>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" :sm="(form.setRembug) ? '6' : '4'">
           <b-form-group label="Cabang">
             <b-select v-model="form.data.kode_cabang" :options="opt.cabang" @change="doGetRembug()"/>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6" v-show="form.setRembug">
           <b-form-group label="Rembug">
             <b-select v-model="form.data.kode_rembug" :options="opt.rembug"/>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" :sm="(form.setRembug) ? '6' : '4'">
           <b-form-group label="Nama">
             <b-input v-model="form.data.nama_anggota" />
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" :sm="(form.setRembug) ? '6' : '4'">
           <b-form-group label="Jenis Kelamin">
             <input class="form-check-input ml-2" type="radio" name="flexRadioDefault" value="W" v-model="form.data.jenis_kelamin">
               <label class="form-check-label ml-7">
@@ -96,53 +99,67 @@
               </label>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="Tempat / Tanggal Lahir">
             <b-row>
-              <b-col cols="6">
+              <b-col cols="12" sm="6">
                 <b-input v-model="form.data.tempat_lahir"/>
               </b-col>
-              <b-col cols="6">
-                <b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" v-model="form.data.tgl_lahir"/>
+              <b-col cols="12" sm="6">
+                <b-input-group class="mb-3">
+                  <b-form-input
+                    v-model="form.data.tgl_lahir"
+                    type="text"
+                    autocomplete="off"
+                  ></b-form-input>
+                  <b-input-group-append>
+                    <b-form-datepicker
+                      button-only
+                      right
+                      :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" v-model="form.data.tgl_lahir"
+                    ></b-form-datepicker>
+                  </b-input-group-append>
+                </b-input-group>
+                <!-- <b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" v-model="form.data.tgl_lahir"/> -->
               </b-col>
             </b-row>
           </b-form-group>
         </b-col>
-        <b-col cols="2">
+        <b-col cols="12" sm="2">
           <b-form-group label="Nama Ibu Kandung">
             <b-input v-model="form.data.ibu_kandung"/>
           </b-form-group>
         </b-col>
-        <b-col cols="2">
+        <b-col cols="12" sm="2">
           <b-form-group label="NIK">
             <b-input v-model="form.data.no_ktp"/>
           </b-form-group>
         </b-col>
-        <b-col cols="2">
+        <b-col cols="12" sm="2">
           <b-form-group label="NPWP">
             <b-input v-model="form.data.no_npwp"/>
           </b-form-group>
         </b-col>
-        <b-col cols="12">
+        <b-col cols="12" sm="12">
           <b-form-group label="Alamat">
             <b-textarea v-model="form.data.alamat"/>
             <b-row class="mt-3">
-              <b-col cols="3">
+              <b-col cols="12" sm="3">
                 <b-form-group label="Desa">
                   <b-input v-model="form.data.desa"/>
                 </b-form-group>
               </b-col>
-              <b-col cols="3">
+              <b-col cols="12" sm="3">
                 <b-form-group label="Kecamatan">
                   <b-input v-model="form.data.kecamatan"/>
                 </b-form-group>
               </b-col>
-              <b-col cols="3">
+              <b-col cols="12" sm="3">
                 <b-form-group label="Kabupaten">
                   <b-input v-model="form.data.kabupaten"/>
                 </b-form-group>
               </b-col>
-              <b-col cols="3">
+              <b-col cols="12" sm="3">
                 <b-form-group label="Kode Pos">
                   <b-input v-model="form.data.kodepos"/>
                 </b-form-group>
@@ -150,207 +167,221 @@
             </b-row>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="No.Telp / HP">
             <b-input placeholder="0858123456" v-model="form.data.no_telp" />
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="Pendidikan Terakhir">
             <b-select :options="opt.pendidikan" v-model="form.data.pendidikan"/>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="Pekerjaan">
             <b-select :options="opt.pekerjaan" v-model="form.data.pekerjaan"/>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="Keterangan Pekerjaan">
             <b-input v-model="form.data.ket_pekerjaan"/>
           </b-form-group>
         </b-col>
       </b-row>
       <b-row v-show="form.activeStep === 2">
-        <b-col cols="12" class="mb-3">
+        <b-col cols="12" sm="12" class="mb-3">
           <h4 class="mb-3">Data Pasangan</h4>
           <hr>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="Status Pernikahan">
             <b-select :options="opt.status_perkawinan" v-model="form.data.status_perkawinan"/>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="Nama Pasangan">
             <b-input v-model="form.data.p_nama"/>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="Tempat / Tanggal Lahir">
             <b-row>
-              <b-col cols="6">
+              <b-col cols="12" sm="6">
                 <b-input v-model="form.data.p_tmplahir"/>
               </b-col>
-              <b-col cols="6">
-                <b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" v-model="form.data.p_tglahir"/>
+              <b-col cols="12" sm="6">
+                <b-input-group class="mb-3">
+                  <b-form-input
+                    v-model="form.data.p_tglahir"
+                    type="text"
+                    autocomplete="off"
+                  ></b-form-input>
+                  <b-input-group-append>
+                    <b-form-datepicker
+                      button-only
+                      right
+                      :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" v-model="form.data.p_tglahir"
+                    ></b-form-datepicker>
+                  </b-input-group-append>
+                </b-input-group>
+                <!-- <b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" v-model="form.data.p_tglahir"/> -->
               </b-col>
             </b-row>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="NIK">
             <b-input v-model="form.data.p_noktp"/>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="Pendidikan Terakhir">
             <b-select :options="opt.pendidikan" v-model="form.data.p_pendidikan"/>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="Pekerjaan">
           <b-select :options="opt.pekerjaan" v-model="form.data.p_pekerjaan"/>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="Keterangan Pekerjaan">
             <b-input v-model="form.data.p_ketpekerjaan"/>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="No.Telp / HP">
             <b-input placeholder="0858123456" v-model="form.data.p_nohp"/>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="Jumlah Anak">
             <b-input v-model="form.data.jml_anak" type="number"/>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-form-group label="Jumlah Tanggungan Lain">
             <b-input v-model="form.data.jml_tanggungan" type="number"/>
           </b-form-group>
         </b-col>
       </b-row>
       <b-row v-show="form.activeStep === 3">
-        <b-col cols="12" class="mb-3">
+        <b-col cols="12" sm="12" class="mb-3">
           <h4 class="mb-3">Data Tempat Tinggal dan Harta</h4>
           <hr>
         </b-col>
-        <b-col cols="4">
+        <b-col cols="12" sm="4">
           <b-form-group label="Status Rumah">
             <b-select :options="opt.rumah_status" v-model="form.data.rumah_status"/>
           </b-form-group>
         </b-col>
-        <b-col cols="4">
+        <b-col cols="12" sm="4">
           <b-form-group label="Ukuran Rumah">
             <b-select :options="opt.rumah_ukuran" v-model="form.data.rumah_ukuran"/>
           </b-form-group>
         </b-col>
-        <b-col cols="4">
+        <b-col cols="12" sm="4">
           <b-form-group label="Dinding">
             <b-select :options="opt.rumah_dinding" v-model="form.data.rumah_dinding"/>
           </b-form-group>
         </b-col>
-        <b-col cols="3">
+        <b-col cols="12" sm="3">
           <b-form-group label="Atap">
             <b-select :options="opt.rumah_atap" v-model="form.data.rumah_atap"/>
           </b-form-group>
         </b-col>
-        <b-col cols="3">
+        <b-col cols="12" sm="3">
           <b-form-group label="Lantai">
             <b-select :options="opt.rumah_lantai" v-model="form.data.rumah_lantai"/>
           </b-form-group>
         </b-col>
-        <b-col cols="3">
+        <b-col cols="12" sm="3">
           <b-form-group label="Jamban">
             <b-select :options="opt.rumah_jamban" v-model="form.data.rumah_jamban"/>
           </b-form-group>
         </b-col>
-        <b-col cols="3">
+        <b-col cols="12" sm="3">
           <b-form-group label="Sumber Air">
             <b-select :options="opt.rumah_air" v-model="form.data.rumah_air"/>
           </b-form-group>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-container class="bv-example-row mb-3 p-0">
             <p>Lahan</p>
-            <b-row cols="3">
+            <b-row cols="12" sm="3">
                 <b-col>
-                  <b-form-group label="Sawah">
+                  <b-form-group label="Sawah (m2)">
                     <b-input v-model="form.data.lahan_sawah" type="number"/>
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Kebun">
+                  <b-form-group label="Kebun (m2)">
                     <b-input v-model="form.data.lahan_kebun" type="number"/>
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Pekarangan">
+                  <b-form-group label="Pekarangan (m2)">
                     <b-input v-model="form.data.lahan_pekarangan" type="number"/>
                   </b-form-group>
                 </b-col>
             </b-row>
           </b-container>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-container class="bv-example-row mb-3 p-0">
             <p>Ternak</p>
-            <b-row cols="3">
+            <b-row cols="12" sm="3">
                 <b-col>
-                  <b-form-group label="Sapi">
+                  <b-form-group label="Sapi (ekor)">
                     <b-input v-model="form.data.ternak_sapi" type="number"/>
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Domba">
+                  <b-form-group label="Domba (ekor)">
                     <b-input v-model="form.data.ternak_domba" type="number"/>
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Unggas">
+                  <b-form-group label="Unggas (ekor)">
                     <b-input v-model="form.data.ternak_unggas" type="number"/>
                   </b-form-group>
                 </b-col>
             </b-row>
           </b-container>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-container class="bv-example-row mb-3 p-0">
             <p>Kendaraan</p>
-            <b-row cols="3">
+            <b-row cols="12" sm="3">
                 <b-col>
-                  <b-form-group label="Sepeda">
+                  <b-form-group label="Sepeda (unit)">
                     <b-input v-model="form.data.kend_sepeda" type="number"/>
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Motor">
+                  <b-form-group label="Motor (unit)">
                     <b-input v-model="form.data.kend_motor" type="number"/>
                   </b-form-group>
                 </b-col>
             </b-row>
           </b-container>
         </b-col>
-        <b-col cols="6">
+        <b-col cols="12" sm="6">
           <b-container class="bv-example-row mb-3 p-0">
             <p>Elektronik</p>
-            <b-row cols="3">
+            <b-row cols="12" sm="3">
               <b-col>
-                <b-form-group label="Kulkas">
+                <b-form-group label="Kulkas (unit)">
                   <b-input v-model="form.data.elc_kulkas" type="number"/>
                 </b-form-group>
               </b-col>
               <b-col>
-                <b-form-group label="Tv">
+                <b-form-group label="Tv (unit)">
                   <b-input v-model="form.data.elc_tv" type="number"/>
                 </b-form-group>
               </b-col>
               <b-col>
-                <b-form-group label="Handphone">
+                <b-form-group label="Handphone (unit)">
                   <b-input v-model="form.data.elc_hp" type="number"/>
                 </b-form-group>
               </b-col>
@@ -359,62 +390,72 @@
         </b-col>
       </b-row>
       <b-row v-show="form.activeStep >= 4">
-        <b-col cols="12" class="mb-3">
+        <b-col cols="12" sm="12" class="mb-3">
           <h4 class="mb-3">Data Pendapatan</h4>
           <hr>
         </b-col>
-        <b-col cols="4">
-          <b-form-group label="Pendapatan Usaha">
-            <b-input v-model="form.data.pendapatan_perbulan" type="number"/>
+        <b-col cols="12" sm="4">
+          <b-form-group label="Pendapatan">
+            <!-- <b-input v-model="form.data.pendapatan_perbulan" type="number"/> -->
+            <vue-numeric currency="Rp " separator="." v-model="form.data.pendapatan_perbulan" class="form-control"/>
           </b-form-group>
         </b-col>
-        <b-col cols="4">
+        <b-col cols="12" sm="4">
           <b-form-group label="Pendapatan Pasangan">
-            <b-input v-model="form.data.p_pendapatan" type="number"/>
+            <!-- <b-input v-model="form.data.p_pendapatan" type="number"/> -->
+            <vue-numeric currency="Rp " separator="." v-model="form.data.p_pendapatan" class="form-control"/>
           </b-form-group>
         </b-col>
-        <b-col cols="4">
+        <b-col cols="12" sm="4">
           <b-form-group label="Total Pendapatan">
-            <b-input disabled :value="Number(form.data.pendapatan_perbulan) + Number(form.data.p_pendapatan)"/>
+            <!-- <b-input disabled :value="Number(form.data.pendapatan_perbulan) + Number(form.data.p_pendapatan)"/> -->
+            <vue-numeric disabled currency="Rp " separator="." :value="Number(form.data.pendapatan_perbulan) + Number(form.data.p_pendapatan)" class="form-control"/>
           </b-form-group>
         </b-col>
-        <b-col cols="12">
+        <b-col cols="12" sm="12">
           <b-container class="bv-example-row mb-3 p-0">
             <p>Pengeluaran Rumah Tangga / Bulan</p>
             <b-row>
-              <b-col cols="3">
-                <b-form-group label="Beras">
-                  <b-input v-model="form.data.by_beras" type="number"/>
+              <b-col cols="12" sm="3">
+                <b-form-group label="Beras (kg/bulan)">
+                  <!-- <b-input v-model="form.data.by_beras" type="number"/> -->
+                  <vue-numeric currency="Rp " separator="." v-model="form.data.by_beras" class="form-control"/>
                 </b-form-group>
               </b-col>
-              <b-col cols="3">
-                <b-form-group label="Biaya Pendidikan">
-                  <b-input v-model="form.data.by_sekolah" type="number"/>
+              <b-col cols="12" sm="3">
+                <b-form-group label="Biaya Pendidikan (rp/bulan)">
+                  <!-- <b-input v-model="form.data.by_sekolah" type="number"/> -->
+                  <vue-numeric currency="Rp " separator="." v-model="form.data.by_sekolah" class="form-control"/>
                 </b-form-group>
               </b-col>
-              <b-col cols="3">
-                <b-form-group label="Belanja Dapur">
-                  <b-input v-model="form.data.by_dapur" type="number"/>
+              <b-col cols="12" sm="3">
+                <b-form-group label="Belanja Dapur (rp/bulan)">
+                  <!-- <b-input v-model="form.data.by_dapur" type="number"/> -->
+                  <vue-numeric currency="Rp " separator="." v-model="form.data.by_dapur" class="form-control"/>
                 </b-form-group>
               </b-col>
-              <b-col cols="3">
-                <b-form-group label="Biaya Listrik">
-                  <b-input v-model="form.data.by_listrik" type="number"/>
+              <b-col cols="12" sm="3">
+                <b-form-group label="Biaya Listrik (rp/bulan)">
+                  <!-- <b-input v-model="form.data.by_listrik" type="number"/> -->
+                  <vue-numeric currency="Rp " separator="." v-model="form.data.by_listrik" class="form-control"/>
                 </b-form-group>
               </b-col>
-              <b-col cols="3">
-                <b-form-group label="Biaya Lainnya">
-                  <b-input v-model="form.data.by_lain" type="number"/>
+              <b-col cols="12" sm="3">
+                <b-form-group label="Biaya Lainnya (rp/bulan)">
+                  <!-- <b-input v-model="form.data.by_lain" type="number"/> -->
+                  <vue-numeric currency="Rp " separator="." v-model="form.data.by_lain" class="form-control"/>
                 </b-form-group>
               </b-col>
-              <b-col cols="3">
-                <b-form-group label="Biaya Telp">
-                  <b-input v-model="form.data.by_telpon" type="number"/>
+              <b-col cols="12" sm="3">
+                <b-form-group label="Biaya Telp (rp/bulan)">
+                  <!-- <b-input v-model="form.data.by_telpon" type="number"/> -->
+                  <vue-numeric currency="Rp " separator="." v-model="form.data.by_telpon" class="form-control"/>
                 </b-form-group>
               </b-col>
-              <b-col cols="3">
-                <b-form-group label="Total Biaya">
-                  <b-input disabled :value="Number(form.data.by_beras)+Number(form.data.by_sekolah)+Number(form.data.by_dapur)+Number(form.data.by_listrik)+Number(form.data.by_lain)+Number(form.data.by_telpon)"/>
+              <b-col cols="12" sm="3">
+                <b-form-group label="Total Biaya (rp/bulan)">
+                  <!-- <b-input disabled :value="Number(form.data.by_beras)+Number(form.data.by_sekolah)+Number(form.data.by_dapur)+Number(form.data.by_listrik)+Number(form.data.by_lain)+Number(form.data.by_telpon)"/> -->
+                  <vue-numeric disabled currency="Rp " separator="." :value="Number(form.data.by_beras)+Number(form.data.by_sekolah)+Number(form.data.by_dapur)+Number(form.data.by_listrik)+Number(form.data.by_lain)+Number(form.data.by_telpon)" class="form-control"/>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -422,7 +463,7 @@
         </b-col>
       </b-row>
       <b-row>
-        <b-col cols="12" class="d-flex justify-content-end border-top pt-5">
+        <b-col cols="12" sm="12" class="d-flex justify-content-end border-top pt-5">
           <b-button 
             variant="secondary" 
             @click="(form.activeStep == 1) ? $bvModal.hide('modal-form') : moveStep('Back')" :disabled="form.loading">{{(form.activeStep == 1) ? 'Cancel' : 'Prev'}}
@@ -486,7 +527,7 @@ export default {
           nama_pasangan: null,
           pekerjaan: null,
           ket_pekerjaan: null,
-          pendapatan_perbulan: null,
+          pendapatan_perbulan: 0,
           tgl_gabung: null,
           created_by: null,
           p_nama: null,
@@ -498,7 +539,7 @@ export default {
           p_pendidikan: null,
           p_pekerjaan: null,
           p_ketpekerjaan: null,
-          p_pendapatan: null,
+          p_pendapatan: 0,
           jml_anak: null,
           jml_tanggungan: null,
           rumah_status: null,
@@ -523,16 +564,17 @@ export default {
           ush_komoditi: 0,
           ush_lokasi: 0,
           ush_omset: 0,
-          by_beras: null,
-          by_dapur: null,
-          by_listrik: null,
-          by_telpon: null,
-          by_sekolah: null,
-          by_lain: null
+          by_beras: 0,
+          by_dapur: 0,
+          by_listrik: 0,
+          by_telpon: 0,
+          by_sekolah: 0,
+          by_lain: 0
         },
         steps: 4,
         activeStep: 1,
         loading: false,
+        setRembug: false
       },
       table: {
         fields: [
@@ -595,7 +637,8 @@ export default {
         perPage: 10,
         sortDesc: true,
         sortBy: 'id',
-        search: ''
+        search: '',
+        status: 0
       },
       remove: {
         data: Object,
@@ -951,7 +994,8 @@ export default {
         this.notify('danger','Login Error',error)         
       }
     },
-    async doUpdate(data) {
+    async doUpdate(data, setRembug) {
+      this.form.setRembug = setRembug
       let id = data.item.id
       try {
         let req = await easycoApi.anggotaDetail(`?id=${id}`,this.user.token)
@@ -1034,7 +1078,7 @@ export default {
           nama_pasangan: null,
           pekerjaan: null,
           ket_pekerjaan: null,
-          pendapatan_perbulan: null,
+          pendapatan_perbulan: 0,
           tgl_gabung: null,
           created_by: null,
           p_nama: null,
@@ -1046,7 +1090,7 @@ export default {
           p_pendidikan: null,
           p_pekerjaan: null,
           p_ketpekerjaan: null,
-          p_pendapatan: null,
+          p_pendapatan: 0,
           jml_anak: null,
           jml_tanggungan: null,
           rumah_status: null,
@@ -1071,14 +1115,15 @@ export default {
           ush_komoditi: 0,
           ush_lokasi: 0,
           ush_omset: 0,
-          by_beras: null,
-          by_dapur: null,
-          by_listrik: null,
-          by_telpon: null,
-          by_sekolah: null,
-          by_lain: null
+          by_beras: 0,
+          by_dapur: 0,
+          by_listrik: 0,
+          by_telpon: 0,
+          by_sekolah: 0,
+          by_lain: 0
         }
         this.form.activeStep = 1
+        this.form.setRembug = false
     },
     notify(type, title, msg) {
       this.$bvToast.toast(msg, {
