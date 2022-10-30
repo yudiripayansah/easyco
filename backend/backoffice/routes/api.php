@@ -214,4 +214,6 @@ Route::prefix('registrasiakad')->middleware('checkToken')->group(function () {
   Route::get('/detail', [RegistrasiAkadController::class, 'detail']);
   Route::post('/update', [RegistrasiAkadController::class, 'update']);
   Route::get('/delete', [RegistrasiAkadController::class, 'delete']);
+  Route::get('/approve', [RegistrasiAkadController::class, 'approve']);
+  Route::get('/reject', [RegistrasiAkadController::class, 'reject']);
 });
