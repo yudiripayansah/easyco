@@ -289,16 +289,20 @@ class PengajuanController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopPengajuan::select('*')->orderBy($sortBy, $sortDir);
+        $read = KopPengajuan::select('kop_pengajuan.*', 'kop_anggota.nama_anggota', 'kop_rembug.nama_rembug')->join('kop_anggota', 'kop_anggota.no_anggota', '=', 'kop_pengajuan.no_anggota')->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', '=', 'kop_anggota.kode_rembug')->orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
         }
 
+        if ($get->kode_cabang <> '00000') {
+            $read->where(DB::raw('SUBSTR(kop_pengajuan.no_anggota,1,5)'), $get->kode_cabang);
+        }
+
         if ($search != NULL) {
-            $read->whereRaw("status_pengajuan = '0' AND (no_anggota LIKE '%" . $search . "%' OR no_pengajuan LIKE '%" . $search . "%')");
+            $read->where('kop_pengajuan.status_pengajuan', 0)->where('kop_pengajuan.no_anggota', 'LIKE', '%' . $search . '%')->orWhere('no_pengajuan', 'LIKE', '%' . $search . '%');
         } else {
-            $read->whereRaw("status_pengajuan = '0'");
+            $read->where('kop_pengajuan.status_pengajuan', 0);
         }
 
         $read = $read->get();
@@ -312,9 +316,9 @@ class PengajuanController extends Controller
             $total = KopPengajuan::orderBy($sortBy, $sortDir);
 
             if ($search) {
-                $total->whereRaw("status_pengajuan = '0' AND (no_anggota LIKE '%" . $search . "%' OR no_pengajuan LIKE '%" . $search . "%')");
+                $total->where('kop_pengajuan.status_pengajuan', 0)->where('kop_pengajuan.no_anggota', 'LIKE', '%' . $search . '%')->orWhere('no_pengajuan', 'LIKE', '%' . $search . '%');
             } else {
-                $read->whereRaw("status_pengajuan = '0'");
+                $total->where('kop_pengajuan.status_pengajuan', 0);
             }
 
             $total = $total->count();

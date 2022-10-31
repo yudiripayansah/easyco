@@ -113,6 +113,7 @@ Route::prefix('rembug')->middleware('checkToken')->group(function () {
 
 Route::prefix('anggota')->middleware('checkToken')->group(function () {
   Route::post('/rembug', [AnggotaController::class, 'rembug']);
+  Route::get('/simpanan_anggota', [AnggotaController::class, 'simpanan_anggota']);
   Route::post('/create', [AnggotaController::class, 'create']);
   Route::post('/read', [AnggotaController::class, 'read']);
   Route::get('/detail', [AnggotaController::class, 'detail']);
@@ -209,6 +210,7 @@ Route::prefix('registrasiakad')->middleware('checkToken')->group(function () {
   Route::post('/fa', [RegistrasiAkadController::class, 'fa']);
   Route::post('/peruntukan', [RegistrasiAkadController::class, 'peruntukan']);
   Route::post('/product', [RegistrasiAkadController::class, 'product']);
+  Route::post('/kreditur', [RegistrasiAkadController::class, 'kreditur']);
   Route::post('/create', [RegistrasiAkadController::class, 'create']);
   Route::post('/read', [RegistrasiAkadController::class, 'read']);
   Route::get('/detail', [RegistrasiAkadController::class, 'detail']);

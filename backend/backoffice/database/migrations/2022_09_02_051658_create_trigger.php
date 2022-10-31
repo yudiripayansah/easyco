@@ -26,8 +26,8 @@ class CreateTrigger extends Migration
                         RETURN vReturn;
                     END
             $BODY$
-            LANGUAGE plpgsql VOLATILE COST 100;
-            ALTER FUNCTION uuid() OWNER TO postgres;
+        LANGUAGE plpgsql VOLATILE COST 100;
+        ALTER FUNCTION uuid() OWNER TO postgres;
 
         CREATE OR REPLACE FUNCTION insert_anggota()
             RETURNS trigger AS $BODY$
@@ -55,8 +55,8 @@ class CreateTrigger extends Migration
                         RETURN NEW;
                     END
             $BODY$
-            LANGUAGE plpgsql VOLATILE COST 100;
-            ALTER FUNCTION insert_anggota() OWNER TO postgres;
+        LANGUAGE plpgsql VOLATILE COST 100;
+        ALTER FUNCTION insert_anggota() OWNER TO postgres;
 
         CREATE OR REPLACE FUNCTION insert_reg_pembiayaan()
             RETURNS trigger AS $BODY$
@@ -85,8 +85,8 @@ class CreateTrigger extends Migration
                         RETURN NEW;
                     END
             $BODY$
-            LANGUAGE plpgsql VOLATILE COST 100;
-            ALTER FUNCTION insert_reg_pembiayaan() OWNER TO postgres;
+        LANGUAGE plpgsql VOLATILE COST 100;
+        ALTER FUNCTION insert_reg_pembiayaan() OWNER TO postgres;
         ');
     }
 

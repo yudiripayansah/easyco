@@ -19,8 +19,8 @@ class CreateKopLembagaTable extends Migration
             $table->string('nama_kop', 100);
             $table->text('alamat_kop');
             $table->string('nik_kop', 100);
-            $table->decimal('simpok', 14, 2)->nullable(TRUE)->default(0);
-            $table->decimal('simwa', 14, 2)->nullable(TRUE)->default(0);
+            $table->decimal('simpok', 14, 0)->nullable(TRUE)->default(0);
+            $table->decimal('simwa', 14, 0)->nullable(TRUE)->default(0);
             $table->string('gl_simpok', 20);
             $table->string('gl_simwa', 20);
             $table->string('gl_simsuk', 20);
