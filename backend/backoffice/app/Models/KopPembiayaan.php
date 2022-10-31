@@ -21,7 +21,6 @@ class KopPembiayaan extends Model
         $rule = [
             'kode_produk' => 'required',
             'kode_akad' => 'required',
-            'kode_petugas' => 'numeric',
             'no_pengajuan' => 'required',
             'no_rekening' => 'required|unique:kop_pembiayaan',
             'pokok' => 'numeric',
@@ -89,7 +88,6 @@ class KopPembiayaan extends Model
             'id' => 'required|numeric',
             'kode_produk' => 'required',
             'kode_akad' => 'required',
-            'kode_petugas' => 'numeric',
             'pokok' => 'numeric',
             'margin' => 'numeric',
             //'nisbah_bagihasil' => 'numeric',
@@ -166,7 +164,7 @@ class KopPembiayaan extends Model
         $param['kp.status_pengajuan'] = 0;
 
         $show = DB::table('kop_pengajuan AS kp')
-            ->select('kp.no_pengajuan', 'ka.nama_anggota', 'kp.jumlah_pengajuan', 'kp.tanggal_pengajuan', 'kp.rencana_droping', 'kp.peruntukan')
+            ->select('kp.no_pengajuan', 'ka.no_anggota', 'ka.nama_anggota', 'kp.jumlah_pengajuan', 'kp.tanggal_pengajuan', 'kp.rencana_droping', 'kp.peruntukan', 'kp.keterangan_peruntukan', 'kp.pengajuan_ke')
             ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kp.no_anggota')
             ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'ka.kode_rembug')
             ->where($param)

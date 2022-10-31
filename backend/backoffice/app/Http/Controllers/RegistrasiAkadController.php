@@ -54,19 +54,25 @@ class RegistrasiAkadController extends Controller
 
         foreach ($show as $sh) {
             $no_pengajuan = $sh->no_pengajuan;
+            $no_anggota = $sh->no_anggota;
             $nama_anggota = $sh->nama_anggota;
             $jumlah_pengajuan = $sh->jumlah_pengajuan;
             $tanggal_pengajuan = $sh->tanggal_pengajuan;
             $rencana_droping = $sh->rencana_droping;
             $peruntukan = $sh->peruntukan;
+            $keterangan_peruntukan = $sh->keterangan_peruntukan;
+            $pengajuan_ke = $sh->pengajuan_ke;
 
             $data[] = array(
                 'no_pengajuan' => $no_pengajuan,
+                'no_anggota' => $no_anggota,
                 'nama_anggota' => $nama_anggota,
                 'jumlah_pengajuan' => str_replace('.00', '', $jumlah_pengajuan),
                 'tanggal_pengajuan' => date('d/m/Y', strtotime($tanggal_pengajuan)),
                 'rencana_droping' => date('d/m/Y', strtotime($rencana_droping)),
-                'peruntukan' => $peruntukan
+                'peruntukan' => $peruntukan,
+                'keterangan_peruntukan' => $keterangan_peruntukan,
+                'pembiayaan_ke' => $pengajuan_ke
             );
         }
 
@@ -156,6 +162,33 @@ class RegistrasiAkadController extends Controller
                 'kode_produk' => $kode_produk,
                 'kode_akad' => $kode_akad,
                 'nama_produk' => $nama_produk
+            );
+        }
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $data,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function kreditur()
+    {
+        $show = KopPembiayaan::peruntukan('kreditur');
+
+        $data = array();
+
+        foreach ($show as $sh) {
+            $kode_value = $sh->kode_value;
+            $kode_display = $sh->kode_display;
+
+            $data[] = array(
+                'kode_value' => $kode_value,
+                'kode_display' => $kode_display
             );
         }
 
@@ -262,20 +295,20 @@ class RegistrasiAkadController extends Controller
 
         $gets = KopUser::where($param)->first();
 
-        $read = KopPembiayaan::select('*')->orderBy($sortBy, $sortDir);
+        $read = KopPembiayaan::select('kop_pembiayaan.*', 'kop_anggota.nama_anggota', 'kop_rembug.nama_rembug')->join('kop_pengajuan', 'kop_pengajuan.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')->join('kop_anggota', 'kop_anggota.no_anggota', '=', 'kop_pengajuan.no_anggota')->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', '=', 'kop_anggota.kode_rembug')->orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
         }
 
         if ($gets->kode_cabang <> '00000') {
-            $read->where(DB::raw('SUBSTR(no_rekening,1,5)'), $gets->kode_cabang);
+            $read->where(DB::raw('SUBSTR(kop_pembiayaan.no_rekening,1,5)'), $gets->kode_cabang);
         }
 
         if ($search != NULL) {
-            $read->where('status_rekening', 0)->where('no_rekening', 'LIKE', '%' . $search . '%');
+            $read->where('kop_pembiayaan.status_rekening', 0)->where('kop_pembiayaan.no_rekening', 'LIKE', '%' . $search . '%');
         } else {
-            $read->where('status_rekening', 0);
+            $read->where('kop_pembiayaan.status_rekening', 0);
         }
 
         $read = $read->get();
@@ -289,9 +322,9 @@ class RegistrasiAkadController extends Controller
             $total = KopPembiayaan::orderBy($sortBy, $sortDir);
 
             if ($search) {
-                $total->where('status_rekening', 0)->where('no_rekening', 'LIKE', '%' . $search . '%');
+                $total->where('kop_pembiayaan.status_rekening', 0)->where('kop_pembiayaan.no_rekening', 'LIKE', '%' . $search . '%');
             } else {
-                $read->where('status_rekening', 0);
+                $read->where('kop_pembiayaan.status_rekening', 0);
             }
 
             $total = $total->count();
@@ -327,11 +360,17 @@ class RegistrasiAkadController extends Controller
 
         if ($id) {
             $get = KopPembiayaan::find($id);
+            $get2 = KopPengajuan::select('kop_pengajuan.no_anggota', 'kop_rembug.nama_rembug')->join('kop_anggota', 'kop_anggota.no_anggota', '=', 'kop_pengajuan.no_anggota')->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', '=', 'kop_anggota.kode_rembug')->where('kop_pengajuan.no_pengajuan', $get->no_pengajuan)->get();
+
+            $data = array(
+                'get' => $get,
+                'get2' => $get2
+            );
 
             if ($get) {
                 $res = array(
                     'status' => TRUE,
-                    'data' => $get,
+                    'data' => $data,
                     'msg' => 'Berhasil!'
                 );
             } else {
@@ -367,8 +406,8 @@ class RegistrasiAkadController extends Controller
         $get->jangka_waktu = $request->jangka_waktu;
         $get->angsuran_pokok = $request->angsuran_pokok;
         $get->angsuran_margin = $request->angsuran_margin;
-        $get->angsuran_catab = $request->angsuran_catab;
-        //$get->angsuran_minggon = $request->angsuran_minggon;
+        //$get->angsuran_catab = $request->angsuran_catab;
+        $get->angsuran_minggon = $request->angsuran_minggon;
         $get->biaya_administrasi = $request->biaya_administrasi;
         $get->biaya_asuransi_jiwa = $request->biaya_asuransi_jiwa;
         //$get->biaya_asuransi_jaminan = $request->biaya_asuransi_jaminan;
@@ -382,13 +421,13 @@ class RegistrasiAkadController extends Controller
         $get->saldo_pokok = $request->saldo_pokok;
         $get->saldo_margin = $request->saldo_margin;
         $get->saldo_catab = $request->saldo_catab;
-        //$get->saldo_minggon = $request->saldo_minggon;
+        $get->saldo_minggon = $request->saldo_minggon;
         //$get->jtempo_angsuran_last = $request->jtempo_angsuran_last;
         $get->jtempo_angsuran_next = $request->jtempo_angsuran_next;
         $get->sumber_dana = $request->sumber_dana;
         //$get->dana_sendiri = $request->dana_sendiri;
         //$get->dana_kreditur = $request->dana_kreditur;
-        //$get->kode_kreditur = $request->kode_kreditur;
+        $get->kode_kreditur = $request->kode_kreditur;
         //$get->ujroh_kreditur = $request->ujroh_kreditur;
         //$get->ujroh_kreditur_persen = $request->ujroh_kreditur_persen;
         //$get->ujroh_kreditur_nominal = $request->ujroh_kreditur_nominal;
