@@ -71,6 +71,16 @@ const easycoApi = {
     }
     return axios.post(url, payload, config)
   },
+  // Cabang
+  cabangRead(payload, token) {
+    let url = 'cabang/read'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
   // Pengajuan Pembiayaan
   pengajuanAnggotaRead(payload, token){
     let url = 'pengajuan/member'
@@ -108,6 +118,126 @@ const easycoApi = {
       }
     }
     return axios.post(url, payload, config)
+  },
+  // Registrasi Akad
+  regisAkadRead(payload, token){
+    let url = 'registrasiakad/read'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  regisAkadCreate(payload, token){
+    let url = 'registrasiakad/create'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  regisAkadReadDetail(payload, token){
+    let url = 'registrasiakad/detail?id='+payload
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
+  regisAkadUpdate(payload, token){
+    let url = 'registrasiakad/update'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  pembiayaanGetRembug(payload, token) {
+    let url = 'registrasiakad/rembug'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  PembiayaanGetPengajuan(payload, token) {
+    let url = 'registrasiakad/pengajuan'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  PembiayaanGetPeruntukan(payload, token) {
+    let url = 'registrasiakad/peruntukan'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  pembiayaanGetProduk(payload, token){
+    let url = 'registrasiakad/product'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  pembiayaanGetKreditur(payload, token){
+    let url = 'registrasiakad/kreditur'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  // Keanggotaan
+  keanggotaanGetSimpananAnggota(payload, token){
+    let url = 'anggota/simpanan_anggota'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
+  // Verifikasi Akad
+  detailVerifikasiAkad(payload, token) {
+    let url = 'registrasiakad/detail?id='+ payload
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
+  verifikasiAkadApprove(payload, token){
+    let url = 'registrasiakad/approve?id='+payload
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
+  verifikasiAkadReject(payload, token){
+    let url = 'registrasiakad/reject?id='+payload
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
   },
 }
 
