@@ -127,7 +127,12 @@ const menu = [
       {
         target: 'registrasi-akad',
         label: 'Registrasi Akad',
-        component: import('@/pages/Dummy.vue'),
+        component: import('@/pages/Pembiayaan/RegistrasiAkad/index.vue'),
+      },
+      {
+        target: 'verifikasi-akad',
+        label: 'Verifikasi Akad',
+        component: import('@/pages/Pembiayaan/VerifikasiAkad/index.vue'),
       },
       {
         target: 'cetak-akad',
