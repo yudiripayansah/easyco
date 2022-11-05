@@ -117,7 +117,7 @@ const menu = [
       {
         target: 'pengajuan-pembiayaan',
         label: 'Pengajuan Pembiayaan',
-        component: import('@/pages/Dummy.vue'),
+        component: import('@/pages/Pembiayaan/PengajuanPembiayaan'),
       },
       {
         target: 'update-status-komite',

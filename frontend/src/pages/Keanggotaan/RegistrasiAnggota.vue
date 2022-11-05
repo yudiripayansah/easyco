@@ -972,6 +972,7 @@ export default {
         payload.usia = Number(this.calculateAge(tgl_lahir))
         payload.ktp = Number(payload.ktp)
         payload.created_by = this.user.id
+        payload.status = 0
         let req = false
         if(payload.id){
           req = await easycoApi.anggotaUpdate(payload, this.user.token) 
