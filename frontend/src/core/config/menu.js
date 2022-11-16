@@ -39,8 +39,8 @@ const menu = [
         children: [
           {
             target: 'registrasi-anggota',
-            label: 'Laporan Registrasi Anggota',
-            component: import('@/pages/Dummy.vue'),
+            label: 'Registrasi Anggota',
+            component: import('@/pages/Keanggotaan/Laporan/RegistrasiAnggota'),
           },
           {
             target: 'profil-anggota',
