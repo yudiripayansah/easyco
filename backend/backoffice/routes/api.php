@@ -119,6 +119,10 @@ Route::prefix('anggota')->middleware('checkToken')->group(function () {
   Route::get('/detail', [AnggotaController::class, 'detail']);
   Route::post('/update', [AnggotaController::class, 'update']);
   Route::get('/delete', [AnggotaController::class, 'delete']);
+
+  // BEGIN REPORTS
+  Route::get('/list_anggota_masuk_excel', [AnggotaController::class, 'list_anggota_masuk_excel']);
+  // END REPORTS
 });
 
 Route::prefix('anggotauk')->middleware('checkToken')->group(function () {
@@ -218,4 +222,8 @@ Route::prefix('registrasiakad')->middleware('checkToken')->group(function () {
   Route::get('/delete', [RegistrasiAkadController::class, 'delete']);
   Route::get('/approve', [RegistrasiAkadController::class, 'approve']);
   Route::get('/reject', [RegistrasiAkadController::class, 'reject']);
+
+  // BEGIN REPORTS
+  Route::get('/list_pengajuan_excel', [RegistrasiAkadController::class, 'list_pengajuan_excel']);
+  // END REPORTS
 });

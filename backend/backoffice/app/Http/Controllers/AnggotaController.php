@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ListAnggotaMasukExport;
 use App\Models\KopAnggota;
 use App\Models\KopAnggotaUk;
 use App\Models\KopLembaga;
@@ -11,6 +12,15 @@ use Illuminate\Support\Facades\DB;
 
 class AnggotaController extends Controller
 {
+    /* BEGIN REPORTS */
+    function list_anggota_masuk_excel(Request $request)
+    {
+        $list = new ListAnggotaMasukExport($request->kode_cabang, $request->kode_rembug, $request->from_date, $request->thru_date);
+
+        return $list->download('list_anggota_masuk_' . $request->kode_cabang . '_' . $request->kode_rembug . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+    }
+    /* END REPORTS */
+
     function rembug(Request $request)
     {
         $kode_cabang = $request->kode_cabang;

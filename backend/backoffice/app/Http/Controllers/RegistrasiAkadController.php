@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ListPengajuanExport;
 use App\Models\KopPembiayaan;
 use App\Models\KopPengajuan;
 use App\Models\KopUser;
@@ -11,6 +12,15 @@ use Illuminate\Support\Facades\DB;
 
 class RegistrasiAkadController extends Controller
 {
+    /* BEGIN REPORTS */
+    function list_pengajuan_excel(Request $request)
+    {
+        $list = new ListPengajuanExport($request->kode_cabang, $request->jenis_pembiayaan, $request->kode_petugas, $request->kode_rembug, $request->from_date, $request->thru_date);
+
+        return $list->download('list_pengajuan_' . $request->kode_cabang . '_' . $request->kode_rembug . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+    }
+    /* END REPORTS */
+
     function rembug(Request $request)
     {
         $token = $request->header('token');
