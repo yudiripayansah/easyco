@@ -94,9 +94,9 @@
             cabang: null,
             tanggal: null,
             nama: null,
+            nik: null,
+            no_anggota: null,
             rembug: null,
-            no_pengajuan: null,
-            jumlah: null,
             status: null,
           },
           loading: false,
@@ -132,23 +132,23 @@
               tdClass: ''
             },
             {
+              key: 'nik',
+              sortable: true,
+              label: 'Nik',
+              thClass: 'text-center',
+              tdClass: ''
+            },
+            {
+              key: 'no_anggota',
+              sortable: true,
+              label: 'No Anggota',
+              thClass: 'text-center',
+              tdClass: ''
+            },
+            {
               key: 'rembug',
               sortable: true,
               label: 'Rembug',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'no_pengajuan',
-              sortable: true,
-              label: 'No Pengajuan',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'jumlah',
-              sortable: true,
-              label: 'Jumlah',
               thClass: 'text-center',
               tdClass: ''
             },
@@ -175,9 +175,9 @@
         },
         opt: {
           cabang: ['Cimauk','Cibinong'],
-          status: ['Cair', 'Pengajuan'],
-          tanggal: ['01-01-2021','08-01-2021'],
-          sd:['01-01-2021','08-01-2021']
+          status: ['aktif','non aktif', 'Calon Agt'],
+          tanggal: ['01-01-2021','01-02-2021'],
+          sd:['08-01-2021','08-02-2021']
         }
       }
     },
@@ -194,13 +194,10 @@
           nama: {
             required
           },
+          nik: {
+            required
+          },
           rembug: {
-            required
-          },
-          no_pengajuan: {
-            required
-          },
-          jumlah: {
             required
           },
           status: {
@@ -226,10 +223,11 @@
               cabang: 'Cimauk',
               tanggal: '01-01-2021',
               nama: 'Siti Aminah',
+              nik: '3201151004780001',
+              no_anggota: '201-0010001',
               rembug: 'Mawar',
-              no_pengajuan: '320115004780001',
-              jumlah: '2.000.000',
-              status: 'Pengajuan',
+              status: 'Aktif',
+              created_at: 'Tanggal Dibuat',
             },
           ]
           this.doInfo('Data berhasil diambil','Berhasil','success')
@@ -276,9 +274,9 @@
           cabang: null,
           tanggal: null,
           nama: null,
+          nik: null,
+          no_anggota: null,
           rembug: null,
-          no_pengajuan: null,
-          jumlah: null,
           status: null,
         }
         this.$v.form.$reset()
