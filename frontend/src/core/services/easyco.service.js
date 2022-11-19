@@ -240,5 +240,4 @@ const easycoApi = {
     return axios.get(url, config)
   },
 }
-
 export default easycoApi
