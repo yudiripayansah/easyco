@@ -3,7 +3,7 @@ const menu = [
     target: '/dashboard',
     label: 'Dashboard',
     icon: 'menu-icon flaticon2-architecture-and-city',
-    component: import('@/pages/Dashboard.vue')
+    component: import('@/pages/Dummy.vue')
   },
   // Keanggotaan
   {
@@ -14,13 +14,13 @@ const menu = [
     children: [
       {
         target: 'registrasi-anggota',
-        label: 'Registrasi Calon Anggota',
+        label: 'Registrasi Anggota',
         component: import('@/pages/Keanggotaan/RegistrasiAnggota'),
       },
       {
         target: 'registrasi-anggota-rembug',
         label: 'Registrasi Anggota Rembug',
-        component: import('@/pages/Keanggotaan/RegistrasiAnggotaRembug.vue'),
+        component: import('@/pages/Keanggotaan/ApprovalRegistrasi.vue'),
       },
       {
         target: 'registrasi-anggota-keluar',
@@ -39,8 +39,8 @@ const menu = [
         children: [
           {
             target: 'registrasi-anggota',
-            label: ' Laporan Registrasi Anggota',
-            component: import('@/pages/Keanggotaan/Laporan/RegistrasiAnggota.vue'),
+            label: 'Laporan Registrasi Anggota',
+            component: import('@/pages/Dummy.vue'),
           },
           {
             target: 'profil-anggota',
@@ -117,7 +117,7 @@ const menu = [
       {
         target: 'pengajuan-pembiayaan',
         label: 'Pengajuan Pembiayaan',
-        component: import('@/pages/Pembiayaan/PengajuanPembiayaan'),
+        component: import('@/pages/Pembiayaan/PengajuanPembiayaan/index.vue'),
       },
       {
         target: 'update-status-komite',
@@ -127,7 +127,12 @@ const menu = [
       {
         target: 'registrasi-akad',
         label: 'Registrasi Akad',
-        component: import('@/pages/Dummy.vue'),
+        component: import('@/pages/Pembiayaan/RegistrasiAkad/index.vue'),
+      },
+      {
+        target: 'verifikasi-akad',
+        label: 'Verifikasi Akad',
+        component: import('@/pages/Pembiayaan/VerifikasiAkad/index.vue'),
       },
       {
         target: 'cetak-akad',
@@ -147,7 +152,7 @@ const menu = [
           {
             target: 'pengajuan-pembiayaan',
             label: 'Laporan Pengajuan Pembiayaan',
-            component: import('@/pages/Pembiayaan/Laporan/PengajuanPembiayaan.vue'),
+            component: import('@/pages/Dummy.vue'),
           },
           {
             target: 'registrasi-akad',

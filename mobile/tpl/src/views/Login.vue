@@ -4,7 +4,7 @@
       <v-row>
         <v-col xs=12 cols=12>
           <img src="../assets/logo-baik.png" class="bt-login-image mx-auto d-flex"/>
-          <h2 class="text-center orange--text lighten-1--text">LOGIN</h2>
+          <h2 class="text-center indigo--text lighten-5--text">LOGIN</h2>
         </v-col>
         <v-col xs=12 cols=12>
           <v-card elevation="3" class="pa-3 rounded-xl">
@@ -40,7 +40,7 @@
           </v-card>
         </v-col>
         <v-col xs=12 cols=12>
-          <v-btn block class="orange lighten-1 white--text rounded-pill py-8 text-h6" type="submit">
+          <v-btn block class="indigo darken-1 white--text rounded-pill py-8 text-h6" type="submit">
             Masuk
             <template v-slot:loader>
               <span class="custom-loader" :loading="form.loading">
@@ -49,7 +49,7 @@
             </template>
           </v-btn>
           <p class="text-center mt-3">
-            <router-link to="/forgot" class="orange--text lighten-1">Lupa Password?</router-link>
+            <router-link to="/forgot" class="indigo--text lighten-5">Lupa Password?</router-link>
           </p>
         </v-col>
       </v-row>

@@ -13,9 +13,6 @@
             <b-row no-gutters>
               <b-col cols="6">
                 <div class="w-100 max-200 pr-5">
-                  <b-input-group size="sm" prepend="Cabang">
-                    <b-form-select  :options="opt.cabang" />
-                  </b-input-group>
                 </div>
               </b-col>
               <b-col cols="6" class="d-flex justify-content-end">
@@ -455,7 +452,7 @@
               {
                 key: 'no',
                 sortable: false,
-                label: 'Cabang',
+                label: 'No',
                 thClass: 'text-center w-5p',
                 tdClass: 'text-center'
               },
@@ -502,6 +499,7 @@
             listAnggota: [],
             listPetugas: [],
             listPeruntukan: [],
+            listCabang: [],
             peruntukan: [{
                 text: "Modal Kerja",
                 value: "modal_kerja"
@@ -553,6 +551,9 @@
       async mounted() {
         let date = new Date();
         this.form.data.tanggalPengajuan = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
+        date.setDate(date.getDate()+7)
+        this.form.data.tanggalDroping = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
+        await this.doGetCabang()
         await this.doGetAnggota()
         await this.doGetPengajuan()
         await this.doGetPetugas()
@@ -705,6 +706,16 @@
             this.notify('danger','Login Error',error)
           }
         },
+        async doGetCabang() {
+          let payload = this.paging
+          try {
+            let req = await easycoApi.cabangRead(payload, this.user.token)
+            this.opt.listCabang = req.data.data.map(cabang => ({text: `${cabang.nama_cabang}`, value: cabang}))
+          } catch (error) {
+            console.log(error)
+            this.notify('danger','Login Error',error)
+          }
+        },
         doClearForm() {
         let date = new Date();
         this.form.data.idPengajuan = null
@@ -722,7 +733,8 @@
         this.form.data.jenisPembiayaan =  null
         this.form.data.sumberPengambilan =  null
         this.form.data.tanggalPengajuan =  `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
-        this.form.data.tanggalDroping =  null
+        date.setDate(date.getDate()+7)
+        this.form.data.tanggalDroping =  `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
         },
         notify(type, title, msg) {
           this.$bvToast.toast(msg, {

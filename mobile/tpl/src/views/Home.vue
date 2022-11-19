@@ -129,7 +129,7 @@ export default {
     },
     async getRembug() {
       let day = new Date().getDay();
-      day = 3
+      day = 5
       let payload = new FormData()
       payload.append('fa_code', this.user.fa_code)
       payload.append('day', day)
