@@ -1,101 +1,105 @@
 <template>
-  <div>
-    <h1 class="mb-5">{{$route.name}}</h1>
-    <b-card>
-      <b-row no-gutters>
-        <b-col cols="12">
-          <h5>Filter</h5>
-        </b-col>
-        <b-col cols="2" class="pr-2">
-          <b-select/>
-        </b-col>
-        <b-col cols="2" class="pr-2">
-          <b-select/>
-        </b-col>
-        <b-col cols="2" class="pr-2">
-          <b-select/>
-        </b-col>
-        <b-col cols="6" class="d-flex justify-content-start">
-          <b-button variant="danger">
-            <b-icon icon="files" />
-            PDF
+    <div>
+      <h1 class="mb-5">{{$route.name}}</h1>
+      <b-card>
+        <b-row no-gutters>
+          <b-col cols="8" class="mb-5">
+            <b-row no-gutters>
+              <b-col cols="4">
+                <div class="w-100 max-200 pr-5">
+                  <b-input-group size="sm" prepend="Cabang"> 
+                    <b-form-select v-model="options" :options="opt.cabang" />
+                  </b-input-group><br>
+                  <b-input-group size="sm" prepend="Tanggal">
+                    <b-form-select v-model="options" :options="opt.tanggal" />
+                  </b-input-group><br>
+                  <b-input-group size="sm" prepend="sd">
+                    <b-form-select v-model="options" :options="opt.sd" />
+                  </b-input-group>
+                </div>
+              </b-col>
+              <b-col cols= "8" class="mb-5">
+              <b-col cols="4" class="d-flex justify-content-end">
+                <div class="w-100 max-300"><br><br><br>
+                      <b-button size="sm" text="Button" variant="danger" class="mr-5">
+                        PDF
+                      </b-button>
+                      <b-button size="sm" text="Button" variant="success">
+                        XLS
+                      </b-button><br><br>
+                </div>
+              </b-col>
+              <b-col cols="4" class="d-flex justify-content-end">
+                <div class="w-100 max-300">
+                  <b-button size="sm" text="Button" variant="primary" class="mr-5">
+                        GRID
+                      </b-button>
+                      <b-button size="sm" text="Button" variant="warning" >
+                        CSV
+                      </b-button>
+                </div>
+              </b-col>
+              </b-col>
+            </b-row>
+          </b-col>
+          <b-col cols="12">
+            <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
+              show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
+              <template #cell(no)="item">
+                {{item.index + 1}}
+              </template>
+              <template #cell(action)="item">
+                <b-button variant="danger" size="xs" class="mx-1" @click="doDelete(item,true)" v-b-tooltip.hover
+                  title="Hapus">
+                  <b-icon icon="trash" />
+                </b-button>
+                <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Ubah">
+                  <b-icon icon="pencil" />
+                </b-button>
+              </template>
+            </b-table>
+          </b-col>
+          <b-col cols="12" class="justify-content-end d-flex">
+            <b-pagination v-model="paging.currentPage" :total-rows="table.totalRows" :per-page="paging.perPage">
+            </b-pagination>
+          </b-col>
+        </b-row>
+      </b-card>
+      <b-modal title="Delete" id="modal-delete" hide-footer size="sm" header-bg-variant="warning"
+        body-bg-variant="warning" centered>
+        <p class="text-center py-3">Anda yakin ingin menghapus data ini?</p>
+        <div class="d-flex justify-content-end">
+          <b-button variant="light" type="button" :disabled="remove.loading" @click="$bvModal.hide('modal-delete')">Tidak
           </b-button>
-          <b-button variant="success" class="ml-2">
-            <b-icon icon="files" />
-            CSV
+          <b-button variant="danger" class="ml-3" type="button" :disabled="remove.loading"
+            @click="doDelete(remove.data,false)">
+            {{remove.loading ? 'Memproses...' : 'Ya' }}
           </b-button>
-        </b-col>
-        <b-col cols="12" class="mb-5 pt-5 mt-5">
-          <b-row no-gutters>
-            <b-col cols="6">
-              <div class="w-100 max-200 pr-5">
-                <b-input-group size="sm" prepend="Per Halaman">
-                  <b-form-select v-model="paging.perPage" :options="opt.perPage" @change="doGet()"/>
-                </b-input-group>
-              </div>
-            </b-col>
-            <b-col cols="6" class="d-flex justify-content-end">
-              <div class="w-100 max-300">
-                <b-input-group size="sm">
-                  <b-form-input v-model="paging.search"/>
-                  <b-input-group-append>
-                    <b-button size="sm" text="Button" variant="primary" @click="doGet()">
-                      <b-icon icon="search" />
-                      Cari
-                    </b-button>
-                  </b-input-group-append>
-                </b-input-group>
-              </div>
-            </b-col>
-          </b-row>
-        </b-col>
-        <b-col cols="12">
-          <b-table 
-            responsive bordered outlined small striped hover 
-            :fields="table.fields" 
-            :items="table.items"
-            :sort-by.sync="paging.sortBy"
-            :sort-desc.sync="paging.sortDesc"
-            show-empty 
-            @filtered="onTableUpdate"
-            :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
-            <template #cell(no)="item">
-              {{item.index + 1}}
-            </template>
-            <template #cell(action)="item">
-              <!-- <b-button variant="danger" size="xs" class="mx-1" @click="doDelete(item,true)">
-                <b-icon icon="trash" />
-              </b-button> -->
-              <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item,false)">
-                <b-icon icon="pencil" />
-              </b-button>
-              <!-- <b-button variant="info" size="xs" class="mx-1" @click="doUpdate(item,true)">
-                <b-icon icon="check" />
-              </b-button> -->
-            </template>
-          </b-table>
-        </b-col>
-        <b-col cols="12" class="justify-content-end d-flex">
-          <b-pagination v-model="paging.currentPage" :total-rows="table.totalRows" :per-page="paging.perPage">
-          </b-pagination>
-        </b-col>
-      </b-row>
-    </b-card>
-  </div>
+        </div>
+      </b-modal>
+    </div>
   </template>
-  <script>
-  import { mapGetters } from 'vuex'
-  import easycoApi from '@/core/services/easyco.service'
-  export default {
-    name: "RegistrasiAnggota",
-    components: {
   
-    },
+  <script>
+  import { validationMixin } from "vuelidate";
+  import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
+  export default {
+    name: "Pengguna",
+    components: {},
     data() {
       return {
         form: {
-          data: Object,
-          loading: false
+          data: {
+            id: null,
+            cabang: null,
+            tanggal: null,
+            nama: null,
+            nik: null,
+            no_anggota: null,
+            rembug: null,
+            status: null,
+          },
+          loading: false,
         },
         table: {
           fields: [
@@ -107,114 +111,184 @@
               tdClass: 'text-center'
             },
             {
-              key: 'nama_anggota',
+              key: 'cabang',
               sortable: true,
-              label: 'Nama Anggota',
+              label: 'Cabang',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'kode_rembug',
+              key: 'tanggal',
               sortable: true,
-              label: 'Kode Rembug',
+              label: 'Tanggal',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'kode_cabang',
+              key: 'nama',
               sortable: true,
-              label: 'Kode Cabang',
+              label: 'Nama',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'no_telp',
+              key: 'nik',
               sortable: true,
-              label: 'No Telp',
+              label: 'Nik',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'alamat',
+              key: 'no_anggota',
               sortable: true,
-              label: 'Alamat',
+              label: 'No Anggota',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'action',
-              sortable: false,
-              label: 'Action',
-              thClass: 'text-center w-10p',
-              tdClass: 'text-center'
+              key: 'rembug',
+              sortable: true,
+              label: 'Rembug',
+              thClass: 'text-center',
+              tdClass: ''
+            },
+            {
+              key: 'status',
+              sortable: true,
+              label: 'Status',
+              thClass: 'text-center',
+              tdClass: ''
             },
           ],
           items: [],
           loading: false,
-          totalRows: 0
         },
         paging: {
-          page: 1,
-          perPage: 10,
-          sortDesc: true,
-          sortBy: 'id',
-          search: '',
-          status: 1
+          currentPage: 1,
+          perPage: 10
+        },
+        remove: {
+          data: {
+  
+          },
+          loading: false
         },
         opt: {
-          perPage: [10,20,50,100,200]
-        },
-        loading: false,
+          cabang: ['Cimauk','Cibinong'],
+          status: ['aktif','non aktif', 'Calon Agt'],
+          tanggal: ['01-01-2021','01-02-2021'],
+          sd:['08-01-2021','08-02-2021']
+        }
       }
     },
-    computed: {
-      ...mapGetters(["user"]),
-    },
-    watch: {
-      paging: {
-        handler(val){
-          this.doGet()
-        },
-        deep: true
+    mixins: [validationMixin],
+    validations: {
+      form: {
+        data: {
+          cabang: {
+            required
+          },
+          tanggal: {
+            required
+          },
+          nama: {
+            required
+          },
+          nik: {
+            required
+          },
+          rembug: {
+            required
+          },
+          status: {
+            required
+          },
+        }
       }
     },
     mounted() {
       this.doGet()
     },
     methods: {
+      validateState(name) {
+        const { $dirty, $error } = this.$v.form.data[name];
+        return $dirty ? !$error : null;
+      },
       async doGet() {
-        let payload = this.paging
-        payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
         this.table.loading = true
-        try {
-          let req = await  easycoApi.anggotaRead(payload, this.user.token)
-          let { data, status, msg, total } = req.data
-          if(status){
-            this.table.items = data
-            this.table.totalRows = total
-          } else {
-            this.notify('danger','Error',msg)
-          }
+        setTimeout(() => {
           this.table.loading = false
-        } catch (error) {
-          this.table.loading = false
-          console.error(error)
-          this.notify('danger','Login Error',error)
+          this.table.items = [
+            {
+              cabang: 'Cimauk',
+              tanggal: '01-01-2021',
+              nama: 'Siti Aminah',
+              nik: '3201151004780001',
+              no_anggota: '201-0010001',
+              rembug: 'Mawar',
+              status: 'Aktif',
+              created_at: 'Tanggal Dibuat',
+            },
+          ]
+          this.doInfo('Data berhasil diambil','Berhasil','success')
+        },5000)
+      },
+      async doSave() {
+        this.$v.form.$touch();
+        if (!this.$v.form.$anyError) {
+          this.form.loading = true
+          setTimeout(() => {
+            this.form.loading = false
+            this.$bvModal.hide('modal-form')
+            let newItems = {...this.form.data}
+            let date = new Date()
+            newItems.created_at = date.toLocaleDateString() 
+            newItems.id = this.table.items.length + 1
+            this.table.items.push(newItems)
+            this.doClearForm()
+            this.doInfo('Data berhasil disimpan','Berhasil','success')
+          }, 5000);
         }
       },
-      onTableUpdate(v){
-        console.log(v)
+      async doUpdate(item) {
+        console.log(item)
+        this.form.data = {...item.item}
+        this.$bvModal.show('modal-form')
       },
-      notify(type, title, msg) {
+      async doDelete(item,prompt) {
+        if(prompt){
+          this.remove.data = item
+          this.$bvModal.show('modal-delete')
+        } else {
+          this.remove.loading = true
+          setTimeout(() => {
+            this.remove.loading = false
+            this.$bvModal.hide('modal-delete')
+            this.doInfo('Data berhasil dihapus','Berhasil','success')
+          }, 5000);
+        }
+      },
+      doClearForm() {
+        this.form.data = {
+          id: null,
+          cabang: null,
+          tanggal: null,
+          nama: null,
+          nik: null,
+          no_anggota: null,
+          rembug: null,
+          status: null,
+        }
+        this.$v.form.$reset()
+      },
+      doInfo(msg,title,variant) {
         this.$bvToast.toast(msg, {
           title: title,
-          autoHideDelay: 5000,
-          variant: type,
-          toaster: 'b-toaster-bottom-right',
-          appendToast: true
+          variant: variant,
+          solid: true,
+          toaster: 'b-toaster-bottom-right'
         })
       }
     }
   };
   </script>
-  

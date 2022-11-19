@@ -39,8 +39,8 @@ const menu = [
         children: [
           {
             target: 'registrasi-anggota',
-            label: 'Registrasi Anggota',
-            component: import('@/pages/Keanggotaan/Laporan/RegistrasiAnggota'),
+            label: ' Laporan Registrasi Anggota',
+            component: import('@/pages/Keanggotaan/Laporan/RegistrasiAnggota.vue'),
           },
           {
             target: 'profil-anggota',
@@ -147,7 +147,7 @@ const menu = [
           {
             target: 'pengajuan-pembiayaan',
             label: 'Laporan Pengajuan Pembiayaan',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Pembiayaan/Laporan/PengajuanPembiayaan.vue'),
           },
           {
             target: 'registrasi-akad',
