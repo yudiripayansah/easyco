@@ -3,17 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-<<<<<<< HEAD:backend/backoffice/app/Models/KopUser.php
-use Illuminate\Database\Eloquent\SoftDeletes;
-=======
 use Illuminate\Database\Eloquent\softDeletes;
 use Illuminate\Support\Facades\DB;
->>>>>>> working:backend/app/Models/KopUser.php
 use Illuminate\Support\Facades\Validator;
 
 class KopUser extends Model
 {
-    use SoftDeletes;
+    use softDeletes;
 
     protected $table = 'kop_user';
     protected $fillable = ['kode_cabang', 'kode_pgw', 'nama_user', 'role_user', 'akses_user', 'status_user', 'photo', 'password', 'created_by'];

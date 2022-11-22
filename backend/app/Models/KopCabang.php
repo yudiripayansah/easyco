@@ -3,17 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-<<<<<<< HEAD:backend/backoffice/app/Models/KopCabang.php
-use Illuminate\Database\Eloquent\SoftDeletes;
-=======
 use Illuminate\Database\Eloquent\softDeletes;
 use Illuminate\Support\Facades\DB;
->>>>>>> working:backend/app/Models/KopCabang.php
 use Illuminate\Support\Facades\Validator;
 
 class KopCabang extends Model
 {
-    use SoftDeletes;
+    use softDeletes;
 
     protected $table = 'kop_cabang';
     protected $fillable = ['kode_cabang', 'nama_cabang', 'induk_cabang', 'jenis_cabang', 'pimpinan_cabang', 'created_by'];
