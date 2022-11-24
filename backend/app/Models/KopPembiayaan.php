@@ -221,33 +221,44 @@ class KopPembiayaan extends Model
 
     function report_list($kode_cabang, $jenis_pembiayaan, $kode_petugas, $kode_rembug, $produk, $from_date, $thru_date)
     {
-        $show = KopPembiayaan::select('kc.nama_cabang', 'kr.nama_rembug', 'kop_pengajuan.no_pengajuan', 'ka.no_anggota', 'ka.nama_anggota', 'ka.no_ktp', 'ka.tempat_lahir', 'ka.tgl_lahir', 'ka.no_telp', 'kr.nama_rembug', 'kkp.nama_kas_petugas', 'kop_pengajuan.jenis_pembiayaan', 'kop_pengajuan.tanggal_pengajuan', 'kop_pengajuan.rencana_droping', 'kop_pengajuan.jumlah_pengajuan', 'kop_pengajuan.status_pengajuan')
-            ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kop_pengajuan.no_anggota')
+        $show = KopPembiayaan::select('kc.nama_cabang', 'kr.nama_rembug', 'ka.no_anggota', 'ka.nama_anggota', 'kop_pembiayaan.no_rekening', 'ka.tempat_lahir', 'ka.tgl_lahir', 'kau.usia', 'ka.no_telp', 'kd.nama_desa', 'kop_pembiayaan.tanggal_registrasi', 'kpg.pengajuan_ke', 'kop_pembiayaan.pokok', 'kop_pembiayaan.margin', DB::raw('(kop_pembiayaan.angsuran_pokok+kop_pembiayaan.angsuran_margin+kop_pembiayaan.angsuran_catab+kop_pembiayaan.angsuran_minggon) AS angsuran'), 'kop_pembiayaan.biaya_administrasi', 'kop_pembiayaan.biaya_asuransi_jiwa', 'kop_pembiayaan.dana_kebajikan', 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.periode_jangka_waktu', 'kop_pembiayaan.tanggal_akad', 'kop_pembiayaan.sumber_dana', 'kop_pembiayaan.status_rekening')
+            ->join('kop_pengajuan AS kpg', 'kpg.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kpg.no_anggota')
+            ->join('kop_anggota_uk AS kau', 'kau.no_anggota', '=', 'ka.no_anggota')
             ->join('kop_cabang AS kc', 'kc.kode_cabang', '=', 'ka.kode_cabang')
             ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'ka.kode_rembug')
-            ->join('kop_kas_petugas AS kkp', 'kkp.kode_petugas', '=', 'kr.kode_petugas')
-            ->whereIn('kop_pengajuan.status_pengajuan', [0, 1]);
+            ->leftjoin('kop_desa AS kd', 'kd.kode_desa', '=', 'kr.kode_desa')
+            ->join('kop_list_kode AS klk', function ($join) {
+                $join->on('klk.kode_value', '=', 'kop_pembiayaan.peruntukan')->where('klk.nama_kode', '=', 'peruntukan');
+            })
+            ->leftjoin('kop_list_kode AS oio', function ($joins) {
+                $joins->on('oio.kode_value', '=', 'kop_pembiayaan.kode_kreditur')->where('oio.nama_kode', '=', 'kreditur');
+            })
+            ->whereIn('kop_pembiayaan.status_rekening', [0, 1, 2, 3]);
 
         if ($kode_cabang <> '00000') {
             $show->where('kc.kode_cabang', $kode_cabang);
         }
 
         if ($jenis_pembiayaan <> 9) {
-            $show->where('kop_pengajuan.jenis_pembiayaan', $jenis_pembiayaan);
+            $show->where('kpg.jenis_pembiayaan', $jenis_pembiayaan);
         }
 
         if ($kode_petugas <> '00000') {
-            $show->where('kkp.kode_petugas', $kode_petugas);
+            $show->where('kop_pembiayaan.kode_petugas', $kode_petugas);
         }
 
         if ($kode_rembug <> '00000') {
             $show->where('kr.kode_rembug', $kode_rembug);
         }
 
-        $show->whereBetween('kop_pengajuan.tanggal_pengajuan', [$from_date, $thru_date])
-            ->orderBy('kc.kode_cabang', 'ASC')
-            ->orderBy('kr.kode_rembug', 'ASC')
-            ->orderBy('kop_pengajuan.tanggal_pengajuan', 'ASC');
+        if ($produk <> '999') {
+            $show->where('kop_pembiayaan.kode_produk', $produk);
+        }
+
+        $show->whereBetween('kop_pembiayaan.tanggal_registrasi', [$from_date, $thru_date])
+            ->orderBy('kc.nama_cabang', 'ASC')
+            ->orderBy('kop_pembiayaan.tanggal_registrasi', 'ASC');
 
         $show = $show->get();
 
