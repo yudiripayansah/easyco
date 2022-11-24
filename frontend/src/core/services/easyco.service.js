@@ -51,6 +51,15 @@ const easycoApi = {
     }
     return axios.get(url, config)
   },
+  anggotaSimpanan(token) {
+    let url = 'anggota/simpanan_anggota'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
   // Petugas
   petugasRead(payload, token) {
     let url = 'pengajuan/fa'

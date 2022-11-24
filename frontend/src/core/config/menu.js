@@ -20,7 +20,7 @@ const menu = [
       {
         target: 'registrasi-anggota-rembug',
         label: 'Registrasi Anggota Rembug',
-        component: import('@/pages/Keanggotaan/ApprovalRegistrasi.vue'),
+        component: import('@/pages/Keanggotaan/RegistrasiAnggotaRembug.vue'),
       },
       {
         target: 'registrasi-anggota-keluar',
@@ -40,7 +40,7 @@ const menu = [
           {
             target: 'registrasi-anggota',
             label: 'Laporan Registrasi Anggota',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Keanggotaan/Laporan/RegistrasiAnggota.vue'),
           },
           {
             target: 'profil-anggota',

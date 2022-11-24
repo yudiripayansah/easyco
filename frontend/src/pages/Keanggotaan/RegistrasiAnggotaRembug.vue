@@ -3,12 +3,6 @@
     <h1 class="mb-5">{{$route.name}}</h1>
     <b-card>
       <b-row no-gutters>
-        <!-- <b-col cols="12" class="d-flex justify-content-end mb-5 pb-5 border-bottom">
-          <b-button variant="success" @click="$bvModal.show('modal-form');doClearForm()">
-            <b-icon icon="plus" />
-            Tambah Baru
-          </b-button>
-        </b-col> -->
         <b-col cols="12" class="mb-5">
           <b-row no-gutters>
             <b-col cols="6">
