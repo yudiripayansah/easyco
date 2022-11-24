@@ -245,7 +245,7 @@ class AnggotaController extends Controller
             $read->skip($offset)->take($perPage);
         }
 
-        if ($status) {
+        if ($status && $status != '~') {
             $read->where('kop_anggota.status', $status);
         }
 
@@ -275,7 +275,7 @@ class AnggotaController extends Controller
                 $total->where('kop_anggota.no_anggota', 'LIKE', '%' . $search . '%')->orWhere('kop_anggota.nama_anggota', 'LIKE', '%' . $search . '%');
             }
 
-            if ($status && $status != NULL) {
+            if ($status && $status != NULL && $status != '~') {
                 $total->where('kop_anggota.status', $status);
             }
     
