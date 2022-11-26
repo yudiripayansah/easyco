@@ -216,10 +216,6 @@ class AnggotaController extends Controller
             $status = $request->status;
         }
 
-        if ($request->type) {
-            $type = $request->type;
-        }
-
         if ($request->cabang) {
             $cabang = $request->cabang;
         }
@@ -236,10 +232,10 @@ class AnggotaController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopAnggota::select('kop_anggota.*','kop_cabang.nama_cabang','kop_rembug.nama_rembug')
-                ->orderBy($sortBy, $sortDir)
-                ->join('kop_cabang','kop_cabang.kode_cabang','kop_anggota.kode_cabang','left')
-                ->join('kop_rembug','kop_rembug.kode_rembug','kop_anggota.kode_rembug','left');
+        $read = KopAnggota::select('kop_anggota.*', 'kop_cabang.nama_cabang', 'kop_rembug.nama_rembug')
+            ->orderBy($sortBy, $sortDir)
+            ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang', 'left')
+            ->join('kop_rembug', 'kop_rembug.kode_rembug', 'kop_anggota.kode_rembug', 'left');
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
@@ -257,7 +253,7 @@ class AnggotaController extends Controller
             $read->where('kop_anggota.no_anggota', 'LIKE', '%' . $search . '%')->orWhere('kop_anggota.nama_anggota', 'LIKE', '%' . $search . '%');
         }
 
-        if($from && $to) {
+        if ($from && $to) {
             $read->whereBetween('kop_anggota.tgl_gabung', [$from, $to]);
         }
 
@@ -278,12 +274,12 @@ class AnggotaController extends Controller
             if ($status && $status != NULL && $status != '~') {
                 $total->where('kop_anggota.status', $status);
             }
-    
+
             if ($cabang && $cabang != NULL) {
                 $total->where('kop_anggota.kode_cabang', $cabang);
             }
 
-            if($from && $to) {
+            if ($from && $to) {
                 $total->whereBetween('kop_anggota.tgl_gabung', [$from, $to]);
             }
 
@@ -296,8 +292,8 @@ class AnggotaController extends Controller
             $totalPage = ceil($total / $perPage);
         }
 
-        foreach($read as $row) {
-            $row->tgl_gabung = date('d-F-Y',strtotime($row->tgl_gabung));
+        foreach ($read as $row) {
+            $row->tgl_gabung = date('d-F-Y', strtotime($row->tgl_gabung));
         }
 
         $res = array(

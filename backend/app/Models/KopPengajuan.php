@@ -142,7 +142,7 @@ class KopPengajuan extends Model
 
     function report_list($kode_cabang, $jenis_pembiayaan, $kode_petugas, $kode_rembug, $from_date, $thru_date)
     {
-        $show = KopPengajuan::select('kc.nama_cabang', 'kr.nama_rembug', 'kop_pengajuan.no_pengajuan', 'ka.no_anggota', 'ka.nama_anggota', 'ka.no_ktp', 'ka.tempat_lahir', 'ka.tgl_lahir', 'ka.no_telp', 'kr.nama_rembug', 'kkp.nama_kas_petugas', 'kop_pengajuan.jenis_pembiayaan', 'kop_pengajuan.tanggal_pengajuan', 'kop_pengajuan.rencana_droping', 'kop_pengajuan.jumlah_pengajuan', 'kop_pengajuan.status_pengajuan')
+        $show = KopPengajuan::select('kc.nama_cabang', 'kr.nama_rembug', 'kop_pengajuan.no_pengajuan', 'ka.no_anggota', 'ka.nama_anggota', 'ka.no_ktp', 'ka.tempat_lahir', 'ka.tgl_lahir', 'ka.no_telp', 'kkp.nama_kas_petugas', 'kop_pengajuan.jenis_pembiayaan', 'kop_pengajuan.tanggal_pengajuan', 'kop_pengajuan.rencana_droping', 'kop_pengajuan.jumlah_pengajuan', 'kop_pengajuan.status_pengajuan')
             ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kop_pengajuan.no_anggota')
             ->join('kop_cabang AS kc', 'kc.kode_cabang', '=', 'ka.kode_cabang')
             ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'ka.kode_rembug')
