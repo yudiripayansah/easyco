@@ -8,6 +8,7 @@ use App\Models\KopRembug;
 use App\Models\KopTabungan;
 use App\Models\KopUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TplController extends Controller
 {
@@ -198,5 +199,11 @@ class TplController extends Controller
         $response = response()->json($res, 200);
 
         return $response;
+    }
+
+    function process_deposit(Request $request)
+    {
+        $uuid = collect(DB::select('SELECT uuid() AS id_deposit'))->first()->id_deposit;
+        echo $uuid;
     }
 }

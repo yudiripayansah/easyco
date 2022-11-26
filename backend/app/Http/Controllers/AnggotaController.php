@@ -183,12 +183,14 @@ class AnggotaController extends Controller
         $page = 1;
         $perPage = '~';
         $sortDir = 'ASC';
-        $sortBy = 'no_anggota';
+        $sortBy = 'kop_anggota.no_anggota';
         $search = NULL;
         $total = 0;
         $totalPage = 1;
-        $type = NULL;
-        $id_cabang = NULL;
+        $cabang = NULL;
+        $status = NULL;
+        $from = NULL;
+        $to = NULL;
 
         if ($request->page) {
             $page = $request->page;
@@ -210,22 +212,49 @@ class AnggotaController extends Controller
             $search = strtoupper($request->search);
         }
 
+        if ($request->status) {
+            $status = $request->status;
+        }
+
+        if ($request->cabang) {
+            $cabang = $request->cabang;
+        }
+
+        if ($request->from) {
+            $from = $request->from;
+        }
+
+        if ($request->to) {
+            $to = $request->to;
+        }
+
         if ($page > 1) {
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopAnggota::select('*')->orderBy($sortBy, $sortDir);
+        $read = KopAnggota::select('kop_anggota.*', 'kop_cabang.nama_cabang', 'kop_rembug.nama_rembug')
+            ->orderBy($sortBy, $sortDir)
+            ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang', 'left')
+            ->join('kop_rembug', 'kop_rembug.kode_rembug', 'kop_anggota.kode_rembug', 'left');
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
         }
 
-        if (isset($request->status)) {
-            $read->where('status', $request->status);
+        if ($status && $status != '~') {
+            $read->where('kop_anggota.status', $status);
         }
 
-        if ($search != NULL) {
-            $read->where('no_anggota', 'LIKE', '%' . $search . '%')->orWhere('nama_anggota', 'LIKE', '%' . $search . '%');
+        if ($cabang) {
+            $read->where('kop_anggota.kode_cabang', $cabang);
+        }
+
+        if ($search) {
+            $read->where('kop_anggota.no_anggota', 'LIKE', '%' . $search . '%')->orWhere('kop_anggota.nama_anggota', 'LIKE', '%' . $search . '%');
+        }
+
+        if ($from && $to) {
+            $read->whereBetween('kop_anggota.tgl_gabung', [$from, $to]);
         }
 
         $read = $read->get();
@@ -235,11 +264,23 @@ class AnggotaController extends Controller
             $rd->used_count = $useCount;
         }
 
-        if ($search || $id_cabang || $type) {
+        if ($search || $cabang || $status || ($from && $to)) {
             $total = KopAnggota::orderBy($sortBy, $sortDir);
 
-            if ($search) {
-                $total->where('no_anggota', 'LIKE', '%' . $search . '%')->orWhere('nama_anggota', 'LIKE', '%' . $search . '%');
+            if ($search && $search != NULL) {
+                $total->where('kop_anggota.no_anggota', 'LIKE', '%' . $search . '%')->orWhere('kop_anggota.nama_anggota', 'LIKE', '%' . $search . '%');
+            }
+
+            if ($status && $status != NULL && $status != '~') {
+                $total->where('kop_anggota.status', $status);
+            }
+
+            if ($cabang && $cabang != NULL) {
+                $total->where('kop_anggota.kode_cabang', $cabang);
+            }
+
+            if ($from && $to) {
+                $total->whereBetween('kop_anggota.tgl_gabung', [$from, $to]);
             }
 
             $total = $total->count();
@@ -249,6 +290,10 @@ class AnggotaController extends Controller
 
         if ($perPage != '~') {
             $totalPage = ceil($total / $perPage);
+        }
+
+        foreach ($read as $row) {
+            $row->tgl_gabung = date('d-F-Y', strtotime($row->tgl_gabung));
         }
 
         $res = array(
