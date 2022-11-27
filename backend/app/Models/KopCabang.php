@@ -19,7 +19,8 @@ class KopCabang extends Model
         $rule = [
             'kode_cabang' => 'required|numeric|unique:kop_cabang',
             'nama_cabang' => 'required',
-            'jenis_cabang' => 'numeric'
+            'jenis_cabang' => 'numeric',
+            'created_by' => 'required'
         ];
 
         $validator = Validator::make($validate, $rule);
