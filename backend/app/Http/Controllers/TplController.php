@@ -6,7 +6,10 @@ use App\Models\KopAnggota;
 use App\Models\KopPembiayaan;
 use App\Models\KopRembug;
 use App\Models\KopTabungan;
+use App\Models\KopTrxAnggota;
+use App\Models\KopTrxRembug;
 use App\Models\KopUser;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -203,7 +206,156 @@ class TplController extends Controller
 
     function process_deposit(Request $request)
     {
-        $uuid = collect(DB::select('SELECT uuid() AS id_deposit'))->first()->id_deposit;
-        echo $uuid;
+        $uuid = collect(DB::select('SELECT uuid() AS id_trx_rembug'))->first()->id_trx_rembug;
+
+        $kode_cabang = $request->kode_cabang;
+        $kode_rembug = $request->kode_rembug;
+        $kode_petugas = $request->kode_petugas;
+        $kode_kas_petugas = $request->kode_kas_petugas;
+        $trx_date = str_replace('/', '-', $request->trx_date);
+        $trx_date = date('Y-m-d', strtotime($trx_date));
+        $no_anggota = $request->no_anggota;
+        $no_rekening = $request->no_rekening;
+        $total_angsuran = $request->total_angsuran;
+        $setoran_sukarela = $request->setoran_sukarela;
+        $setoran_simpanan_wajib = $request->setoran_simpanan_wajib;
+        $penarikan_sukarela = $request->penarikan_sukarela;
+
+        $no_rekening_tabungan = $request->no_rekening_tabungan;
+        $amount_tabungan = $request->amount_tabungan;
+
+        $count = count($no_rekening_tabungan);
+
+        $data_trx_rembug = array(
+            'id_trx_rembug' => $uuid,
+            'kode_rembug' => $kode_rembug,
+            'kode_petugas' => $kode_petugas,
+            'trx_date' => $trx_date,
+            'created_by' => $kode_petugas
+        );
+
+        $data_trx_anggota = array();
+
+        // ANGSURAN PEMBIAYAAN
+        $data_trx_anggota[] = array(
+            'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+            'id_trx_rembug' => $uuid,
+            'no_anggota' => $no_anggota,
+            'no_rekening' => $no_rekening,
+            'trx_date' => $trx_date,
+            'amount' => $total_angsuran,
+            'flag_debet_credit' => 'C',
+            'trx_type' => '32',
+            'description' => 'Bayar Angsuran',
+            'created_by' => $kode_petugas
+        );
+
+        // SETORAN SUKARELA
+        $data_trx_anggota[] = array(
+            'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+            'id_trx_rembug' => $uuid,
+            'no_anggota' => $no_anggota,
+            'no_rekening' => NULL,
+            'trx_date' => $trx_date,
+            'amount' => $setoran_sukarela,
+            'flag_debet_credit' => 'C',
+            'trx_type' => '13',
+            'description' => 'Bayar Simsuk',
+            'created_by' => $kode_petugas
+        );
+
+        // SETORAN SIMPANAN WAJIB
+        $data_trx_anggota[] = array(
+            'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+            'id_trx_rembug' => $uuid,
+            'no_anggota' => $no_anggota,
+            'no_rekening' => NULL,
+            'trx_date' => $trx_date,
+            'amount' => $setoran_simpanan_wajib,
+            'flag_debet_credit' => 'C',
+            'trx_type' => '12',
+            'description' => 'Bayar Simwa',
+            'created_by' => $kode_petugas
+        );
+
+        // PENARIKAN SUKARELA
+        $data_trx_anggota[] = array(
+            'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+            'id_trx_rembug' => $uuid,
+            'no_anggota' => $no_anggota,
+            'no_rekening' => NULL,
+            'trx_date' => $trx_date,
+            'amount' => $penarikan_sukarela,
+            'flag_debet_credit' => 'C',
+            'trx_type' => '22',
+            'description' => 'Penarikan Tabungan',
+            'created_by' => $kode_petugas
+        );
+
+        for ($i = 0; $i < $count; $i++) {
+            $data_trx_anggota[] = array(
+                'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                'id_trx_rembug' => $uuid,
+                'no_anggota' => $no_anggota,
+                'no_rekening' => $no_rekening_tabungan[$i],
+                'trx_date' => $trx_date,
+                'amount' => $amount_tabungan[$i],
+                'flag_debet_credit' => 'C',
+                'trx_type' => '21',
+                'description' => 'Setoran Tabungan',
+                'created_by' => $kode_petugas
+            );
+        }
+
+        $validate = KopTrxRembug::validateAdd($data_trx_rembug);
+        $validate2 = KopTrxAnggota::validateAdd($data_trx_anggota);
+
+        DB::beginTransaction();
+
+        if ($validate['status'] === TRUE or $validate2['status'] === TRUE) {
+            try {
+                KopTrxRembug::create($data_trx_rembug);
+                KopTrxAnggota::insert($data_trx_anggota);
+
+                $res = array(
+                    'status' => TRUE,
+                    'data' => NULL,
+                    'msg' => 'Berhasil!',
+                    'error' => NULL
+                );
+
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+
+                $res = array(
+                    'status' => FALSE,
+                    'data' => $data_trx_rembug,
+                    'msg' => $e->getMessage(),
+                    'error' => NULL
+                );
+            }
+        } else {
+            $msg = array(
+                'validate' => $validate['msg'],
+                'validate2' => $validate2['msg']
+            );
+
+            $error = array(
+                'error' => $validate['errors'],
+                'error2' => $validate2['errors']
+            );
+
+            $res = array(
+                'status' => FALSE,
+                'data' => NULL,
+                'msg' => $msg,
+                'error' => $error
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
     }
 }
