@@ -149,19 +149,19 @@ class KopPengajuan extends Model
             ->join('kop_kas_petugas AS kkp', 'kkp.kode_petugas', '=', 'kr.kode_petugas')
             ->whereIn('kop_pengajuan.status_pengajuan', [0, 1]);
 
-        if ($kode_cabang <> '00000') {
+        if ($kode_cabang <> '~') {
             $show->where('kc.kode_cabang', $kode_cabang);
         }
 
-        if ($jenis_pembiayaan <> 9) {
+        if ($jenis_pembiayaan <> '~') {
             $show->where('kop_pengajuan.jenis_pembiayaan', $jenis_pembiayaan);
         }
 
-        if ($kode_petugas <> '00000') {
+        if ($kode_petugas <> '~') {
             $show->where('kkp.kode_petugas', $kode_petugas);
         }
 
-        if ($kode_rembug <> '00000') {
+        if ($kode_rembug <> '~') {
             $show->where('kr.kode_rembug', $kode_rembug);
         }
 

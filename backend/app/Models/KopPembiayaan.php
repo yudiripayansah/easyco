@@ -233,26 +233,25 @@ class KopPembiayaan extends Model
             })
             ->leftjoin('kop_list_kode AS oio', function ($joins) {
                 $joins->on('oio.kode_value', '=', 'kop_pembiayaan.kode_kreditur')->where('oio.nama_kode', '=', 'kreditur');
-            })
-            ->whereIn('kop_pembiayaan.status_rekening', [0, 1, 2, 3]);
+            });
 
-        if ($kode_cabang <> '00000') {
+        if ($kode_cabang <> '~') {
             $show->where('kc.kode_cabang', $kode_cabang);
         }
 
-        if ($jenis_pembiayaan <> 9) {
+        if ($jenis_pembiayaan <> '~') {
             $show->where('kpg.jenis_pembiayaan', $jenis_pembiayaan);
         }
 
-        if ($kode_petugas <> '00000') {
+        if ($kode_petugas <> '~') {
             $show->where('kop_pembiayaan.kode_petugas', $kode_petugas);
         }
 
-        if ($kode_rembug <> '00000') {
+        if ($kode_rembug <> '~') {
             $show->where('kr.kode_rembug', $kode_rembug);
         }
 
-        if ($produk <> '999') {
+        if ($produk <> '~') {
             $show->where('kop_pembiayaan.kode_produk', $produk);
         }
 
