@@ -69,11 +69,15 @@ class CreateKopPembiayaanTable extends Migration
             $table->string('norek_tabungan', 20)->nullable(TRUE);
             $table->string('no_rekening_o', 20)->nullable(TRUE);
             $table->string('id_anggota_o', 20)->nullable(TRUE);
+            $table->text('droping_doc')->nullable(TRUE);
+            $table->integer('status_droping')->nullable(TRUE)->default(0)->comment('0 = Belum, 1 = Sudah');
             $table->string('created_by', 30);
             $table->timestamps();
             $table->string('updated_by', 30)->nullable(TRUE);
             $table->string('verified_by', 30)->nullable(TRUE);
             $table->dateTime('verified_at')->nullable(TRUE);
+            $table->string('droping_by', 30)->nullable(TRUE);
+            $table->dateTime('droping_at')->nullable(TRUE);
             $table->softDeletes();
             $table->string('deleted_by', 30)->nullable(TRUE);
 
