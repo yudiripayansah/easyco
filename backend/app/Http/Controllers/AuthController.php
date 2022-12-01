@@ -62,6 +62,7 @@ class AuthController extends Controller
                                 'kode_cabang' => $get->kode_cabang,
                                 'kode_pgw' => $get->kode_pgw,
                                 'kode_petugas' => $get2->kode_petugas,
+                                'kode_kas_petugas' => $get2->kode_kas_petugas,
                                 'nama_user' => $get->nama_user,
                                 'role_user' => $get->role_user,
                                 'akses_user' => $get->akses_user,
