@@ -173,6 +173,7 @@ class TplController extends Controller
         $getMember = KopAnggota::where($param)->first();
         $simwa = $getMember->simwa;
 
+        // BERENCANA
         $read = KopTabungan::tpl_saving($no_anggota);
 
         $count = $read->count();
@@ -185,7 +186,9 @@ class TplController extends Controller
                     'nama_produk' => $rd['nama_singkat'],
                     'no_rekening' => $rd['no_rekening'],
                     'setoran' => str_replace('.', '', number_format($rd['setoran'], 0, ',', '.')),
-                    'freq_saving' => (isset($rd['setoran']) ? 1 : 0)
+                    'freq_saving' => (isset($rd['setoran']) ? 1 : 0),
+                    'counter_angsuran' => $rd['counter_angsuran'],
+                    'jangka_waktu' => $rd['jangka_waktu']
                 );
             }
         } else {
@@ -202,9 +205,21 @@ class TplController extends Controller
             'angsuran' => [
                 'amount' => str_replace('.', '', number_format($angsuran, 0, ',', '.')),
                 'detail' => [
-                    ['id' => '32', 'nama' => 'angsuran pokok', 'amount' => $angsuran_pokok],
-                    ['id' => '33', 'nama' => 'angsuran margin', 'amount' => $angsuran_margin],
-                    ['id' => '34', 'nama' => 'angsuran catab', 'amount' => $angsuran_catab]
+                    [
+                        'id' => '32',
+                        'nama' => 'angsuran pokok',
+                        'amount' => str_replace('.', '', number_format($angsuran_pokok, 0, ',', '.'))
+                    ],
+                    [
+                        'id' => '33',
+                        'nama' => 'angsuran margin',
+                        'amount' => str_replace('.', '', number_format($angsuran_margin, 0, ',', '.'))
+                    ],
+                    [
+                        'id' => '34',
+                        'nama' => 'angsuran catab',
+                        'amount' => str_replace('.', '', number_format($angsuran_catab, 0, ',', '.'))
+                    ]
                 ]
             ],
             'frekuensi' => $freq,
