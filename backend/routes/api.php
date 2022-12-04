@@ -243,6 +243,7 @@ Route::prefix('tpl')->group(function () {
   Route::prefix('transaction')->middleware('checkToken')->group(function () {
     Route::post('/deposit', [TplController::class, 'deposit']);
     Route::post('/process_deposit', [TplController::class, 'process_deposit']);
+    Route::post('/process_cash', [TplController::class, 'process_cash']);
   });
 });
 

@@ -7,6 +7,7 @@ use App\Models\KopPembiayaan;
 use App\Models\KopRembug;
 use App\Models\KopTabungan;
 use App\Models\KopTrxAnggota;
+use App\Models\KopTrxKasPetugas;
 use App\Models\KopTrxRembug;
 use App\Models\KopUser;
 use Exception;
@@ -173,6 +174,31 @@ class TplController extends Controller
         $getMember = KopAnggota::where($param)->first();
         $simwa = $getMember->simwa;
 
+        // PEMBIAYAAN
+        $show = KopPembiayaan::tpl_financing($no_anggota);
+
+        $hit = $show->count();
+
+        $financing = array();
+
+        if ($hit > 0) {
+            foreach ($show as $sh) {
+                $financing[] = array(
+                    'nama_produk' => $sh['nama_singkat'],
+                    'counter_angsuran' => $sh['counter_angsuran'],
+                    'jangka_waktu' => $sh['jangka_waktu'],
+                    'pokok' => str_replace('.', '', number_format($sh['pokok'], 0, ',', '.'))
+                );
+            }
+        } else {
+            $financing[] = array(
+                'nama_produk' => NULL,
+                'counter_angsuran' => 0,
+                'jangka_waktu' => 0,
+                'pokok' => 0
+            );
+        }
+
         // BERENCANA
         $read = KopTabungan::tpl_saving($no_anggota);
 
@@ -196,7 +222,9 @@ class TplController extends Controller
                 'nama_produk' => NULL,
                 'no_rekening' => NULL,
                 'setoran' => 0,
-                'freq_saving' => 0
+                'freq_saving' => 0,
+                'counter_angsuran' => 0,
+                'jangka_waktu' => 0
             );
         }
 
@@ -224,6 +252,7 @@ class TplController extends Controller
             ],
             'frekuensi' => $freq,
             'simwa' => str_replace('.', '', number_format($simwa, 0, ',', '.')),
+            'pembiayaan' => $financing,
             'berencana' => $saving,
             'pokok' => str_replace('.', '', number_format($pokok, 0, ',', '.')),
             'biaya_administrasi' => str_replace('.', '', number_format($biaya_administrasi, 0, ',', '.')),
@@ -412,6 +441,90 @@ class TplController extends Controller
                 'data' => NULL,
                 'msg' => $msg,
                 'error' => $error
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function process_cash(Request $request)
+    {
+        $kode_kas_petugas = $request->kode_kas_petugas;
+        $nama_rembug = $request->nama_rembug;
+        $total_setoran = $request->total_setoran;
+        $total_penarikan = $request->total_penarikan;
+        $total_infaq = $request->total_infaq;
+        $voucher_date = $request->voucher_date;
+        $created_by = $request->kode_petugas;
+
+        $validate_fill = array(
+            'kode_kas_petugas' => $kode_kas_petugas,
+            'nama_rembug' => $nama_rembug,
+            'total_setoran' => $total_setoran,
+            'total_penarikan' => $total_penarikan,
+            'total_infaq' => $total_infaq,
+            'voucher_date' => $voucher_date,
+            'created_by' => $created_by
+        );
+
+        $data_trx_kas_petugas = array();
+
+        $data_trx_kas_petugas[] = array(
+            'kode_kas_petugas' => $kode_kas_petugas,
+            'jenis_trx' => 2,
+            'debit_credit' => 'D',
+            'jumlah_trx' => ($total_setoran + $total_infaq),
+            'trx_date' => date('Y-m-d'),
+            'voucher_date' => $voucher_date,
+            'keterangan' => 'PENERIMAAN MAJELIS ' . $nama_rembug,
+            'created_by' => $created_by
+        );
+
+        $data_trx_kas_petugas[] = array(
+            'kode_kas_petugas' => $kode_kas_petugas,
+            'jenis_trx' => 3,
+            'debit_credit' => 'C',
+            'jumlah_trx' => $total_penarikan,
+            'trx_date' => date('Y-m-d'),
+            'voucher_date' => $voucher_date,
+            'keterangan' => 'PENARIKAN MAJELIS ' . $nama_rembug,
+            'created_by' => $created_by
+        );
+
+        $validate = KopTrxKasPetugas::validateAdd($validate_fill);
+
+        DB::beginTransaction();
+
+        if ($validate['status'] === TRUE) {
+            try {
+                KopTrxKasPetugas::insert($data_trx_kas_petugas);
+
+                $res = array(
+                    'status' => TRUE,
+                    'data' => NULL,
+                    'msg' => 'Berhasil!',
+                    'error' => NULL
+                );
+
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+
+                $res = array(
+                    'status' => FALSE,
+                    'data' => $data_trx_kas_petugas,
+                    'msg' => $e->getMessage(),
+                    'error' => NULL
+                );
+            }
+        } else {
+            $res = array(
+                'status' => FALSE,
+                'data' => NULL,
+                'msg' => $validate['msg'],
+                'error' => $validate['errors']
             );
         }
 

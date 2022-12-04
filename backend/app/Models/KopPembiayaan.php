@@ -219,6 +219,18 @@ class KopPembiayaan extends Model
         return $show;
     }
 
+    function tpl_financing($no_anggota)
+    {
+        $show = KopPembiayaan::select('kpp.nama_singkat', 'kop_pembiayaan.counter_angsuran', 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.pokok')
+            ->join('kop_pengajuan AS kp', 'kp.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_prd_pembiayaan AS kpp', 'kpp.kode_produk', '=', 'kop_pembiayaan.kode_produk')
+            ->where('kop_pembiayaan.status_rekening', 1)
+            ->where('kp.no_anggota', $no_anggota)
+            ->get();
+
+        return $show;
+    }
+
     function tpl_droping($no_anggota)
     {
         $show = KopPembiayaan::select('kop_pembiayaan.pokok', 'kop_pembiayaan.biaya_administrasi', 'kop_pembiayaan.biaya_asuransi_jiwa', 'kop_pembiayaan.biaya_asuransi_jaminan', 'kop_pembiayaan.biaya_notaris', 'kop_pembiayaan.tabungan_persen', 'kop_pembiayaan.dana_kebajikan')
