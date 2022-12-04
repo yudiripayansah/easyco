@@ -169,7 +169,7 @@
         <b-row>
           <b-col cols="12" sm="12" class="mb-3">
             <hr>
-            <h4 class="my-3">Cabang & Rembug</h4>
+            <h4 class="my-3">Cabang & Majelis</h4>
           </b-col>
           <b-col cols="12" sm="6">
             <b-form-group label="Cabang">
@@ -177,7 +177,7 @@
             </b-form-group>
           </b-col>
           <b-col cols="12" sm="6">
-            <b-form-group label="Rembug">
+            <b-form-group label="Majelis">
               <b-select v-model="form.data.kode_rembug" :options="opt.rembug"/>
             </b-form-group>
           </b-col>
@@ -330,7 +330,7 @@
             {
               key: 'kode_rembug',
               sortable: true,
-              label: 'Kode Rembug',
+              label: 'Kode Majelis',
               thClass: 'text-center',
               tdClass: ''
             },
