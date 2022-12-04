@@ -362,6 +362,7 @@ class AnggotaController extends Controller
 
         $get->nama_anggota = strtoupper($request->nama_anggota);
         $get->jenis_kelamin = $request->jenis_kelamin;
+        $get->kode_rembug = $request->kode_rembug;
         $get->ibu_kandung = strtoupper($request->ibu_kandung);
         $get->tempat_lahir = strtoupper($request->tempat_lahir);
         $get->tgl_lahir = $request->tgl_lahir;
