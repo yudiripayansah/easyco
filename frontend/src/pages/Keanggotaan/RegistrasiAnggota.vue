@@ -419,7 +419,7 @@
               <b-col cols="12" sm="3">
                 <b-form-group label="Beras (kg/bulan)">
                   <!-- <b-input v-model="form.data.by_beras" type="number"/> -->
-                  <vue-numeric currency="Rp " separator="." v-model="form.data.by_beras" class="form-control"/>
+                  <vue-numeric currency="" separator="." v-model="form.data.by_beras" class="form-control"/>
                 </b-form-group>
               </b-col>
               <b-col cols="12" sm="3">
@@ -595,7 +595,7 @@ export default {
           {
             key: 'kode_rembug',
             sortable: true,
-            label: 'Kode Rembug',
+            label: 'Kode Majelis',
             thClass: 'text-center',
             tdClass: ''
           },

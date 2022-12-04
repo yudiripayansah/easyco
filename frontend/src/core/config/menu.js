@@ -152,12 +152,12 @@ const menu = [
           {
             target: 'pengajuan-pembiayaan',
             label: 'Laporan Pengajuan Pembiayaan',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Pembiayaan/Laporan/PengajuanPembiayaan.vue'),
           },
           {
             target: 'registrasi-akad',
             label: 'Laporan Registrasi Akad',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Pembiayaan/Laporan/LaporanRegistrasiAkad.vue'),
           },
           {
             target: 'pencairan',
