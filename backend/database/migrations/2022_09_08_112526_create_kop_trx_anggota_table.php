@@ -21,7 +21,7 @@ class CreateKopTrxAnggotaTable extends Migration
             $table->string('no_anggota', 20);
             $table->string('no_rekening', 25);
             $table->date('trx_date');
-            $table->decimal('amount', 14, 2)->nullable(TRUE)->default(0);
+            $table->decimal('amount', 14, 0)->nullable(TRUE)->default(0);
             $table->char('flag_debet_credit', 1);
             $table->integer('trx_type')->comment('Referensi Table List Kode');
             $table->text('description')->nullable(TRUE);
