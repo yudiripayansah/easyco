@@ -118,11 +118,16 @@ class TplController extends Controller
             $data = array();
 
             foreach ($read as $rd) {
+                $penerimaan = KopTrxAnggota::tpl_cashflow_credit($rd->no_anggota)->first();
+                $penarikan = KopTrxAnggota::tpl_cashflow_debet($rd->no_anggota)->first();
+
                 $data[] = array(
                     'no_anggota' => $rd->no_anggota,
                     'nama_anggota' => $rd->nama_anggota,
                     'kode_rembug' => $rd->kode_rembug,
-                    'nama_rembug' => $rd->nama_rembug
+                    'nama_rembug' => $rd->nama_rembug,
+                    'total_penerimaan' => $penerimaan->total_penerimaan,
+                    'total_penarikan' => $penarikan->total_penarikan
                 );
             }
 
@@ -173,6 +178,7 @@ class TplController extends Controller
         $param = array('no_anggota' => $no_anggota);
         $getMember = KopAnggota::where($param)->first();
         $simwa = $getMember->simwa;
+        $simsuk = $getMember->simsuk;
 
         // PEMBIAYAAN
         $show = KopPembiayaan::tpl_financing($no_anggota);
@@ -252,6 +258,7 @@ class TplController extends Controller
             ],
             'frekuensi' => $freq,
             'simwa' => str_replace('.', '', number_format($simwa, 0, ',', '.')),
+            'simsuk' => str_replace('.', '', number_format($simsuk, 0, ',', '.')),
             'pembiayaan' => $financing,
             'berencana' => $saving,
             'pokok' => str_replace('.', '', number_format($pokok, 0, ',', '.')),
@@ -375,7 +382,7 @@ class TplController extends Controller
             'no_rekening' => NULL,
             'trx_date' => $trx_date,
             'amount' => $penarikan_sukarela,
-            'flag_debet_credit' => 'C',
+            'flag_debet_credit' => 'D',
             'trx_type' => '22',
             'description' => 'Penarikan Tabungan',
             'created_by' => $kode_petugas

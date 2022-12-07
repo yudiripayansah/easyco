@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class KopTrxAnggota extends Model
@@ -45,5 +46,27 @@ class KopTrxAnggota extends Model
         }
 
         return $res;
+    }
+
+    function tpl_cashflow_credit($no_anggota)
+    {
+        $show = KopTrxAnggota::select(DB::raw('COALESCE(SUM(amount),0) AS total_penerimaan'))
+            ->where('no_anggota', $no_anggota)
+            //->where('trx_datex', date('Y-m-d'))
+            ->where('flag_debet_credit', 'C')
+            ->get();
+
+        return $show;
+    }
+
+    function tpl_cashflow_debet($no_anggota)
+    {
+        $show = KopTrxAnggota::select(DB::raw('COALESCE(SUM(amount),0) AS total_penarikan'))
+            ->where('no_anggota', $no_anggota)
+            //->where('trx_datex', date('Y-m-d'))
+            ->where('flag_debet_credit', 'D')
+            ->get();
+
+        return $show;
     }
 }
