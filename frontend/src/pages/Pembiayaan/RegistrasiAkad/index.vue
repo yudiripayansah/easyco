@@ -57,7 +57,7 @@
       <b-form @submit.prevent="doSave()">
         <b-row>  
           <b-col cols="12">
-            <b-form-group label="Rembug">
+            <b-form-group label="Majelis">
               <b-select :options="opt.listRembug" class="mb-3" v-model="form.data.rembug" required/>
             </b-form-group>
           </b-col>
@@ -337,7 +337,7 @@
               {
                 key: 'nama_rembug',
                 sortable: true,
-                label: 'Rembug',
+                label: 'Majelis',
                 thClass: 'text-center',
                 tdClass: ''
               },

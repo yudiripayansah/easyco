@@ -82,7 +82,7 @@ export default {
           {
             key: 'nama_rembug',
             sortable: true,
-            label: 'Nama Rembug',
+            label: 'Nama Majelis',
             thClass: 'text-center',
             tdClass: ''
           },

@@ -320,7 +320,7 @@
                 {
                   key: 'nama_rembug',
                   sortable: true,
-                  label: 'Rembug',
+                  label: 'Majelis',
                   thClass: 'text-center',
                   tdClass: ''
                 },
