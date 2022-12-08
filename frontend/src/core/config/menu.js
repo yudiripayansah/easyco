@@ -19,7 +19,7 @@ const menu = [
       },
       {
         target: 'registrasi-anggota-rembug',
-        label: 'Registrasi Anggota Rembug',
+        label: 'Registrasi Anggota Majelis',
         component: import('@/pages/Keanggotaan/RegistrasiAnggotaRembug.vue'),
       },
       {
@@ -213,7 +213,7 @@ const menu = [
       {
         target: 'transaksi-kas-petugas',
         label: 'Transaksi Kas Petugas',
-        component: import('@/pages/Dummy.vue'),
+        component: import('@/pages/Transaksi/TransaksiKasPetugas.vue'),
       },
       {
         target: 'verifikasi-transaksi-kas-petugas',
@@ -222,8 +222,8 @@ const menu = [
       },
       {
         target: 'transaksi-jurnal',
-        label: 'Transaksi Jurnal',
-        component: import('@/pages/Dummy.vue'),
+        label: 'Transaksi Jurnal Umum',
+        component: import('@/pages/Transaksi/TransaksiJurnalUmum.vue'),
       },
       {
         target: 'verifikasi-transaksi-jurnal',

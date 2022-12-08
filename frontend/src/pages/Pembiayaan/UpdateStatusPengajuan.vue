@@ -323,7 +323,7 @@
             {
               key: 'rembug',
               sortable: true,
-              label: 'rembug',
+              label: 'Majelis',
               thClass: 'text-center',
               tdClass: ''
             },

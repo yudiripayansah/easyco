@@ -59,7 +59,7 @@
         </b-col>
       </b-row>
     </b-card>
-    <b-modal title="Form Registrasi Anggota Rembug" id="modal-form" hide-footer size="xl" centered>
+    <b-modal title="Form Registrasi Anggota Majelis" id="modal-form" hide-footer size="xl" centered>
       <b-form @submit="doSave()">
         <b-row>
           <b-col cols="12" sm="12" class="mb-3">
