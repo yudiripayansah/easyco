@@ -127,7 +127,7 @@ const menu = [
       {
         target: 'registrasi-akad',
         label: 'Registrasi Akad',
-        component: import('@/pages/Pembiayaan/RegistrasiAkad/index.vue'),
+        component: import('@/pages/Pembiayaan/RegistrasiAkad.vue'),
       },
       {
         target: 'verifikasi-akad',

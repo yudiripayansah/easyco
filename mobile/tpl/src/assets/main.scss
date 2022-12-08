@@ -9,6 +9,9 @@ body {
   a {
     text-decoration: none;
   }
+  .v-text-field.text-right .v-input__control input {
+    text-align: right;
+  }
   #baik-tpl {
     width: 100%;
     max-width: 768px;

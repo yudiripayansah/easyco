@@ -449,6 +449,15 @@
           solid: true,
           toaster: 'b-toaster-bottom-right'
         })
+      },
+      notify(type, title, msg) {
+        this.$bvToast.toast(msg, {
+          title: title,
+          autoHideDelay: 5000,
+          variant: type,
+          toaster: 'b-toaster-bottom-right',
+          appendToast: true
+        })
       }
     }
   };

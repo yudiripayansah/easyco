@@ -589,6 +589,7 @@
             try {
               let req = await easycoApi.regisAkadRead(payload, this.user.token)
               this.table.items = req.data.data
+              this.table.totalRows = req.data.total
             } catch (error) {
               console.log(error)
               this.notify('danger','Login Error',error)

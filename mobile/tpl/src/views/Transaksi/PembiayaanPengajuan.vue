@@ -1,8 +1,8 @@
 
 <template>
   <div class="bt-pembiayaan-pengajuan pa-5">
-    <h6 class="text-h5 font-weight-bold orange--text text--lighten-1 d-flex align-center">
-      <div class="rounded-pill orange lighten-1 me-2 px-2 d-flex align-center justify-center py-2 elevation-3">
+    <h6 class="text-h5 font-weight-bold indigo--text text--lighten-1 d-flex align-center">
+      <div class="rounded-pill indigo lighten-1 me-2 px-2 d-flex align-center justify-center py-2 elevation-3">
         <v-icon small color="white">mdi-note-plus-outline</v-icon>
       </div>
       Pengajuan Pembiayaan
@@ -12,27 +12,27 @@
       <div class="bt-page-indicator d-flex justify-space-between pt-3">
         <span 
           class="d-flex align-center justify-center elevation-3 rounded-circle" 
-          :class="(step==1) ? 'orange lighten-1 white--text text--darken-1' : 'orange lighten-5 orange--text text--darken-1'">
+          :class="(step==1) ? 'indigo lighten-1 white--text text--darken-1' : 'indigo lighten-5 indigo--text text--darken-1'">
           1
         </span>
         <span 
           class="d-flex align-center justify-center elevation-3 rounded-circle" 
-          :class="(step==2) ? 'orange lighten-1 white--text text--darken-1' : 'orange lighten-5 orange--text text--darken-1'">
+          :class="(step==2) ? 'indigo lighten-1 white--text text--darken-1' : 'indigo lighten-5 indigo--text text--darken-1'">
           2
         </span>
         <span 
           class="d-flex align-center justify-center elevation-3 rounded-circle" 
-          :class="(step==3) ? 'orange lighten-1 white--text text--darken-1' : 'orange lighten-5 orange--text text--darken-1'">
+          :class="(step==3) ? 'indigo lighten-1 white--text text--darken-1' : 'indigo lighten-5 indigo--text text--darken-1'">
           3
         </span>
         <span 
           class="d-flex align-center justify-center elevation-3 rounded-circle" 
-          :class="(step==4) ? 'orange lighten-1 white--text text--darken-1' : 'orange lighten-5 orange--text text--darken-1'">
+          :class="(step==4) ? 'indigo lighten-1 white--text text--darken-1' : 'indigo lighten-5 indigo--text text--darken-1'">
           4
         </span>
         <span 
           class="d-flex align-center justify-center elevation-3 rounded-circle" 
-          :class="(step==5) ? 'orange lighten-1 white--text text--darken-1' : 'orange lighten-5 orange--text text--darken-1'">
+          :class="(step==5) ? 'indigo lighten-1 white--text text--darken-1' : 'indigo lighten-5 indigo--text text--darken-1'">
           5
         </span>
       </div>
@@ -533,25 +533,25 @@
       </div>
       <v-row>
         <v-col cols="6" class="pb-0" v-show="step > 1">
-          <v-btn block class="orange lighten-1 white--text" @click="move(step-1)">
+          <v-btn block class="indigo lighten-1 white--text" @click="move(step-1)">
             Sebelumnya
           </v-btn>
         </v-col>
         <v-col :cols="step > 1 ? 6 : 12" class="pb-0">
-          <v-btn block class="orange lighten-1 white--text" @click="move(step+1)">
+          <v-btn block class="indigo lighten-1 white--text" @click="move(step+1)">
             {{step == 5 ? 'Simpan' : 'Selanjutnya'}}
           </v-btn>
         </v-col>
         <!-- <v-col cols="6" class="pb-0">
           <router-link to="/transaksi/pembiayaan">
-          <v-btn block class="orange lighten-1 white--text d-flex justify-content-start">
+          <v-btn block class="indigo lighten-1 white--text d-flex justify-content-start">
             Kembali
           </v-btn>
           </router-link>
         </v-col>
         <v-col cols="6" class="pb-0">
           <router-link to="/transaksi/pembiayaan-rab">
-          <v-btn block class="orange lighten-1 white--text">
+          <v-btn block class="indigo lighten-1 white--text">
             RAB
           </v-btn>
           </router-link> 

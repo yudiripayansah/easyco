@@ -39,12 +39,6 @@
               <template #cell(jumlah_pengajuan)="item">
                 {{doFormatCurrency(item.item.jumlah_pengajuan)}}
               </template>
-              <template #cell(no_anggota)="item">
-                {{doFindAnggota(item.item.no_anggota)}}
-              </template>
-              <template #cell(nama_rembug)="item">
-                {{doFindRembug(item.item.no_anggota)}}
-              </template>
               <template #cell(action)="item">
                 <b-button variant="success" size="xs" class="mx-1" @click="doShowEdit(item);$bvModal.show('modal-form')" v-b-tooltip.hover title="Update Status">
                     Update Status
@@ -53,7 +47,7 @@
             </b-table>
           </b-col>
           <b-col cols="12" class="justify-content-end d-flex">
-            <b-pagination v-model="paging.currentPage" :total-rows="table.totalRows" :per-page="paging.perPage">
+            <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
             </b-pagination>
           </b-col>
         </b-row>
@@ -280,6 +274,12 @@
       components: {  
       },
         watch: {
+            paging: {
+              handler(val){
+                this.doGetPengajuan()
+              },
+              deep: true
+            },
             "form.data.noAnggota"(val){
               if(val != null){
                 this.form.data.nama = val.nama_anggota
@@ -457,7 +457,7 @@
                 tdClass: 'text-center'
               },
               {
-                key: 'no_anggota',
+                key: 'nama_anggota',
                 sortable: true,
                 label: 'Nama',
                 thClass: 'text-center',
@@ -482,7 +482,7 @@
                 sortable: true,
                 label: 'Jumlah',
                 thClass: 'text-center',
-                tdClass: ''
+                tdClass: 'text-right'
               },
               {
                 key: 'action',
@@ -701,6 +701,7 @@
           try {
             let req = await easycoApi.pengajuanRead(payload, this.user.token)
             this.table.items = req.data.data
+            this.table.totalRows = req.data.total
           } catch (error) {
             console.log(error)
             this.notify('danger','Login Error',error)

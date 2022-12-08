@@ -455,7 +455,7 @@
               <b-col cols="12" sm="3">
                 <b-form-group label="Total Biaya (rp/bulan)">
                   <!-- <b-input disabled :value="Number(form.data.by_beras)+Number(form.data.by_sekolah)+Number(form.data.by_dapur)+Number(form.data.by_listrik)+Number(form.data.by_lain)+Number(form.data.by_telpon)"/> -->
-                  <vue-numeric disabled currency="Rp " separator="." :value="Number(form.data.by_beras)+Number(form.data.by_sekolah)+Number(form.data.by_dapur)+Number(form.data.by_listrik)+Number(form.data.by_lain)+Number(form.data.by_telpon)" class="form-control"/>
+                  <vue-numeric disabled currency="Rp " separator="." :value="Number(form.data.by_sekolah)+Number(form.data.by_dapur)+Number(form.data.by_listrik)+Number(form.data.by_lain)+Number(form.data.by_telpon)" class="form-control"/>
                 </b-form-group>
               </b-col>
             </b-row>

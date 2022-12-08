@@ -1,8 +1,8 @@
 export default (to, from, next) => {
-  if (localStorage.getItem('baikTpl') != null && localStorage.getItem('baikTpl').length > 0) {
+  if (localStorage.getItem('easycoTpl') != null && localStorage.getItem('easycoTpl').length > 0) {
     next()
   } else {
-    localStorage.removeItem('baikTpl')
+    localStorage.removeItem('easycoTpl')
     next('/login')
   }
 }

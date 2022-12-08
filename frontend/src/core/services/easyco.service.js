@@ -60,6 +60,24 @@ const easycoApi = {
     }
     return axios.get(url, config)
   },
+  anggotaRembug(payload,token) {
+    let url = 'anggota/rembug'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  anggotaExcel(payload,token) {
+    let url = 'laporan/list/excel/anggota_masuk?kode_cabang=10101&kode_rembug=101010001&from_date=2022-09-01&thru_date=2022-09-07'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
   // Petugas
   petugasRead(payload, token) {
     let url = 'pengajuan/fa'
