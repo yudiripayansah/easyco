@@ -161,8 +161,8 @@ const menu = [
           },
           {
             target: 'pencairan',
-            label: 'Laporan Pencairan',
-            component: import('@/pages/Dummy.vue'),
+            label: 'Laporan Pencairan Pembiayaan',
+            component: import('@/pages/Pembiayaan/Laporan/LaporanPencairanPembiayaan.vue'),
           },
           {
             target: 'kartu-angsuran',
@@ -171,8 +171,8 @@ const menu = [
           },
           {
             target: 'list-outstanding',
-            label: 'List Outstanding',
-            component: import('@/pages/Dummy.vue'),
+            label: 'Laporan Outstanding',
+            component: import('@/pages/Pembiayaan/Laporan/LaporanOutstanding.vue'),
           },
           {
             target: 'list-penerimaan-angsuran',

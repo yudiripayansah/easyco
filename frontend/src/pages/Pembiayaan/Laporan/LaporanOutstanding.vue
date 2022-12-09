@@ -9,19 +9,19 @@
             <b-row no-gutters>
                 <b-col cols="8" class="mb-5">
           <div class="row">
-            <b-col cols="12">
+            <b-col cols="7">
               <b-input-group prepend="Cabang" class="mb-3">
                 <b-form-select v-model="paging.cabang" :options="opt.cabang" />
               </b-input-group>
             </b-col>
-            <b-col>
-              <b-input-group prepend="Dari Tanggal">
-                <b-form-datepicker v-model="paging.from"/>
+            <b-col cols="7">
+              <b-input-group prepend="Petugas" class="mb-3">
+                <b-form-select v-model="paging.petugas" :options="opt.petugas" />
               </b-input-group>
             </b-col>
-            <b-col>
-              <b-input-group prepend="Sampai Tanggal">
-                <b-form-datepicker v-model="paging.to"/>
+            <b-col cols="7">
+              <b-input-group prepend="Majelis" class="mb-3">
+                <b-form-select v-model="paging.majelis" :options="opt.majelis" />
               </b-input-group>
             </b-col>
           </div>
@@ -65,7 +65,7 @@
   import { validationMixin } from "vuelidate";
   import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
   export default {
-    name: "Laporan Jurnal Transaski",
+    name: "Laporan Pencairan Pembiayaan",
     components: {},
     data() {
       return {
@@ -73,56 +73,82 @@
           data: {
             id: null,
             cabang: null,
-            tanggal: null,
-            no_trans: null,
-            keterangan: null,
-            no_akun: null,
-            debit: null,
-            kredit: null,
+            petugas: null,
+            majelis: null,
+            no_rek: null,
+            nama: null,
+            majelis: null,
+            produk: null,
+            tgl_cair: null,
+            jk_waktu: null,
+            ctr_byr: null,
+            saldo_pokok: null,
+            saldo_mgn: null,
           },
           loading: false,
-        },
+        },  
         table: {
           fields: [
             {
-              key: 'tanggal',
+              key: 'no_rek',
               sortable: true,
-              label: 'Tanggal',
+              label: 'No Rek',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'no_trans',
+              key: 'nama',
               sortable: true,
-              label: 'No Trans',
+              label: 'Nama',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'keterangan',
+              key: 'majelis',
               sortable: true,
-              label: 'Keterangan',
+              label: 'Majelis',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'no_akun',
+              key: 'produk',
               sortable: true,
-              label: 'No Akun',
+              label: 'Produk',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'debit',
+              key: 'tgl_cair',
               sortable: true,
-              label: 'Debit',
+              label: 'Tgl Cair',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'kredit',
+              key: 'jk_waktu',
               sortable: true,
-              label: 'Kredit',
+              label: 'Jk Waktu',
+              thClass: 'text-center',
+              tdClass: ''
+            },
+            {
+              key: 'ctr_byr',
+              sortable: true,
+              label: 'Margin',
+              thClass: 'text-center',
+              tdClass: ''
+            },
+            {
+              key: 'saldo_pokok',
+              sortable: true,
+              label: 'Saldo Pokok',
+              thClass: 'text-center',
+              tdClass: ''
+            },
+            {
+              key: 'saldo_mgn',
+              sortable: true,
+              label: 'Saldo Mgn',
               thClass: 'text-center',
               tdClass: ''
             },
@@ -143,6 +169,8 @@
         opt: {
           perPage: [10,25,50,100],
           cabang: ['cabang 1','cabang 2','cabang 3'],
+          petugas: ['Aldy','Danu'],
+          majelis: ['Semua','Cempaka','Melati','Mawar'],
         }
       }
     },
@@ -153,22 +181,34 @@
           cabang: {
             required
           },
-          tanggal: {
+          petugas: {
             required,
           },
-          no_trans: {
+          majelis: {
             required,
           },
-          keterangan: {
+          no_rek: {
             required,
           },
-          no_akun: {
+          nama: {
             required,
           },
-          debit: {
+          produk: {
             required,
           },
-          kredit: {
+          tgl_cair: {
+            required,
+          },
+          jk_waktu: {
+            required,
+          },
+          ctr_byr: {
+            required,
+          },
+          saldo_pokok: {
+            required,
+          },
+          saldo_mgn: {
             required,
           },
         }
@@ -188,36 +228,37 @@
           this.table.loading = false
           this.table.items = [
             {
-              tanggal: '01-12-2022',
-              no_trans: '221201-01001',
-              keterangan: 'Setor Tunai Ke BRI',
-              no_akun: '101020101 BRI CAB SUDIRMAN',
-              debit: '78.250.000',
-              kredit: '0',
+              no_rek: '3201151004780001',
+              nama: 'Siti Aminah',
+              majelis: 'Mawar',
+              produk: 'Mikro MBA',
+              tgl_cair: '01-08-2022',
+              jk_waktu: '50 pekan',
+              ctr_byr: '25',
+              saldo_pokok: '2.000.000',
+              saldo_mgn: '600.000',
             },
             {
-              tanggal: '',
-              no_trans: '',
-              keterangan: '',
-              no_akun: '101010101 KAS BESAR',
-              debit: '0',
-              kredit: '78.250.000',
+              no_rek: '3201151004780001',
+              nama: 'Siti Aminah',
+              majelis: 'Mawar',
+              produk: 'Mikro Ijr',
+              tgl_cair: '01-08-2022',
+              jk_waktu: '50 pekan',
+              ctr_byr: '25',
+              saldo_pokok: '2.000.000',
+              saldo_mgn: '600.000',
             },
             {
-              tanggal: '01-12-2022',
-              no_trans: '221201-01002',
-              keterangan: 'UMB Perjalanan Dinas Tim Penumbuhan',
-              no_akun: '501020105 BY PERJALANAN DINS',
-              debit: '15.700.000',
-              kredit: '0',
-            },
-            {
-              tanggal: '',
-              no_trans: '',
-              keterangan: '',
-              no_akun: '101010101 KAS BESAR',
-              debit: '0',
-              kredit: '15.700.000',
+              no_rek: '3201151004780001',
+              nama: 'Edoh',
+              majelis: 'Melati',
+              produk: 'Mikro MBA',
+              tgl_cair: '01-08-2022',
+              jk_waktu: '50 pekan',
+              ctr_byr: '30',
+              saldo_pokok: '4.000.000',
+              saldo_mgn: '1.200.000',
             },
           ]
           this.doInfo('Data berhasil diambil','Berhasil','success')
@@ -262,12 +303,17 @@
         this.form.data = {
             id: null,
             cabang: null,
-            tanggal: null,
-            no_trans: null,
-            keterangan: null,
-            no_akun: null,
-            debit: null,
-            kredit: null,
+            petugas: null,
+            majelis: null,
+            no_rek: null,
+            nama: null,
+            majelis: null,
+            produk: null,
+            tgl_cair: null,
+            jk_waktu: null,
+            ctr_byr: null,
+            saldo_pokok: null,
+            saldo_mgn: null,
         }
         this.$v.form.$reset()
       },
