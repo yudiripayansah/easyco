@@ -75,28 +75,28 @@
             {
               key: 'cabang',
               sortable: true,
-              label: 'cabang',
+              label: 'Cabang',
               thClass: 'text-center',
               tdClass: ''
             },
             {
               key: 'tanggal',
               sortable: true,
-              label: 'tanggal',
+              label: 'Tanggal',
               thClass: 'text-center',
               tdClass: ''
             },
             {
               key: 'nama',
               sortable: true,
-              label: 'nama',
+              label: 'Nama',
               thClass: 'text-center',
               tdClass: ''
             },
             {
               key: 'majelis',
               sortable: true,
-              label: 'majelis',
+              label: 'Majelis',
               thClass: 'text-center',
               tdClass: 'text-center'
             },
@@ -110,21 +110,21 @@
             {
               key: 'produk',
               sortable: true,
-              label: 'produk',
+              label: 'Produk',
               thClass: 'text-center',
               tdClass: 'text-right'
             },
             {
               key: 'plafon',
               sortable: true,
-              label: 'plafon',
+              label: 'Plafon',
               thClass: 'text-center',
               tdClass: 'text-right'
             },
             {
               key: 'margin',
               sortable: true,
-              label: 'margin',
+              label: 'Margin',
               thClass: 'text-center',
               tdClass: 'text-right'
             },

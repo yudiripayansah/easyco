@@ -75,14 +75,14 @@ export default {
           {
             key: 'cabang',
             sortable: true,
-            label: 'cabang',
+            label: 'Cabang',
             thClass: 'text-center',
             tdClass: ''
           },
           {
             key: 'taggal',
             sortable: true,
-            label: 'tanggal',
+            label: 'Tanggal',
             thClass: 'text-center',
             tdClass: ''
           },
@@ -110,7 +110,7 @@ export default {
           {
             key: 'status',
             sortable: true,
-            label: 'status',
+            label: 'Status',
             thClass: 'text-center',
             tdClass: 'text-right'
           }
