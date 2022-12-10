@@ -152,7 +152,7 @@
   import { validationMixin } from "vuelidate";
   import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
   export default {
-    name: "transaksi_kas_petugas",
+    name: "Transaksi Jurnal Umum",
     components: {},
     data() {
       return {
