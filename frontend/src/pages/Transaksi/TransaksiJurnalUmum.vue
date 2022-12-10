@@ -80,10 +80,9 @@
                 <thead class="thead-dark">
                     <tr>
                     <th scope="col">No</th>
-                    <th scope="col">No Akun</th>
-                    <th scope="col">Debit</th>
-                    <th scope="col">Kredit</th>
-                    <th scope="col">Keterangan</th>
+                    <th scope="col">COA</th>
+                    <th scope="col">DC</th>
+                    <th scope="col">Jumlah</th>
                     <th scope="col">Action</th>
                     </tr>
                 </thead>
@@ -93,7 +92,6 @@
                     <td><b-select v-model="form.data.no_akun_1" :options="opt.no_akun_1" /></td>
                     <td>78.250.000</td>
                     <td>0</td>
-                    <td>-</td>
                     <td><b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Ceklis">V</b-button>
                         <b-button variant="danger" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Silang">X</b-button>
                     </td>

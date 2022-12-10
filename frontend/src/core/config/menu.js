@@ -167,7 +167,7 @@ const menu = [
           {
             target: 'kartu-angsuran',
             label: 'Kartu Angsuran',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Pembiayaan/Laporan/LaporanKartuAngsuran.vue'),
           },
           {
             target: 'list-outstanding',
@@ -176,8 +176,8 @@ const menu = [
           },
           {
             target: 'list-penerimaan-angsuran',
-            label: 'List Penerimaaan Angsuran',
-            component: import('@/pages/Dummy.vue'),
+            label: 'Laporan Penerimaaan Angsuran',
+            component: import('@/pages/Pembiayaan/Laporan/LaporanPenerimaanAngsuran.vue'),
           },
           {
             target: 'list-pelunasan',

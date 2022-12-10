@@ -62,10 +62,12 @@
   </template>
   
   <script>
+  import { mapGetters } from 'vuex'
   import { validationMixin } from "vuelidate";
+  import easycoApi from '@/core/services/easyco.service'
   import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
   export default {
-    name: "Laporan Pencairan Pembiayaan",
+    name: "LaporanOutstanding",
     components: {},
     data() {
       return {
@@ -214,6 +216,9 @@
         }
       }
     },
+    computed: {
+      ...mapGetters(["user"]),
+    },
     mounted() {
       this.doGet()
     },
@@ -223,46 +228,24 @@
         return $dirty ? !$error : null;
       },
       async doGet() {
+        let payload = this.paging
+        payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
         this.table.loading = true
-        setTimeout(() => {
+        try {
+          let req = await easycoApi.regisAkadRead(payload, this.user.token)
+          let { data, status, msg, total } = req.data
+          if (status) {
+            this.table.items = data
+            this.table.totalRows = total
+          } else {
+            this.notify('danger', 'Error', msg)
+          }
           this.table.loading = false
-          this.table.items = [
-            {
-              no_rek: '3201151004780001',
-              nama: 'Siti Aminah',
-              majelis: 'Mawar',
-              produk: 'Mikro MBA',
-              tgl_cair: '01-08-2022',
-              jk_waktu: '50 pekan',
-              ctr_byr: '25',
-              saldo_pokok: '2.000.000',
-              saldo_mgn: '600.000',
-            },
-            {
-              no_rek: '3201151004780001',
-              nama: 'Siti Aminah',
-              majelis: 'Mawar',
-              produk: 'Mikro Ijr',
-              tgl_cair: '01-08-2022',
-              jk_waktu: '50 pekan',
-              ctr_byr: '25',
-              saldo_pokok: '2.000.000',
-              saldo_mgn: '600.000',
-            },
-            {
-              no_rek: '3201151004780001',
-              nama: 'Edoh',
-              majelis: 'Melati',
-              produk: 'Mikro MBA',
-              tgl_cair: '01-08-2022',
-              jk_waktu: '50 pekan',
-              ctr_byr: '30',
-              saldo_pokok: '4.000.000',
-              saldo_mgn: '1.200.000',
-            },
-          ]
-          this.doInfo('Data berhasil diambil','Berhasil','success')
-        },5000)
+        } catch (error) {
+          this.table.loading = false
+          console.error(error)
+          this.notify('danger', 'Login Error', error)
+        }
       },
       async doSave() {
         this.$v.form.$touch();

@@ -42,7 +42,7 @@
           <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
             show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
             <template #cell(no)="item">
-              {{ item.index + 1 }}
+              {{item.index + 1}}
             </template>
           </b-table>
         </b-col>
@@ -104,6 +104,13 @@ export default {
             key: 'jumlah_pengajuan',
             sortable: true,
             label: 'Jumlah Pengajuan',
+            thClass: 'text-center',
+            tdClass: 'text-right'
+          },
+          {
+            key: 'status',
+            sortable: true,
+            label: 'Status',
             thClass: 'text-center',
             tdClass: 'text-right'
           }

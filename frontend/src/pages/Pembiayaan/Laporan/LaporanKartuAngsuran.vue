@@ -9,29 +9,69 @@
             <b-row no-gutters>
                 <b-col cols="8" class="mb-5">
           <div class="row">
-            <b-col cols="4">
-              <b-input-group prepend="Cabang" class="mb-3">
-                <b-form-select v-model="paging.cabang" :options="opt.cabang" />
+            <b-col cols="5">
+              <b-input-group prepend="No Rekening" class="mb-3">
+                <b-form-select v-model="paging.no_rek" :options="opt.no_rek" />
               </b-input-group>
             </b-col>
-            <b-col cols="4">
-              <b-input-group prepend="Petugas" class="mb-3">
-                <b-form-select v-model="paging.petugas" :options="opt.petugas" />
+            <b-col cols="5">
+              <b-input-group prepend="Nama" class="mb-3">
+                <b-form-input v-model="paging.nama"/>
               </b-input-group>
             </b-col>
-            <b-col cols="4">
+            <b-col cols="5">
               <b-input-group prepend="Majelis" class="mb-3">
-                <b-form-select v-model="paging.majelis" :options="opt.majelis" />
+                <b-form-input v-model="paging.majelis"/>
               </b-input-group>
             </b-col>
-            <b-col>
-              <b-input-group prepend="Dari Tanggal">
-                <b-form-datepicker v-model="paging.from"/>
+            <b-col cols="5">
+              <b-input-group prepend="Desa" class="mb-3">
+                <b-form-input v-model="paging.desa"/>
               </b-input-group>
             </b-col>
-            <b-col>
-              <b-input-group prepend="Sampai Tanggal">
-                <b-form-datepicker v-model="paging.to"/>
+            <b-col cols="5">
+              <b-input-group prepend="Produk" class="mb-3">
+                <b-form-input v-model="paging.produk"/>
+              </b-input-group>
+            </b-col>
+            <b-col cols="5">
+              <b-input-group prepend="Tgl Akad" class="mb-3">
+                <b-form-input v-model="paging.tgl_akad"/>
+              </b-input-group>
+            </b-col>
+            <b-col cols="5">
+              <b-input-group prepend="Mulai Angs" class="mb-3">
+                <b-form-input v-model="paging.mulai_angs"/>
+              </b-input-group>
+            </b-col>
+            <b-col cols="5">
+              <b-input-group prepend="Plafon" class="mb-3">
+                <b-form-input v-model="paging.plafon"/>
+              </b-input-group>
+            </b-col>
+            <b-col cols="5">
+              <b-input-group prepend="Margin" class="mb-3">
+                <b-form-input v-model="paging.margin"/>
+              </b-input-group>
+            </b-col>
+            <b-col cols="5">
+              <b-input-group prepend="Jk Waktu" class="mb-3">
+                <b-form-input v-model="paging.jk_waktu"/>
+              </b-input-group>
+            </b-col>
+            <b-col cols="5">
+              <b-input-group prepend="Angs Pokok" class="mb-3">
+                <b-form-input v-model="paging.angs_pokok"/>
+              </b-input-group>
+            </b-col>
+            <b-col cols="5">
+              <b-input-group prepend="Angs margin" class="mb-3">
+                <b-form-input v-model="paging.angs_margin"/>
+              </b-input-group>
+            </b-col>
+            <b-col cols="5">
+              <b-input-group prepend="Total Angs" class="mb-3">
+                <b-form-input v-model="paging.total_angs"/>
               </b-input-group>
             </b-col>
           </div>
@@ -72,91 +112,73 @@
   </template>
   
   <script>
-  import { mapGetters } from 'vuex'
   import { validationMixin } from "vuelidate";
-  import easycoApi from '@/core/services/easyco.service'
   import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
   export default {
-    name: "LaporanPencairanPembiayaan",
+    name: "LaporanKartuAngsuran",
     components: {},
     data() {
       return {
         form: {
           data: {
             id: null,
-            majelis: null,
-            tgl_cair: null,
             no_rek: null,
+            majelis: null,
+            desa: null,
             produk: null,
+            tgl_akad: null,
+            mulai_angs: null,
             plafon: null,
             margin: null,
             jk_waktu: null,
-            prtugas: null,
+            angs_pokok: null,
+            angs_margin: null,
+            total: null,
           },
           loading: false,
         },
         table: {
           fields: [
             {
-              key: 'tgl_cair',
+              key: 'tanggal',
               sortable: true,
-              label: 'Tgl Cair',
+              label: 'Tanggal',
+              label: 'Tanggal',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'nama',
+              key: 'no_trans',
               sortable: true,
-              label: 'Nama',
+              label: 'No Trans',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'majelis',
+              key: 'keterangan',
               sortable: true,
-              label: 'Majelis',
+              label: 'Keterangan',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'no_rek',
+              key: 'no_akun',
               sortable: true,
-              label: 'No Rek',
+              label: 'No Akun',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'produk',
+              key: 'debit',
               sortable: true,
-              label: 'Produk',
+              label: 'Debit',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'plafon',
+              key: 'kredit',
               sortable: true,
-              label: 'Plafon',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'margin',
-              sortable: true,
-              label: 'Margin',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'jk_waktu',
-              sortable: true,
-              label: 'Jk Waktu',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'petugas',
-              sortable: true,
-              label: 'Petugas',
+              label: 'Kredit',
               thClass: 'text-center',
               tdClass: ''
             },
@@ -165,18 +187,8 @@
           loading: false,
         },
         paging: {
-          page: 1,
-          perPage: 10,
-          sortDesc: true,
-          sortBy: 'kop_pembiayaan.dropping_at',
-          search: '',
-          status_rekening: [1],
-          status_dropping: [1],
-          petugas: null,
-          rembug: null,
-          cabang: 0,
-          from: null,
-          to: null
+          currentPage: 1,
+          perPage: 10
         },
         remove: {
           data: {
@@ -187,8 +199,7 @@
         opt: {
           perPage: [10,25,50,100],
           cabang: ['cabang 1','cabang 2','cabang 3'],
-          petugas: ['Aldy','Danu'],
-          majelis: ['Semua','Cempaka','Melati','Mawar'],
+          no_rek: ['1010100101','2030300202','1020300301']
         }
       }
     },
@@ -199,38 +210,26 @@
           cabang: {
             required
           },
-          petugas: {
+          tanggal: {
             required,
           },
-          tgl_cair: {
+          no_trans: {
             required,
           },
-          majelis: {
+          keterangan: {
             required,
           },
-          nama: {
+          no_akun: {
             required,
           },
-          no_rek: {
+          debit: {
             required,
           },
-          produk: {
-            required,
-          },
-          plafon: {
-            required,
-          },
-          margin: {
-            required,
-          },
-          jk_waktu: {
+          kredit: {
             required,
           },
         }
       }
-    },
-    computed: {
-      ...mapGetters(["user"]),
     },
     mounted() {
       this.doGet()
@@ -241,24 +240,45 @@
         return $dirty ? !$error : null;
       },
       async doGet() {
-        let payload = this.paging
-        payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
         this.table.loading = true
-        try {
-          let req = await easycoApi.regisAkadRead(payload, this.user.token)
-          let { data, status, msg, total } = req.data
-          if (status) {
-            this.table.items = data
-            this.table.totalRows = total
-          } else {
-            this.notify('danger', 'Error', msg)
-          }
+        setTimeout(() => {
           this.table.loading = false
-        } catch (error) {
-          this.table.loading = false
-          console.error(error)
-          this.notify('danger', 'Login Error', error)
-        }
+          this.table.items = [
+            {
+              tanggal: '01-12-2022',
+              no_trans: '221201-01001',
+              keterangan: 'Setor Tunai Ke BRI',
+              no_akun: '101020101 BRI CAB SUDIRMAN',
+              debit: '78.250.000',
+              kredit: '0',
+            },
+            {
+              tanggal: '',
+              no_trans: '',
+              keterangan: '',
+              no_akun: '101010101 KAS BESAR',
+              debit: '0',
+              kredit: '78.250.000',
+            },
+            {
+              tanggal: '01-12-2022',
+              no_trans: '221201-01002',
+              keterangan: 'UMB Perjalanan Dinas Tim Penumbuhan',
+              no_akun: '501020105 BY PERJALANAN DINS',
+              debit: '15.700.000',
+              kredit: '0',
+            },
+            {
+              tanggal: '',
+              no_trans: '',
+              keterangan: '',
+              no_akun: '101010101 KAS BESAR',
+              debit: '0',
+              kredit: '15.700.000',
+            },
+          ]
+          this.doInfo('Data berhasil diambil','Berhasil','success')
+        },5000)
       },
       async doSave() {
         this.$v.form.$touch();
@@ -298,14 +318,13 @@
       doClearForm() {
         this.form.data = {
             id: null,
-            majelis: null,
-            tgl_cair: null,
-            no_rek: null,
-            produk: null,
-            plafon: null,
-            margin: null,
-            jk_waktu: null,
-            prtugas: null,
+            cabang: null,
+            tanggal: null,
+            no_trans: null,
+            keterangan: null,
+            no_akun: null,
+            debit: null,
+            kredit: null,
         }
         this.$v.form.$reset()
       },

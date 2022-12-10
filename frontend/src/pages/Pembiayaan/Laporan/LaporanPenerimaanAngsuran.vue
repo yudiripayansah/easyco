@@ -72,12 +72,10 @@
   </template>
   
   <script>
-  import { mapGetters } from 'vuex'
   import { validationMixin } from "vuelidate";
-  import easycoApi from '@/core/services/easyco.service'
   import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
   export default {
-    name: "LaporanPencairanPembiayaan",
+    name: "Laporan Pencairan Pembiayaan",
     components: {},
     data() {
       return {
@@ -85,22 +83,29 @@
           data: {
             id: null,
             majelis: null,
-            tgl_cair: null,
+            tanggal: null,
             no_rek: null,
-            produk: null,
-            plafon: null,
-            margin: null,
-            jk_waktu: null,
-            prtugas: null,
+            nama: null,
+            byr: null,
+            byr_pokok: null,
+            byr_mgn: null,
+            tot_byr: null,
           },
           loading: false,
         },
         table: {
           fields: [
             {
-              key: 'tgl_cair',
+              key: 'tanggal',
               sortable: true,
-              label: 'Tgl Cair',
+              label: 'Tanggal',
+              thClass: 'text-center',
+              tdClass: ''
+            },
+            {
+              key: 'no_rek',
+              sortable: true,
+              label: 'No Rek',
               thClass: 'text-center',
               tdClass: ''
             },
@@ -119,44 +124,30 @@
               tdClass: ''
             },
             {
-              key: 'no_rek',
+              key: 'byr',
               sortable: true,
-              label: 'No Rek',
+              label: 'Byr',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'produk',
+              key: 'byr_pokok',
               sortable: true,
-              label: 'Produk',
+              label: 'Byr Pokok',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'plafon',
+              key: 'byr_mgn',
               sortable: true,
-              label: 'Plafon',
+              label: 'Byr Mgn',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'margin',
+              key: 'tot_byr',
               sortable: true,
-              label: 'Margin',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'jk_waktu',
-              sortable: true,
-              label: 'Jk Waktu',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'petugas',
-              sortable: true,
-              label: 'Petugas',
+              label: 'Total Bayar',
               thClass: 'text-center',
               tdClass: ''
             },
@@ -165,18 +156,8 @@
           loading: false,
         },
         paging: {
-          page: 1,
-          perPage: 10,
-          sortDesc: true,
-          sortBy: 'kop_pembiayaan.dropping_at',
-          search: '',
-          status_rekening: [1],
-          status_dropping: [1],
-          petugas: null,
-          rembug: null,
-          cabang: 0,
-          from: null,
-          to: null
+          currentPage: 1,
+          perPage: 10
         },
         remove: {
           data: {
@@ -202,7 +183,7 @@
           petugas: {
             required,
           },
-          tgl_cair: {
+          tanggal: {
             required,
           },
           majelis: {
@@ -214,23 +195,20 @@
           no_rek: {
             required,
           },
-          produk: {
+          byr: {
             required,
           },
-          plafon: {
+          byr_pokok: {
             required,
           },
-          margin: {
+          byr_mgn: {
             required,
           },
-          jk_waktu: {
+          tot_byr: {
             required,
           },
         }
       }
-    },
-    computed: {
-      ...mapGetters(["user"]),
     },
     mounted() {
       this.doGet()
@@ -241,24 +219,43 @@
         return $dirty ? !$error : null;
       },
       async doGet() {
-        let payload = this.paging
-        payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
         this.table.loading = true
-        try {
-          let req = await easycoApi.regisAkadRead(payload, this.user.token)
-          let { data, status, msg, total } = req.data
-          if (status) {
-            this.table.items = data
-            this.table.totalRows = total
-          } else {
-            this.notify('danger', 'Error', msg)
-          }
+        setTimeout(() => {
           this.table.loading = false
-        } catch (error) {
-          this.table.loading = false
-          console.error(error)
-          this.notify('danger', 'Login Error', error)
-        }
+          this.table.items = [
+            {
+              tanggal: '01-08-2022',
+              no_rek: '3201151004780001',
+              nama: 'Siti Aminah',
+              majelis: 'Mawar',
+              byr: '1',
+              byr_pokok: '40.000',
+              byr_mgn: '12.000',
+              tot_byr: '52.000',
+            },
+            {
+              tanggal: '01-08-2022',
+              no_rek: '3201142001157201',
+              nama: 'Siti Aminah',
+              majelis: 'Mawar',
+              byr: '1',
+              byr_pokok: '40.000',
+              byr_mgn: '12.000',
+              tot_byr: '52.000',
+            },
+            {
+              tanggal: '01-08-2022',
+              no_rek: '3201162003152101',
+              nama: 'Edoh',
+              majelis: 'Melati',
+              byr: '2',
+              byr_pokok: '80.000',
+              byr_mgn: '24.000',
+              tot_byr: '104.000',
+            },
+          ]
+          this.doInfo('Data berhasil diambil','Berhasil','success')
+        },5000)
       },
       async doSave() {
         this.$v.form.$touch();
@@ -299,13 +296,13 @@
         this.form.data = {
             id: null,
             majelis: null,
-            tgl_cair: null,
+            tanggal: null,
             no_rek: null,
-            produk: null,
-            plafon: null,
-            margin: null,
-            jk_waktu: null,
-            prtugas: null,
+            nama: null,
+            byr: null,
+            byr_pokok: null,
+            byr_mgn: null,
+            tot_byr: null,
         }
         this.$v.form.$reset()
       },

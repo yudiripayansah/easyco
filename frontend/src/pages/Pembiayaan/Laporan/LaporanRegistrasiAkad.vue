@@ -116,9 +116,9 @@
           page: 1,
           perPage: 10,
           sortDesc: true,
-          sortBy: 'kop_anggota.id',
+          sortBy: 'kop_pembiayaan.tanggal_registrasi',
           search: '',
-          status: [0,1],
+          status_rekening: [0,1],
           cabang: 0,
           from: null,
           to: null
@@ -176,7 +176,7 @@
         payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
         this.table.loading = true
         try {
-          let req = await easycoApi.pengajuanRead(payload, this.user.token)
+          let req = await easycoApi.regisAkadRead(payload, this.user.token)
           let { data, status, msg, total } = req.data
           if (status) {
             this.table.items = data
