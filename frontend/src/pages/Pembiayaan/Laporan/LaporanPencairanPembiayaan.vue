@@ -75,26 +75,11 @@
   import { mapGetters } from 'vuex'
   import { validationMixin } from "vuelidate";
   import easycoApi from '@/core/services/easyco.service'
-  import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
   export default {
     name: "LaporanPencairanPembiayaan",
     components: {},
     data() {
       return {
-        form: {
-          data: {
-            id: null,
-            majelis: null,
-            tgl_cair: null,
-            no_rek: null,
-            produk: null,
-            plafon: null,
-            margin: null,
-            jk_waktu: null,
-            prtugas: null,
-          },
-          loading: false,
-        },
         table: {
           fields: [
             {

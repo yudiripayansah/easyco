@@ -42,7 +42,7 @@
           <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
             show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
             <template #cell(no)="item">
-              {{item.index + 1}}
+              {{ item.index + 1 }}
             </template>
           </b-table>
         </b-col>
@@ -73,16 +73,23 @@ export default {
             tdClass: 'text-center'
           },
           {
-            key: 'nama_anggota',
+            key: 'cabang',
             sortable: true,
-            label: 'Nama Anggota',
+            label: 'cabang',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'nama_rembug',
+            key: 'taggal',
             sortable: true,
-            label: 'Nama Majelis',
+            label: 'tanggal',
+            thClass: 'text-center',
+            tdClass: ''
+          },
+          {
+            key: 'majelis',
+            sortable: true,
+            label: 'Majelis',
             thClass: 'text-center',
             tdClass: ''
           },
@@ -91,26 +98,19 @@ export default {
             sortable: true,
             label: 'No Pengajuan',
             thClass: 'text-center',
-            tdClass: ''
-          },
-          {
-            key: 'tanggal_pengajuan',
-            sortable: true,
-            label: 'Tanggal Pengajuan',
-            thClass: 'text-center',
             tdClass: 'text-center'
           },
           {
-            key: 'jumlah_pengajuan',
+            key: 'jumlah',
             sortable: true,
-            label: 'Jumlah Pengajuan',
+            label: 'Jumlah',
             thClass: 'text-center',
             tdClass: 'text-right'
           },
           {
             key: 'status',
             sortable: true,
-            label: 'Status',
+            label: 'status',
             thClass: 'text-center',
             tdClass: 'text-right'
           }

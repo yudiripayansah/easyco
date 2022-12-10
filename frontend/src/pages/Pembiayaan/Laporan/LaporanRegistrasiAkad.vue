@@ -73,37 +73,65 @@
               tdClass: 'text-center'
             },
             {
-              key: 'nama_anggota',
+              key: 'cabang',
               sortable: true,
-              label: 'Nama Anggota',
+              label: 'cabang',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'nama_rembug',
+              key: 'tanggal',
               sortable: true,
-              label: 'Nama Majelis',
+              label: 'tanggal',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'no_pengajuan',
+              key: 'nama',
               sortable: true,
-              label: 'No Pengajuan',
+              label: 'nama',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'tanggal_pengajuan',
+              key: 'majelis',
               sortable: true,
-              label: 'Tanggal Pengajuan',
+              label: 'majelis',
               thClass: 'text-center',
               tdClass: 'text-center'
             },
             {
-              key: 'jumlah_pengajuan',
+              key: 'no_rek',
               sortable: true,
-              label: 'Jumlah Pengajuan',
+              label: 'No Rek',
+              thClass: 'text-center',
+              tdClass: 'text-right'
+            },
+            {
+              key: 'produk',
+              sortable: true,
+              label: 'produk',
+              thClass: 'text-center',
+              tdClass: 'text-right'
+            },
+            {
+              key: 'plafon',
+              sortable: true,
+              label: 'plafon',
+              thClass: 'text-center',
+              tdClass: 'text-right'
+            },
+            {
+              key: 'margin',
+              sortable: true,
+              label: 'margin',
+              thClass: 'text-center',
+              tdClass: 'text-right'
+            },
+            {
+              key: 'jk_waktu',
+              sortable: true,
+              label: 'Jk Waktu',
               thClass: 'text-center',
               tdClass: 'text-right'
             }
