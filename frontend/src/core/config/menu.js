@@ -258,7 +258,12 @@ const menu = [
           {
             target: 'jurnal-transaksi',
             label: ' Laporan Jurnal Transaksi',
-            component: import('@/pages/Transaksi/Laporan/LaporanJurnalTransaksi.vue'),
+            component: import('@/pages/Transaksi/Laporan/LaporanTransaksiJurnal.vue'),
+          },
+          {
+            target: 'transaksi-majelis',
+            label: 'Laporan Transaksi Majelis',
+            component: import('@/pages/Transaksi/Laporan/LaporanTransaksiMajelis.vue'),
           },
         ]
       },

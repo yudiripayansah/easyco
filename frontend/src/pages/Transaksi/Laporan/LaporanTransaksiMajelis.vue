@@ -7,32 +7,39 @@
           </b-col>
           <b-col cols="12" class="mb-5">
             <b-row no-gutters>
-                <b-col cols="8" class="mb-5">
-          <div class="row">
-            <b-col cols="12">
-              <b-input-group prepend="Cabang" class="mb-3">
-                <b-form-select v-model="paging.cabang" :options="opt.cabang" />
-              </b-input-group>
+              <b-col cols="8" class="mb-5">
+              <div class="row">
+                <b-col cols="4">
+                  <b-input-group prepend="Cabang" class="mb-3">
+                    <b-form-select v-model="paging.cabang" :options="opt.cabang" />
+                  </b-input-group>
+                </b-col>
+                <b-col cols="4">
+                  <b-input-group prepend="Petugas" class="mb-3">
+                    <b-form-select v-model="paging.petugas" :options="opt.petugas" />
+                  </b-input-group>
+                </b-col>
+                <b-col cols="4">
+                  <b-input-group prepend="Majelis" class="mb-3">
+                    <b-form-select v-model="paging.majelis" :options="opt.majelis" />
+                  </b-input-group>
+                </b-col>
+                <b-col>
+                  <b-input-group prepend="Dari Tanggal">
+                    <b-form-datepicker v-model="paging.from"/>
+                  </b-input-group>
+                </b-col>
+                <b-col>
+                  <b-input-group prepend="Sampai Tanggal">
+                    <b-form-datepicker v-model="paging.to"/>
+                  </b-input-group>
+                </b-col>
+              </div>
             </b-col>
-            <b-col>
-              <b-input-group prepend="Dari Tanggal">
-                <b-form-datepicker v-model="paging.from"/>
-              </b-input-group>
-            </b-col>
-            <b-col>
-              <b-input-group prepend="Sampai Tanggal">
-                <b-form-datepicker v-model="paging.to"/>
-              </b-input-group>
-            </b-col>
-          </div>
-        </b-col>
-        <b-col cols="4" class="d-flex justify-content-end align-items-start">
+            <b-col cols="4" class="d-flex justify-content-end align-items-start">
           <b-button-group>
             <b-button text="Button" variant="primary">
               GRID
-            </b-button>
-            <b-button text="Button" variant="warning">
-              CSV
             </b-button>
             <b-button text="Button" variant="danger">
               PDF
@@ -50,10 +57,15 @@
               <template #cell(no)="item">
                 {{item.index + 1}}
               </template>
+              <template #cell(action)="item">
+                <b-button variant="danger" size="xs" class="mx-1" v-b-tooltip.hover title="PDF">
+                  PDF
+                </b-button>
+              </template>
             </b-table>
           </b-col>
           <b-col cols="12" class="justify-content-end d-flex">
-            <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
+            <b-pagination v-model="paging.currentPage" :total-rows="table.totalRows" :per-page="paging.perPage">
             </b-pagination>
           </b-col>
         </b-row>
@@ -65,7 +77,7 @@
   import { validationMixin } from "vuelidate";
   import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
   export default {
-    name: "Laporan Jurnal Transaski",
+    name: "LaporanTransaksiMajelis",
     components: {},
     data() {
       return {
@@ -73,17 +85,25 @@
           data: {
             id: null,
             cabang: null,
+            petugas: null,
             tanggal: null,
-            no_trans: null,
-            keterangan: null,
-            no_akun: null,
-            debit: null,
-            kredit: null,
+            majelis: null,
+            no_transaksi: null,
+            setoran: null,
+            penarikan: null,
+            pencairan: null,
           },
           loading: false,
         },
         table: {
           fields: [
+            {
+              key: 'no',
+              sortable: false,
+              label: 'No',
+              thClass: 'text-center w-5p',
+              tdClass: 'text-center'
+            },
             {
               key: 'tanggal',
               sortable: true,
@@ -92,46 +112,53 @@
               tdClass: ''
             },
             {
-              key: 'no_trans',
+              key: 'no_transaksi',
               sortable: true,
-              label: 'No Trans',
+              label: 'No Transaksi',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'keterangan',
+              key: 'majelis',
               sortable: true,
-              label: 'Keterangan',
+              label: 'Majelis',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'no_akun',
+              key: 'setoran',
               sortable: true,
-              label: 'No Akun',
+              label: 'Setoran',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'debit',
+              key: 'penarikan',
               sortable: true,
-              label: 'Debit',
+              label: 'Penarikan',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'kredit',
+              key: 'pencairan',
               sortable: true,
-              label: 'Kredit',
+              label: 'Pencairan',
               thClass: 'text-center',
               tdClass: ''
+            },
+            {
+              key: 'action',
+              sortable: false,
+              label: 'Action',
+              thClass: 'text-center w-10p',
+              tdClass: 'text-center'
             },
           ],
           items: [],
           loading: false,
         },
         paging: {
-          page: 1,
+          currentPage: 1,
           perPage: 10
         },
         remove: {
@@ -143,6 +170,8 @@
         opt: {
           perPage: [10,25,50,100],
           cabang: ['cabang 1','cabang 2','cabang 3'],
+          petugas: ['Andi','Danu'],
+          majelis: ['Semua','Mawar','Melati','Kamboja']
         }
       }
     },
@@ -153,22 +182,25 @@
           cabang: {
             required
           },
+          petugas: {
+            required,
+          },
           tanggal: {
             required,
           },
-          no_trans: {
+          no_transaksi: {
             required,
           },
-          keterangan: {
+          majelis: {
             required,
           },
-          no_akun: {
+          setoran: {
             required,
           },
-          debit: {
+          penarikan: {
             required,
           },
-          kredit: {
+          pencairan: {
             required,
           },
         }
@@ -188,36 +220,28 @@
           this.table.loading = false
           this.table.items = [
             {
-              tanggal: '01-12-2022',
-              no_trans: '221201-01001',
-              keterangan: 'Setor Tunai Ke BRI',
-              no_akun: '101020101 BRI CAB SUDIRMAN',
-              debit: '78.250.000',
-              kredit: '0',
+              tanggal: '01-08-2022',
+              no_transaksi: '3201151004780001',
+              majelis: 'Mawar',
+              setoran: '200.000',
+              penarikan: '0',
+              pencairan: '3.000.000',
             },
             {
-              tanggal: '',
-              no_trans: '',
-              keterangan: '',
-              no_akun: '101010101 KAS BESAR',
-              debit: '0',
-              kredit: '78.250.000',
+              tanggal: '01-08-2022',
+              no_transaksi: '3201142001157201',
+              majelis: 'Melati',
+              setoran: '1.250.000',
+              penarikan: '50.000',
+              pencairan: '0',
             },
             {
-              tanggal: '01-12-2022',
-              no_trans: '221201-01002',
-              keterangan: 'UMB Perjalanan Dinas Tim Penumbuhan',
-              no_akun: '501020105 BY PERJALANAN DINS',
-              debit: '15.700.000',
-              kredit: '0',
-            },
-            {
-              tanggal: '',
-              no_trans: '',
-              keterangan: '',
-              no_akun: '101010101 KAS BESAR',
-              debit: '0',
-              kredit: '15.700.000',
+              tanggal: '01-08-2022',
+              no_transaksi: '3201162003152101',
+              majelis: 'Kamboja',
+              setoran: '850.000',
+              penarikan: '0',
+              pencairan: '0',
             },
           ]
           this.doInfo('Data berhasil diambil','Berhasil','success')
@@ -262,12 +286,13 @@
         this.form.data = {
             id: null,
             cabang: null,
+            petugas: null,
             tanggal: null,
-            no_trans: null,
-            keterangan: null,
-            no_akun: null,
-            debit: null,
-            kredit: null,
+            majelis: null,
+            no_transaksi: null,
+            setoran: null,
+            penarikan: null,
+            pencairan: null,
         }
         this.$v.form.$reset()
       },
@@ -281,5 +306,4 @@
       }
     }
   };
-  </script>
-    
+  </script>  
