@@ -107,21 +107,21 @@
             {
               key: 'no_akun',
               sortable: true,
-              label: 'no_akun',
+              label: 'No Akun',
               thClass: 'text-center',
               tdClass: ''
             },
             {
               key: 'debit',
               sortable: true,
-              label: 'debit',
+              label: 'Debit',
               thClass: 'text-center',
               tdClass: ''
             },
             {
               key: 'kredit',
               sortable: true,
-              label: 'kredit',
+              label: 'Kredit',
               thClass: 'text-center',
               tdClass: ''
             },
