@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\KopAuth;
 use App\Models\KopKasPetugas;
+use App\Models\KopRembug;
 use App\Models\KopUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -56,14 +57,19 @@ class AuthController extends Controller
 
                             $get2 = KopKasPetugas::where($param2)->first();
 
+                            $param3 = array('kode_petugas' => $get2->kode_petugas);
+
+                            $get3 = KopRembug::where($param3)->first();
+
                             $data = array(
                                 'id' => $get->id,
                                 'id_user' => $get->id_user,
                                 'kode_cabang' => $get->kode_cabang,
                                 'kode_pgw' => $get->kode_pgw,
-                                'kode_petugas' => $get2->kode_petugas,
-                                'kode_kas_petugas' => $get2->kode_kas_petugas,
-                                'saldo_awal' => $get2->saldo,
+                                'kode_petugas' => (isset($get2->kode_petugas) ? $get2->kode_petugas : null),
+                                'hari_transaksi' => (isset($get3->hari_transaksi) ? $get3->hari_transaksi : null),
+                                'kode_kas_petugas' => (isset($get2->kode_kas_petugas) ? $get2->kode_kas_petugas : null),
+                                'saldo_awal' => (isset($get2->saldo) ? $get2->saldo : 0),
                                 'nama_user' => $get->nama_user,
                                 'role_user' => $get->role_user,
                                 'akses_user' => $get->akses_user,

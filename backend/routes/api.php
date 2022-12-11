@@ -23,6 +23,7 @@ use App\Http\Controllers\PrdTabunganController;
 use App\Http\Controllers\RegistrasiAkadController;
 use App\Http\Controllers\RembugController;
 use App\Http\Controllers\TplController;
+use App\Http\Controllers\TrxGl;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -222,6 +223,10 @@ Route::prefix('registrasiakad')->middleware('checkToken')->group(function () {
   Route::get('/delete', [RegistrasiAkadController::class, 'delete']);
   Route::get('/approve', [RegistrasiAkadController::class, 'approve']);
   Route::get('/reject', [RegistrasiAkadController::class, 'reject']);
+});
+
+Route::prefix('general_ledger')->middleware('checkToken')->group(function () {
+  Route::post('/create', [TrxGl::class, 'create']);
 });
 
 Route::prefix('laporan/list/excel')->middleware('checkToken')->group(function () {
