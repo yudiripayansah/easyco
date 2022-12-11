@@ -72,7 +72,7 @@ class KopCabang extends Model
         return $res;
     }
 
-    function read($search, $sortBy, $sortDir, $offset, $perPage)
+    function read($search, $cabang, $sortBy, $sortDir, $offset, $perPage)
     {
         $show = DB::table('kop_cabang')->orderBy($sortBy, $sortDir);
 
@@ -80,9 +80,12 @@ class KopCabang extends Model
             $show->skip($offset)->take($perPage);
         }
 
+        if ($cabang != '00000') {
+            $show->where('kode_cabang', $cabang);
+        }
+
         if ($search <> NULL) {
-            $show->where('kode_cabang', 'LIKE', '%' . $search . '%')
-                ->orWhere('nama_cabang', 'LIKE', '%' . $search . '%')
+            $show->where('nama_cabang', 'LIKE', '%' . $search . '%')
                 ->orWhere('pimpinan_cabang', 'LIKE', '%' . $search . '%');
         }
 

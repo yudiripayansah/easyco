@@ -256,13 +256,17 @@ class PengajuanController extends Controller
         $search = NULL;
         $total = 0;
         $totalPage = 1;
-        $cabang = '~';
         $jenis_pembiayaan = '~';
         $petugas = '~';
         $rembug = '~';
         $status = '~';
         $from = NULL;
         $to = NULL;
+
+        $token = $request->header('token');
+        $param = array('token' => $token);
+        $get = KopUser::where($param)->first();
+        $cabang = $get->kode_cabang;
 
         if ($request->page) {
             $page = $request->page;
@@ -284,12 +288,16 @@ class PengajuanController extends Controller
             $search = strtoupper($request->search);
         }
 
-        if ($request->status) {
-            $status = $request->status;
-        }
-
         if ($request->cabang) {
             $cabang = $request->cabang;
+        }
+
+        if ($request->rembug) {
+            $rembug = $request->rembug;
+        }
+
+        if ($request->status) {
+            $status = $request->status;
         }
 
         if ($request->jenis_pembiayaan) {
@@ -298,10 +306,6 @@ class PengajuanController extends Controller
 
         if ($request->petugas) {
             $petugas = $request->petugas;
-        }
-
-        if ($request->rembug) {
-            $rembug = $request->rembug;
         }
 
         if ($request->from) {
@@ -333,7 +337,7 @@ class PengajuanController extends Controller
             $read->whereIn('kop_pengajuan.status_pengajuan', $status);
         }
 
-        if ($cabang && $cabang != '~') {
+        if ($cabang != '00000') {
             $read->where('kop_cabang.kode_cabang', $cabang);
         }
 
@@ -351,7 +355,8 @@ class PengajuanController extends Controller
 
         if ($search) {
             $read->where('kop_pengajuan.no_anggota', 'LIKE', '%' . $search . '%')
-                ->orWhere('kop_pengajuan.no_pengajuan', 'LIKE', '%' . $search . '%');
+                ->orWhere('kop_pengajuan.no_pengajuan', 'LIKE', '%' . $search . '%')
+                ->orWhere('kop_anggota.nama_anggota', 'LIKE', '%' . $search . '%');
         }
 
         if ($from && $to) {
@@ -366,7 +371,9 @@ class PengajuanController extends Controller
         }
 
         if ($search || $cabang || $jenis_pembiayaan || $petugas || $rembug || $status || ($from && $to)) {
-            $total = KopPengajuan::orderBy($sortBy, $sortDir);
+            $total = KopPengajuan::orderBy($sortBy, $sortDir)
+                ->join('kop_anggota', 'kop_anggota.no_anggota', 'kop_pengajuan.no_anggota')
+                ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang');
 
             if ($search) {
                 $total->where('kop_pengajuan.no_anggota', 'LIKE', '%' . $search . '%')
@@ -377,7 +384,7 @@ class PengajuanController extends Controller
                 $total->whereIn('kop_pengajuan.status_pengajuan', $status);
             }
 
-            if ($cabang && $cabang != '~') {
+            if ($cabang != '00000') {
                 $total->where('kop_cabang.kode_cabang', $cabang);
             }
 

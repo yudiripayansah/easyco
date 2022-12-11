@@ -21,7 +21,7 @@ class CreateKopPengajuanTable extends Migration
             $table->string('kode_petugas', 20);
             $table->string('no_pengajuan', 20)->nullable(TRUE)->unique()->comment('yy.branc_code.xxxx');
             $table->date('tanggal_pengajuan');
-            $table->decimal('jumlah_pengajuan', 14, 2)->nullable(TRUE)->default(0);
+            $table->decimal('jumlah_pengajuan', 14, 0)->nullable(TRUE)->default(0);
             $table->integer('pengajuan_ke');
             $table->integer('peruntukan')->comment('Referensi Tabel List Kode');
             $table->string('keterangan_peruntukan', 100);

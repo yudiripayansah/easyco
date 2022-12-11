@@ -155,19 +155,12 @@ class KopPembiayaan extends Model
 
     function pengajuan($kode_rembug)
     {
-        $param = array();
-
-        if ($kode_rembug <> '00000') {
-            $param['kr.kode_rembug'] = $kode_rembug;
-        }
-
-        $param['kp.status_pengajuan'] = 0;
-
-        $show = DB::table('kop_pengajuan AS kp')
-            ->select('kp.no_pengajuan', 'ka.no_anggota', 'ka.nama_anggota', 'kp.jumlah_pengajuan', 'kp.tanggal_pengajuan', 'kp.rencana_droping', 'kp.peruntukan', 'kp.keterangan_peruntukan', 'kp.pengajuan_ke')
-            ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kp.no_anggota')
+        $show = KopPengajuan::select('kop_pengajuan.no_pengajuan', 'ka.no_anggota', 'ka.nama_anggota', 'kop_pengajuan.jumlah_pengajuan', 'kop_pengajuan.tanggal_pengajuan', 'kop_pengajuan.rencana_droping', 'kop_pengajuan.peruntukan', 'kop_pengajuan.keterangan_peruntukan', 'kop_pengajuan.pengajuan_ke', 'kr.nama_rembug', 'kc.nama_cabang')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kop_pengajuan.no_anggota')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', '=', 'ka.kode_cabang')
             ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'ka.kode_rembug')
-            ->where($param)
+            ->where('kr.kode_rembug', $kode_rembug)
+            ->where('kop_pengajuan.status_pengajuan', 0)
             ->get();
 
         return $show;

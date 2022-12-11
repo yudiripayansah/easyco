@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\KopAnggota;
 use App\Models\KopAnggotaUk;
 use App\Models\KopLembaga;
+use App\Models\KopUser;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -187,10 +188,15 @@ class AnggotaController extends Controller
         $search = NULL;
         $total = 0;
         $totalPage = 1;
-        $cabang = '~';
         $rembug = '~';
+        $status = '~';
         $from = NULL;
         $to = NULL;
+
+        $token = $request->header('token');
+        $param = array('token' => $token);
+        $get = KopUser::where($param)->first();
+        $cabang = $get->kode_cabang;
 
         if ($request->page) {
             $page = $request->page;
@@ -220,12 +226,18 @@ class AnggotaController extends Controller
             $rembug = $request->rembug;
         }
 
+        if ($request->status) {
+            $status = $request->status;
+        }
+
         if ($request->from) {
-            $from = $request->from;
+            $from = str_replace('/', '-', $request->from);
+            $from = date('Y-m-d', strtotime($from));
         }
 
         if ($request->to) {
-            $to = $request->to;
+            $to = str_replace('/', '-', $request->to);
+            $to = date('Y-m-d', strtotime($to));
         }
 
         if ($page > 1) {
@@ -240,12 +252,16 @@ class AnggotaController extends Controller
             $read->skip($offset)->take($perPage);
         }
 
-        if ($cabang && $cabang != '~') {
+        if ($cabang != '00000') {
             $read->where('kop_anggota.kode_cabang', $cabang);
         }
 
         if ($rembug && $rembug != '~') {
-            $read->where('kop_anggota.status', $rembug);
+            $read->where('kop_anggota.kode_rembug', $rembug);
+        }
+
+        if ($status && $status != '~') {
+            $read->where('kop_anggota.status', $status);
         }
 
         if ($search) {
@@ -267,7 +283,7 @@ class AnggotaController extends Controller
         if ($search || $cabang || $rembug || ($from && $to)) {
             $total = KopAnggota::orderBy($sortBy, $sortDir);
 
-            if ($cabang && $cabang != '~') {
+            if ($cabang != '00000') {
                 $total->where('kop_anggota.kode_cabang', $cabang);
             }
 
