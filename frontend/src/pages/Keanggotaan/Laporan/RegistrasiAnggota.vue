@@ -33,7 +33,7 @@
             <b-button text="Button" variant="danger">
               PDF
             </b-button>
-            <b-button text="Button" variant="success">
+            <b-button text="Button" variant="success" @click="excel()">
               XLS
             </b-button>
           </b-button-group>
@@ -47,7 +47,7 @@
           </b-table>
         </b-col>
         <b-col cols="12" class="justify-content-end d-flex">
-          <b-pagination v-model="paging.currentPage" :total-rows="table.totalRows" :per-page="paging.perPage">
+          <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
           </b-pagination>
         </b-col>
       </b-row>
@@ -132,7 +132,7 @@ export default {
         sortDesc: true,
         sortBy: 'kop_anggota.id',
         search: '',
-        status: 1,
+        status: '~',
         cabang: 0,
         from: null,
         to: null
@@ -202,7 +202,24 @@ export default {
       } catch (error) {
         this.table.loading = false
         console.error(error)
-        this.notify('danger', 'Login Error', error)
+        this.notify('danger', 'Error', error)
+      }
+    },
+    async excel() {
+      let payload = this.paging
+      try {
+        let req = await easycoApi.anggotaExcel(payload, this.user.token)
+        console.log(req)
+        let fileName = 'Laporan Anggota.xls'
+        const url = window.URL.createObjectURL(new Blob([req.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', fileName)
+        document.body.appendChild(link)
+        link.click()
+      } catch (error) {
+        console.log(error)
+        this.notify('danger', 'Error', error)
       }
     },
     doInfo(msg, title, variant) {
@@ -211,6 +228,15 @@ export default {
         variant: variant,
         solid: true,
         toaster: 'b-toaster-bottom-right'
+      })
+    },
+    notify(type, title, msg) {
+      this.$bvToast.toast(msg, {
+        title: title,
+        autoHideDelay: 5000,
+        variant: type,
+        toaster: 'b-toaster-bottom-right',
+        appendToast: true
       })
     }
   }

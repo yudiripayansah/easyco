@@ -54,7 +54,7 @@
           </b-table>
         </b-col>
         <b-col cols="12" class="justify-content-end d-flex">
-          <b-pagination v-model="paging.currentPage" :total-rows="table.totalRows" :per-page="paging.perPage">
+          <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
           </b-pagination>
         </b-col>
       </b-row>
@@ -328,16 +328,16 @@
               tdClass: ''
             },
             {
-              key: 'kode_rembug',
+              key: 'nama_rembug',
               sortable: true,
-              label: 'Kode Majelis',
+              label: 'Rembug',
               thClass: 'text-center',
               tdClass: ''
             },
             {
-              key: 'kode_cabang',
+              key: 'nama_cabang',
               sortable: true,
-              label: 'Kode Cabang',
+              label: 'Cabang',
               thClass: 'text-center',
               tdClass: ''
             },

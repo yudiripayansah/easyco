@@ -42,7 +42,7 @@
             </b-table>
           </b-col>
           <b-col cols="12" class="justify-content-end d-flex">
-            <b-pagination v-model="paging.currentPage" :total-rows="table.totalRows" :per-page="paging.perPage">
+            <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
             </b-pagination>
           </b-col>
         </b-row>
@@ -217,7 +217,7 @@
           loading: false,
         },
         paging: {
-          currentPage: 1,
+          page: 1,
           perPage: 10
         },
         remove: {

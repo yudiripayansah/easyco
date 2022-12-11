@@ -1,61 +1,61 @@
 <template>
   <div>
     <b-card :title="$route.name">
-        <b-row no-gutters>
-          <b-col cols="12" class="d-flex justify-content-end mb-5 pb-5 border-bottom">
-            <b-button variant="success" @click="doOpenModalCreate()" v-b-tooltip.hover
-              title="Tambah Data Baru">
-              <b-icon icon="plus" />
-              Tambah Baru
-            </b-button>
-          </b-col>
-          <b-col cols="12" class="mb-5">
-            <b-row no-gutters>
-              <b-col cols="6">
-                <div class="w-100 max-200 pr-5">
-                  
-                </div>
-              </b-col>
-              <b-col cols="6" class="d-flex justify-content-end">
-                <div class="w-100 max-300">
-                  <b-input-group size="sm">
-                    <b-form-input />
-                    <b-input-group-append>
-                      <b-button size="sm" text="Button" variant="primary">
-                        <b-icon icon="search" />
-                        Cari
-                      </b-button>
-                    </b-input-group-append>
-                  </b-input-group>
-                </div>
-              </b-col>
-            </b-row>
-          </b-col>
-          <b-col cols="12">
-            <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
-              show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
-              <template #cell(no)="item">
-                {{item.index + 1}}
-              </template>
-              <template #cell(pokok)="item">
-                {{doFormatCurrency(item.item.pokok)}}
-              </template>
-              <template #cell(action)="item">
-                <b-button variant="success" size="xs" class="mx-1" @click="doShowEdit(item)" v-b-tooltip.hover title="Update Status">
-                    Update Status
-                </b-button>
-              </template>
-            </b-table>
-          </b-col>
-          <b-col cols="12" class="justify-content-end d-flex">
-            <b-pagination v-model="paging.currentPage" :total-rows="table.totalRows" :per-page="paging.perPage">
-            </b-pagination>
-          </b-col>
-        </b-row>
+      <b-row no-gutters>
+        <b-col cols="12" class="d-flex justify-content-end mb-5 pb-5 border-bottom">
+          <b-button variant="success" @click="doOpenModalCreate()" v-b-tooltip.hover title="Tambah Data Baru">
+            <b-icon icon="plus" />
+            Tambah Baru
+          </b-button>
+        </b-col>
+        <b-col cols="12" class="mb-5">
+          <b-row no-gutters>
+            <b-col cols="6">
+              <div class="w-100 max-200 pr-5">
+
+              </div>
+            </b-col>
+            <b-col cols="6" class="d-flex justify-content-end">
+              <div class="w-100 max-300">
+                <b-input-group size="sm">
+                  <b-form-input />
+                  <b-input-group-append>
+                    <b-button size="sm" text="Button" variant="primary">
+                      <b-icon icon="search" />
+                      Cari
+                    </b-button>
+                  </b-input-group-append>
+                </b-input-group>
+              </div>
+            </b-col>
+          </b-row>
+        </b-col>
+        <b-col cols="12">
+          <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
+            show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
+            <template #cell(no)="item">
+              {{ item.index + 1 }}
+            </template>
+            <template #cell(pokok)="item">
+              {{ doFormatCurrency(item.item.pokok) }}
+            </template>
+            <template #cell(action)="item">
+              <b-button variant="success" size="xs" class="mx-1" @click="doShowEdit(item)" v-b-tooltip.hover
+                title="Update Status">
+                Update Status
+              </b-button>
+            </template>
+          </b-table>
+        </b-col>
+        <b-col cols="12" class="justify-content-end d-flex">
+          <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
+          </b-pagination>
+        </b-col>
+      </b-row>
     </b-card>
     <b-modal title="Form Pembiayaan Pengajuan" id="modal-form" hide-footer size="lg" centered>
       <b-form @submit.prevent="doSave()">
-        <b-row>  
+        <b-row>
           <b-col cols="12">
             <b-form-group label="Majelis">
               <b-select :options="opt.listRembug" class="mb-3" v-model="form.data.rembug" required/>
@@ -63,76 +63,73 @@
           </b-col>
           <b-col cols="12" v-if="Object.keys(form.data.detail).length == 0">
             <b-form-group label="Nama">
-              <b-select :options="opt.listPengajuan" class="mb-3" v-model="form.data.pengajuan" required/>
+              <b-select :options="opt.listPengajuan" class="mb-3" v-model="form.data.pengajuan" required />
             </b-form-group>
           </b-col>
           <b-col cols="12" v-else>
             <b-form-group label="Nama">
-              <b-input disabled v-model="form.data.pengajuan"/>
+              <b-input disabled v-model="form.data.pengajuan" />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group label="No Anggota">
-              <b-input disabled v-model="form.data.noAnggota"/>
+              <b-input disabled v-model="form.data.noAnggota" />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group label="No Pengajuan">
-              <b-input disabled v-model="form.data.noPengajuan"/>
+              <b-input disabled v-model="form.data.noPengajuan" />
             </b-form-group>
           </b-col>
           <b-col cols="2">
             <b-form-group label="Pembiayaan Ke">
-              <b-input disabled type="number" v-model="form.data.pembiayaanKe"/>
+              <b-input disabled type="number" v-model="form.data.pembiayaanKe" />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group label="Jumlah Pengajuan">
-              <b-input disabled v-model="form.data.jumlahPengajuan" @blur="form.data.jumlahPengajuan = focusOut($event, form.data.jumlahPengajuan)"/>
+              <b-input disabled v-model="form.data.jumlahPengajuan"
+                @blur="sumAngsuran();form.data.jumlahPengajuan = focusOut($event, form.data.jumlahPengajuan)" />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group label="Peruntukan">
-              <b-select disabled :options="opt.listPeruntukan" v-model="form.data.peruntukan"/>
+              <b-select disabled :options="opt.listPeruntukan" v-model="form.data.peruntukan" />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group label="Keterangan">
-              <b-form-textarea
-                disabled
-                id="textarea"
-                v-model="form.data.keterangan"
-                placeholder="Keterangan..."
-                rows="3"
-                max-rows="6"
-                ></b-form-textarea>
+              <b-form-textarea disabled id="textarea" v-model="form.data.keterangan" placeholder="Keterangan..."
+                rows="3" max-rows="6"></b-form-textarea>
             </b-form-group>
           </b-col>
         </b-row>
         <b-row class="border-top py-5">
           <b-col cols="12">
             <b-form-group label="Akad / Produk">
-                <b-select :options="opt.listProduk" v-model="form.data.produk"/>
+              <b-select :options="opt.listProduk" v-model="form.data.produk" />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group label="Plafon">
-              <b-input v-model="form.data.plafon" @blur="form.data.plafon = focusOut($event, form.data.plafon)"/>
+              <b-input v-model="form.data.plafon" @blur="sumAngsuran();form.data.plafon = focusOut($event, form.data.plafon)" />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group label="Margin">
-              <b-input v-model="form.data.margin" @blur="form.data.margin = focusOut($event, form.data.margin)"/>
+              <b-input v-model="form.data.margin" @blur="sumAngsuran();form.data.margin = focusOut($event, form.data.margin)" />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group label="Rencana Jangka Waktu">
               <b-row>
                 <b-col cols="2">
-                  <b-input type="number" v-model="form.data.rencanaJangkaWaktu" @blur="sumAngsuran();sumSetoranSaatPencairan()"/>
+                  <b-input type="number" v-model="form.data.rencanaJangkaWaktu"
+                    @blur="sumAngsuran(); sumSetoranSaatPencairan()" />
                 </b-col>
                 <b-col cols="10">
-                    <b-select :options="opt.rencanaPeriodeJangkaWaktu" v-model="form.data.rencanaPeriodeJangkaWaktu" require/>
+                  <b-select :options="opt.rencanaPeriodeJangkaWaktu" v-model="form.data.rencanaPeriodeJangkaWaktu"
+                    require />
                 </b-col>
               </b-row>
             </b-form-group>
@@ -143,22 +140,26 @@
             <b-form-group label="Angsuran">
               <b-col cols="12">
                 <b-form-group label="Pokok">
-                  <b-input disabled v-model="form.data.angsuran.pokok" @blur="form.data.angsuran.pokok = focusOut($event, form.data.angsuran.pokok)"/>
+                  <b-input disabled v-model="form.data.angsuran.pokok"
+                    @blur="sumAngsuran();form.data.angsuran.pokok = focusOut($event, form.data.angsuran.pokok)" />
                 </b-form-group>
               </b-col>
               <b-col cols="12">
                 <b-form-group label="Margin">
-                  <b-input disabled v-model="form.data.angsuran.margin" @blur="form.data.angsuran.margin = focusOut($event, form.data.angsuran.margin)"/>
+                  <b-input disabled v-model="form.data.angsuran.margin"
+                    @blur="sumAngsuran();form.data.angsuran.margin = focusOut($event, form.data.angsuran.margin)" />
                 </b-form-group>
               </b-col>
               <b-col cols="12">
                 <b-form-group label="Minggon">
-                  <b-input v-model="form.data.angsuran.minggon" @blur="form.data.angsuran.minggon = focusOut($event, form.data.angsuran.minggon)"/>
+                  <b-input v-model="form.data.angsuran.minggon"
+                    @blur="sumAngsuran();form.data.angsuran.minggon = focusOut($event, form.data.angsuran.minggon)" />
                 </b-form-group>
               </b-col>
               <b-col cols="12">
                 <b-form-group label="Total">
-                  <b-input disabled v-model="form.data.angsuran.total" @blur="form.data.angsuran.total = focusOut($event, form.data.angsuran.total)"/>
+                  <b-input disabled v-model="form.data.angsuran.total"
+                    @blur="sumAngsuran();form.data.angsuran.total = focusOut($event, form.data.angsuran.total)" />
                 </b-form-group>
               </b-col>
             </b-form-group>
@@ -167,19 +168,24 @@
             <b-form-group label="Setoran Saat Pencairan">
               <b-col cols="12">
                 <b-form-group label="Biaya Adm">
-                  <b-input v-model="form.data.setoranSaatPencarian.biayaAdm" @blur="form.data.setoranSaatPencarian.biayaAdm = focusOut($event, form.data.setoranSaatPencarian.biayaAdm);sumSetoranSaatPencairan()"/>
+                  <b-input v-model="form.data.setoranSaatPencarian.biayaAdm"
+                    @blur="sumAngsuran();form.data.setoranSaatPencarian.biayaAdm = focusOut($event, form.data.setoranSaatPencarian.biayaAdm); sumSetoranSaatPencairan()" />
                 </b-form-group>
                 <b-form-group label="Asuransi">
-                  <b-input v-model="form.data.setoranSaatPencarian.asuransi" @blur="form.data.setoranSaatPencarian.asuransi = focusOut($event, form.data.setoranSaatPencarian.asuransi);sumSetoranSaatPencairan()"/>
+                  <b-input v-model="form.data.setoranSaatPencarian.asuransi"
+                    @blur="sumAngsuran();form.data.setoranSaatPencarian.asuransi = focusOut($event, form.data.setoranSaatPencarian.asuransi); sumSetoranSaatPencairan()" />
                 </b-form-group>
                 <b-form-group label="Dana Kebajikan">
-                  <b-input v-model="form.data.setoranSaatPencarian.danaKebajikan" @blur="form.data.setoranSaatPencarian.danaKebajikan = focusOut($event, form.data.setoranSaatPencarian.danaKebajikan);sumSetoranSaatPencairan()"/>
+                  <b-input v-model="form.data.setoranSaatPencarian.danaKebajikan"
+                    @blur="sumAngsuran();form.data.setoranSaatPencarian.danaKebajikan = focusOut($event, form.data.setoranSaatPencarian.danaKebajikan); sumSetoranSaatPencairan()" />
                 </b-form-group>
                 <b-form-group label="Simpanan Wajib 4%">
-                  <b-input disabled v-model="form.data.setoranSaatPencarian.simpananWajib" @blur="form.data.setoranSaatPencarian.simpananWajib = focusOut($event, form.data.setoranSaatPencarian.simpananWajib);sumSetoranSaatPencairan()"/>
+                  <b-input disabled v-model="form.data.setoranSaatPencarian.simpananWajib"
+                    @blur="sumAngsuran();form.data.setoranSaatPencarian.simpananWajib = focusOut($event, form.data.setoranSaatPencarian.simpananWajib); sumSetoranSaatPencairan()" />
                 </b-form-group>
                 <b-form-group label="Total">
-                  <b-input disabled v-model="form.data.setoranSaatPencarian.total" @blur="form.data.setoranSaatPencarian.total = focusOut($event, form.data.setoranSaatPencarian.total)"/>
+                  <b-input disabled v-model="form.data.setoranSaatPencarian.total"
+                    @blur="sumAngsuran();form.data.setoranSaatPencarian.total = focusOut($event, form.data.setoranSaatPencarian.total)" />
                 </b-form-group>
               </b-col>
             </b-form-group>
@@ -188,27 +194,30 @@
         <b-row class="border-top py-5">
           <b-col cols="12">
             <b-form-group label="Tanggal Pengajuan">
-                <b-form-datepicker disabled :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" v-model="form.data.tanggalPengajuan"/>
+              <b-form-datepicker disabled :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+                locale="id" v-model="form.data.tanggalPengajuan" />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group label="Tanggal Akad">
-                <b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" v-model="form.data.tanggalAkad"/>
+              <b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+                locale="id" v-model="form.data.tanggalAkad" />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group label="Mulai Angsur">
-                <b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" v-model="form.data.rencanaAngsur"/>
+              <b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+                locale="id" v-model="form.data.rencanaAngsur" />
             </b-form-group>
           </b-col>
           <b-col cols="12">
             <b-form-group label="Sumber Dana">
-                <b-select :options="opt.sumberDana" v-model="form.data.sumberDana"/>
+              <b-select :options="opt.sumberDana" v-model="form.data.sumberDana" />
             </b-form-group>
           </b-col>
           <b-col cols="12" v-if="form.data.sumberDana == 1">
             <b-form-group label="Nama Kreditur">
-                <b-select :options="opt.listKreditur" v-model="form.data.kreditur"/>
+              <b-select :options="opt.listKreditur" v-model="form.data.kreditur" />
             </b-form-group>
           </b-col>
           <b-col cols="12" class="d-flex justify-content-end border-top pt-5">
@@ -220,7 +229,8 @@
               <b-spinner small label="Small Spinner" v-show="form.loading"></b-spinner>
               Submit
             </b-button>
-            <b-button v-if="form.data.id != null" variant="primary" :disabled="form.loading" @click="doUpdate()" class="ml-5">
+            <b-button v-if="form.data.id != null" variant="primary" :disabled="form.loading" @click="doUpdate()"
+              class="ml-5">
               <b-spinner small label="Small Spinner" v-show="form.loading"></b-spinner>
               Simpan
             </b-button>
@@ -229,8 +239,8 @@
       </b-form>
     </b-modal>
   </div>
-  </template>
-  <script src="works/frontend/src/pages/Keanggotaan/wizard_regis_anggota.js"></script>
+</template>
+<script src="works/frontend/src/pages/Keanggotaan/wizard_regis_anggota.js"></script>
   <script>
     import { mapGetters } from 'vuex'
     import easycoApi from '@/core/services/easyco.service'
@@ -481,22 +491,23 @@
           }
         },
         sumAngsuran(){
-          let plafon = parseInt(this.form.data.plafon.replaceAll(',', ''))
-          let margin = parseInt(this.form.data.margin.replaceAll(',', ''))
+          let plafon = parseInt(this.form.data.plafon.replace(/\,/g,''))
+          let margin = parseInt(this.form.data.margin.replace(/\,/g,''))
           let jangkaWaktu = this.form.data.rencanaJangkaWaktu
           this.form.data.angsuran.pokok = this.doFormatCurrency(`${Math.ceil((plafon/jangkaWaktu))}`)
           this.form.data.angsuran.margin = this.doFormatCurrency(`${Math.ceil((margin/jangkaWaktu))}`)
-          this.form.data.angsuran.total = this.doFormatCurrency(`${parseInt(this.form.data.angsuran.pokok.replaceAll(',', ''))+parseInt(this.form.data.angsuran.margin.replaceAll(',', ''))+parseInt(this.form.data.angsuran.minggon.replaceAll(',', ''))}`)
+          let minggon = (this.form.data.angsuran.minggon) ? this.form.data.angsuran.minggon.replace(/\,/g,'') : 0
+          this.form.data.angsuran.total = this.doFormatCurrency(`${parseInt(this.form.data.angsuran.pokok.replace(/\,/g,''))+parseInt(this.form.data.angsuran.margin.replace(/\,/g,''))+parseInt(minggon)}`)
           this.form.data.setoranSaatPencarian.biayaAdm = this.doFormatCurrency(`${this.form.data.setoranSaatPencarian.biayaAdm}`)
-          this.form.data.setoranSaatPencarian.asuransi = this.doFormatCurrency(`${(parseInt(this.form.data.plafon.replaceAll(',', ''))*0.5)/100}`)
-          this.form.data.setoranSaatPencarian.danaKebajikan = this.doFormatCurrency(`${(parseInt(this.form.data.plafon.replaceAll(',', ''))*1)/100}`)
-          this.form.data.setoranSaatPencarian.simpananWajib = this.doFormatCurrency(`${(parseInt(this.form.data.plafon.replaceAll(',', ''))*4)/100}`)
+          this.form.data.setoranSaatPencarian.asuransi = this.doFormatCurrency(`${(parseInt(this.form.data.plafon.replace(/\,/g,''))*0.5)/100}`)
+          this.form.data.setoranSaatPencarian.danaKebajikan = this.doFormatCurrency(`${(parseInt(this.form.data.plafon.replace(/\,/g,''))*1)/100}`)
+          this.form.data.setoranSaatPencarian.simpananWajib = this.doFormatCurrency(`${(parseInt(this.form.data.plafon.replace(/\,/g,''))*4)/100}`)
         },
         sumSetoranSaatPencairan(){
-          let biayaAdm = this.form.data.setoranSaatPencarian.biayaAdm != 0 ? parseInt(this.form.data.setoranSaatPencarian.biayaAdm.replaceAll(',', '')) : 0
-          let asuransi = this.form.data.setoranSaatPencarian.asuransi != 0 ? parseInt(this.form.data.setoranSaatPencarian.asuransi.replaceAll(',', '')) : 0
-          let danaKebajikan = this.form.data.setoranSaatPencarian.danaKebajikan != 0 ? parseInt(this.form.data.setoranSaatPencarian.danaKebajikan.replaceAll(',', '')) : 0
-          let simpananWajib = this.form.data.setoranSaatPencarian.simpananWajib != 0 ? parseInt(this.form.data.setoranSaatPencarian.simpananWajib.replaceAll(',', '')) : 0
+          let biayaAdm = this.form.data.setoranSaatPencarian.biayaAdm != 0 ? parseInt(this.form.data.setoranSaatPencarian.biayaAdm.replace(/\,/g,'')) : 0
+          let asuransi = this.form.data.setoranSaatPencarian.asuransi != 0 ? parseInt(this.form.data.setoranSaatPencarian.asuransi.replace(/\,/g,'')) : 0
+          let danaKebajikan = this.form.data.setoranSaatPencarian.danaKebajikan != 0 ? parseInt(this.form.data.setoranSaatPencarian.danaKebajikan.replace(/\,/g,'')) : 0
+          let simpananWajib = this.form.data.setoranSaatPencarian.simpananWajib != 0 ? parseInt(this.form.data.setoranSaatPencarian.simpananWajib.replace(/\,/g,'')) : 0
           this.form.data.setoranSaatPencarian.total = this.doFormatCurrency(`${parseInt(biayaAdm)+parseInt(asuransi)+parseInt(danaKebajikan)+parseInt(simpananWajib)}`)
 
         },
@@ -511,23 +522,23 @@
           payload.append('kode_petugas', null)
           payload.append('no_pengajuan', this.form.data.pengajuan.no_pengajuan)
           payload.append('no_rekening', this.form.data.pengajuan.no_anggota+''+this.form.data.produk.kode_produk+''+this.form.data.pembiayaanKe)
-          payload.append('pokok', parseInt(this.form.data.plafon.replaceAll(',', '')))
-          payload.append('margin', parseInt(this.form.data.margin.replaceAll(',', '')))
+          payload.append('pokok', parseInt(this.form.data.plafon.replace(/\,/g,'')))
+          payload.append('margin', parseInt(this.form.data.margin.replace(/\,/g,'')))
           payload.append('periode_jangka_waktu', this.form.data.rencanaPeriodeJangkaWaktu)
           payload.append('jangka_waktu', this.form.data.rencanaJangkaWaktu)
-          payload.append('angsuran_pokok', parseInt(this.form.data.angsuran.pokok.replaceAll(',', '')))
-          payload.append('angsuran_margin', parseInt(this.form.data.angsuran.margin.replaceAll(',', '')))
-          payload.append('angsuran_minggon', parseInt(this.form.data.angsuran.minggon.replaceAll(',', '')))
-          payload.append('biaya_administrasi', parseInt(this.form.data.setoranSaatPencarian.biayaAdm.replaceAll(',', '')))
-          payload.append('dana_kebajikan', parseInt(this.form.data.setoranSaatPencarian.danaKebajikan.replaceAll(',', '')))
-          payload.append('biaya_asuransi_jiwa', parseInt(this.form.data.setoranSaatPencarian.asuransi.replaceAll(',', '')))
+          payload.append('angsuran_pokok', parseInt(this.form.data.angsuran.pokok.replace(/\,/g,'')))
+          payload.append('angsuran_margin', parseInt(this.form.data.angsuran.margin.replace(/\,/g,'')))
+          payload.append('angsuran_minggon', parseInt(this.form.data.angsuran.minggon.replace(/\,/g,'')))
+          payload.append('biaya_administrasi', parseInt(this.form.data.setoranSaatPencarian.biayaAdm.replace(/\,/g,'')))
+          payload.append('dana_kebajikan', parseInt(this.form.data.setoranSaatPencarian.danaKebajikan.replace(/\,/g,'')))
+          payload.append('biaya_asuransi_jiwa', parseInt(this.form.data.setoranSaatPencarian.asuransi.replace(/\,/g,'')))
           payload.append('kode_kreditur', this.form.data.kreditur.kode_value)
           payload.append('tanggal_registrasi', this.form.data.tanggalPengajuan)
           payload.append('tanggal_akad', this.form.data.tanggalAkad)
           payload.append('tanggal_mulai_angsur', this.form.data.rencanaAngsur)
           payload.append('tanggal_jtempo', jatuhTempo)
-          payload.append('saldo_pokok', parseInt(this.form.data.plafon.replaceAll(',', '')))
-          payload.append('saldo_margin', parseInt(this.form.data.plafon.replaceAll(',', '')))
+          payload.append('saldo_pokok', parseInt(this.form.data.plafon.replace(/\,/g,'')))
+          payload.append('saldo_margin', parseInt(this.form.data.plafon.replace(/\,/g,'')))
           payload.append('saldo_catab', 0)
           payload.append('saldo_minggon', 0)
           payload.append('jtempo_angsuran_next', this.form.data.rencanaAngsur)
@@ -536,14 +547,14 @@
           payload.append('norek_tabungan', null)
           payload.append('created_by', this.user.id)
           try {
-            // let req = await easycoApi.regisAkadCreate(payload, this.user.token)
-            // if(req.status == 200){
-            //   await this.doGetListRegisAkad()
-            //   this.$bvModal.hide('modal-form')
-            //   this.doClearForm()
-            //   this.form.loading = false
-            //   this.notify('success','Success',req.statusText)
-            // }
+            let req = await easycoApi.regisAkadCreate(payload, this.user.token)
+            if(req.status == 200){
+              await this.doGetListRegisAkad()
+              this.$bvModal.hide('modal-form')
+              this.doClearForm()
+              this.form.loading = false
+              this.notify('success','Success',req.statusText)
+            }
           } catch (error) {
             console.log(error)
             this.form.loading = false
@@ -575,11 +586,11 @@
           this.form.data.angsuran.pokok = this.doFormatCurrency(detailRegisAkad.get.angsuran_pokok)
           this.form.data.angsuran.margin = this.doFormatCurrency(detailRegisAkad.get.angsuran_margin)
           this.form.data.angsuran.minggon = this.doFormatCurrency(detailRegisAkad.get.angsuran_minggon)
-          this.form.data.angsuran.total = this.doFormatCurrency(`${parseInt(detailRegisAkad.get.angsuran_pokok.replaceAll(',', ''))+parseInt(detailRegisAkad.get.angsuran_margin.replaceAll(',', ''))+parseInt(detailRegisAkad.get.angsuran_minggon.replaceAll(',', ''))}`)
+          this.form.data.angsuran.total = this.doFormatCurrency(`${parseInt(detailRegisAkad.get.angsuran_pokok.replace(/\,/g,''))+parseInt(detailRegisAkad.get.angsuran_margin.replace(/\,/g,''))+parseInt(detailRegisAkad.get.angsuran_minggon.replace(/\,/g,''))}`)
           this.form.data.setoranSaatPencarian.biayaAdm = this.doFormatCurrency(detailRegisAkad.get.biaya_administrasi)
           this.form.data.setoranSaatPencarian.asuransi = this.doFormatCurrency(detailRegisAkad.get.biaya_asuransi_jiwa)
           this.form.data.setoranSaatPencarian.danaKebajikan = this.doFormatCurrency(detailRegisAkad.get.dana_kebajikan)
-          this.form.data.setoranSaatPencarian.simpananWajib = this.doFormatCurrency(`${(parseInt(detailRegisAkad.get.pokok.replaceAll(',', ''))*4)/100}`)
+          this.form.data.setoranSaatPencarian.simpananWajib = this.doFormatCurrency(`${(parseInt(detailRegisAkad.get.pokok.replace(/\,/g,''))*4)/100}`)
           this.sumSetoranSaatPencairan()
           this.form.data.tanggalAkad = detailRegisAkad.get.tanggal_akad
           this.form.data.rencanaAngsur = detailRegisAkad.get.tanggal_mulai_angsur
@@ -597,23 +608,23 @@
           payload.append('kode_produk', this.form.data.produk.kode_produk)
           payload.append('kode_akad', 0)
           payload.append('no_pengajuan', this.form.data.noPengajuan)
-          payload.append('pokok', parseInt(this.form.data.plafon.replaceAll(',', '')))
-          payload.append('margin', parseInt(this.form.data.margin.replaceAll(',', '')))
+          payload.append('pokok', parseInt(this.form.data.plafon.replace(/\,/g,'')))
+          payload.append('margin', parseInt(this.form.data.margin.replace(/\,/g,'')))
           payload.append('periode_jangka_waktu', this.form.data.rencanaPeriodeJangkaWaktu)
           payload.append('jangka_waktu', this.form.data.rencanaJangkaWaktu)
-          payload.append('angsuran_pokok', parseInt(this.form.data.angsuran.pokok.replaceAll(',', '')))
-          payload.append('angsuran_margin', parseInt(this.form.data.angsuran.margin.replaceAll(',', '')))
-          payload.append('angsuran_minggon', parseInt(this.form.data.angsuran.minggon.replaceAll(',', '')))
-          payload.append('biaya_administrasi', parseInt(this.form.data.setoranSaatPencarian.biayaAdm.replaceAll(',', '')))
-          payload.append('dana_kebajikan', parseInt(this.form.data.setoranSaatPencarian.danaKebajikan.replaceAll(',', '')))
-          payload.append('biaya_asuransi_jiwa', parseInt(this.form.data.setoranSaatPencarian.asuransi.replaceAll(',', '')))
+          payload.append('angsuran_pokok', parseInt(this.form.data.angsuran.pokok.replace(/\,/g,'')))
+          payload.append('angsuran_margin', parseInt(this.form.data.angsuran.margin.replace(/\,/g,'')))
+          payload.append('angsuran_minggon', parseInt(this.form.data.angsuran.minggon.replace(/\,/g,'')))
+          payload.append('biaya_administrasi', parseInt(this.form.data.setoranSaatPencarian.biayaAdm.replace(/\,/g,'')))
+          payload.append('dana_kebajikan', parseInt(this.form.data.setoranSaatPencarian.danaKebajikan.replace(/\,/g,'')))
+          payload.append('biaya_asuransi_jiwa', parseInt(this.form.data.setoranSaatPencarian.asuransi.replace(/\,/g,'')))
           payload.append('kode_kreditur', this.form.data.kreditur.kode_value)
           payload.append('tanggal_registrasi', this.form.data.tanggalPengajuan)
           payload.append('tanggal_akad', this.form.data.tanggalAkad)
           payload.append('tanggal_mulai_angsur', this.form.data.rencanaAngsur)
           payload.append('tanggal_jtempo', jatuhTempo)
-          payload.append('saldo_pokok', parseInt(this.form.data.plafon.replaceAll(',', '')))
-          payload.append('saldo_margin', parseInt(this.form.data.plafon.replaceAll(',', '')))
+          payload.append('saldo_pokok', parseInt(this.form.data.plafon.replace(/\,/g,'')))
+          payload.append('saldo_margin', parseInt(this.form.data.plafon.replace(/\,/g,'')))
           payload.append('saldo_catab', 0)
           payload.append('saldo_minggon', 0)
           payload.append('jtempo_angsuran_next', this.form.data.rencanaAngsur)
@@ -689,6 +700,7 @@
           try {
             let req = await easycoApi.regisAkadRead(payload, this.user.token)
             this.table.items = req.data.data
+            this.table.totalRows = req.data.total
           } catch (error) {
             console.log(error)
             this.notify('danger','Login Error',error)

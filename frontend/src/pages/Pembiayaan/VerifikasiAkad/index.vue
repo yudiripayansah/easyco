@@ -41,7 +41,7 @@
               </b-table>
             </b-col>
             <b-col cols="12" class="justify-content-end d-flex">
-              <b-pagination v-model="paging.currentPage" :total-rows="table.totalRows" :per-page="paging.perPage">
+              <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
               </b-pagination>
             </b-col>
           </b-row>
@@ -589,6 +589,7 @@
             try {
               let req = await easycoApi.regisAkadRead(payload, this.user.token)
               this.table.items = req.data.data
+              this.table.totalRows = req.data.total
             } catch (error) {
               console.log(error)
               this.notify('danger','Login Error',error)

@@ -209,10 +209,35 @@ class KopPembiayaan extends Model
 
     function tpl_deposit($no_anggota)
     {
-        $show = KopPembiayaan::select('kop_pembiayaan.no_rekening', DB::raw('COALESCE((kop_pembiayaan.angsuran_pokok+kop_pembiayaan.angsuran_margin+kop_pembiayaan.angsuran_catab),0) AS angsuran'))
+        $show = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'kop_pembiayaan.angsuran_pokok', 'kop_pembiayaan.angsuran_margin', 'kop_pembiayaan.angsuran_catab', DB::raw('COALESCE((kop_pembiayaan.angsuran_pokok+kop_pembiayaan.angsuran_margin+kop_pembiayaan.angsuran_catab),0) AS angsuran'))
             ->join('kop_pengajuan AS kpp', 'kpp.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')
             ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kpp.no_anggota')
             ->where('kop_pembiayaan.status_rekening', 1)
+            ->where('ka.no_anggota', $no_anggota)
+            ->get();
+
+        return $show;
+    }
+
+    function tpl_financing($no_anggota)
+    {
+        $show = KopPembiayaan::select('kpp.nama_singkat', 'kop_pembiayaan.counter_angsuran', 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.pokok')
+            ->join('kop_pengajuan AS kp', 'kp.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_prd_pembiayaan AS kpp', 'kpp.kode_produk', '=', 'kop_pembiayaan.kode_produk')
+            ->where('kop_pembiayaan.status_rekening', 1)
+            ->where('kp.no_anggota', $no_anggota)
+            ->get();
+
+        return $show;
+    }
+
+    function tpl_droping($no_anggota)
+    {
+        $show = KopPembiayaan::select('kop_pembiayaan.pokok', 'kop_pembiayaan.biaya_administrasi', 'kop_pembiayaan.biaya_asuransi_jiwa', 'kop_pembiayaan.biaya_asuransi_jaminan', 'kop_pembiayaan.biaya_notaris', 'kop_pembiayaan.tabungan_persen', 'kop_pembiayaan.dana_kebajikan')
+            ->join('kop_pengajuan AS kpp', 'kpp.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kpp.no_anggota')
+            ->where('kop_pembiayaan.status_rekening', 1)
+            ->where('kop_pembiayaan.status_droping', 0)
             ->where('ka.no_anggota', $no_anggota)
             ->get();
 
@@ -233,26 +258,25 @@ class KopPembiayaan extends Model
             })
             ->leftjoin('kop_list_kode AS oio', function ($joins) {
                 $joins->on('oio.kode_value', '=', 'kop_pembiayaan.kode_kreditur')->where('oio.nama_kode', '=', 'kreditur');
-            })
-            ->whereIn('kop_pembiayaan.status_rekening', [0, 1, 2, 3]);
+            });
 
-        if ($kode_cabang <> '00000') {
+        if ($kode_cabang <> '~') {
             $show->where('kc.kode_cabang', $kode_cabang);
         }
 
-        if ($jenis_pembiayaan <> 9) {
+        if ($jenis_pembiayaan <> '~') {
             $show->where('kpg.jenis_pembiayaan', $jenis_pembiayaan);
         }
 
-        if ($kode_petugas <> '00000') {
+        if ($kode_petugas <> '~') {
             $show->where('kop_pembiayaan.kode_petugas', $kode_petugas);
         }
 
-        if ($kode_rembug <> '00000') {
+        if ($kode_rembug <> '~') {
             $show->where('kr.kode_rembug', $kode_rembug);
         }
 
-        if ($produk <> '999') {
+        if ($produk <> '~') {
             $show->where('kop_pembiayaan.kode_produk', $produk);
         }
 

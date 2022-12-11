@@ -29,37 +29,37 @@ const routes = [
         redirect: '/transaksi/dashboard',
         children: [    
           {
-            path: 'dashboard/:cif_no?',
+            path: 'dashboard/:no_anggota?',
             name: 'Dashboard',
             component: () => import(/* webpackChunkName: "dashboard" */ '../views/Transaksi/Dashboard.vue')
           },
           {
-            path: 'pembiayaan/:cif_no?',
+            path: 'pembiayaan/:no_anggota?',
             name: 'Pembiayaan',
             component: () => import(/* webpackChunkName: "pembiayaan" */ '../views/Transaksi/Pembiayaan.vue')
           },
           {
-            path: 'pembiayaan-pengajuan/:cif_no?',
+            path: 'pembiayaan-pengajuan/:no_anggota?',
             name: 'PembiayaanPengajuan',
             component: () => import(/* webpackChunkName: "pembiayaan-pengajuan" */ '../views/Transaksi/PembiayaanPengajuan.vue')
           },
           {
-            path: 'pembiayaan-rab/:cif_no?',
+            path: 'pembiayaan-rab/:no_anggota?',
             name: 'PembiayaanRab',
             component: () => import(/* webpackChunkName: "pembiayaan-rab" */ '../views/Transaksi/PembiayaanRab.vue')
           },
           {
-            path: 'pembiayaan-wakalah/:cif_no?',
+            path: 'pembiayaan-wakalah/:no_anggota?',
             name: 'PembiayaanWakalah',
             component: () => import(/* webpackChunkName: "pembiayaan-wakalah" */ '../views/Transaksi/PembiayaanWakalah.vue')
           },
           {
-            path: 'pembiayaan-akad/:cif_no?',
+            path: 'pembiayaan-akad/:no_anggota?',
             name: 'PembiayaanAkad',
             component: () => import(/* webpackChunkName: "pembiayaan-akad" */ '../views/Transaksi/PembiayaanAkad.vue')
           },
           {
-            path: 'registrasi-anggota/:cif_no?',
+            path: 'registrasi-anggota/:no_anggota?',
             name: 'RegistrasiAnggota',
             component: () => import(/* webpackChunkName: "registrasi-anggota" */ '../views/Transaksi/RegistrasiAnggota.vue')
           },
@@ -74,14 +74,14 @@ const routes = [
             component: () => import(/* webpackChunkName: "setoran" */ '../views/Transaksi/Setoran.vue')
           },
           {
-            path: 'setoran-form/:cm_code?/:cif_no?',
+            path: 'setoran-form/:kode_rembug?/:no_anggota?',
             name: 'SetoranForm',
             component: () => import(/* webpackChunkName: "setoran-form" */ '../views/Transaksi/SetoranForm.vue')
           },
         ]
       },
       {
-        path: 'anggota/:cm_code?',
+        path: 'anggota/:kode_rembug?',
         name: 'Anggota',
         component: () => import(/* webpackChunkName: "anggota" */ '../views/Anggota.vue')
       },

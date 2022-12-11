@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KopAuth;
+use App\Models\KopKasPetugas;
 use App\Models\KopUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -51,11 +52,18 @@ class AuthController extends Controller
 
                             $save = $check->save();
 
+                            $param2 = array('id_user' => $get->id_user);
+
+                            $get2 = KopKasPetugas::where($param2)->first();
+
                             $data = array(
                                 'id' => $get->id,
                                 'id_user' => $get->id_user,
                                 'kode_cabang' => $get->kode_cabang,
                                 'kode_pgw' => $get->kode_pgw,
+                                'kode_petugas' => $get2->kode_petugas,
+                                'kode_kas_petugas' => $get2->kode_kas_petugas,
+                                'saldo_awal' => $get2->saldo,
                                 'nama_user' => $get->nama_user,
                                 'role_user' => $get->role_user,
                                 'akses_user' => $get->akses_user,

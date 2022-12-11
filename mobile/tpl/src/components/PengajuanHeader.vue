@@ -10,7 +10,7 @@
           <div class="d-flex flex-column">
             <h5 class="text-h5 font-weight-bold">John Doe</h5>
             <span class="text-caption grey--text">11228877665453</span>
-            <span class="orange--text lighten-1 font-weight-black">Rembug Mawar</span>
+            <span class="indigo--text lighten-1 font-weight-black">Rembug Mawar</span>
           </div>
         </v-container>
       </v-card>

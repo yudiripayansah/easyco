@@ -254,18 +254,22 @@ class RegistrasiAkadController extends Controller
 
     public function read(Request $request)
     {
-        $token = $request->header('token');
-
         $offset = 0;
         $page = 1;
         $perPage = '~';
         $sortDir = 'ASC';
-        $sortBy = 'tanggal_akad';
+        $sortBy = 'kop_pembiayaan.tanggal_registrasi';
         $search = NULL;
         $total = 0;
         $totalPage = 1;
-        $type = NULL;
-        $id_cabang = NULL;
+        $cabang = '~';
+        $jenis_pembiayaan = '~';
+        $petugas = '~';
+        $rembug = '~';
+        $produk = '~';
+        $status = '~';
+        $from = NULL;
+        $to = NULL;
 
         if ($request->page) {
             $page = $request->page;
@@ -287,44 +291,136 @@ class RegistrasiAkadController extends Controller
             $search = strtoupper($request->search);
         }
 
+        if ($request->status) {
+            $status = $request->status;
+        }
+
+        if ($request->cabang) {
+            $cabang = $request->cabang;
+        }
+
+        if ($request->jenis_pembiayaan) {
+            $jenis_pembiayaan = $request->jenis_pembiayaan;
+        }
+
+        if ($request->petugas) {
+            $petugas = $request->petugas;
+        }
+
+        if ($request->rembug) {
+            $rembug = $request->rembug;
+        }
+
+        if ($request->produk) {
+            $produk = $request->produk;
+        }
+
+        if ($request->from) {
+            $from = str_replace('/', '-', $request->from);
+            $from = date('Y-m-d', strtotime($from));
+        }
+
+        if ($request->to) {
+            $to = str_replace('/', '-', $request->to);
+            $to = date('Y-m-d', strtotime($to));
+        }
+
         if ($page > 1) {
             $offset = ($page - 1) * $perPage;
         }
 
-        $param = array('token' => $token);
-
-        $gets = KopUser::where($param)->first();
-
-        $read = KopPembiayaan::select('kop_pembiayaan.*', 'kop_anggota.nama_anggota', 'kop_rembug.nama_rembug')->join('kop_pengajuan', 'kop_pengajuan.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')->join('kop_anggota', 'kop_anggota.no_anggota', '=', 'kop_pengajuan.no_anggota')->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', '=', 'kop_anggota.kode_rembug')->orderBy($sortBy, $sortDir);
+        $read = KopPembiayaan::select('kop_pembiayaan.*', 'kop_cabang.nama_cabang', 'kop_rembug.nama_rembug', 'kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kop_anggota.tempat_lahir', 'kop_anggota.tgl_lahir', 'kop_anggota_uk.usia', 'kop_anggota.no_telp', 'kop_desa.nama_desa', 'kop_pengajuan.pengajuan_ke', DB::raw('(kop_pembiayaan.angsuran_pokok+kop_pembiayaan.angsuran_margin+kop_pembiayaan.angsuran_catab+kop_pembiayaan.angsuran_minggon) AS angsuran'))
+            ->join('kop_pengajuan', 'kop_pengajuan.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_anggota', 'kop_anggota.no_anggota', 'kop_pengajuan.no_anggota')
+            ->join('kop_anggota_uk', 'kop_anggota_uk.no_anggota', 'kop_anggota.no_anggota')
+            ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang')
+            ->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', 'kop_anggota.kode_rembug')
+            ->leftjoin('kop_desa', 'kop_desa.kode_desa', 'kop_rembug.kode_desa')
+            ->join('kop_list_kode AS klk', function ($join) {
+                $join->on('klk.kode_value', 'kop_pembiayaan.peruntukan')->where('klk.nama_kode', '=', 'peruntukan');
+            })
+            ->leftjoin('kop_list_kode AS oio', function ($join) {
+                $join->on('oio.kode_value', 'kop_pembiayaan.kode_kreditur')->where('oio.nama_kode', '=', 'kreditur');
+            });
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
         }
 
-        if ($gets->kode_cabang <> '00000') {
-            $read->where(DB::raw('SUBSTR(kop_pembiayaan.no_rekening,1,5)'), $gets->kode_cabang);
+        if ($cabang && $cabang != '~') {
+            $read->where('kop_cabang.kode_cabang', $cabang);
         }
 
-        if ($search != NULL) {
-            $read->where('kop_pembiayaan.status_rekening', 0)->where('kop_pembiayaan.no_rekening', 'LIKE', '%' . $search . '%');
-        } else {
-            $read->where('kop_pembiayaan.status_rekening', 0);
+        if ($jenis_pembiayaan && $jenis_pembiayaan != '~') {
+            $read->where('kop_pengajuan.jenis_pembiayaan', $jenis_pembiayaan);
         }
 
-        $read = $read->get();
+        if ($petugas && $petugas != '~') {
+            $read->where('kop_pembiayaan.kode_petugas', $petugas);
+        }
+
+        if ($rembug && $rembug != '~') {
+            $read->where('kop_rembug.kode_rembug', $rembug);
+        }
+
+        if ($produk && $produk != '~') {
+            $read->where('kop_pembiayaan.kode_produk', $produk);
+        }
+
+        if ($status && $status != '~') {
+            $read->whereIn('kop_pengajuan.status_pengajuan', $status);
+        }
+
+        if ($search) {
+            $read->where('kop_pengajuan.no_anggota', 'LIKE', '%' . $search . '%')
+                ->orWhere('kop_pengajuan.no_pengajuan', 'LIKE', '%' . $search . '%');
+        }
+
+        if ($from && $to) {
+            $read->whereBetween('kop_pembiayaan.tanggal_registrasi', [$from, $to]);
+        }
+
+        $read = $read->orderBy($sortBy, $sortDir)->get();
 
         foreach ($read as $rd) {
             $useCount = 'used count diubah datanya disini';
             $rd->used_count = $useCount;
         }
 
-        if ($search || $id_cabang || $type) {
+        if ($search || $cabang || $jenis_pembiayaan || $petugas || $rembug || $produk || $status || ($from && $to)) {
             $total = KopPembiayaan::orderBy($sortBy, $sortDir);
 
+            if ($cabang && $cabang != '~') {
+                $total->where('kop_cabang.kode_cabang', $cabang);
+            }
+
+            if ($jenis_pembiayaan && $jenis_pembiayaan != '~') {
+                $total->where('kop_pengajuan.jenis_pembiayaan', $jenis_pembiayaan);
+            }
+
+            if ($petugas && $petugas != '~') {
+                $total->where('kop_pembiayaan.kode_petugas', $petugas);
+            }
+
+            if ($rembug && $rembug != '~') {
+                $total->where('kop_rembug.kode_rembug', $rembug);
+            }
+
+            if ($produk && $produk != '~') {
+                $total->where('kop_pembiayaan.kode_produk', $produk);
+            }
+
+            if ($status && $status != '~') {
+                $total->whereIn('kop_pengajuan.status_pengajuan', $status);
+            }
+
             if ($search) {
-                $total->where('kop_pembiayaan.status_rekening', 0)->where('kop_pembiayaan.no_rekening', 'LIKE', '%' . $search . '%');
-            } else {
-                $read->where('kop_pembiayaan.status_rekening', 0);
+                $total->where('kop_pengajuan.no_anggota', 'LIKE', '%' . $search . '%')
+                    ->orWhere('kop_pengajuan.no_pengajuan', 'LIKE', '%' . $search . '%');
+            }
+
+            if ($from && $to) {
+                $total->whereBetween('kop_pembiayaan.tanggal_registrasi', [$from, $to]);
             }
 
             $total = $total->count();
@@ -334,6 +430,10 @@ class RegistrasiAkadController extends Controller
 
         if ($perPage != '~') {
             $totalPage = ceil($total / $perPage);
+        }
+
+        foreach ($read as $row) {
+            $row->tgl_gabung = date('d-F-Y', strtotime($row->tgl_gabung));
         }
 
         $res = array(

@@ -248,22 +248,21 @@ class PengajuanController extends Controller
 
     public function read(Request $request)
     {
-        $token = $request->header('token');
-
-        $param = array('token' => $token);
-
-        $get = KopUser::where($param)->first();
-
         $offset = 0;
         $page = 1;
         $perPage = '~';
         $sortDir = 'ASC';
-        $sortBy = 'no_pengajuan';
+        $sortBy = 'kop_pengajuan.tanggal_pengajuan';
         $search = NULL;
         $total = 0;
         $totalPage = 1;
-        $type = NULL;
-        $id_cabang = NULL;
+        $cabang = '~';
+        $jenis_pembiayaan = '~';
+        $petugas = '~';
+        $rembug = '~';
+        $status = '~';
+        $from = NULL;
+        $to = NULL;
 
         if ($request->page) {
             $page = $request->page;
@@ -285,24 +284,78 @@ class PengajuanController extends Controller
             $search = strtoupper($request->search);
         }
 
+        if ($request->status) {
+            $status = $request->status;
+        }
+
+        if ($request->cabang) {
+            $cabang = $request->cabang;
+        }
+
+        if ($request->jenis_pembiayaan) {
+            $jenis_pembiayaan = $request->jenis_pembiayaan;
+        }
+
+        if ($request->petugas) {
+            $petugas = $request->petugas;
+        }
+
+        if ($request->rembug) {
+            $rembug = $request->rembug;
+        }
+
+        if ($request->from) {
+            $from = str_replace('/', '-', $request->from);
+            $from = date('Y-m-d', strtotime($from));
+        }
+
+        if ($request->to) {
+            $to = str_replace('/', '-', $request->to);
+            $to = date('Y-m-d', strtotime($to));
+        }
+
         if ($page > 1) {
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopPengajuan::select('kop_pengajuan.*', 'kop_anggota.nama_anggota', 'kop_rembug.nama_rembug')->join('kop_anggota', 'kop_anggota.no_anggota', '=', 'kop_pengajuan.no_anggota')->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', '=', 'kop_anggota.kode_rembug')->orderBy($sortBy, $sortDir);
+        $read = KopPengajuan::select('kop_pengajuan.*', 'kop_cabang.nama_cabang', 'kop_rembug.nama_rembug', 'kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kop_anggota.no_ktp', 'kop_anggota.tempat_lahir', 'kop_anggota.tgl_lahir', 'kop_anggota.no_telp', 'kop_kas_petugas.nama_kas_petugas')
+            ->orderBy($sortBy, $sortDir)
+            ->join('kop_anggota', 'kop_anggota.no_anggota', 'kop_pengajuan.no_anggota')
+            ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang')
+            ->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', 'kop_anggota.kode_rembug')
+            ->join('kop_kas_petugas', 'kop_kas_petugas.kode_petugas', 'kop_rembug.kode_petugas');
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
         }
 
-        if ($get->kode_cabang <> '00000') {
-            $read->where(DB::raw('SUBSTR(kop_pengajuan.no_anggota,1,5)'), $get->kode_cabang);
+        if ($status && $status != '~') {
+            $read->whereIn('kop_pengajuan.status_pengajuan', $status);
         }
 
-        if ($search != NULL) {
-            $read->where('kop_pengajuan.status_pengajuan', 0)->where('kop_pengajuan.no_anggota', 'LIKE', '%' . $search . '%')->orWhere('no_pengajuan', 'LIKE', '%' . $search . '%');
-        } else {
-            $read->where('kop_pengajuan.status_pengajuan', 0);
+        if ($cabang && $cabang != '~') {
+            $read->where('kop_cabang.kode_cabang', $cabang);
+        }
+
+        if ($jenis_pembiayaan && $jenis_pembiayaan != '~') {
+            $read->where('kop_pengajuan.jenis_pembiayaan', $jenis_pembiayaan);
+        }
+
+        if ($petugas && $petugas != '~') {
+            $read->where('kop_kas_petugas.kode_petugas', $petugas);
+        }
+
+        if ($rembug && $rembug != '~') {
+            $read->where('kop_rembug.kode_rembug', $rembug);
+        }
+
+        if ($search) {
+            $read->where('kop_pengajuan.no_anggota', 'LIKE', '%' . $search . '%')
+                ->orWhere('kop_pengajuan.no_pengajuan', 'LIKE', '%' . $search . '%');
+        }
+
+        if ($from && $to) {
+            $read->whereBetween('kop_pengajuan.tanggal_pengajuan', [$from, $to]);
         }
 
         $read = $read->get();
@@ -312,13 +365,36 @@ class PengajuanController extends Controller
             $rd->used_count = $useCount;
         }
 
-        if ($search || $id_cabang || $type) {
+        if ($search || $cabang || $jenis_pembiayaan || $petugas || $rembug || $status || ($from && $to)) {
             $total = KopPengajuan::orderBy($sortBy, $sortDir);
 
             if ($search) {
-                $total->where('kop_pengajuan.status_pengajuan', 0)->where('kop_pengajuan.no_anggota', 'LIKE', '%' . $search . '%')->orWhere('no_pengajuan', 'LIKE', '%' . $search . '%');
-            } else {
-                $total->where('kop_pengajuan.status_pengajuan', 0);
+                $total->where('kop_pengajuan.no_anggota', 'LIKE', '%' . $search . '%')
+                    ->orWhere('kop_pengajuan.no_pengajuan', 'LIKE', '%' . $search . '%');
+            }
+
+            if ($status && $status != '~') {
+                $total->whereIn('kop_pengajuan.status_pengajuan', $status);
+            }
+
+            if ($cabang && $cabang != '~') {
+                $total->where('kop_cabang.kode_cabang', $cabang);
+            }
+
+            if ($jenis_pembiayaan && $jenis_pembiayaan != '~') {
+                $total->where('kop_pengajuan.jenis_pembiayaan', $jenis_pembiayaan);
+            }
+
+            if ($petugas && $petugas != '~') {
+                $total->where('kop_kas_petugas.kode_petugas', $petugas);
+            }
+
+            if ($rembug && $rembug != '~') {
+                $total->where('kop_rembug.kode_rembug', $rembug);
+            }
+
+            if ($from && $to) {
+                $total->whereBetween('kop_pengajuan.tanggal_pengajuan', [$from, $to]);
             }
 
             $total = $total->count();
@@ -328,6 +404,10 @@ class PengajuanController extends Controller
 
         if ($perPage != '~') {
             $totalPage = ceil($total / $perPage);
+        }
+
+        foreach ($read as $row) {
+            $row->tgl_gabung = date('d-F-Y', strtotime($row->tgl_gabung));
         }
 
         $res = array(

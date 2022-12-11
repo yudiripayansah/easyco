@@ -1,72 +1,57 @@
 <template>
   <div>
     <v-select solo label="Rembug" class="mb-4" hide-details :items="rembug" v-model="list.rembug" @change="$emit('refreshAnggota',list.rembug)"/>
-    <v-btn small block class="orange lighten-1 white--text rounded-lg mb-4" type="submit">
+    <!-- <v-btn small block class="indigo lighten-1 white--text rounded-lg mb-4" type="submit">
       Infaq
-    </v-btn>
+    </v-btn> -->
     <v-container class="pa-0" v-if="list.anggota && list.anggota.length > 0">
       <v-card class="white elevation-3 rounded-lg pa-3 align-items-end mb-3">
         <div class="d-flex justify-space-between">
           <span>Total Setoran</span>
-          <h5>Rp 1.000.000</h5>
+          <h5>Rp {{thousand(total.setoran)}}</h5>
         </div>
         <div class="d-flex justify-space-between">
           <span>Total Penarikan</span>
-          <h5>Rp 1.000.000</h5>
+          <h5>Rp {{thousand(total.penarikan)}}</h5>
         </div>
-        <div class="d-flex justify-space-between">
+        <!-- <div class="d-flex justify-space-between">
           <span>Total Infaq</span>
-          <h5>Rp 1.000.000</h5>
-        </div>
+          <h5>Rp 0</h5>
+        </div> -->
       </v-card>
       <v-card class="white elevation-3 rounded-lg pa-3 align-items-end mb-3" v-for="(agt,agtIndex) in list.anggota" :key="agtIndex">
-        <v-container class="d-flex justify-space-between pa-0">
-          <div class="d-flex flex-column">
-            <h5 class="text-h5 font-weight-bold">{{agt.nama}}</h5>
-            <span class="text-caption grey--text">{{agt.cif_no}}</span>
-            <span class="orange--text lighten-1 font-weight-black">{{agt.cm_name}}</span>
-            <div class="d-flex block flex-row justify-space-between align-items-center">
-              <span>Total Setoran: </span>
-              <h5 class="text-end">Rp 1.000.000</h5>
-            </div>
-            <div class="d-flex block flex-row justify-space-between align-items-center">
-              <span>Total Penarikan: </span>
-              <h5 class="text-end">Rp 1.000.000</h5>
-            </div>
+        <v-container class="d-flex justify-space-between pa-0 flex-column">
+          <h5 class="text-h6 font-weight-bold d-inline-flex justify-space-between align-center">{{agt.nama_anggota}} <small class="text-caption grey--text ms-3">{{agt.no_anggota}}</small></h5>
+          <div class="d-flex block flex-row justify-space-between align-items-center">
+            <span>Total Setoran: </span>
+            <h5 class="text-end">Rp {{thousand(agt.total_penerimaan)}}</h5>
           </div>
-          <div>
-            <!-- <v-btn
-              class="orange lighten-1"
-              fab
-              x-small
-              dark
-              depressed
-            >
-              <v-icon>mdi-refresh</v-icon>
-            </v-btn> -->
+          <div class="d-flex block flex-row justify-space-between align-items-center">
+            <span>Total Penarikan: </span>
+            <h5 class="text-end">Rp {{thousand(agt.total_penarikan)}}</h5>
           </div>
         </v-container>
         <v-divider class="my-2"/>
         <v-container class="pa-0 d-flex justify-space-between">
           <v-row>
             <v-col cols="4">
-              <router-link :to="`/transaksi/setoran-form/${list.rembug}/${agt.cif_no}`">
-                <v-btn small block class="orange lighten-1 white--text rounded-lg" type="submit">
+              <router-link :to="`/transaksi/setoran-form/${list.rembug}/${agt.no_anggota}`">
+                <v-btn small block class="indigo lighten-1 white--text rounded-lg" type="submit">
                   Setoran
                 </v-btn>
               </router-link>
             </v-col>
             <v-col cols="4">
-              <router-link :to="`/transaksi/pembiayaan/${agt.cif_no}`">
-                <v-btn small block class="orange lighten-1 white--text rounded-lg px-0" type="submit">
+              <router-link :to="`/transaksi/pembiayaan/${agt.no_anggota}`">
+                <v-btn small block class="indigo lighten-1 white--text rounded-lg px-0" type="submit">
                   Pembiayaan
                 </v-btn>
               </router-link>
             </v-col>
             <v-col cols="4">
-              <router-link :to="`/transaksi/rekening/${agt.cif_no}`">
-                <v-btn small block class="orange lighten-1 white--text rounded-lg" type="submit">
-                  Rekening
+              <router-link :to="`/transaksi/rekening/${agt.no_anggota}`">
+                <v-btn small block class="indigo lighten-1 white--text rounded-lg" type="submit">
+                  Tabungan
                 </v-btn>
               </router-link>
             </v-col>
@@ -88,6 +73,7 @@
   </div>
 </template>
 <script>
+import helper from '@/utils/helper'
 import Toast from '@/components/Toast'
 import {
   mapGetters,
@@ -95,7 +81,7 @@ import {
 } from "vuex";
 import services from "@/services";
 export default {
-  props: ['list','target'],
+  props: ['list','target', 'total'],
   components: {
     Toast
   },
@@ -113,12 +99,13 @@ export default {
     ...mapGetters(['user'])
   },
   methods: {
+    ...helper,
     async getRembug() {
-      let day = new Date().getDay();
-      day = 3
+      let hari_transaksi = new Date().getDay();
+      hari_transaksi = 1
       let payload = new FormData()
-      payload.append('fa_code', this.user.fa_code)
-      payload.append('day', day)
+      payload.append('kode_petugas', this.user.kode_petugas)
+      payload.append('hari_transaksi', hari_transaksi)
       this.rembug = []
       this.loading = true
       try {
@@ -126,8 +113,8 @@ export default {
         if(req.status === 200) {
           req.data.data.map((item) => {
             this.rembug.push({
-              text: item.cm_name,
-              value: item.cm_code
+              text: item.nama_rembug,
+              value: item.kode_rembug
             })
           })
         } else {

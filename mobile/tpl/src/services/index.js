@@ -1,15 +1,9 @@
 import axios from 'axios';
 const Axios = axios.create({
-  baseURL: 'https://tpl.baytulikhtiar.com/api/'
+  baseURL: 'https://easyco.kopikoding.com/api/api/'
 })
-const authRegister = (payload) => {
-  return Axios.post('auth/register', payload)
-}
-const authCheckPassword = (payload) => {
-  return Axios.post('/auth/check_password', payload)
-}
-const authUsername = (payload) => {
-  return Axios.post('auth/check_fa_code', payload)
+const authLogin = (payload) => {
+  return Axios.post('/authenticate/login', payload)
 }
 const infoRembug = (payload, token) => {
   let config = {
@@ -17,7 +11,7 @@ const infoRembug = (payload, token) => {
       'Token': token
     }
   }
-  return Axios.post('/information/rembug', payload, config)
+  return Axios.post('/tpl/information/rembug', payload, config)
 }
 const infoMember = (payload, token) => {
   let config = {
@@ -25,7 +19,7 @@ const infoMember = (payload, token) => {
       'Token': token
     }
   }
-  return Axios.post('/information/member', payload, config)
+  return Axios.post('/tpl/information/member', payload, config)
 }
 const transSetoranDeposit = (payload, token) => {
   let config = {
@@ -33,58 +27,20 @@ const transSetoranDeposit = (payload, token) => {
       'Token': token
     }
   }
-  return Axios.post('/transaction/deposit', payload, config)
+  return Axios.post('/tpl/transaction/deposit', payload, config)
 }
-const transSetoranDepositProses = (payload, token) => {
+const transSetoranProses = (payload, token) => {
   let config = {
     headers: {
       'Token': token
     }
   }
-  return Axios.post('/transaction/process_deposit', payload, config)
-}
-const transPembiayaanPengajuan = (payload, token) => {
-  let config = {
-    headers: {
-      'Token': token
-    }
-  }
-  return Axios.post('/transaction/submission', payload, config)
-}
-const transPembiayaanRab = (payload, token) => {
-  let config = {
-    headers: {
-      'Token': token
-    }
-  }
-  return Axios.post('/transaction/rab', payload, config)
-}
-const transPembiayaanPencairan = (payload, token) => {
-  let config = {
-    headers: {
-      'Token': token
-    }
-  }
-  return Axios.post('/transaction/droping', payload, config)
-}
-const transPembiayaanPencairanProses = (payload, token) => {
-  let config = {
-    headers: {
-      'Token': token
-    }
-  }
-  return Axios.post('/transaction/process_droping', payload, config)
+  return Axios.post('/tpl/transaction/process_deposit', payload, config)
 }
 export default {
-  authRegister,
-  authCheckPassword,
-  authUsername,
+  authLogin,
   infoRembug,
   infoMember,
   transSetoranDeposit,
-  transSetoranDepositProses,
-  transPembiayaanPengajuan,
-  transPembiayaanRab,
-  transPembiayaanPencairan,
-  transPembiayaanPencairanProses
+  transSetoranProses
 }

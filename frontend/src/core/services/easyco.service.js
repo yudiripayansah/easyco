@@ -60,6 +60,24 @@ const easycoApi = {
     }
     return axios.get(url, config)
   },
+  anggotaRembug(payload,token) {
+    let url = 'anggota/rembug'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  anggotaExcel(payload,token) {
+    let url = 'laporan/list/excel/anggota_masuk?kode_cabang=10101&kode_rembug=101010001&from_date=2022-09-01&thru_date=2022-09-07'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
   // Petugas
   petugasRead(payload, token) {
     let url = 'pengajuan/fa'
@@ -104,8 +122,7 @@ const easycoApi = {
     let url = 'pengajuan/create'
     let config = {
       headers: {
-        'token': token,
-        'Content-Type' : 'multipart/form-data'
+        'token': token
       }
     }
     return axios.post(url, payload, config)
@@ -128,6 +145,24 @@ const easycoApi = {
     }
     return axios.post(url, payload, config)
   },
+  pengajuanDetail(payload, token) {
+    let url = 'pengajuan/detail'+payload
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
+  pengajuanDelete(payload, token) {
+    let url = 'pengajuan/delete'+payload
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
   // Registrasi Akad
   regisAkadRead(payload, token){
     let url = 'registrasiakad/read'
@@ -148,7 +183,7 @@ const easycoApi = {
     return axios.post(url, payload, config)
   },
   regisAkadReadDetail(payload, token){
-    let url = 'registrasiakad/detail?id='+payload
+    let url = 'registrasiakad/detail'+payload
     let config = {
       headers: {
         'token': token
@@ -231,7 +266,7 @@ const easycoApi = {
     return axios.get(url, config)
   },
   verifikasiAkadApprove(payload, token){
-    let url = 'registrasiakad/approve?id='+payload
+    let url = 'registrasiakad/approve'+payload
     let config = {
       headers: {
         'token': token
@@ -240,7 +275,7 @@ const easycoApi = {
     return axios.get(url, config)
   },
   verifikasiAkadReject(payload, token){
-    let url = 'registrasiakad/reject?id='+payload
+    let url = 'registrasiakad/reject'+payload
     let config = {
       headers: {
         'token': token

@@ -103,14 +103,13 @@ class KopAnggota extends Model
     {
         $show = KopAnggota::select('kc.nama_cabang', 'kr.nama_rembug', 'kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kop_anggota.jenis_kelamin', 'kop_anggota.ibu_kandung', 'kop_anggota.tempat_lahir', 'kop_anggota.tgl_lahir', 'kop_anggota.alamat', 'kop_anggota.desa', 'kop_anggota.kecamatan', 'kop_anggota.kabupaten', 'kop_anggota.no_ktp', 'kop_anggota.no_telp', 'kop_anggota.pendidikan', 'kop_anggota.status_perkawinan', 'kop_anggota.nama_pasangan', 'kop_anggota.pekerjaan', 'kop_anggota.ket_pekerjaan', 'kop_anggota.pendapatan_perbulan', 'kop_anggota.tgl_gabung')
             ->join('kop_cabang AS kc', 'kc.kode_cabang', '=', 'kop_anggota.kode_cabang')
-            ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'kop_anggota.kode_rembug')
-            ->whereIn('kop_anggota.status', [0, 1, 2, 3]);
+            ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'kop_anggota.kode_rembug');
 
-        if ($kode_cabang <> '00000') {
+        if ($kode_cabang <> '~') {
             $show->where('kc.kode_cabang', $kode_cabang);
         }
 
-        if ($kode_rembug <> '00000') {
+        if ($kode_rembug <> '~') {
             $show->where('kr.kode_rembug', $kode_rembug);
         }
 

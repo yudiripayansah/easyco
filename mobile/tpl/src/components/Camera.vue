@@ -2,7 +2,7 @@
 <div id="camera">
   <v-row no-gutters>
     <v-col cols="12" class="d-flex justify-center">
-      <v-btn block class="white--text" :class="{ 'orange lighten-1' : !isCameraOpen, 'red lighten-1' : isCameraOpen}" @click="toggleCamera">
+      <v-btn block class="white--text" :class="{ 'indigo lighten-1' : !isCameraOpen, 'red lighten-1' : isCameraOpen}" @click="toggleCamera">
         <span v-if="!isCameraOpen">Scan Qr</span>
         <span v-else>Tutup Kamera</span>
       </v-btn>

@@ -35,7 +35,7 @@
             </b-table>
           </b-col>
           <b-col cols="12" class="justify-content-end d-flex">
-            <b-pagination v-model="paging.currentPage" :total-rows="table.totalRows" :per-page="paging.perPage">
+            <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
             </b-pagination>
           </b-col>
         </b-row>
@@ -261,7 +261,7 @@
           loading: false,
         },
         paging: {
-          currentPage: 1,
+          page: 1,
           perPage: 10
         },
         remove: {
@@ -448,6 +448,15 @@
           variant: variant,
           solid: true,
           toaster: 'b-toaster-bottom-right'
+        })
+      },
+      notify(type, title, msg) {
+        this.$bvToast.toast(msg, {
+          title: title,
+          autoHideDelay: 5000,
+          variant: type,
+          toaster: 'b-toaster-bottom-right',
+          appendToast: true
         })
       }
     }

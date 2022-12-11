@@ -6,8 +6,13 @@ use App\Models\KopAnggota;
 use App\Models\KopPembiayaan;
 use App\Models\KopRembug;
 use App\Models\KopTabungan;
+use App\Models\KopTrxAnggota;
+use App\Models\KopTrxKasPetugas;
+use App\Models\KopTrxRembug;
 use App\Models\KopUser;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TplController extends Controller
 {
@@ -113,11 +118,16 @@ class TplController extends Controller
             $data = array();
 
             foreach ($read as $rd) {
+                $penerimaan = KopTrxAnggota::tpl_cashflow_credit($rd->no_anggota)->first();
+                $penarikan = KopTrxAnggota::tpl_cashflow_debet($rd->no_anggota)->first();
+
                 $data[] = array(
                     'no_anggota' => $rd->no_anggota,
                     'nama_anggota' => $rd->nama_anggota,
                     'kode_rembug' => $rd->kode_rembug,
-                    'nama_rembug' => $rd->nama_rembug
+                    'nama_rembug' => $rd->nama_rembug,
+                    'total_penerimaan' => $penerimaan->total_penerimaan,
+                    'total_penarikan' => $penarikan->total_penarikan
                 );
             }
 
@@ -149,13 +159,53 @@ class TplController extends Controller
         $getFinancing = KopPembiayaan::tpl_deposit($no_anggota)->first();
         $no_rekening = (isset($getFinancing->no_rekening) ? $getFinancing->no_rekening : '');
         $angsuran = (isset($getFinancing->angsuran) ? $getFinancing->angsuran : 0);
+        $angsuran_pokok = (isset($getFinancing->angsuran_pokok) ? $getFinancing->angsuran_pokok : 0);
+        $angsuran_margin = (isset($getFinancing->angsuran_margin) ? $getFinancing->angsuran_margin : 0);
+        $angsuran_catab = (isset($getFinancing->angsuran_catab) ? $getFinancing->angsuran_catab : 0);
         $freq = (isset($getFinancing->angsuran) ? 1 : 0);
+
+        // PENCAIRAN
+        $getDroping = KopPembiayaan::tpl_droping($no_anggota)->first();
+        $pokok = (isset($getDroping->pokok) ? $getDroping->pokok : 0);
+        $biaya_administrasi = (isset($getDroping->biaya_administrasi) ? $getDroping->biaya_administrasi : 0);
+        $biaya_asuransi_jiwa = (isset($getDroping->biaya_asuransi_jiwa) ? $getDroping->biaya_asuransi_jiwa : 0);
+        $biaya_asuransi_jaminan = (isset($getDroping->biaya_asuransi_jaminan) ? $getDroping->biaya_asuransi_jaminan : 0);
+        $biaya_notaris = (isset($getDroping->biaya_notaris) ? $getDroping->biaya_notaris : 0);
+        $tabungan_persen = (isset($getDroping->tabungan_persen) ? $getDroping->tabungan_persen : 0);
+        $dana_kebajikan = (isset($getDroping->dana_kebajikan) ? $getDroping->dana_kebajikan : 0);
 
         // SIMPANAN WAJIB
         $param = array('no_anggota' => $no_anggota);
         $getMember = KopAnggota::where($param)->first();
         $simwa = $getMember->simwa;
+        $simsuk = $getMember->simsuk;
 
+        // PEMBIAYAAN
+        $show = KopPembiayaan::tpl_financing($no_anggota);
+
+        $hit = $show->count();
+
+        $financing = array();
+
+        if ($hit > 0) {
+            foreach ($show as $sh) {
+                $financing[] = array(
+                    'nama_produk' => $sh['nama_singkat'],
+                    'counter_angsuran' => $sh['counter_angsuran'],
+                    'jangka_waktu' => $sh['jangka_waktu'],
+                    'pokok' => str_replace('.', '', number_format($sh['pokok'], 0, ',', '.'))
+                );
+            }
+        } else {
+            $financing[] = array(
+                'nama_produk' => NULL,
+                'counter_angsuran' => 0,
+                'jangka_waktu' => 0,
+                'pokok' => 0
+            );
+        }
+
+        // BERENCANA
         $read = KopTabungan::tpl_saving($no_anggota);
 
         $count = $read->count();
@@ -165,10 +215,12 @@ class TplController extends Controller
         if ($count > 0) {
             foreach ($read as $rd) {
                 $saving[] = array(
-                    'nama_produk' => $rd['nama_produk'],
+                    'nama_produk' => $rd['nama_singkat'],
                     'no_rekening' => $rd['no_rekening'],
                     'setoran' => str_replace('.', '', number_format($rd['setoran'], 0, ',', '.')),
-                    'freq_saving' => (isset($rd['setoran']) ? 1 : 0)
+                    'freq_saving' => (isset($rd['setoran']) ? 1 : 0),
+                    'counter_angsuran' => $rd['counter_angsuran'],
+                    'jangka_waktu' => $rd['jangka_waktu']
                 );
             }
         } else {
@@ -176,17 +228,46 @@ class TplController extends Controller
                 'nama_produk' => NULL,
                 'no_rekening' => NULL,
                 'setoran' => 0,
-                'freq_saving' => 0
+                'freq_saving' => 0,
+                'counter_angsuran' => 0,
+                'jangka_waktu' => 0
             );
         }
 
-
         $data = array(
             'no_rekening' => $no_rekening,
-            'angsuran' => str_replace('.', '', number_format($angsuran, 0, ',', '.')),
+            'angsuran' => [
+                'amount' => str_replace('.', '', number_format($angsuran, 0, ',', '.')),
+                'detail' => [
+                    [
+                        'id' => '32',
+                        'nama' => 'angsuran pokok',
+                        'amount' => str_replace('.', '', number_format($angsuran_pokok, 0, ',', '.'))
+                    ],
+                    [
+                        'id' => '33',
+                        'nama' => 'angsuran margin',
+                        'amount' => str_replace('.', '', number_format($angsuran_margin, 0, ',', '.'))
+                    ],
+                    [
+                        'id' => '34',
+                        'nama' => 'angsuran catab',
+                        'amount' => str_replace('.', '', number_format($angsuran_catab, 0, ',', '.'))
+                    ]
+                ]
+            ],
             'frekuensi' => $freq,
             'simwa' => str_replace('.', '', number_format($simwa, 0, ',', '.')),
-            'berencana' => $saving
+            'simsuk' => str_replace('.', '', number_format($simsuk, 0, ',', '.')),
+            'pembiayaan' => $financing,
+            'berencana' => $saving,
+            'pokok' => str_replace('.', '', number_format($pokok, 0, ',', '.')),
+            'biaya_administrasi' => str_replace('.', '', number_format($biaya_administrasi, 0, ',', '.')),
+            'biaya_asuransi_jiwa' => str_replace('.', '', number_format($biaya_asuransi_jiwa, 0, ',', '.')),
+            'biaya_asuransi_jaminan' => str_replace('.', '', number_format($biaya_asuransi_jaminan, 0, ',', '.')),
+            'biaya_notaris' => str_replace('.', '', number_format($biaya_notaris, 0, ',', '.')),
+            'tabungan_persen' => str_replace('.', '', number_format($tabungan_persen, 0, ',', '.')),
+            'dana_kebajikan' => str_replace('.', '', number_format($dana_kebajikan, 0, ',', '.'))
         );
 
         $res = array(
@@ -195,6 +276,265 @@ class TplController extends Controller
             'msg' => 'Berhasil!',
             'error' => NULL
         );
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function process_deposit(Request $request)
+    {
+        $uuid = collect(DB::select('SELECT uuid() AS id_trx_rembug'))->first()->id_trx_rembug;
+
+        $kode_cabang = $request->kode_cabang;
+        $kode_rembug = $request->kode_rembug;
+        $kode_petugas = $request->kode_petugas;
+        $kode_kas_petugas = $request->kode_kas_petugas;
+        $trx_date = str_replace('/', '-', $request->trx_date);
+        $trx_date = date('Y-m-d', strtotime($trx_date));
+        $no_anggota = $request->no_anggota;
+        $no_rekening = $request->no_rekening;
+        $angsuran = $request->angsuran;
+        $setoran_sukarela = $request->setoran_sukarela;
+        $setoran_simpanan_wajib = $request->setoran_simpanan_wajib;
+        $penarikan_sukarela = $request->penarikan_sukarela;
+
+        $no_rekening_tabungan = $request->no_rekening_tabungan;
+        $amount_tabungan = $request->amount_tabungan;
+
+        $pokok = $request->pokok;
+
+        $count = count($no_rekening_tabungan);
+
+        $data_trx_rembug = array(
+            'id_trx_rembug' => $uuid,
+            'kode_rembug' => $kode_rembug,
+            'kode_petugas' => $kode_petugas,
+            'trx_date' => $trx_date,
+            'created_by' => $kode_petugas
+        );
+
+        $data_trx_anggota = array();
+
+        // ANGSURAN PEMBIAYAAN
+        for ($a = 0; $a < count($angsuran); $a++) {
+            $data_trx_anggota[] = array(
+                'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                'id_trx_rembug' => $uuid,
+                'no_anggota' => $no_anggota,
+                'no_rekening' => $no_rekening,
+                'trx_date' => $trx_date,
+                'amount' => $angsuran[$a]['amount'],
+                'flag_debet_credit' => 'C',
+                'trx_type' => $angsuran[$a]['id'],
+                'description' => 'Bayar ' . $angsuran[$a]['nama'],
+                'created_by' => $kode_petugas
+            );
+        }
+
+        // PENCAIRAN
+        if ($pokok > 0) {
+            $data_droping = array(
+                'status_droping' => 1,
+                'droping_by' => $kode_petugas,
+                'droping_at' => $trx_date
+            );
+        } else {
+            $data_droping = array(
+                'status_droping' => 0,
+                'droping_by' => NULL,
+                'droping_at' => NULL
+            );
+        }
+
+        // SETORAN SUKARELA
+        $data_trx_anggota[] = array(
+            'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+            'id_trx_rembug' => $uuid,
+            'no_anggota' => $no_anggota,
+            'no_rekening' => NULL,
+            'trx_date' => $trx_date,
+            'amount' => $setoran_sukarela,
+            'flag_debet_credit' => 'C',
+            'trx_type' => '13',
+            'description' => 'Bayar Simsuk',
+            'created_by' => $kode_petugas
+        );
+
+        // SETORAN SIMPANAN WAJIB
+        $data_trx_anggota[] = array(
+            'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+            'id_trx_rembug' => $uuid,
+            'no_anggota' => $no_anggota,
+            'no_rekening' => NULL,
+            'trx_date' => $trx_date,
+            'amount' => $setoran_simpanan_wajib,
+            'flag_debet_credit' => 'C',
+            'trx_type' => '12',
+            'description' => 'Bayar Simwa',
+            'created_by' => $kode_petugas
+        );
+
+        // PENARIKAN SUKARELA
+        $data_trx_anggota[] = array(
+            'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+            'id_trx_rembug' => $uuid,
+            'no_anggota' => $no_anggota,
+            'no_rekening' => NULL,
+            'trx_date' => $trx_date,
+            'amount' => $penarikan_sukarela,
+            'flag_debet_credit' => 'D',
+            'trx_type' => '22',
+            'description' => 'Penarikan Tabungan',
+            'created_by' => $kode_petugas
+        );
+
+        for ($i = 0; $i < $count; $i++) {
+            $data_trx_anggota[] = array(
+                'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                'id_trx_rembug' => $uuid,
+                'no_anggota' => $no_anggota,
+                'no_rekening' => $no_rekening_tabungan[$i],
+                'trx_date' => $trx_date,
+                'amount' => $amount_tabungan[$i],
+                'flag_debet_credit' => 'C',
+                'trx_type' => '21',
+                'description' => 'Setoran Tabungan',
+                'created_by' => $kode_petugas
+            );
+        }
+
+        $validate = KopTrxRembug::validateAdd($data_trx_rembug);
+        $validate2 = KopTrxAnggota::validateAdd($data_trx_anggota);
+
+        DB::beginTransaction();
+
+        if ($validate['status'] === TRUE or $validate2['status'] === TRUE) {
+            try {
+                KopTrxRembug::create($data_trx_rembug);
+                KopTrxAnggota::insert($data_trx_anggota);
+                KopPembiayaan::where('no_rekening', '=', $no_rekening)->update($data_droping);
+
+                $res = array(
+                    'status' => TRUE,
+                    'data' => NULL,
+                    'msg' => 'Berhasil!',
+                    'error' => NULL
+                );
+
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+
+                $res = array(
+                    'status' => FALSE,
+                    'data' => $data_trx_rembug,
+                    'msg' => $e->getMessage(),
+                    'error' => NULL
+                );
+            }
+        } else {
+            $msg = array(
+                'validate' => $validate['msg'],
+                'validate2' => $validate2['msg']
+            );
+
+            $error = array(
+                'error' => $validate['errors'],
+                'error2' => $validate2['errors']
+            );
+
+            $res = array(
+                'status' => FALSE,
+                'data' => NULL,
+                'msg' => $msg,
+                'error' => $error
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function process_cash(Request $request)
+    {
+        $kode_kas_petugas = $request->kode_kas_petugas;
+        $nama_rembug = $request->nama_rembug;
+        $total_setoran = $request->total_setoran;
+        $total_penarikan = $request->total_penarikan;
+        $total_infaq = $request->total_infaq;
+        $voucher_date = $request->voucher_date;
+        $created_by = $request->kode_petugas;
+
+        $validate_fill = array(
+            'kode_kas_petugas' => $kode_kas_petugas,
+            'nama_rembug' => $nama_rembug,
+            'total_setoran' => $total_setoran,
+            'total_penarikan' => $total_penarikan,
+            'total_infaq' => $total_infaq,
+            'voucher_date' => $voucher_date,
+            'created_by' => $created_by
+        );
+
+        $data_trx_kas_petugas = array();
+
+        $data_trx_kas_petugas[] = array(
+            'kode_kas_petugas' => $kode_kas_petugas,
+            'jenis_trx' => 2,
+            'debit_credit' => 'D',
+            'jumlah_trx' => ($total_setoran + $total_infaq),
+            'trx_date' => date('Y-m-d'),
+            'voucher_date' => $voucher_date,
+            'keterangan' => 'PENERIMAAN MAJELIS ' . $nama_rembug,
+            'created_by' => $created_by
+        );
+
+        $data_trx_kas_petugas[] = array(
+            'kode_kas_petugas' => $kode_kas_petugas,
+            'jenis_trx' => 3,
+            'debit_credit' => 'C',
+            'jumlah_trx' => $total_penarikan,
+            'trx_date' => date('Y-m-d'),
+            'voucher_date' => $voucher_date,
+            'keterangan' => 'PENARIKAN MAJELIS ' . $nama_rembug,
+            'created_by' => $created_by
+        );
+
+        $validate = KopTrxKasPetugas::validateAdd($validate_fill);
+
+        DB::beginTransaction();
+
+        if ($validate['status'] === TRUE) {
+            try {
+                KopTrxKasPetugas::insert($data_trx_kas_petugas);
+
+                $res = array(
+                    'status' => TRUE,
+                    'data' => NULL,
+                    'msg' => 'Berhasil!',
+                    'error' => NULL
+                );
+
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+
+                $res = array(
+                    'status' => FALSE,
+                    'data' => $data_trx_kas_petugas,
+                    'msg' => $e->getMessage(),
+                    'error' => NULL
+                );
+            }
+        } else {
+            $res = array(
+                'status' => FALSE,
+                'data' => NULL,
+                'msg' => $validate['msg'],
+                'error' => $validate['errors']
+            );
+        }
+
         $response = response()->json($res, 200);
 
         return $response;
