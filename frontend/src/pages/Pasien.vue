@@ -25,7 +25,7 @@
               </b-button>
             </template>
             <template #cell(no)="data">
-              {{ paging.perPage * (paging.currentPage-1) + data.index + 1 }}
+              {{ paging.perPage * (paging.page-1) + data.index + 1 }}
             </template>
             <template #table-busy>
               <div class="text-center text-danger my-2">
@@ -42,7 +42,7 @@
         Total <b class="mx-2">{{table.totalRows}}</b> data
       </b-col>
       <b-col xs=12 sm=6 class="mt-xs-2 d-flex justify-content-end align-items-end">
-        <b-pagination v-model="paging.currentPage" :total-rows="table.totalRows" :per-page="paging.perPage" class="m-0"></b-pagination>
+        <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage" class="m-0"></b-pagination>
       </b-col>
     </b-row>
   </b-card>
@@ -209,7 +209,7 @@ export default {
         selected: [],
       },
       paging: {
-        currentPage: 1,
+        page: 1,
         rows: 100,
         perPage: 10,
         search: null,

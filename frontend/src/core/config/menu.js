@@ -3,7 +3,7 @@ const menu = [
     target: '/dashboard',
     label: 'Dashboard',
     icon: 'menu-icon flaticon2-architecture-and-city',
-    component: import('@/pages/Dummy.vue')
+    component: import('@/pages/Dashboard.vue')
   },
   // Keanggotaan
   {
@@ -114,16 +114,26 @@ const menu = [
     icon: 'menu-icon fas fa-wallet',
     component: import('@/pages/Pembiayaan'),
     children: [
+      // {
+      //   target: 'pengajuan-pembiayaan-old',
+      //   label: 'Pengajuan Pembiayaan Old',
+      //   component: import('@/pages/Pembiayaan/PengajuanPembiayaan/index.vue'),
+      // },
       {
         target: 'pengajuan-pembiayaan',
         label: 'Pengajuan Pembiayaan',
-        component: import('@/pages/Pembiayaan/PengajuanPembiayaan/index.vue'),
+        component: import('@/pages/Pembiayaan/PengajuanPembiayaan.vue'),
       },
       {
         target: 'update-status-komite',
         label: 'Update Status Komite',
         component: import('@/pages/Pembiayaan/UpdateStatusPengajuan.vue'),
       },
+      // {
+      //   target: 'registrasi-akad-old',
+      //   label: 'Registrasi Akad Old',
+      //   component: import('@/pages/Pembiayaan/RegistrasiAkad/index.vue'),
+      // },
       {
         target: 'registrasi-akad',
         label: 'Registrasi Akad',
@@ -132,7 +142,7 @@ const menu = [
       {
         target: 'verifikasi-akad',
         label: 'Verifikasi Akad',
-        component: import('@/pages/Pembiayaan/VerifikasiAkad/index.vue'),
+        component: import('@/pages/Pembiayaan/VerifikasiAkad.vue'),
       },
       {
         target: 'cetak-akad',

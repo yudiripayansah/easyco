@@ -360,7 +360,7 @@
           loading: false,
         },
         paging: {
-          currentPage: 1,
+          page: 1,
           perPage: 10
         },
         remove: {
