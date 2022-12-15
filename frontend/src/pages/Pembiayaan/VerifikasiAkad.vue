@@ -34,9 +34,9 @@
 					</b-row>
 				</b-col>
 				<b-col cols="12">
-					<b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
-						:sort-by.sync="paging.sortBy" :sort-desc.sync="paging.sortDesc" show-empty @filtered="onTableUpdate"
-						:emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
+					<b-table responsive bordered outlined small striped hover :fields="table.fields"
+						:items="table.items" :sort-by.sync="paging.sortBy" :sort-desc.sync="paging.sortDesc" show-empty
+						@filtered="onTableUpdate" :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
 						<template #cell(no)="item">
 							{{ item.index + 1 }}
 						</template>
@@ -144,8 +144,8 @@
 									<b-input v-model="form.data.jangka_waktu" disabled />
 								</b-col>
 								<b-col>
-									<b-select v-model="form.data.periode_jangka_waktu" :options="opt.rencanaPeriodeJangkaWaktu"
-										disabled />
+									<b-select v-model="form.data.periode_jangka_waktu"
+										:options="opt.rencanaPeriodeJangkaWaktu" disabled />
 								</b-col>
 							</b-row>
 						</b-form-group>
@@ -173,12 +173,10 @@
 					<b-col cols="12" sm="6">
 						<h4 class="mb-5">Setoran Saat Pencairan</h4>
 						<b-form-group label="Biaya Adm">
-							<b-input :value="thousand(form.data.biaya_administrasi)"
-								disabled />
+							<b-input :value="thousand(form.data.biaya_administrasi)" disabled />
 						</b-form-group>
 						<b-form-group label="Asuransi">
-							<b-input :value="thousand(form.data.biaya_asuransi_jiwa)"
-								disabled />
+							<b-input :value="thousand(form.data.biaya_asuransi_jiwa)" disabled />
 						</b-form-group>
 						<b-form-group label="Dana Kebajikan">
 							<b-input :value="thousand(form.data.dana_kebajikan)" disabled />
@@ -198,7 +196,8 @@
 					<b-col cols="12" sm="6">
 						<b-form-group label="Tanggal Pengajuan">
 							<b-form-datepicker v-model="form.data.tanggal_pengajuan"
-								:date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" disabled />
+								:date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id"
+								disabled />
 						</b-form-group>
 					</b-col>
 					<!-- <b-col cols="12" sm="6">
@@ -210,7 +209,8 @@
 					<b-col cols="12" sm="6">
 						<b-form-group label="Tanggal Akad">
 							<b-form-datepicker v-model="form.data.tanggal_akad"
-								:date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" disabled />
+								:date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id"
+								disabled />
 						</b-form-group>
 					</b-col>
 					<!-- <b-col cols="12" sm="4">
@@ -232,12 +232,15 @@
 				</b-row>
 				<b-row>
 					<b-col cols="12" sm="12" class="d-flex justify-content-end border-top pt-5">
-						<b-button variant="secondary" @click="$bvModal.hide('modal-form')" :disabled="form.loading">Cancel
+						<b-button variant="secondary" @click="$bvModal.hide('modal-form')"
+							:disabled="form.loading">Cancel
 						</b-button>
-						<b-button variant="danger" type="button" :disabled="form.loading" class="ml-3" @click="doApproval(false)">
+						<b-button variant="danger" type="button" :disabled="form.loading" class="ml-3"
+							@click="doApproval('reject')">
 							{{ form.loading ? 'Memproses...' : 'Reject' }}
 						</b-button>
-						<b-button variant="primary" type="button" :disabled="form.loading" class="ml-3" @click="doApproval(true)">
+						<b-button variant="primary" type="button" :disabled="form.loading" class="ml-3"
+							@click="doApproval('approve')">
 							{{ form.loading ? 'Memproses...' : 'Approve' }}
 						</b-button>
 					</b-col>
@@ -248,7 +251,8 @@
 			body-bg-variant="warning" centered>
 			<p class="text-center py-3">Anda yakin ingin menghapus data ini?</p>
 			<div class="d-flex justify-content-end">
-				<b-button variant="light" type="button" :disabled="remove.loading" @click="$bvModal.hide('modal-delete')">Tidak
+				<b-button variant="light" type="button" :disabled="remove.loading"
+					@click="$bvModal.hide('modal-delete')">Tidak
 				</b-button>
 				<b-button variant="danger" class="ml-3" type="button" :disabled="remove.loading"
 					@click="doDelete(remove.data, false)">
@@ -412,8 +416,7 @@ export default {
 				sortDesc: true,
 				sortBy: 'id',
 				search: '',
-				status: 0,
-				cabang: '~',
+				status_rekening: [0],
 				jenis_pembiayaan: '~',
 				petugas: '~',
 				rembug: '~',
@@ -763,12 +766,15 @@ export default {
 			}
 		},
 		async doApproval(status) {
+			let state = status
 			try {
 				this.form.loading = true
 				let req = false
-				if(status) {
+				if (state == 'approve') {
+					console.log('approve')
 					req = await easycoApi.verifikasiAkadApprove(`?id=${this.form.data.id}`, this.user.token)
 				} else {
+					console.log('reject')
 					req = await easycoApi.verifikasiAkadReject(`?id=${this.form.data.id}`, this.user.token)
 				}
 				let { status, msg } = req.data

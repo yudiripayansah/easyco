@@ -217,7 +217,7 @@
           </v-col>
         </v-row>
       </v-card>
-      <v-card class="white elevation-3 rounded-lg pa-3 mb-3" v-if="(form.data.pokok > 0)">
+      <v-card class="white elevation-3 rounded-lg pa-3 mb-3" v-if="(form.data.pokok != 0)">
         <h6 class="text-h6 font-weight-bold mb-4">Pencairan</h6>
         <v-row>
           <v-col cols="7" class="pb-0">
@@ -410,11 +410,11 @@ export default {
               simwaState: true,
               angsuranState: true,
               taber: [],
-              pokok: 0,
-              biaya_administrasi: 0,
-              biaya_asuransi_jiwa: 0,
-              tabungan_persen: 0,
-              dana_kebajikan: 0,
+              pokok: dataDeposit.pokok,
+              biaya_administrasi: dataDeposit.biaya_administrasi,
+              biaya_asuransi_jiwa: dataDeposit.biaya_asuransi_jiwa,
+              tabungan_persen: dataDeposit.tabungan_persen,
+              dana_kebajikan: dataDeposit.dana_kebajikan,
               pembiayaan: dataDeposit.pembiayaan,
               total_setoran: 0
             }
@@ -424,6 +424,7 @@ export default {
               formData.taber.push(dataTaber)
             })
             this.form.data = {...formData}
+            console.log(formData)
             this.countTotalSetoran()
           } else {
             this.alert = {
@@ -446,7 +447,7 @@ export default {
     },
     async getRembug() {
       let hari_transaksi = new Date().getDay();
-      hari_transaksi = 1
+      hari_transaksi = this.user.hari_transaksi
       let payload = new FormData()
       payload.append('kode_petugas', this.user.kode_petugas)
       payload.append('hari_transaksi', hari_transaksi)
@@ -525,11 +526,11 @@ export default {
       formData.setoran_sukarela = (formData.setoran_sukarela) ? Number(formData.setoran_sukarela.replace(/\./g,"")) : 0
       formData.setoran_simpanan_wajib = (formData.setoran_simpanan_wajib) ? Number(formData.setoran_simpanan_wajib.replace(/\./g,"")) : 0
       formData.penarikan_sukarela = (formData.penarikan_sukarela) ? Number(formData.penarikan_sukarela.replace(/\./g,"")) : 0
-      formData.pokok = (formData.pokok) ? Number(formData.pokok) : 0
-      formData.biaya_administrasi = (formData.biaya_administrasi) ? Number(formData.biaya_administrasi) : 0
-      formData.biaya_asuransi_jiwa = (formData.biaya_asuransi_jiwa) ? Number(formData.biaya_asuransi_jiwa) : 0
-      formData.tabungan_persen = (formData.tabungan_persen) ? Number(formData.tabungan_persen) : 0
-      formData.dana_kebajikan = (formData.dana_kebajikan) ? Number(formData.dana_kebajikan) : 0
+      formData.pokok = (formData.pokok) ? Number(this.removeThousand(formData.pokok)) : 0
+      formData.biaya_administrasi = (formData.biaya_administrasi) ? Number(this.removeThousand(formData.biaya_administrasi)) : 0
+      formData.biaya_asuransi_jiwa = (formData.biaya_asuransi_jiwa) ? Number(this.removeThousand(formData.biaya_asuransi_jiwa)) : 0
+      formData.tabungan_persen = (formData.tabungan_persen) ? Number(this.removeThousand(formData.tabungan_persen)) : 0
+      formData.dana_kebajikan = (formData.dana_kebajikan) ? Number(this.removeThousand(formData.dana_kebajikan)) : 0
       payload.append('kode_cabang',formData.kode_cabang)
       payload.append('kode_rembug',formData.kode_rembug)
       payload.append('kode_petugas',formData.kode_petugas)
@@ -553,11 +554,11 @@ export default {
         payload.append('amount_tabungan[]',item.setoran*item.freq_saving)
       })
       
-      payload.append('pokok',formData.pokok)
-      payload.append('biaya_administrasi',formData.biaya_administrasi)
-      payload.append('biaya_asuransi_jiwa',formData.biaya_asuransi_jiwa)
-      payload.append('tabungan_persen',formData.tabungan_persen)
-      payload.append('dana_kebajikan',formData.dana_kebajikan)
+      payload.append('pokok',Number(formData.pokok))
+      payload.append('biaya_administrasi',Number(formData.biaya_administrasi))
+      payload.append('biaya_asuransi_jiwa',Number(formData.biaya_asuransi_jiwa))
+      payload.append('tabungan_persen',Number(formData.tabungan_persen))
+      payload.append('dana_kebajikan',Number(formData.dana_kebajikan))
       try {
         let req = await services.transSetoranProses(payload, this.user.token)
         if(req.status === 200) {

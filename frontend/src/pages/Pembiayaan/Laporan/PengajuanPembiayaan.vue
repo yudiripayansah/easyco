@@ -12,37 +12,40 @@
             </b-col>
             <b-col>
               <b-input-group prepend="Dari Tanggal">
-                <b-form-datepicker v-model="paging.from"/>
+                <b-form-datepicker v-model="paging.from" :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id"/>
               </b-input-group>
             </b-col>
             <b-col>
               <b-input-group prepend="Sampai Tanggal">
-                <b-form-datepicker v-model="paging.to"/>
+                <b-form-datepicker v-model="paging.to" :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id"/>
               </b-input-group>
             </b-col>
           </div>
         </b-col>
         <b-col cols="4" class="d-flex justify-content-end align-items-start">
           <b-button-group>
-            <b-button text="Button" variant="primary">
-              GRID
-            </b-button>
-            <b-button text="Button" variant="warning">
-              CSV
-            </b-button>
-            <b-button text="Button" variant="danger">
+            <b-button text="Button" variant="danger" @click="doPrintPdf()">
               PDF
             </b-button>
             <b-button text="Button" variant="success">
               XLS
             </b-button>
+            <b-button text="Button" variant="warning">
+              CSV
+            </b-button>
           </b-button-group>
         </b-col>
         <b-col cols="12">
           <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
-            show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
+            show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'" id="table-print">
             <template #cell(no)="item">
               {{ item.index + 1 }}
+            </template>
+            <template #cell(jumlah_pengajuan)="item">
+              Rp {{ thousand(item.item.jumlah_pengajuan) }}
+            </template>
+            <template #cell(status_pengajuan)="item">
+              {{ showStatus(item.item.status_pengajuan) }}
             </template>
           </b-table>
         </b-col>
@@ -56,10 +59,12 @@
 </template>
   
 <script>
+import html2pdf from "html2pdf.js";
+import helper from '@/core/helper'
 import { mapGetters } from 'vuex'
 import easycoApi from '@/core/services/easyco.service'
 export default {
-  name: "LaporanRegistrasiAnggota",
+  name: "LaporanPengajuanPembiayaan",
   components: {},
   data() {
     return {
@@ -73,23 +78,30 @@ export default {
             tdClass: 'text-center'
           },
           {
-            key: 'cabang',
+            key: 'nama_cabang',
             sortable: true,
             label: 'Cabang',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'taggal',
+            key: 'tanggal_pengajuan',
             sortable: true,
             label: 'Tanggal',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'majelis',
+            key: 'nama_anggota',
             sortable: true,
-            label: 'Majelis',
+            label: 'Nama',
+            thClass: 'text-center',
+            tdClass: ''
+          },
+          {
+            key: 'nama_rembug',
+            sortable: true,
+            label: 'Rembug',
             thClass: 'text-center',
             tdClass: ''
           },
@@ -101,14 +113,14 @@ export default {
             tdClass: 'text-center'
           },
           {
-            key: 'jumlah',
+            key: 'jumlah_pengajuan',
             sortable: true,
             label: 'Jumlah',
             thClass: 'text-center',
             tdClass: 'text-right'
           },
           {
-            key: 'status',
+            key: 'status_pengajuan',
             sortable: true,
             label: 'Status',
             thClass: 'text-center',
@@ -151,6 +163,18 @@ export default {
     this.doGetCabang()
   },
   methods: {
+		...helper,
+    doPrintPdf() {
+      html2pdf(document.getElementById("table-print"), {
+				margin: 1,
+  			filename: "i-was-html.pdf",
+        jsPDF: {
+					unit: 'in',
+					format: 'a4',
+					orientation: 'landscape'
+				}
+			});
+    },
     async doGetCabang() {
       let payload = {
         perPage: '~',
@@ -198,6 +222,24 @@ export default {
         this.notify('danger', 'Login Error', error)
       }
     },
+    showStatus(status) {
+      let statusText = ''
+      switch (status) {
+        case 1:
+          statusText = 'Aktivasi'
+          break;
+        case 2:
+          statusText = 'Ditolak'
+          break;
+        case 3:
+          statusText = 'Batal'
+          break;
+        default:
+          statusText = 'Registrasi'
+          break;
+      }
+      return statusText
+    },  
     doInfo(msg, title, variant) {
       this.$bvToast.toast(msg, {
         title: title,

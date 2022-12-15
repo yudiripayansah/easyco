@@ -124,7 +124,7 @@ export default {
     },
     async getRembug() {
       let hari_transaksi = new Date().getDay();
-      hari_transaksi = 1
+      hari_transaksi = this.user.hari_transaksi
       let payload = new FormData()
       payload.append('kode_petugas', this.user.kode_petugas)
       payload.append('hari_transaksi', hari_transaksi)
