@@ -55,6 +55,8 @@ class RegistrasiAkadController extends Controller
         foreach ($show as $sh) {
             $no_pengajuan = $sh->no_pengajuan;
             $no_anggota = $sh->no_anggota;
+            $nama_cabang = $sh->nama_cabang;
+            $nama_rembug = $sh->nama_rembug;
             $nama_anggota = $sh->nama_anggota;
             $jumlah_pengajuan = $sh->jumlah_pengajuan;
             $tanggal_pengajuan = $sh->tanggal_pengajuan;
@@ -67,6 +69,8 @@ class RegistrasiAkadController extends Controller
                 'no_pengajuan' => $no_pengajuan,
                 'no_anggota' => $no_anggota,
                 'nama_anggota' => $nama_anggota,
+                'nama_cabang' => $nama_cabang,
+                'nama_rembug' => $nama_rembug,
                 'jumlah_pengajuan' => str_replace('.00', '', $jumlah_pengajuan),
                 'tanggal_pengajuan' => date('d/m/Y', strtotime($tanggal_pengajuan)),
                 'rencana_droping' => date('d/m/Y', strtotime($rencana_droping)),
@@ -207,6 +211,33 @@ class RegistrasiAkadController extends Controller
     {
         $data = $request->all();
 
+        $data['saldo_pokok'] = $request->pokok;
+        $data['saldo_margin'] = $request->margin;
+        $data['tanggal_registrasi'] = date('Y-m-d');
+
+        if ($request->periode_jangka_waktu == 0) {
+            $tanggal_mulai_angsur = date('Y-m-d', strtotime($request->tanggal_akad . ' + 1 DAY'));
+            $tanggal_jtempo = date('Y-m-d', strtotime($request->tanggal_akad . ' + ' . $request->jangka_waktu . ' DAY'));
+        } else if ($request->periode_jangka_waktu == 1) {
+            $tanggal_mulai_angsur = date('Y-m-d', strtotime($request->tanggal_akad . ' + 1 WEEK'));
+            $tanggal_jtempo = date('Y-m-d', strtotime($request->tanggal_akad . ' + ' . $request->jangka_waktu . ' WEEK'));
+        } else if ($request->periode_jangka_waktu == 2) {
+            $tanggal_mulai_angsur = date('Y-m-d', strtotime($request->tanggal_akad . ' + 1 MONTH'));
+            $tanggal_jtempo = date('Y-m-d', strtotime($request->tanggal_akad . ' + ' . $request->jangka_waktu . ' MONTH'));
+        } else {
+            $tanggal_mulai_angsur = $request->tanggal_akad;
+            $tanggal_jtempo = $request->tanggal_jtempo;
+        }
+
+        $default = '000';
+        $format = $default . $request->pembiayaan_ke;
+        $pengajuan_ke = substr($format, -3);
+
+        $data['tanggal_mulai_angsur'] = $tanggal_mulai_angsur;
+        $data['tanggal_jtempo'] = $tanggal_jtempo;
+        $data['jtempo_angsuran_next'] = $tanggal_mulai_angsur;
+        $data['no_rekening'] = $request->no_anggota . $request->kode_produk . $pengajuan_ke;
+
         $validate = KopPembiayaan::validateAdd($data);
 
         $param = array('no_pengajuan' => $request->no_pengajuan);
@@ -218,9 +249,11 @@ class RegistrasiAkadController extends Controller
                 $create = KopPembiayaan::create($data);
                 $find = KopPembiayaan::find($create->id);
 
-                $update = KopPengajuan::where($param)->first();
-                $update->status_pengajuan = 1;
-                $update->save();
+                $getPengajuan = KopPengajuan::where($param)->first();
+                $get = KopPengajuan::find($getPengajuan->id);
+                $get->status_pengajuan = 1;
+
+                $get->save();
 
                 $res = array(
                     'status' => TRUE,
@@ -262,14 +295,19 @@ class RegistrasiAkadController extends Controller
         $search = NULL;
         $total = 0;
         $totalPage = 1;
-        $cabang = '~';
         $jenis_pembiayaan = '~';
         $petugas = '~';
         $rembug = '~';
         $produk = '~';
-        $status = '~';
+        $status_rekening = '~';
+        $status_droping = '~';
         $from = NULL;
         $to = NULL;
+
+        $token = $request->header('token');
+        $param = array('token' => $token);
+        $get = KopUser::where($param)->first();
+        $cabang = $get->kode_cabang;
 
         if ($request->page) {
             $page = $request->page;
@@ -291,8 +329,12 @@ class RegistrasiAkadController extends Controller
             $search = strtoupper($request->search);
         }
 
-        if ($request->status) {
-            $status = $request->status;
+        if ($request->status_rekening) {
+            $status_rekening = $request->status_rekening;
+        }
+
+        if ($request->status_droping) {
+            $status_droping = $request->status_droping;
         }
 
         if ($request->cabang) {
@@ -329,11 +371,12 @@ class RegistrasiAkadController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopPembiayaan::select('kop_pembiayaan.*', 'kop_cabang.nama_cabang', 'kop_rembug.nama_rembug', 'kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kop_anggota.tempat_lahir', 'kop_anggota.tgl_lahir', 'kop_anggota_uk.usia', 'kop_anggota.no_telp', 'kop_desa.nama_desa', 'kop_pengajuan.pengajuan_ke', DB::raw('(kop_pembiayaan.angsuran_pokok+kop_pembiayaan.angsuran_margin+kop_pembiayaan.angsuran_catab+kop_pembiayaan.angsuran_minggon) AS angsuran'))
+        $read = KopPembiayaan::select('kop_pembiayaan.*', 'kop_cabang.nama_cabang', 'kop_rembug.nama_rembug', 'kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kop_anggota.tempat_lahir', 'kop_anggota.tgl_lahir', 'kop_anggota_uk.usia', 'kop_anggota.no_telp', 'kop_desa.nama_desa', 'kop_pengajuan.pengajuan_ke', DB::raw('(kop_pembiayaan.angsuran_pokok+kop_pembiayaan.angsuran_margin+kop_pembiayaan.angsuran_catab+kop_pembiayaan.angsuran_minggon) AS angsuran'), 'kop_prd_pembiayaan.nama_produk')
             ->join('kop_pengajuan', 'kop_pengajuan.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
             ->join('kop_anggota', 'kop_anggota.no_anggota', 'kop_pengajuan.no_anggota')
             ->join('kop_anggota_uk', 'kop_anggota_uk.no_anggota', 'kop_anggota.no_anggota')
             ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang')
+            ->join('kop_prd_pembiayaan', 'kop_prd_pembiayaan.kode_produk', 'kop_pembiayaan.kode_produk')
             ->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', 'kop_anggota.kode_rembug')
             ->leftjoin('kop_desa', 'kop_desa.kode_desa', 'kop_rembug.kode_desa')
             ->join('kop_list_kode AS klk', function ($join) {
@@ -347,7 +390,7 @@ class RegistrasiAkadController extends Controller
             $read->skip($offset)->take($perPage);
         }
 
-        if ($cabang && $cabang != '~') {
+        if ($cabang != '00000') {
             $read->where('kop_cabang.kode_cabang', $cabang);
         }
 
@@ -367,8 +410,12 @@ class RegistrasiAkadController extends Controller
             $read->where('kop_pembiayaan.kode_produk', $produk);
         }
 
-        if ($status && $status != '~') {
-            $read->whereIn('kop_pengajuan.status_pengajuan', $status);
+        if ($status_rekening && $status_rekening != '~') {
+            $read->whereIn('kop_pembiayaan.status_rekening', $status_rekening);
+        }
+
+        if ($status_droping && $status_droping != '~') {
+            $read->whereIn('kop_pembiayaan.status_droping', $status_droping);
         }
 
         if ($search) {
@@ -376,8 +423,14 @@ class RegistrasiAkadController extends Controller
                 ->orWhere('kop_pengajuan.no_pengajuan', 'LIKE', '%' . $search . '%');
         }
 
-        if ($from && $to) {
-            $read->whereBetween('kop_pembiayaan.tanggal_registrasi', [$from, $to]);
+        if ($status_droping == 1) {
+            if ($from && $to) {
+                $read->whereBetween('kop_pembiayaan.tanggal_akad', [$from, $to]);
+            }
+        } else {
+            if ($from && $to) {
+                $read->whereBetween('kop_pembiayaan.tanggal_registrasi', [$from, $to]);
+            }
         }
 
         $read = $read->orderBy($sortBy, $sortDir)->get();
@@ -387,11 +440,13 @@ class RegistrasiAkadController extends Controller
             $rd->used_count = $useCount;
         }
 
-        if ($search || $cabang || $jenis_pembiayaan || $petugas || $rembug || $produk || $status || ($from && $to)) {
-            $total = KopPembiayaan::orderBy($sortBy, $sortDir);
+        if ($search || $cabang || $jenis_pembiayaan || $petugas || $rembug || $produk || $status_rekening || ($from && $to)) {
+            $total = KopPembiayaan::orderBy($sortBy, $sortDir)
+                ->join('kop_pengajuan', 'kop_pengajuan.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
+                ->join('kop_anggota', 'kop_anggota.no_anggota', 'kop_pengajuan.no_anggota');
 
-            if ($cabang && $cabang != '~') {
-                $total->where('kop_cabang.kode_cabang', $cabang);
+            if ($cabang != '00000') {
+                $total->where('kop_anggota.kode_cabang', $cabang);
             }
 
             if ($jenis_pembiayaan && $jenis_pembiayaan != '~') {
@@ -410,8 +465,12 @@ class RegistrasiAkadController extends Controller
                 $total->where('kop_pembiayaan.kode_produk', $produk);
             }
 
-            if ($status && $status != '~') {
-                $total->whereIn('kop_pengajuan.status_pengajuan', $status);
+            if ($status_rekening && $status_rekening != '~') {
+                $total->whereIn('kop_pembiayaan.status_rekening', $status_rekening);
+            }
+
+            if ($status_droping && $status_droping != '~') {
+                $total->whereIn('kop_pembiayaan.status_droping', $status_droping);
             }
 
             if ($search) {
@@ -419,8 +478,14 @@ class RegistrasiAkadController extends Controller
                     ->orWhere('kop_pengajuan.no_pengajuan', 'LIKE', '%' . $search . '%');
             }
 
-            if ($from && $to) {
-                $total->whereBetween('kop_pembiayaan.tanggal_registrasi', [$from, $to]);
+            if ($status_droping == 1) {
+                if ($from && $to) {
+                    $read->whereBetween('kop_pembiayaan.tanggal_akad', [$from, $to]);
+                }
+            } else {
+                if ($from && $to) {
+                    $read->whereBetween('kop_pembiayaan.tanggal_registrasi', [$from, $to]);
+                }
             }
 
             $total = $total->count();
@@ -460,7 +525,7 @@ class RegistrasiAkadController extends Controller
 
         if ($id) {
             $get = KopPembiayaan::find($id);
-            $get2 = KopPengajuan::select('kop_pengajuan.no_anggota', 'kop_rembug.nama_rembug')->join('kop_anggota', 'kop_anggota.no_anggota', '=', 'kop_pengajuan.no_anggota')->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', '=', 'kop_anggota.kode_rembug')->where('kop_pengajuan.no_pengajuan', $get->no_pengajuan)->get();
+            $get2 = KopPengajuan::select('kop_pengajuan.no_anggota', 'kop_anggota.nama_anggota', 'kop_pengajuan.pengajuan_ke', 'kop_pengajuan.tanggal_pengajuan', 'kop_pengajuan.keterangan_peruntukan', 'kop_rembug.kode_rembug', 'kop_rembug.nama_rembug')->join('kop_anggota', 'kop_anggota.no_anggota', '=', 'kop_pengajuan.no_anggota')->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', '=', 'kop_anggota.kode_rembug')->where('kop_pengajuan.no_pengajuan', $get->no_pengajuan)->get();
 
             $data = array(
                 'get' => $get,
@@ -512,18 +577,34 @@ class RegistrasiAkadController extends Controller
         $get->biaya_asuransi_jiwa = $request->biaya_asuransi_jiwa;
         //$get->biaya_asuransi_jaminan = $request->biaya_asuransi_jaminan;
         //$get->biaya_notaris = $request->biaya_notaris;
-        //$get->tabungan_persen = $request->tabungan_persen;
+        $get->tabungan_persen = $request->tabungan_persen;
         $get->dana_kebajikan = $request->dana_kebajikan;
-        $get->tanggal_registrasi = $request->tanggal_registrasi;
+        //$get->tanggal_registrasi = $request->tanggal_registrasi;
         $get->tanggal_akad = $request->tanggal_akad;
-        $get->tanggal_mulai_angsur = $request->tanggal_mulai_angsur;
-        $get->tanggal_jtempo = $request->tanggal_jtempo;
-        $get->saldo_pokok = $request->saldo_pokok;
-        $get->saldo_margin = $request->saldo_margin;
-        $get->saldo_catab = $request->saldo_catab;
+
+        if ($get->periode_jangka_waktu == 0) {
+            $tanggal_mulai_angsur = date('Y-m-d', strtotime($get->tanggal_akad . ' + 1 DAY'));
+            $tanggal_jtempo = date('Y-m-d', strtotime($get->tanggal_akad . ' + ' . $get->jangka_waktu . ' DAY'));
+        } else if ($get->periode_jangka_waktu == 1) {
+            $tanggal_mulai_angsur = date('Y-m-d', strtotime($get->tanggal_akad . ' + 1 WEEK'));
+            $tanggal_jtempo = date('Y-m-d', strtotime($get->tanggal_akad . ' + ' . $get->jangka_waktu . ' WEEK'));
+        } else if ($get->periode_jangka_waktu == 2) {
+            $tanggal_mulai_angsur = date('Y-m-d', strtotime($get->tanggal_akad . ' + 1 MONTH'));
+            $tanggal_jtempo = date('Y-m-d', strtotime($get->tanggal_akad . ' + ' . $get->jangka_waktu . ' MONTH'));
+        } else {
+            $tanggal_mulai_angsur = $get->tanggal_akad;
+            $tanggal_jtempo = $get->tanggal_jtempo;
+        }
+
+        $get->tanggal_mulai_angsur = $tanggal_mulai_angsur;
+        $get->tanggal_jtempo = $tanggal_jtempo;
+
+        $get->saldo_pokok = $request->pokok;
+        $get->saldo_margin = $request->margin;
+        //$get->saldo_catab = $request->saldo_catab;
         $get->saldo_minggon = $request->saldo_minggon;
         //$get->jtempo_angsuran_last = $request->jtempo_angsuran_last;
-        $get->jtempo_angsuran_next = $request->jtempo_angsuran_next;
+        $get->jtempo_angsuran_next = $request->tanggal_mulai_angsur;
         $get->sumber_dana = $request->sumber_dana;
         //$get->dana_sendiri = $request->dana_sendiri;
         //$get->dana_kreditur = $request->dana_kreditur;
@@ -619,7 +700,9 @@ class RegistrasiAkadController extends Controller
         if ($id) {
             $data = KopPembiayaan::find($id);
             $data->status_rekening = 1;
+            $data->status_droping = 0;
             $data->verified_at = date('Y-m-d H:i:s');
+            $data->verified_by = 'SYS';
 
             DB::beginTransaction();
 
@@ -664,7 +747,7 @@ class RegistrasiAkadController extends Controller
             $param = array('no_pengajuan' => $data->no_pengajuan);
 
             $update = KopPengajuan::where($param)->first();
-            $update->status_pengajuan = 0;
+            $update->status_pengajuan = 2;
 
             DB::beginTransaction();
 

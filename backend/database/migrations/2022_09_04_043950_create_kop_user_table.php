@@ -18,7 +18,7 @@ class CreateKopUserTable extends Migration
             $table->id();
             $table->string('id_user', 32)->unique();
             $table->string('kode_cabang', 6);
-            $table->string('kode_pgw', 20);
+            $table->string('kode_pgw', 20)->nullable(TRUE);
             $table->string('nama_user', 25)->unique();
             $table->integer('role_user');
             $table->integer('akses_user');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KopCabang;
+use App\Models\KopUser;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -70,6 +71,11 @@ class CabangController extends Controller
         $total = 0;
         $totalPage = 1;
 
+        $token = $request->header('token');
+        $param = array('token' => $token);
+        $get = KopUser::where($param)->first();
+        $cabang = $get->kode_cabang;
+
         if (isset($request->page)) {
             $page = $request->page;
         }
@@ -94,7 +100,7 @@ class CabangController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopCabang::read($search, $sortBy, $sortDir, $offset, $perPage);
+        $read = KopCabang::read($search, $cabang, $sortBy, $sortDir, $offset, $perPage);
 
         $data = array();
 
