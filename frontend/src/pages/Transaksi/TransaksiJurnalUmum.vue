@@ -80,8 +80,8 @@
                 <thead class="thead-dark">
                     <tr>
                     <th scope="col">No</th>
-                    <th scope="col">COA</th>
-                    <th scope="col">DC</th>
+                    <th scope="col">No Akun</th>
+                    <th scope="col">Metode</th>
                     <th scope="col">Jumlah</th>
                     <th scope="col">Action</th>
                     </tr>
@@ -90,8 +90,8 @@
                     <tr>
                     <th scope="row">1</th>
                     <td><b-select v-model="form.data.no_akun_1" :options="opt.no_akun_1" /></td>
-                    <td>78.250.000</td>
-                    <td>0</td>
+                    <td><b-select v-model="form.data.metode_1" :options="opt.metode_1" /></td>
+                    <td>-</td>
                     <td><b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Ceklis">V</b-button>
                         <b-button variant="danger" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Silang">X</b-button>
                     </td>
@@ -99,8 +99,7 @@
                     <tr>
                     <th scope="row">2</th>
                     <td><b-select v-model="form.data.no_akun_2" :options="opt.no_akun_2" /></td>
-                    <td>0</td>
-                    <td>78.250.000</td>
+                    <td><b-select v-model="form.data.metode_2" :options="opt.metode_2" /></td>
                     <td>-</td>
                     <td><b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Ceklis">V</b-button>
                         <b-button variant="danger" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Silang">X</b-button>
@@ -233,6 +232,8 @@
           petugas: ['Andi','Danu'],
           no_akun_1: ['101020101 BRI CAB SUDIRMAN','101010101 KAS BESAR'],
           no_akun_2: ['101020101 BRI CAB SUDIRMAN','101010101 KAS BESAR'],
+          metode_1: ['Cash','Debit','kredit'],
+          metode_2: ['Cash','Debit','kredit'],
         }
       }
     },
