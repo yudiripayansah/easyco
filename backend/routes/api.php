@@ -229,10 +229,11 @@ Route::prefix('general_ledger')->middleware('checkToken')->group(function () {
   Route::post('/create', [TrxGl::class, 'create']);
 });
 
-Route::prefix('laporan/list/excel')->middleware('checkToken')->group(function () {
+Route::prefix('laporan/list/excel')->group(function () {
   Route::get('/anggota_masuk', [LaporanController::class, 'list_excel_anggota_masuk']);
   Route::get('/pengajuan', [LaporanController::class, 'list_excel_pengajuan']);
   Route::get('/regis_akad', [LaporanController::class, 'list_excel_regis_akad']);
+  Route::get('/pencairan', [LaporanController::class, 'list_excel_pencairan']);
 });
 /* END BACK OFFICE */
 

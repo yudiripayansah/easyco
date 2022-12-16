@@ -237,10 +237,12 @@ class KopPembiayaan extends Model
         return $show;
     }
 
-    function report_list($kode_cabang, $jenis_pembiayaan, $kode_petugas, $kode_rembug, $produk, $from_date, $thru_date)
+    function report_list($kode_cabang, $jenis_pembiayaan, $kode_petugas, $kode_rembug, $produk, $from_date, $thru_date, $status_rekening, $status_droping, $flag)
     {
-        $show = KopPembiayaan::select('kc.nama_cabang', 'kr.nama_rembug', 'ka.no_anggota', 'ka.nama_anggota', 'kop_pembiayaan.no_rekening', 'ka.tempat_lahir', 'ka.tgl_lahir', 'kau.usia', 'ka.no_telp', 'kd.nama_desa', 'kop_pembiayaan.tanggal_registrasi', 'kpg.pengajuan_ke', 'kop_pembiayaan.pokok', 'kop_pembiayaan.margin', DB::raw('(kop_pembiayaan.angsuran_pokok+kop_pembiayaan.angsuran_margin+kop_pembiayaan.angsuran_catab+kop_pembiayaan.angsuran_minggon) AS angsuran'), 'kop_pembiayaan.biaya_administrasi', 'kop_pembiayaan.biaya_asuransi_jiwa', 'kop_pembiayaan.dana_kebajikan', 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.periode_jangka_waktu', 'kop_pembiayaan.tanggal_akad', 'kop_pembiayaan.sumber_dana', 'kop_pembiayaan.status_rekening')
+        $show = KopPembiayaan::select('kc.nama_cabang', 'kr.nama_rembug', 'ka.no_anggota', 'ka.nama_anggota', 'kop_pembiayaan.no_rekening', 'ka.tempat_lahir', 'ka.tgl_lahir', 'kau.usia', 'ka.no_telp', 'kd.nama_desa', 'kop_pembiayaan.tanggal_registrasi', 'kpg.pengajuan_ke', 'kop_pembiayaan.pokok', 'kop_pembiayaan.margin', DB::raw('(kop_pembiayaan.angsuran_pokok+kop_pembiayaan.angsuran_margin+kop_pembiayaan.angsuran_catab+kop_pembiayaan.angsuran_minggon) AS angsuran'), 'kop_pembiayaan.biaya_administrasi', 'kop_pembiayaan.biaya_asuransi_jiwa', 'kop_pembiayaan.dana_kebajikan', 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.periode_jangka_waktu', 'kop_pembiayaan.tanggal_akad', 'kop_pembiayaan.sumber_dana', 'kop_pembiayaan.status_rekening', 'kpp.nama_produk', 'kkp.nama_kas_petugas')
+            ->join('kop_prd_pembiayaan AS kpp', 'kpp.kode_produk', '=', 'kop_pembiayaan.kode_produk')
             ->join('kop_pengajuan AS kpg', 'kpg.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_kas_petugas AS kkp', 'kkp.kode_petugas', '=', 'kpg.kode_petugas')
             ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kpg.no_anggota')
             ->join('kop_anggota_uk AS kau', 'kau.no_anggota', '=', 'ka.no_anggota')
             ->join('kop_cabang AS kc', 'kc.kode_cabang', '=', 'ka.kode_cabang')
@@ -251,13 +253,15 @@ class KopPembiayaan extends Model
             })
             ->leftjoin('kop_list_kode AS oio', function ($joins) {
                 $joins->on('oio.kode_value', '=', 'kop_pembiayaan.kode_kreditur')->where('oio.nama_kode', '=', 'kreditur');
-            });
+            })
+            ->whereIn('kop_pembiayaan.status_rekening', $status_rekening)
+            ->whereIn('kop_pembiayaan.status_droping', $status_droping);
 
         if ($kode_cabang <> '~') {
             $show->where('kc.kode_cabang', $kode_cabang);
         }
 
-        if ($jenis_pembiayaan <> '~') {
+        if ($jenis_pembiayaan <> '9') {
             $show->where('kpg.jenis_pembiayaan', $jenis_pembiayaan);
         }
 
@@ -269,13 +273,19 @@ class KopPembiayaan extends Model
             $show->where('kr.kode_rembug', $kode_rembug);
         }
 
-        if ($produk <> '~') {
+        if ($produk <> '99') {
             $show->where('kop_pembiayaan.kode_produk', $produk);
         }
 
-        $show->whereBetween('kop_pembiayaan.tanggal_registrasi', [$from_date, $thru_date])
-            ->orderBy('kc.nama_cabang', 'ASC')
-            ->orderBy('kop_pembiayaan.tanggal_registrasi', 'ASC');
+        if ($flag == 0) {
+            $show->whereBetween('kop_pembiayaan.tanggal_registrasi', [$from_date, $thru_date])
+                ->orderBy('kop_pembiayaan.tanggal_registrasi', 'ASC');
+        } else {
+            $show->whereBetween('kop_pembiayaan.tanggal_akad', [$from_date, $thru_date])
+                ->orderBy('kop_pembiayaan.tanggal_akad', 'ASC');
+        }
+
+        $show->orderBy('kc.nama_cabang', 'ASC');
 
         $show = $show->get();
 
