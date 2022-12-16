@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\ListAnggotaMasukExport;
 use App\Exports\ListPengajuanExport;
 use App\Exports\ListRegisAkadExport;
+use App\Exports\ListPencairanExport;
 use Illuminate\Http\Request;
 
 class LaporanController extends Controller
@@ -28,5 +29,12 @@ class LaporanController extends Controller
         $list = new ListRegisAkadExport($request->kode_cabang, $request->jenis_pembiayaan, $request->kode_petugas, $request->kode_rembug, $request->produk, $request->from_date, $request->thru_date);
 
         return $list->download('list_registrasi_akad_' . $request->kode_cabang . '_' . $request->kode_rembug . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+    }
+
+    function list_excel_pencairan(Request $request)
+    {
+        $list = new ListPencairanExport($request->kode_cabang, $request->jenis_pembiayaan, $request->kode_petugas, $request->kode_rembug, $request->produk, $request->from_date, $request->thru_date);
+
+        return $list->download('list_pencairan_' . $request->kode_cabang . '_' . $request->kode_rembug . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
     }
 }
