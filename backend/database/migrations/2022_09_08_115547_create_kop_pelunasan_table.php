@@ -16,7 +16,7 @@ class CreateKopPelunasanTable extends Migration
     {
         Schema::create('kop_pelunasan', function (Blueprint $table) {
             $table->id();
-            $table->string('id_pelunasan', 32)->unique();
+            $table->string('id_pelunasan', 32)->unique()->default(DB::raw('uuid()'));
             $table->string('id_trx_rembug', 32);
             $table->string('no_rekening', 25);
             $table->decimal('saldo_pokok', 14, 2)->nullable(TRUE)->default(0);

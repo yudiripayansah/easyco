@@ -16,7 +16,7 @@ class CreateKopPengajuanTable extends Migration
     {
         Schema::create('kop_pengajuan', function (Blueprint $table) {
             $table->id();
-            $table->string('id_pengajuan', 32)->unique();
+            $table->string('id_pengajuan', 32)->unique()->default(DB::raw('uuid()'));
             $table->string('no_anggota', 20);
             $table->string('kode_petugas', 20);
             $table->string('no_pengajuan', 20)->nullable(TRUE)->unique()->comment('yy.branc_code.xxxx');

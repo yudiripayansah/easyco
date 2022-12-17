@@ -48,22 +48,22 @@ class KopTrxAnggota extends Model
         return $res;
     }
 
-    function tpl_cashflow_credit($no_anggota)
+    function tpl_cashflow_credit($no_anggota, $trx_date)
     {
         $show = KopTrxAnggota::select(DB::raw('COALESCE(SUM(amount),0) AS total_penerimaan'))
             ->where('no_anggota', $no_anggota)
-            //->where('trx_datex', date('Y-m-d'))
+            ->where('trx_date', $trx_date)
             ->where('flag_debet_credit', 'C')
             ->get();
 
         return $show;
     }
 
-    function tpl_cashflow_debet($no_anggota)
+    function tpl_cashflow_debet($no_anggota, $trx_date)
     {
         $show = KopTrxAnggota::select(DB::raw('COALESCE(SUM(amount),0) AS total_penarikan'))
             ->where('no_anggota', $no_anggota)
-            //->where('trx_datex', date('Y-m-d'))
+            ->where('trx_date', $trx_date)
             ->where('flag_debet_credit', 'D')
             ->get();
 

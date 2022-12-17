@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class CreateKopKasPetugasTable extends Migration
 {
@@ -16,7 +16,7 @@ class CreateKopKasPetugasTable extends Migration
     {
         Schema::create('kop_kas_petugas', function (Blueprint $table) {
             $table->id();
-            $table->string('id_kas_petugas', 32)->unique();
+            $table->string('id_kas_petugas', 32)->unique()->default(DB::raw('uuid()'));
             $table->string('id_user', 32);
             $table->string('kode_kas_petugas', 20)->unique();
             $table->string('kode_petugas', 20)->unique();
@@ -33,6 +33,7 @@ class CreateKopKasPetugasTable extends Migration
 
             $table->foreign('id_user')->references('id_user')->on('kop_user')->cascadeOnUpdate()->restrictOnDelete();
             $table->foreign('kode_gl')->references('kode_gl')->on('kop_gl')->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreign('kode_petugas')->references('kode_pgw')->on('kop_pegawai')->cascadeOnUpdate()->restrictOnDelete();
         });
     }
 

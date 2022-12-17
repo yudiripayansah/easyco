@@ -23,7 +23,7 @@ class CabangSeeder extends Seeder
                 'nama_cabang' => 'PUSAT KONSOLIDASI',
                 'induk_cabang' => '00000',
                 'jenis_cabang' => 0,
-                'pimpinan_cabang' => 'Khaerudin',
+                'pimpinan_cabang' => 'KHAERUDIN',
                 'created_by' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
@@ -33,7 +33,7 @@ class CabangSeeder extends Seeder
                 'nama_cabang' => 'BANTEN',
                 'induk_cabang' => NULL,
                 'jenis_cabang' => 1,
-                'pimpinan_cabang' => 'Man. Area Banten',
+                'pimpinan_cabang' => 'MAN. AREA BANTEN',
                 'created_by' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
@@ -43,7 +43,7 @@ class CabangSeeder extends Seeder
                 'nama_cabang' => 'TANGERANG SELATAN',
                 'induk_cabang' => '10000',
                 'jenis_cabang' => 2,
-                'pimpinan_cabang' => 'Man. Area Tangsel',
+                'pimpinan_cabang' => 'MAN. AREA TANGSEL',
                 'created_by' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
@@ -53,7 +53,17 @@ class CabangSeeder extends Seeder
                 'nama_cabang' => 'KCP SERPONG',
                 'induk_cabang' => '10100',
                 'jenis_cabang' => 3,
-                'pimpinan_cabang' => 'Ade Setiawan',
+                'pimpinan_cabang' => 'ADE SETIAWAN',
+                'created_by' => 1,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+            ],
+            [
+                'kode_cabang' => '10102',
+                'nama_cabang' => 'KCP CIPUTAT',
+                'induk_cabang' => '10100',
+                'jenis_cabang' => 3,
+                'pimpinan_cabang' => 'MUHAMMAD IMANUDIN',
                 'created_by' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
@@ -63,7 +73,7 @@ class CabangSeeder extends Seeder
                 'nama_cabang' => 'PUSAT OPERASIONAL',
                 'induk_cabang' => '10100',
                 'jenis_cabang' => 1,
-                'pimpinan_cabang' => 'Herdi Kusuma',
+                'pimpinan_cabang' => 'HERDI KUSUMA',
                 'created_by' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')

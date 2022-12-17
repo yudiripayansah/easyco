@@ -166,6 +166,11 @@ class KopPembiayaan extends Model
         return $show;
     }
 
+    function buat_karwas($no_rekening)
+    {
+        DB::select("SELECT fn_insert_kartu_angsuran('" . $no_rekening . "')");
+    }
+
     function fa($kode_cabang)
     {
         $param = array();
