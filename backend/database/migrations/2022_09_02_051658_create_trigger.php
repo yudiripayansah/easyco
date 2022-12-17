@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -87,6 +86,39 @@ class CreateTrigger extends Migration
             $BODY$
         LANGUAGE plpgsql VOLATILE COST 100;
         ALTER FUNCTION insert_reg_pembiayaan() OWNER TO postgres;
+
+        CREATE OR REPLACE FUNCTION public.fn_insert_kartu_angsuran(character)
+            RETURNS numeric AS $BODY$
+                DECLARE
+                    v_no_rekening ALIAS FOR $1;
+                    mviews RECORD;
+                    i INTEGER;
+                    v_angs_ke INTEGER;
+                    v_tgl_angs DATE;
+                    v_saldo_pokok NUMERIC;
+                    v_saldo_margin NUMERIC;
+                    v_saldo_catab NUMERIC;
+                    BEGIN
+                        DELETE FROM kop_kartu_angsuran WHERE no_rekening = v_no_rekening;
+                        FOR mviews IN
+                            SELECT no_rekening,pokok,margin,tanggal_mulai_angsur,jangka_waktu,angsuran_pokok,angsuran_margin,angsuran_catab,saldo_pokok,saldo_margin,saldo_catab FROM kop_pembiayaan where no_rekening = v_no_rekening
+                            LOOP
+                            i = 1;
+                            WHILE i <= mviews.jangka_waktu LOOP
+                                v_angs_ke = i;
+                                v_tgl_angs = mviews.tanggal_mulai_angsur + (i * 7) - 7;
+                                v_saldo_pokok = mviews.pokok - (i * mviews.angsuran_pokok);
+                                v_saldo_margin = mviews.margin - (i * mviews.angsuran_margin);
+                                v_saldo_catab = (i * mviews.angsuran_catab);
+                                INSERT INTO kop_kartu_angsuran (no_rekening,angsuran_ke,tgl_angsuran,angsuran_pokok,angsuran_margin,angsuran_catab,saldo_pokok,saldo_margin,saldo_catab,flag_bayar) VALUES (v_no_rekening,v_angs_ke,v_tgl_angs,mviews.angsuran_pokok,mviews.angsuran_margin,mviews.angsuran_catab,v_saldo_pokok,v_saldo_margin,v_saldo_catab,0);
+                                i = i + 1;
+                            END LOOP;
+                        END LOOP;
+                        RETURN  1;
+                    END
+            $BODY$
+        LANGUAGE plpgsql VOLATILE COST 100;
+        ALTER FUNCTION public.fn_insert_kartu_angsuran(character) OWNER TO postgres;
         ');
     }
 

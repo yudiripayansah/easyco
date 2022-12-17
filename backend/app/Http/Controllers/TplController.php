@@ -109,6 +109,13 @@ class TplController extends Controller
     function member(Request $request)
     {
         $kode_rembug = $request->kode_rembug;
+        $today = $request->today;
+
+        if ($today == '~') {
+            $trx_date = date('Y-m-d');
+        } else {
+            $trx_date = $today;
+        }
 
         $read = KopAnggota::tpl_member($kode_rembug);
 
@@ -118,8 +125,8 @@ class TplController extends Controller
             $data = array();
 
             foreach ($read as $rd) {
-                $penerimaan = KopTrxAnggota::tpl_cashflow_credit($rd->no_anggota)->first();
-                $penarikan = KopTrxAnggota::tpl_cashflow_debet($rd->no_anggota)->first();
+                $penerimaan = KopTrxAnggota::tpl_cashflow_credit($rd->no_anggota, $trx_date)->first();
+                $penarikan = KopTrxAnggota::tpl_cashflow_debet($rd->no_anggota, $trx_date)->first();
 
                 $data[] = array(
                     'no_anggota' => $rd->no_anggota,

@@ -16,7 +16,7 @@ class CreateKopAnggotaMutasiTable extends Migration
     {
         Schema::create('kop_anggota_mutasi', function (Blueprint $table) {
             $table->id();
-            $table->string('id_mutasi', 32)->unique();
+            $table->string('id_mutasi', 32)->unique()->default(DB::raw('uuid()'));
             $table->string('no_anggota', 20);
             $table->integer('jenis_mutasi')->comment('1 = Anggota Mutasi, 2 = Anggota Keluar');
             $table->integer('alasan_mutasi')->comment('1 = Meninggal, 2 = Karakter, 3 = Pindah Lembaga Lain, 4 = Tidak diijinkan Pasangan, 5 = Simpanan Kurang, 6 = Kondisi Keluarga, 7 = Pindah Alamat, 8 = Tidak Setuju Keputusan Lembaga, 9 = Usia / Jompo, 10 = Sakit, 11 = Kumpulan Bubar, 12 = Tidak Punya Waktu, 13 = Kerja, 14 = Cerai, 15 = Pembiayaan Bermasalah, 16 = Usaha Sudah Berkembang, 17 = Tidak Mau Kumpulan, 18 = Batal Pembiayaan (Anggota baru), 19 = Migrasi Anggota Individu');

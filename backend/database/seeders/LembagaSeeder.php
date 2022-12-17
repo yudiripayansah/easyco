@@ -16,8 +16,8 @@ class LembagaSeeder extends Seeder
     {
         $lembaga = new KopLembaga();
         $lembaga->kode_kop = '20220901';
-        $lembaga->nama_kop = 'KSPPS Mitra Sejahtera Raya Indonesia';
-        $lembaga->alamat_kop = 'Rajeg - Tangerang';
+        $lembaga->nama_kop = 'KSPPS MITRA SEJAHTERA RAYA INDONESIA';
+        $lembaga->alamat_kop = 'RAJEG - TANGERANG';
         $lembaga->nik_kop = '32720220901';
         $lembaga->gl_simpok = '30101010';
         $lembaga->gl_simwa = '30102010';

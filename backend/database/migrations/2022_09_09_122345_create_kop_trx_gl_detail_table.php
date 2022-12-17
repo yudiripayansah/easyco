@@ -16,7 +16,7 @@ class CreateKopTrxGlDetailTable extends Migration
     {
         Schema::create('kop_trx_gl_detail', function (Blueprint $table) {
             $table->id();
-            $table->string('id_trx_gl_detail', 32)->unique();
+            $table->string('id_trx_gl_detail', 32)->unique()->default(DB::raw('uuid()'));
             $table->string('id_trx_gl', 32);
             $table->string('kode_gl', 20);
             $table->char('flag_dc', 1);

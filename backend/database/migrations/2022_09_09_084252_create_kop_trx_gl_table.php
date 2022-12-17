@@ -16,7 +16,7 @@ class CreateKopTrxGlTable extends Migration
     {
         Schema::create('kop_trx_gl', function (Blueprint $table) {
             $table->id();
-            $table->string('id_trx_gl', 32)->unique();
+            $table->string('id_trx_gl', 32)->unique()->default(DB::raw('uuid()'));
             $table->string('kode_cabang', 6);
             $table->date('trx_date');
             $table->date('voucher_date');

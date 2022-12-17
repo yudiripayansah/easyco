@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class CreateKopAnggotaTable extends Migration
 {
@@ -16,7 +16,7 @@ class CreateKopAnggotaTable extends Migration
     {
         Schema::create('kop_anggota', function (Blueprint $table) {
             $table->id();
-            $table->string('id_anggota', 32)->unique();
+            $table->string('id_anggota', 32)->unique()->default(DB::raw('uuid()'));
             $table->string('kode_cabang', 6);
             $table->string('kode_rembug', 20)->nullable(TRUE);
             $table->string('no_anggota', 20)->nullable(TRUE)->unique();
