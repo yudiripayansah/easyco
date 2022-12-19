@@ -72,8 +72,8 @@ class RegistrasiAkadController extends Controller
                 'nama_cabang' => $nama_cabang,
                 'nama_rembug' => $nama_rembug,
                 'jumlah_pengajuan' => str_replace('.00', '', $jumlah_pengajuan),
-                'tanggal_pengajuan' => date('d/m/Y', strtotime($tanggal_pengajuan)),
-                'rencana_droping' => date('d/m/Y', strtotime($rencana_droping)),
+                'tanggal_pengajuan' => $tanggal_pengajuan,
+                'rencana_droping' => $rencana_droping,
                 'peruntukan' => $peruntukan,
                 'keterangan_peruntukan' => $keterangan_peruntukan,
                 'pembiayaan_ke' => $pengajuan_ke

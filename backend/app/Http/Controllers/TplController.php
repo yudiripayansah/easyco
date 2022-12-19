@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KopAnggota;
+use App\Models\KopKartuAngsuran;
 use App\Models\KopPembiayaan;
 use App\Models\KopRembug;
 use App\Models\KopTabungan;
@@ -541,6 +542,274 @@ class TplController extends Controller
                 'error' => $validate['errors']
             );
         }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function penerimaan_angsuran(Request $request)
+    {
+        $offset = 0;
+        $page = 1;
+        $perPage = '~';
+        $sortDir = 'ASC';
+        $sortBy = 'kop_trx_anggota.trx_anggota';
+        $total = 0;
+        $totalPage = 1;
+        $cabang = '~';
+        $petugas = '~';
+        $rembug = '~';
+        $from = NULL;
+        $to = NULL;
+
+        if ($request->page) {
+            $page = $request->page;
+        }
+
+        if ($request->perPage) {
+            $perPage = $request->perPage;
+        }
+
+        if ($request->sortDir) {
+            $sortDir = $request->sortDir;
+        }
+
+        if ($request->sortBy) {
+            $sortBy = $request->sortBy;
+        }
+
+        if ($request->cabang) {
+            $cabang = $request->cabang;
+        }
+
+        if ($request->petugas) {
+            $petugas = $request->petugas;
+        }
+
+        if ($request->rembug) {
+            $rembug = $request->rembug;
+        }
+
+        if ($request->from) {
+            $from = str_replace('/', '-', $request->from);
+            $from = date('Y-m-d', strtotime($from));
+        }
+
+        if ($request->to) {
+            $to = str_replace('/', '-', $request->to);
+            $to = date('Y-m-d', strtotime($to));
+        }
+
+        if ($page > 1) {
+            $offset = ($page - 1) * $perPage;
+        }
+
+        $read = KopTrxAnggota::select('ktr.trx_date', 'kp.no_rekening', 'ka.nama_anggota', 'kr.nama_rembug', 'kp.angsuran_pokok', DB::raw('COALESCE(a.byr_pokok,0) AS byr_pokok'), DB::raw('COALESCE(b.byr_margin,0) AS byr_margin'))
+            ->join('kop_trx_rembug AS ktr', 'ktr.id_trx_rembug', 'kop_trx_anggota.id_trx_rembug')
+            ->join('kop_rembug AS kr', 'kr.kode_rembug', 'ktr.kode_rembug')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kop_trx_anggota.no_anggota')
+            ->join('kop_pembiayaan AS kp', 'kp.no_rekening', 'kop_trx_anggota.no_rekening')
+            ->leftjoin(DB::raw("(SELECT no_rekening,trx_date,SUM(amount) AS byr_pokok FROM kop_trx_anggota WHERE trx_type = '32' AND flag_debet_credit = 'C' GROUP BY no_rekening,trx_date) AS a"), function ($join) {
+                $join->on('a.no_rekening', 'kp.no_rekening')->where('a.trx_date', 'ktr.trx_date');
+            })
+            ->leftjoin(DB::raw("(SELECT no_rekening,trx_date,SUM(amount) AS byr_margin FROM kop_trx_anggota WHERE trx_type = '33' AND flag_debet_credit = 'C' GROUP BY no_rekening,trx_date) AS b"), function ($join) {
+                $join->on('b.no_rekening', 'kp.no_rekening')->where('b.trx_date', 'ktr.trx_date');
+            })
+            ->whereBetween('ktr.trx_date', [$from, $to]);
+
+        if ($perPage != '~') {
+            $read->skip($offset)->take($perPage);
+        }
+
+        if ($cabang <> '~') {
+            $read->where('kr.kode_cabang', $cabang);
+        }
+
+        if ($petugas <> '~') {
+            $read->where('kr.kode_petugas', $petugas);
+        }
+
+        if ($rembug <> '~') {
+            $read->where('kr.kode_rembug', $rembug);
+        }
+
+        $read = $read->groupBy('ktr.trx_date', 'kp.no_rekening', 'ka.nama_anggota', 'kr.nama_rembug', 'kp.angsuran_pokok', 'a.byr_pokok', 'b.byr_margin')->get();
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $read,
+            'page' => $page,
+            'perPage' => $perPage,
+            'sortDir' => $sortDir,
+            'sortBy' => $sortBy,
+            'total' => $total,
+            'totalPage' => $totalPage,
+            'msg' => 'List data available'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function kartu_angsuran(Request $request)
+    {
+        $no_rekening = '~';
+
+        if ($request->no_rekening) {
+            $no_rekening = $request->no_rekening;
+        }
+
+        $read = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'ka.nama_anggota', 'kr.nama_rembug', 'kd.nama_desa', 'kpp.nama_produk', 'kop_pembiayaan.tanggal_akad', 'kop_pembiayaan.tanggal_mulai_angsur', 'kop_pembiayaan.pokok', 'kop_pembiayaan.margin', 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.periode_jangka_waktu', 'kop_pembiayaan.angsuran_pokok', 'kop_pembiayaan.angsuran_margin')
+            ->join('kop_pengajuan AS kpg', 'kpg.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kpg.no_anggota')
+            ->join('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+            ->join('kop_desa AS kd', 'kd.kode_desa', 'kr.kode_desa')
+            ->join('kop_prd_pembiayaan AS kpp', 'kpp.kode_produk', 'kop_pembiayaan.kode_produk')
+            ->where('kop_pembiayaan.no_rekening', $no_rekening)->where('kop_pembiayaan.status_rekening', 1)->get();
+
+        $kartu = array();
+
+        foreach ($read as $rd) {
+            $card = KopKartuAngsuran::select('kop_kartu_angsuran.*', 'kpg.nama_pgw')
+                ->leftjoin('kop_trx_rembug AS ktr', 'ktr.id_trx_rembug', 'kop_kartu_angsuran.id_trx_rembug')
+                ->leftjoin('kop_pegawai AS kpg', 'kpg.kode_pgw', 'ktr.kode_petugas')
+                ->where('no_rekening', $rd->no_rekening)
+                ->orderBy('angsuran_ke', 'ASC')
+                ->get();
+
+            foreach ($card as $cd) {
+                $kartu[] = array(
+                    'trx_date' => $cd->tgl_angsuran,
+                    'tgl_bayar' => $cd->tgl_bayar,
+                    'angsuran_ke' => $cd->angsuran_ke,
+                    'jumlah' => ($cd->angsuran_pokok + $cd->angsuran_margin),
+                    'angsuran_pokok' => $cd->angsuran_pokok,
+                    'angsuran_margin' => $cd->angsuran_margin,
+                    'petugas' => $cd->nama_pgw
+                );
+            }
+
+            $rd->detail = $kartu;
+        }
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $read,
+            'page' => NULL,
+            'perPage' => NULL,
+            'sortDir' => NULL,
+            'sortBy' => NULL,
+            'total' => NULL,
+            'totalPage' => NUll,
+            'msg' => 'List data available'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function transaksi_majelis(Request $request)
+    {
+        $offset = 0;
+        $page = 1;
+        $perPage = '~';
+        $sortDir = 'ASC';
+        $sortBy = 'kop_trx_rembug.trx_date';
+        $total = 0;
+        $totalPage = 1;
+        $cabang = '~';
+        $petugas = '~';
+        $rembug = '~';
+        $from = NULL;
+        $to = NULL;
+
+        if ($request->page) {
+            $page = $request->page;
+        }
+
+        if ($request->perPage) {
+            $perPage = $request->perPage;
+        }
+
+        if ($request->sortDir) {
+            $sortDir = $request->sortDir;
+        }
+
+        if ($request->sortBy) {
+            $sortBy = $request->sortBy;
+        }
+
+        if ($request->cabang) {
+            $cabang = $request->cabang;
+        }
+
+        if ($request->petugas) {
+            $petugas = $request->petugas;
+        }
+
+        if ($request->rembug) {
+            $rembug = $request->rembug;
+        }
+
+        if ($request->from) {
+            $from = str_replace('/', '-', $request->from);
+            $from = date('Y-m-d', strtotime($from));
+        }
+
+        if ($request->to) {
+            $to = str_replace('/', '-', $request->to);
+            $to = date('Y-m-d', strtotime($to));
+        }
+
+        if ($page > 1) {
+            $offset = ($page - 1) * $perPage;
+        }
+
+        $read = KopTrxRembug::select('kop_trx_rembug.trx_date', 'kr.nama_rembug', DB::raw('COALESCE(a.setoran,0) AS setoran'), DB::raw('COALESCE(b.penarikan,0) AS penarikan'), DB::raw('COALESCE(SUM(kta.amount),0) AS pencairan'))
+            ->join('kop_rembug AS kr', 'kr.kode_rembug', 'kop_trx_rembug.kode_rembug')
+            ->leftjoin('kop_trx_anggota AS kta', function ($join) {
+                $join->on('kta.id_trx_rembug', 'kop_trx_rembug.id_trx_rembug')->where('kta.trx_type', 31);
+            })
+            ->leftjoin(DB::raw("(SELECT id_trx_rembug,SUM(amount) AS setoran FROM kop_trx_anggota WHERE flag_debet_credit = 'C' GROUP BY id_trx_rembug) AS a"), function ($join) {
+                $join->on('a.id_trx_rembug', 'kop_trx_rembug.id_trx_rembug');
+            })
+            ->leftjoin(DB::raw("(SELECT id_trx_rembug,SUM(amount) AS penarikan FROM kop_trx_anggota WHERE flag_debet_credit = 'D' GROUP BY id_trx_rembug) AS b"), function ($join) {
+                $join->on('b.id_trx_rembug', 'kop_trx_rembug.id_trx_rembug');
+            })
+            ->whereBetween('kop_trx_rembug.trx_date', [$from, $to]);
+
+        if ($perPage != '~') {
+            $read->skip($offset)->take($perPage);
+        }
+
+        if ($cabang <> '~') {
+            $read->where('kr.kode_cabang', $cabang);
+        }
+
+        if ($petugas <> '~') {
+            $read->where('kr.kode_petugas', $petugas);
+        }
+
+        if ($rembug <> '~') {
+            $read->where('kr.kode_rembug', $rembug);
+        }
+
+        $read = $read->groupBy('kop_trx_rembug.trx_date', 'kr.nama_rembug', 'a.setoran', 'b.penarikan')->get();
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $read,
+            'page' => $page,
+            'perPage' => $perPage,
+            'sortDir' => $sortDir,
+            'sortBy' => $sortBy,
+            'total' => $total,
+            'totalPage' => $totalPage,
+            'msg' => 'List data available'
+        );
 
         $response = response()->json($res, 200);
 
