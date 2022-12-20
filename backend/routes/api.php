@@ -233,6 +233,13 @@ Route::prefix('laporan/list/excel')->middleware('checkToken')->group(function ()
   Route::get('/anggota_masuk', [LaporanController::class, 'list_excel_anggota_masuk']);
   Route::get('/pengajuan', [LaporanController::class, 'list_excel_pengajuan']);
   Route::get('/regis_akad', [LaporanController::class, 'list_excel_regis_akad']);
+  Route::get('/pencairan', [LaporanController::class, 'list_excel_pencairan']);
+});
+
+Route::prefix('trx_member')->group(function () {
+  Route::post('/penerimaan_angsuran', [TplController::class, 'penerimaan_angsuran']);
+  Route::post('/kartu_angsuran', [TplController::class, 'kartu_angsuran']);
+  Route::post('/transaksi_majelis', [TplController::class, 'transaksi_majelis']);
 });
 /* END BACK OFFICE */
 

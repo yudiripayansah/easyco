@@ -7,7 +7,7 @@ use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromView;
 
-class ListRegisAkadExport implements FromView
+class ListPencairanExport implements FromView
 {
     use Exportable;
 
@@ -26,12 +26,14 @@ class ListRegisAkadExport implements FromView
 
     function view(): View
     {
-        $show = KopPembiayaan::report_list($this->kode_cabang, $this->jenis_pembiayaan, $this->kode_petugas, $this->kode_rembug, $this->produk, $this->from_date, $this->thru_date, [0, 1, 2, 3], [0, 1], 0);
+        $show = KopPembiayaan::report_list($this->kode_cabang, $this->jenis_pembiayaan, $this->kode_petugas, $this->kode_rembug, $this->produk, $this->from_date, $this->thru_date, [1, 2, 3], [1], 1);
 
         foreach ($show as $item) {
+            $item->nama_kas_petugas = explode('.', $item->nama_kas_petugas);
+            $item->nama_petugas = $item->nama_kas_petugas[0];
             $item->tanggal_akad = date('d/m/Y', strtotime($item->tanggal_akad));
         }
 
-        return view('listregisakad', ['regisakad' => $show]);
+        return view('listpencairan', ['pencairan' => $show]);
     }
 }

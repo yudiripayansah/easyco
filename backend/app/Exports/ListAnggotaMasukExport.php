@@ -25,6 +25,10 @@ class ListAnggotaMasukExport implements FromView
     {
         $show = KopAnggota::report_list($this->kode_cabang, $this->kode_rembug, $this->from_date, $this->thru_date);
 
+        foreach ($show as $item) {
+            $item->tgl_gabung = date('d/m/Y', strtotime($item->tgl_gabung));
+        }
+
         return view('listanggotamasuk', ['anggotamasuk' => $show]);
     }
 }

@@ -27,6 +27,10 @@ class ListPengajuanExport implements FromView
     {
         $show = KopPengajuan::report_list($this->kode_cabang, $this->jenis_pembiayaan, $this->kode_petugas, $this->kode_rembug, $this->from_date, $this->thru_date);
 
+        foreach ($show as $item) {
+            $item->tanggal_pengajuan = date('d/m/Y', strtotime($item->tanggal_pengajuan));
+        }
+
         return view('listpengajuan', ['pengajuan' => $show]);
     }
 }

@@ -153,7 +153,7 @@ class KopPengajuan extends Model
             $show->where('kc.kode_cabang', $kode_cabang);
         }
 
-        if ($jenis_pembiayaan <> '~') {
+        if ($jenis_pembiayaan <> '9') {
             $show->where('kop_pengajuan.jenis_pembiayaan', $jenis_pembiayaan);
         }
 

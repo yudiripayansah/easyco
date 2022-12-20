@@ -21,7 +21,7 @@ class DesaSeeder extends Seeder
             [
                 'kode_desa' => '36030301',
                 'kode_kecamatan' => '360303',
-                'nama_desa' => 'Pasir Nangka',
+                'nama_desa' => 'PASIR NANGKA',
                 'created_by' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
@@ -29,7 +29,7 @@ class DesaSeeder extends Seeder
             [
                 'kode_desa' => '36030302',
                 'kode_kecamatan' => '360303',
-                'nama_desa' => 'Pete',
+                'nama_desa' => 'PETE',
                 'created_by' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
@@ -37,7 +37,7 @@ class DesaSeeder extends Seeder
             [
                 'kode_desa' => '36030601',
                 'kode_kecamatan' => '360306',
-                'nama_desa' => 'Cibadak',
+                'nama_desa' => 'CIBADAK',
                 'created_by' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
@@ -45,7 +45,7 @@ class DesaSeeder extends Seeder
             [
                 'kode_desa' => '36030602',
                 'kode_kecamatan' => '360306',
-                'nama_desa' => 'Bojong',
+                'nama_desa' => 'BOJONG',
                 'created_by' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
@@ -53,7 +53,7 @@ class DesaSeeder extends Seeder
             [
                 'kode_desa' => '36710101',
                 'kode_kecamatan' => '367101',
-                'nama_desa' => 'Cilenggang',
+                'nama_desa' => 'CILENGGANG',
                 'created_by' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
@@ -61,7 +61,7 @@ class DesaSeeder extends Seeder
             [
                 'kode_desa' => '36710102',
                 'kode_kecamatan' => '367101',
-                'nama_desa' => 'Serpong',
+                'nama_desa' => 'SERPONG',
                 'created_by' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
@@ -69,7 +69,7 @@ class DesaSeeder extends Seeder
             [
                 'kode_desa' => '36710301',
                 'kode_kecamatan' => '367103',
-                'nama_desa' => 'Sawah',
+                'nama_desa' => 'SAWAH',
                 'created_by' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
@@ -77,7 +77,15 @@ class DesaSeeder extends Seeder
             [
                 'kode_desa' => '36710302',
                 'kode_kecamatan' => '367103',
-                'nama_desa' => 'Serua',
+                'nama_desa' => 'SERUA',
+                'created_by' => 1,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+            ],
+            [
+                'kode_desa' => '32010101',
+                'kode_kecamatan' => '320101',
+                'nama_desa' => 'PENGASINAN',
                 'created_by' => 1,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')

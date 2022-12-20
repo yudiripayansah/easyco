@@ -16,7 +16,7 @@ class CreateKopTrxRembugTable extends Migration
     {
         Schema::create('kop_trx_rembug', function (Blueprint $table) {
             $table->id();
-            $table->string('id_trx_rembug', 32)->unique();
+            $table->string('id_trx_rembug', 32)->unique()->default(DB::raw('uuid()'));
             $table->string('kode_rembug', 20);
             $table->string('kode_petugas', 20);
             $table->date('trx_date');

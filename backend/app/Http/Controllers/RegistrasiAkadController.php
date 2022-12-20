@@ -72,8 +72,8 @@ class RegistrasiAkadController extends Controller
                 'nama_cabang' => $nama_cabang,
                 'nama_rembug' => $nama_rembug,
                 'jumlah_pengajuan' => str_replace('.00', '', $jumlah_pengajuan),
-                'tanggal_pengajuan' => date('d/m/Y', strtotime($tanggal_pengajuan)),
-                'rencana_droping' => date('d/m/Y', strtotime($rencana_droping)),
+                'tanggal_pengajuan' => $tanggal_pengajuan,
+                'rencana_droping' => $rencana_droping,
                 'peruntukan' => $peruntukan,
                 'keterangan_peruntukan' => $keterangan_peruntukan,
                 'pembiayaan_ke' => $pengajuan_ke
@@ -216,17 +216,17 @@ class RegistrasiAkadController extends Controller
         $data['tanggal_registrasi'] = date('Y-m-d');
 
         if ($request->periode_jangka_waktu == 0) {
-            $tanggal_mulai_angsur = date('Y-m-d', strtotime($request->tanggal_akad . ' + 1 DAY'));
-            $tanggal_jtempo = date('Y-m-d', strtotime($request->tanggal_akad . ' + ' . $request->jangka_waktu . ' DAY'));
+            $tanggal_mulai_angsur = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_akad) . ' + 1 DAY'));
+            $tanggal_jtempo = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_akad) . ' + ' . $request->jangka_waktu . ' DAY'));
         } else if ($request->periode_jangka_waktu == 1) {
-            $tanggal_mulai_angsur = date('Y-m-d', strtotime($request->tanggal_akad . ' + 1 WEEK'));
-            $tanggal_jtempo = date('Y-m-d', strtotime($request->tanggal_akad . ' + ' . $request->jangka_waktu . ' WEEK'));
+            $tanggal_mulai_angsur = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_akad) . ' + 1 WEEK'));
+            $tanggal_jtempo = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_akad) . ' + ' . $request->jangka_waktu . ' WEEK'));
         } else if ($request->periode_jangka_waktu == 2) {
-            $tanggal_mulai_angsur = date('Y-m-d', strtotime($request->tanggal_akad . ' + 1 MONTH'));
-            $tanggal_jtempo = date('Y-m-d', strtotime($request->tanggal_akad . ' + ' . $request->jangka_waktu . ' MONTH'));
+            $tanggal_mulai_angsur = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_akad) . ' + 1 MONTH'));
+            $tanggal_jtempo = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_akad) . ' + ' . $request->jangka_waktu . ' MONTH'));
         } else {
-            $tanggal_mulai_angsur = $request->tanggal_akad;
-            $tanggal_jtempo = $request->tanggal_jtempo;
+            $tanggal_mulai_angsur = str_replace('/', '-', $request->tanggal_akad);
+            $tanggal_jtempo = str_replace('/', '-', $request->tanggal_jtempo);
         }
 
         $default = '000';
@@ -708,6 +708,7 @@ class RegistrasiAkadController extends Controller
 
             try {
                 $data->save();
+                KopPembiayaan::buat_karwas($data->no_rekening);
 
                 $res = array(
                     'status' => TRUE,
