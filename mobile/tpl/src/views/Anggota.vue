@@ -29,6 +29,7 @@ export default {
       list: {
         anggota: [],
         rembug: null,
+        date: null,
         loading: false
       },
       alert: {
@@ -45,14 +46,19 @@ export default {
     ...mapGetters(['user'])
   },
   methods: {
-    async getAnggota(kode_rembug) {
+    async getAnggota(kode_rembug, today) {
       if(!kode_rembug) {
         kode_rembug = this.$route.params.kode_rembug
       } else {
         this.$router.push(`/anggota/${kode_rembug}`)
       }
+      if(this.$route.params.date) {
+        today = this.$route.params.date
+      }
       let payload = new FormData()
       payload.append('kode_rembug', kode_rembug)
+      if(today)
+        payload.append('today', today)
       this.list.anggota = []
       this.list.loading = true
       try {
@@ -61,10 +67,12 @@ export default {
           this.list.anggota = req.data.data
           let setoran = 0
           let penarikan = 0
-          this.list.anggota.map((item) => {
-            setoran = setoran + Number(item.total_penerimaan)
-            penarikan = penarikan + Number(item.total_penarikan)
-          })
+          if(this.list.anggota){
+            this.list.anggota.map((item) => {
+              setoran = setoran + Number(item.total_penerimaan)
+              penarikan = penarikan + Number(item.total_penarikan)
+            })
+          }
           this.total = {
             penarikan: penarikan,
             setoran: setoran
@@ -88,6 +96,7 @@ export default {
   mounted() {
     this.getAnggota(false)
     this.list.rembug = this.$route.params.kode_rembug
+    this.list.date = this.$route.params.date
   }
 }
 </script>

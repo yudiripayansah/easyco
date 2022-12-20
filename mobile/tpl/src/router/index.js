@@ -33,11 +33,11 @@ const routes = [
             name: 'Dashboard',
             component: () => import(/* webpackChunkName: "dashboard" */ '../views/Transaksi/Dashboard.vue')
           },
-          {
-            path: 'pembiayaan/:no_anggota?',
-            name: 'Pembiayaan',
-            component: () => import(/* webpackChunkName: "pembiayaan" */ '../views/Transaksi/Pembiayaan.vue')
-          },
+          // {
+          //   path: 'pembiayaan/:no_anggota?',
+          //   name: 'Pembiayaan',
+          //   component: () => import(/* webpackChunkName: "pembiayaan" */ '../views/Transaksi/Pembiayaan.vue')
+          // },
           {
             path: 'pembiayaan-pengajuan/:no_anggota?',
             name: 'PembiayaanPengajuan',
@@ -74,14 +74,14 @@ const routes = [
             component: () => import(/* webpackChunkName: "setoran" */ '../views/Transaksi/Setoran.vue')
           },
           {
-            path: 'setoran-form/:kode_rembug?/:no_anggota?',
+            path: 'setoran-form/:kode_rembug?/:no_anggota?/:date?',
             name: 'SetoranForm',
             component: () => import(/* webpackChunkName: "setoran-form" */ '../views/Transaksi/SetoranForm.vue')
           },
         ]
       },
       {
-        path: 'anggota/:kode_rembug?',
+        path: 'anggota/:kode_rembug?/:date?',
         name: 'Anggota',
         component: () => import(/* webpackChunkName: "anggota" */ '../views/Anggota.vue')
       },
@@ -89,6 +89,21 @@ const routes = [
         path: 'pengumuman',
         name: 'Pengumuman',
         component: () => import(/* webpackChunkName: "pengumuman" */ '../views/Pengumuman.vue')
+      },
+      {
+        path: 'keanggotaan',
+        name: 'Keanggotaan',
+        component: () => import(/* webpackChunkName: "keanggotaan" */ '../views/Keanggotaan.vue')
+      },
+      {
+        path: 'pembiayaan',
+        name: 'Pembiayaan',
+        component: () => import(/* webpackChunkName: "pembiayaan" */ '../views/Pembiayaan.vue')
+      },
+      {
+        path: 'tabungan',
+        name: 'Tabungan',
+        component: () => import(/* webpackChunkName: "tabungan" */ '../views/Tabungan.vue')
       },
     ]
   },

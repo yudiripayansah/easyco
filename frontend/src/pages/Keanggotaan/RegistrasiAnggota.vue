@@ -132,7 +132,7 @@
         </b-col>
         <b-col cols="12" sm="2">
           <b-form-group label="NIK">
-            <b-input v-model="form.data.no_ktp"/>
+            <b-input v-model="form.data.no_ktp" maxlength="16"/>
           </b-form-group>
         </b-col>
         <b-col cols="12" sm="2">
@@ -200,7 +200,7 @@
         </b-col>
         <b-col cols="12" sm="6">
           <b-form-group label="Nama Pasangan">
-            <b-input v-model="form.data.p_nama"/>
+            <b-input v-model="form.data.p_nama" :disabled="form.data.status_perkawinan != 1"/>
           </b-form-group>
         </b-col>
         <b-col cols="12" sm="6">
@@ -231,7 +231,7 @@
         </b-col>
         <b-col cols="12" sm="6">
           <b-form-group label="NIK">
-            <b-input v-model="form.data.p_noktp"/>
+            <b-input v-model="form.data.p_noktp" maxlength="16"/>
           </b-form-group>
         </b-col>
         <b-col cols="12" sm="6">
@@ -495,6 +495,7 @@
 </div>
 </template>
 <script>
+import helper from '@/core/helper'
 import { mapGetters } from 'vuex'
 import easycoApi from '@/core/services/easyco.service'
 export default {
@@ -691,15 +692,15 @@ export default {
         ],
         status_perkawinan: [
           {
-            text: 'Tidak Diketahui',
+            text: 'Belum Menikah',
             value: '0'
           },
           {
-            text: 'Sudah',
+            text: 'Menikah',
             value: '1'
           },
           {
-            text: 'Belum',
+            text: 'Janda/ Duda',
             value: '2'
           }
         ],
@@ -900,6 +901,7 @@ export default {
     this.doGetCabang()
   },
   methods: {
+    ...helper,
     async doGetCabang() {
       let payload = {
         perPage: '~',

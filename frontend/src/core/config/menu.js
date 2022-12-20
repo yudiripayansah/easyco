@@ -50,7 +50,7 @@ const menu = [
           {
             target: 'saldo-anggota',
             label: 'Saldo Anggota',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Keanggotaan/Laporan/SaldoAnggota.vue'),
           },
           {
             target: 'anggota-keluar',
@@ -248,7 +248,7 @@ const menu = [
           {
             target: 'transaksi-rembug',
             label: 'Laporan Transaksi Rembug',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Transaksi/Laporan/LaporanTransaksiMajelis'),
           },
           {
             target: 'transaksi-kas-petugas',
@@ -259,12 +259,7 @@ const menu = [
             target: 'jurnal-transaksi',
             label: ' Laporan Jurnal Transaksi',
             component: import('@/pages/Transaksi/Laporan/LaporanTransaksiJurnal.vue'),
-          },
-          {
-            target: 'transaksi-majelis',
-            label: 'Laporan Transaksi Majelis',
-            component: import('@/pages/Transaksi/Laporan/LaporanTransaksiMajelis.vue'),
-          },
+          }
         ]
       },
     ]

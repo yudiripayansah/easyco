@@ -5,14 +5,14 @@
         mdi-home
       </v-icon>
     </router-link>
-    <router-link to="/anggota" class="d-flex justify-center align-center rounded-lg pa-1 mx-4" :class="($route.path == '/anggota') ? 'indigo darken-1' : 'indigo lighten-5 elevation-3'">
-      <v-icon :color="($route.path == '/anggota') ? 'indigo lighten-5' : 'indigo darken-1'">
+    <router-link to="/keanggotaan" class="d-flex justify-center align-center rounded-lg pa-1 mx-4" :class="($route.path == '/keanggotaan') ? 'indigo darken-1' : 'indigo lighten-5 elevation-3'">
+      <v-icon :color="($route.path == '/keanggotaan') ? 'indigo lighten-5' : 'indigo darken-1'">
         mdi-account-group
       </v-icon>
     </router-link>
-    <router-link to="/transaksi" class="d-flex justify-center align-center rounded-lg pa-1 mx-4" :class="($route.path == '/transaksi/dashboard') ? 'indigo darken-1' : 'indigo lighten-5 elevation-3'">
-      <v-icon :color="($route.path == '/transaksi/dashboard') ? 'indigo lighten-5' : 'indigo darken-1'">
-        mdi-gesture-double-tap
+    <router-link to="/pembiayaan" class="d-flex justify-center align-center rounded-lg pa-1 mx-4" :class="($route.path == '/pembiayaan') ? 'indigo darken-1' : 'indigo lighten-5 elevation-3'">
+      <v-icon :color="($route.path == '/pembiayaan') ? 'indigo lighten-5' : 'indigo darken-1'">
+        mdi-cash-multiple
       </v-icon>
     </router-link>
     <!-- <router-link to="/pengumuman" class="d-flex justify-center align-center rounded-lg pa-1 mx-4" :class="($route.path == '/pengumuman') ? 'indigo darken-1' : 'indigo lighten-5 elevation-3'">
@@ -20,9 +20,9 @@
         mdi-bell
       </v-icon>
     </router-link> -->
-    <router-link to="/profile" class="d-flex justify-center align-center rounded-lg pa-1 mx-4" :class="($route.path == '/profile') ? 'indigo darken-1' : 'indigo lighten-5 elevation-3'">
-      <v-icon :color="($route.path == '/profile') ? 'indigo lighten-5' : 'indigo darken-1'">
-        mdi-account
+    <router-link to="/tabungan" class="d-flex justify-center align-center rounded-lg pa-1 mx-4" :class="($route.path == '/tabungan') ? 'indigo darken-1' : 'indigo lighten-5 elevation-3'">
+      <v-icon :color="($route.path == '/tabungan') ? 'indigo lighten-5' : 'indigo darken-1'">
+        mdi-wallet
       </v-icon>
     </router-link>
   </div>

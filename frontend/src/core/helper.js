@@ -27,4 +27,21 @@ const removeThousand = (num) => {
   }
 }
 
-export default { thousand, thousandMask, removeThousand }
+const dateFormatId = (date) => {
+  if(date) {
+    let theDate = new Date(date)
+    let d = theDate.getDate()
+    let m = theDate.getMonth() + 1
+    let y = theDate.getFullYear()
+    return `${d}-${m}-${y}`
+  } else {
+    return null
+  }
+}
+
+const maxLength = (s,l) => {
+  return String(s).substring(0,l);
+}
+
+
+export default { thousand, thousandMask, removeThousand, dateFormatId , maxLength}

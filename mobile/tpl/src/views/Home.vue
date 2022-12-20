@@ -14,27 +14,48 @@
         <span class="black--text text-caption d-block">{{ user.kode_pgw }}</span>
         <v-row class="mt-3">
           <v-col cols="6" class="d-flex justify-end align-center">
-            <div class="blue lighten-3 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
+            <div style="width: 100%;" class="blue lighten-3 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
             <span class="text-caption font-weight-bold blue--text text--darken-1">Saldo Awal</span>
             <span class="text-body-2 font-weight-bold white--text text--darken-1">Rp {{kasPetugas.saldoAwal}}</span>
             </div>
           </v-col>
           <v-col cols="6" class="d-flex justify-start align-center">
-            <div class="green lighten-3 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
+            <div style="width: 100%;" class="green lighten-3 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
             <span class="text-caption font-weight-bold green--text text--darken-1">Saldo Akhir</span>
             <span class="text-body-2 font-weight-bold white--text text--darken-1">Rp {{kasPetugas.saldoAkhir}}</span>
             </div>
           </v-col>
           <v-col cols="6" class="d-flex justify-end align-center">
-            <div class="light-green lighten-3 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
+            <div style="width: 100%;" class="light-green lighten-3 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
             <span class="text-caption font-weight-bold light-green--text text--darken-1">Kas Masuk</span>
             <span class="text-body-2 font-weight-bold white--text text--darken-1">Rp {{kasPetugas.kasMasuk}}</span>
             </div>
           </v-col>
           <v-col cols="6" class="d-flex justify-start align-center">
-            <div class="indigo lighten-3 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
+            <div style="width: 100%;" class="indigo lighten-3 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
             <span class="text-caption font-weight-bold indigo--text text--darken-1">Kas Keluar</span>
             <span class="text-body-2 font-weight-bold white--text text--darken-1">Rp {{kasPetugas.kasKeluar}}</span>
+            </div>
+          </v-col>
+          <v-col cols="6" class="d-flex justify-end align-center">
+            <div style="width: 100%;" class="orange darken-2 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
+            <span class="text-caption font-weight-bold black--text text--darken-1">Anggota</span>
+            <span class="text-caption font-weight-bold white--text text--darken-1">Gabung 0</span>
+            <span class="text-caption font-weight-bold white--text text--darken-1">Keluar 0</span>
+            </div>
+          </v-col>
+          <v-col cols="6" class="d-flex justify-start align-center">
+            <div style="width: 100%;" class="yellow darken-2 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
+            <span class="text-caption font-weight-bold black--text text--darken-1">Pembiayaan</span>
+            <span class="text-caption font-weight-bold white--text text--darken-1">Pengajuan 0</span>
+            <span class="text-caption font-weight-bold white--text text--darken-1">Pencairan 0</span>
+            </div>
+          </v-col>
+          <v-col cols="12" class="d-flex justify-center align-center">
+            <div style="width: 50%;" class="red lighten-2 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
+            <span class="text-caption font-weight-bold black--text text--darken-1">Tabungan</span>
+            <span class="text-caption font-weight-bold white--text text--darken-1">Pembukaan 0</span>
+            <span class="text-caption font-weight-bold white--text text--darken-1">Pencairan 0</span>
             </div>
           </v-col>
         </v-row>

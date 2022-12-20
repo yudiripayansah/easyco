@@ -22,7 +22,7 @@
             <v-row>
               <v-col cols="12" class="text-left pt-1 pb-0 mb-0 d-flex justify-space-between" v-for="(tbr, tbrIndex) in form.data.taber" :key="`trx-${tbrIndex}`">
                 <v-row no-gutters>
-                  <v-col cols="4">{{tbr.nama_produk}}</v-col>
+                  <v-col cols="4">{{(tbr.nama_produk) ? tbr.nama_produk : 'Taber'}}</v-col>
                   <v-col cols="4">{{(tbr.counter_angsuran) ? tbr.counter_angsuran : 0}}/{{tbr.jangka_waktu}}</v-col>
                   <v-col cols="4" class="text-right"><b>Rp {{thousand(tbr.setoran)}}</b></v-col>
                 </v-row>
@@ -32,7 +32,7 @@
               </v-col>
               <v-col cols="12" class="text-left pt-1 pb-0 mb-0 d-flex justify-space-between" v-for="(pmb, pmbIndex) in form.data.pembiayaan" :key="`pmb-${pmbIndex}`">
                 <v-row no-gutters>
-                  <v-col cols="4">{{pmb.nama_produk}}</v-col>
+                  <v-col cols="4">{{(pmb.nama_produk) ? pmb.nama_produk : 'Pmby'}}</v-col>
                   <v-col cols="4">{{pmb.counter_angsuran}}/{{pmb.jangka_waktu}}</v-col>
                   <v-col cols="4" class="text-right"><b>Rp {{thousand(pmb.pokok)}}</b></v-col>
                 </v-row>
@@ -42,7 +42,7 @@
               </v-col>
               <v-col cols="12" class="text-left pt-1 d-flex justify-space-between">
                 <v-row no-gutters>
-                  <v-col cols="6">Saldo Sukarela</v-col>
+                  <v-col cols="6">Sukarela</v-col>
                   <v-col cols="6" class="text-right"><b>Rp {{thousand(form.data.simsuk)}}</b></v-col>
                 </v-row>
               </v-col>
@@ -54,7 +54,7 @@
         <h6 class="text-h6 font-weight-bold mb-4">Setoran</h6>
         <v-row>
           <v-col cols="3">
-            <label class="black--text">Angsuran</label>
+            <label class="black--text">Angs</label>
           </v-col>
           <!-- <v-col cols="4" class="pb-0 d-flex justify-end">
             Tidak <v-switch hide-details class="pa-0 ma-0" v-model="form.data.angsuranState"/> Bayar
@@ -68,10 +68,7 @@
               dense
               v-model="form.data.frekuensi"
               :disabled="!form.data.angsuranState"
-              append-outer-icon="mdi-plus"
-              prepend-icon="mdi-minus"
-              @click:append-outer="form.data.frekuensi += 1;countTotalSetoran()"
-              @click:prepend="(form.data.frekuensi > 0) ? form.data.frekuensi -= 1 : 1;countTotalSetoran()"
+
             />
           </v-col>
           <v-col cols="5">
@@ -89,7 +86,7 @@
         </v-row>
         <v-row>
           <v-col cols="7" class="pb-0">
-            <label class="black--text">Simpanan Wajib</label>
+            <label class="black--text">Simwa</label>
           </v-col>
           <!-- <v-col cols="4" class="pb-0 d-flex justify-end">
             Tidak <v-switch hide-details class="pa-0 ma-0" v-model="form.data.simwaState"/> Bayar
@@ -129,7 +126,7 @@
         </v-row>
         <v-row v-for="(taber,taberIndex) in form.data.taber" :key="taberIndex">
           <v-col cols="3" class="pb-0">
-            <label class="black--text">{{ taber.nama_produk }}</label>
+            <label class="black--text">{{ (taber.nama_produk) ? taber.nama_produk : 'Taber' }}</label>
           </v-col>
           <!-- <v-col cols="4" class="pb-0 d-flex justify-end">
             Tidak <v-switch hide-details class="pa-0 ma-0" v-model="taber.state"/> Bayar
@@ -143,10 +140,6 @@
               dense
               v-model="taber.freq_saving"
               :disabled="!taber.state"
-              append-outer-icon="mdi-plus"
-              prepend-icon="mdi-minus"
-              @click:append-outer="taber.freq_saving += 1;countTotalSetoran()"
-              @click:prepend="(taber.freq_saving > 0) ? taber.freq_saving -= 1 : 1;countTotalSetoran()"
             />
           </v-col>
           <v-col cols="5">
@@ -181,7 +174,7 @@
         </v-row>
         <v-row>
           <v-col cols="7" class="pb-0">
-            <label class="black--text"><b>Total</b></label>
+            <label class="black--text"><b>Total Setoran</b></label>
           </v-col>
           <v-col cols="5">
             <v-text-field 
@@ -367,6 +360,7 @@ export default {
       },
       rembug: null,
       anggota: null,
+      trx_date: null,
       aAnggota: {
         nama: null,
         cif_no: null,
@@ -399,7 +393,7 @@ export default {
               kode_rembug: this.rembug,
               kode_petugas: this.user.kode_petugas,
               kode_kas_petugas: this.user.kode_kas_petugas,
-              trx_date: this.getDate(),
+              trx_date: (this.trx_date) ? this.trx_date : this.getDate(),
               no_anggota: this.anggota,
               no_rekening: dataDeposit.no_rekening,
               angsuran: dataDeposit.angsuran,
@@ -567,7 +561,7 @@ export default {
             msg: req.data.msg
           }
           setTimeout(() => {
-            this.$router.push('/anggota/'+this.rembug).catch(()=>{});
+            this.$router.push('/anggota/'+this.rembug+'/'+this.trx_date).catch(()=>{});
           },500)
         } else {
           this.alert = {
@@ -601,6 +595,8 @@ export default {
     setForm(){
       let kode_rembug = this.$route.params.kode_rembug
       let no_anggota = this.$route.params.no_anggota
+      let date = this.$route.params.date
+      this.trx_date = (date) ? date : null
       this.rembug = kode_rembug
       this.anggota = (no_anggota) ? no_anggota : null
     }

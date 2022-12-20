@@ -283,5 +283,23 @@ const easycoApi = {
     }
     return axios.get(url, config)
   },
+  penerimaanAngsuran(payload, token){
+    let url = 'trx_member/penerimaan_angsuran'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  transaksiRembug(payload, token){
+    let url = 'trx_member/transaksi_majelis'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
 }
 export default easycoApi

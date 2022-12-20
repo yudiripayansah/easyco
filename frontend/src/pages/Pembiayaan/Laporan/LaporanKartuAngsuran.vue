@@ -277,7 +277,7 @@
               kredit: '15.700.000',
             },
           ]
-          this.doInfo('Data berhasil diambil','Berhasil','success')
+          // this.doInfo('Data berhasil diambil','Berhasil','success')
         },5000)
       },
       async doSave() {
@@ -293,7 +293,7 @@
             newItems.id = this.table.items.length + 1
             this.table.items.push(newItems)
             this.doClearForm()
-            this.doInfo('Data berhasil disimpan','Berhasil','success')
+            // this.doInfo('Data berhasil disimpan','Berhasil','success')
           }, 5000);
         }
       },
@@ -311,7 +311,7 @@
           setTimeout(() => {
             this.remove.loading = false
             this.$bvModal.hide('modal-delete')
-            this.doInfo('Data berhasil dihapus','Berhasil','success')
+            // this.doInfo('Data berhasil dihapus','Berhasil','success')
           }, 5000);
         }
       },
