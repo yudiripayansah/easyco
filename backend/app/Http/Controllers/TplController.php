@@ -611,10 +611,10 @@ class TplController extends Controller
             ->join('kop_anggota AS ka', 'ka.no_anggota', 'kop_trx_anggota.no_anggota')
             ->join('kop_pembiayaan AS kp', 'kp.no_rekening', 'kop_trx_anggota.no_rekening')
             ->leftjoin(DB::raw("(SELECT no_rekening,trx_date,SUM(amount) AS byr_pokok FROM kop_trx_anggota WHERE trx_type = '32' AND flag_debet_credit = 'C' GROUP BY no_rekening,trx_date) AS a"), function ($join) {
-                $join->on('a.no_rekening', 'kp.no_rekening')->where('a.trx_date', 'ktr.trx_date');
+                $join->on('a.no_rekening', 'kp.no_rekening')->where('a.trx_date', DB::raw('CAST(ktr.trx_date AS DATE)'));
             })
             ->leftjoin(DB::raw("(SELECT no_rekening,trx_date,SUM(amount) AS byr_margin FROM kop_trx_anggota WHERE trx_type = '33' AND flag_debet_credit = 'C' GROUP BY no_rekening,trx_date) AS b"), function ($join) {
-                $join->on('b.no_rekening', 'kp.no_rekening')->where('b.trx_date', 'ktr.trx_date');
+                $join->on('b.no_rekening', 'kp.no_rekening')->where('b.trx_date', DB::raw('CAST(ktr.trx_date AS DATE)'));
             })
             ->whereBetween('ktr.trx_date', [$from, $to]);
 

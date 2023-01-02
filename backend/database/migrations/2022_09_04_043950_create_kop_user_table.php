@@ -20,11 +20,12 @@ class CreateKopUserTable extends Migration
             $table->string('kode_cabang', 6);
             $table->string('kode_pgw', 20)->nullable(TRUE);
             $table->string('nama_user', 25)->unique();
-            $table->integer('role_user');
+            $table->integer('role_user')->comment('0 = Anggota, 1 = ....');
             $table->integer('akses_user');
             $table->integer('status_user')->nullable(TRUE)->default(1)->comment('0 = Tidak Aktif, 1 = Aktif');
+            $table->integer('status_user')->nullable(TRUE)->default(1)->comment('Khusus Akun Anggota: 0 = Belum Diubah, 1 = Sudah Diubah');
             $table->string('photo', 150)->nullable(TRUE);
-            $table->string('password');
+            $table->string('password')->nullable(TRUE);
             $table->dateTime('last_login')->nullable(TRUE);
             $table->text('token')->nullable(TRUE);
             $table->string('created_by', 30);
