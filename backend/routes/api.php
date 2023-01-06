@@ -3,6 +3,7 @@
 use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\AnggotaMutasiController;
 use App\Http\Controllers\AnggotaUkController;
+use App\Http\Controllers\AnggotaUser;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\DesaController;
@@ -236,12 +237,19 @@ Route::prefix('laporan/list/excel')->middleware('checkToken')->group(function ()
   Route::get('/pencairan', [LaporanController::class, 'list_excel_pencairan']);
 });
 
-Route::prefix('trx_member')->group(function () {
+Route::prefix('trx_member')->middleware('checkToken')->group(function () {
   Route::post('/penerimaan_angsuran', [TplController::class, 'penerimaan_angsuran']);
   Route::post('/kartu_angsuran', [TplController::class, 'kartu_angsuran']);
   Route::post('/transaksi_majelis', [TplController::class, 'transaksi_majelis']);
 });
 /* END BACK OFFICE */
+
+/* BEGIN APP ANGGOTA */
+Route::prefix('member')->group(function () {
+  Route::post('/authenticate/check_username', [AnggotaUser::class, 'check_username']);
+  Route::post('/authenticate/check_password', [AnggotaUser::class, 'check_password']);
+});
+/* END APP ANGGOTA */
 
 /* BEGIN APP TPL */
 Route::prefix('tpl')->group(function () {
@@ -258,5 +266,4 @@ Route::prefix('tpl')->group(function () {
     Route::post('/process_cash', [TplController::class, 'process_cash']);
   });
 });
-
 /* END APP TPL */
