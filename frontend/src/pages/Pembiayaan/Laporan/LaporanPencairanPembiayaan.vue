@@ -12,12 +12,12 @@
             </b-col>
             <b-col>
               <b-input-group prepend="Dari Tanggal">
-                <b-form-datepicker v-model="paging.from" />
+                <b-form-datepicker v-model="paging.from" :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id"/>
               </b-input-group>
             </b-col>
             <b-col>
               <b-input-group prepend="Sampai Tanggal">
-                <b-form-datepicker v-model="paging.to" />
+                <b-form-datepicker v-model="paging.to" :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id"/>
               </b-input-group>
             </b-col>
           </div>

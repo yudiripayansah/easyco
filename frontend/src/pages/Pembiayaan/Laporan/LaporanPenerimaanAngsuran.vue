@@ -22,12 +22,14 @@
             </b-col>
             <b-col cols="6">
               <b-input-group prepend="Dari Tanggal">
-                <b-form-datepicker v-model="paging.from" />
+                <b-form-datepicker v-model="paging.from"
+                  :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" />
               </b-input-group>
             </b-col>
             <b-col cols="6">
               <b-input-group prepend="Sampai Tanggal">
-                <b-form-datepicker v-model="paging.to" />
+                <b-form-datepicker v-model="paging.to"
+                  :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" />
               </b-input-group>
             </b-col>
           </div>
@@ -55,11 +57,17 @@
             <template #cell(no)="item">
               {{ item.index + 1 }}
             </template>
-            <template #cell(margin)="item">
-              Rp {{ thousand(item.item.margin) }}
+            <template #cell(trx_date)="item">
+              {{ dateFormatId(item.item.trx_date) }}
             </template>
-            <template #cell(pokok)="item">
-              Rp {{ thousand(item.item.pokok) }}
+            <template #cell(byr_margin)="item">
+              Rp {{ thousand(item.item.byr_margin) }}
+            </template>
+            <template #cell(byr_pokok)="item">
+              Rp {{ thousand(item.item.byr_pokok) }}
+            </template>
+            <template #cell(total_bayar)="item">
+              Rp {{ thousand(Number(item.item.byr_margin) + Number(item.item.byr_pokok)) }}
             </template>
           </b-table>
         </b-col>
@@ -85,11 +93,17 @@
           <template #cell(no)="item">
             {{ item.index + 1 }}
           </template>
-          <template #cell(margin)="item">
-            Rp {{ thousand(item.item.margin) }}
+          <template #cell(trx_date)="item">
+            {{ dateFormatId(item.item.trx_date) }}
           </template>
-          <template #cell(pokok)="item">
-            Rp {{ thousand(item.item.pokok) }}
+          <template #cell(byr_margin)="item">
+            Rp {{ thousand(item.item.byr_margin) }}
+          </template>
+          <template #cell(byr_pokok)="item">
+            Rp {{ thousand(item.item.byr_pokok) }}
+          </template>
+          <template #cell(total_bayar)="item">
+            Rp {{ thousand(Number(item.item.byr_margin) + Number(item.item.byr_pokok)) }}
           </template>
         </b-table>
       </div>
@@ -126,16 +140,16 @@ export default {
             tdClass: 'text-center'
           },
           {
-            key: 'nama_cabang',
+            key: 'trx_date',
             sortable: true,
-            label: 'Cabang',
+            label: 'Tanggal',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'tanggal_registrasi',
+            key: 'no_rekening',
             sortable: true,
-            label: 'Tanggal',
+            label: 'No Rek',
             thClass: 'text-center',
             tdClass: ''
           },
@@ -153,41 +167,41 @@ export default {
             thClass: 'text-center',
             tdClass: 'text-center'
           },
+          // {
+          //   key: 'byr_pokok',
+          //   sortable: true,
+          //   label: 'Byr',
+          //   thClass: 'text-center',
+          //   tdClass: 'text-right'
+          // },
           {
-            key: 'no_rekening',
+            key: 'byr_pokok',
             sortable: true,
-            label: 'No Rek',
+            label: 'Byr Pokok',
             thClass: 'text-center',
             tdClass: 'text-right'
           },
           {
-            key: 'nama_produk',
+            key: 'byr_margin',
             sortable: true,
-            label: 'Produk',
+            label: 'Byr Margin',
             thClass: 'text-center',
             tdClass: 'text-right'
           },
           {
-            key: 'pokok',
+            key: 'total_bayar',
             sortable: true,
-            label: 'Plafon',
+            label: 'Total Bayar',
             thClass: 'text-center',
             tdClass: 'text-right'
           },
-          {
-            key: 'margin',
-            sortable: true,
-            label: 'Margin',
-            thClass: 'text-center',
-            tdClass: 'text-right'
-          },
-          {
-            key: 'jangka_waktu',
-            sortable: true,
-            label: 'Jk Waktu',
-            thClass: 'text-center',
-            tdClass: 'text-right'
-          }
+          // {
+          //   key: 'jangka_waktu',
+          //   sortable: true,
+          //   label: 'Jk Waktu',
+          //   thClass: 'text-center',
+          //   tdClass: 'text-right'
+          // }
         ],
         items: [],
         loading: false,
@@ -203,16 +217,16 @@ export default {
             tdClass: 'text-center'
           },
           {
-            key: 'nama_cabang',
+            key: 'trx_date',
             sortable: false,
-            label: 'Cabang',
+            label: 'Tanggal',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'tanggal_registrasi',
+            key: 'no_rekening',
             sortable: false,
-            label: 'Tanggal',
+            label: 'No Rek',
             thClass: 'text-center',
             tdClass: ''
           },
@@ -230,41 +244,41 @@ export default {
             thClass: 'text-center',
             tdClass: 'text-center'
           },
+          // {
+          //   key: 'byr_pokok',
+          //   sortable: false,
+          //   label: 'Byr',
+          //   thClass: 'text-center',
+          //   tdClass: 'text-right'
+          // },
           {
-            key: 'no_rekening',
+            key: 'byr_pokok',
             sortable: false,
-            label: 'No Rek',
+            label: 'Byr Pokok',
             thClass: 'text-center',
             tdClass: 'text-right'
           },
           {
-            key: 'nama_produk',
+            key: 'byr_margin',
             sortable: false,
-            label: 'Produk',
+            label: 'Byr Margin',
             thClass: 'text-center',
             tdClass: 'text-right'
           },
           {
-            key: 'pokok',
+            key: 'total_bayar',
             sortable: false,
-            label: 'Plafon',
+            label: 'Total Bayar',
             thClass: 'text-center',
             tdClass: 'text-right'
           },
-          {
-            key: 'margin',
-            sortable: false,
-            label: 'Margin',
-            thClass: 'text-center',
-            tdClass: 'text-right'
-          },
-          {
-            key: 'jangka_waktu',
-            sortable: false,
-            label: 'Jk Waktu',
-            thClass: 'text-center',
-            tdClass: 'text-right'
-          }
+          // {
+          //   key: 'jangka_waktu',
+          //   sortable: false,
+          //   label: 'Jk Waktu',
+          //   thClass: 'text-center',
+          //   tdClass: 'text-right'
+          // }
         ],
         items: [],
         loading: false,
