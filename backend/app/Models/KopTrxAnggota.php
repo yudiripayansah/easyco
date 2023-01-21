@@ -69,4 +69,46 @@ class KopTrxAnggota extends Model
 
         return $show;
     }
+
+    function get_credit_member($no_anggota, $jenis_trx, $from_date)
+    {
+        $show = KopTrxAnggota::select(DB::raw('COALESCE(SUM(kop_trx_anggota.amount),0) AS amount'))
+            ->join('kop_list_kode AS klk', 'klk.kode_value', 'kop_trx_anggota.trx_type')
+            ->where('kop_trx_anggota.no_anggota', $no_anggota)
+            ->where('klk.kode_value', $jenis_trx)
+            ->where('kop_trx_anggota.flag_debet_credit', 'C')
+            ->where('kop_trx_anggota.trx_date', '<', $from_date)
+            ->groupBy('kop_trx_anggota.no_anggota')
+            ->first();
+
+        return $show;
+    }
+
+    function get_debet_member($no_anggota, $jenis_trx, $from_date)
+    {
+        $show = KopTrxAnggota::select(DB::raw('COALESCE(SUM(kop_trx_anggota.amount),0) AS amount'))
+            ->join('kop_list_kode AS klk', 'klk.kode_value', 'kop_trx_anggota.trx_type')
+            ->where('kop_trx_anggota.no_anggota', $no_anggota)
+            ->where('klk.kode_value', $jenis_trx)
+            ->where('kop_trx_anggota.flag_debet_credit', 'D')
+            ->where('kop_trx_anggota.trx_date', '<', $from_date)
+            ->groupBy('kop_trx_anggota.no_anggota')
+            ->first();
+
+        return $show;
+    }
+
+    function get_history_member($no_anggota, $jenis_trx, $from_date, $thru_date)
+    {
+        $show = KopTrxAnggota::select('kop_trx_anggota.trx_date', DB::raw('COALESCE(kop_trx_anggota.amount,0) AS amount'), 'kop_trx_anggota.flag_debet_credit', 'kop_trx_anggota.description')
+            ->join('kop_list_kode AS klk', 'klk.kode_value', 'kop_trx_anggota.trx_type')
+            ->where('kop_trx_anggota.no_anggota', $no_anggota)
+            ->where('kop_trx_anggota.amount', '>', 0)
+            ->whereIn('klk.kode_value', $jenis_trx)
+            ->whereBetween('kop_trx_anggota.trx_date', [$from_date, $thru_date])
+            ->orderBy('kop_trx_anggota.trx_date', 'ASC')
+            ->get();
+
+        return $show;
+    }
 }

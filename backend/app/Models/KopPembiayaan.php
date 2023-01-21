@@ -296,4 +296,16 @@ class KopPembiayaan extends Model
 
         return $show;
     }
+
+    function get_financing_member($no_anggota)
+    {
+        $show = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'kpg.no_anggota', 'kpp.nama_produk', 'kop_pembiayaan.tanggal_akad', 'kop_pembiayaan.pokok', 'kop_pembiayaan.margin', 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.status_rekening')
+            ->join('kop_pengajuan AS kpg', 'kpg.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_prd_pembiayaan AS kpp', 'kpp.kode_produk', 'kop_pembiayaan.kode_produk')
+            ->where('kpg.no_anggota', $no_anggota)
+            ->orderBy('kop_pembiayaan.tanggal_akad', 'DESC')
+            ->get();
+
+        return $show;
+    }
 }
