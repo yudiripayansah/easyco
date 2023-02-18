@@ -104,7 +104,7 @@
       </b-row>
     </b-card>
     <b-modal title="Form Cabang" id="modal-form" hide-footer size="lg" centered>
-      <b-form @submit="doSave(e)">
+      <b-form @submit="doSave">
         <b-row>
           <b-col cols="6">
             <b-form-group label="Kode Cabang" label-for="kode_cabang">
@@ -210,7 +210,7 @@ import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import easycoApi from "@/core/services/easyco.service";
 export default {
-  name: "Pengguna",
+  name: "Cabang",
   components: {},
   data() {
     return {
