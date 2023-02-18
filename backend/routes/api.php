@@ -248,6 +248,13 @@ Route::prefix('trx_member')->middleware('checkToken')->group(function () {
 Route::prefix('member')->group(function () {
   Route::post('/authenticate/check_username', [AnggotaUser::class, 'check_username']);
   Route::post('/authenticate/check_password', [AnggotaUser::class, 'check_password']);
+
+  Route::prefix('information')->middleware('checkToken')->group(function () {
+    Route::post('/dashboard', [AnggotaUser::class, 'dashboard']);
+    Route::post('/history_saving', [AnggotaUser::class, 'history_saving']);
+    Route::post('/financing', [AnggotaUser::class, 'financing']);
+    Route::post('/history_financing', [AnggotaUser::class, 'history_financing']);
+  });
 });
 /* END APP ANGGOTA */
 

@@ -122,4 +122,23 @@ class KopAnggota extends Model
 
         return $show;
     }
+
+    function member_dashboard($no_anggota)
+    {
+        $show = KopAnggota::select('kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kr.nama_rembug', 'kd.nama_desa', 'kop_anggota.simpok', 'kop_anggota.simwa', 'kop_anggota.simsuk', DB::raw('COALESCE(SUM(kpb.saldo_pokok),0) AS saldo_outstanding'), DB::raw('COALESCE(SUM(kt.saldo),0) AS saldo_tab_berencana'))
+            ->join('kop_rembug AS kr', 'kr.kode_rembug', 'kop_anggota.kode_rembug')
+            ->join('kop_desa AS kd', 'kd.kode_desa', 'kr.kode_desa')
+            ->leftjoin('kop_pengajuan AS kp', 'kp.no_anggota', 'kop_anggota.no_anggota')
+            ->leftjoin('kop_pembiayaan AS kpb', function ($join) {
+                $join->on('kpb.no_pengajuan', 'kp.no_pengajuan')->where('kpb.status_rekening', 1);
+            })
+            ->leftjoin('kop_tabungan AS kt', function ($joins) {
+                $joins->on('kt.no_anggota', 'kop_anggota.no_anggota')->where('kt.flag_taber', 1)->where('kt.status_rekening', 1);
+            })
+            ->where('kop_anggota.no_anggota', $no_anggota)
+            ->groupBy('kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kr.nama_rembug', 'kd.nama_desa', 'kop_anggota.simpok', 'kop_anggota.simwa', 'kop_anggota.simsuk')
+            ->first();
+
+        return $show;
+    }
 }
