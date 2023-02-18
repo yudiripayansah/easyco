@@ -347,5 +347,51 @@ const easycoApi = {
     }
     return axios.get(url, config)
   },
+    // rembug
+    rembugRead(payload, token){
+      let url = 'rembug/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    rembugDetail(payload, token){
+      let url = 'rembug/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    rembugCreate(payload, token){
+      let url = 'rembug/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    rembugUpdate(payload, token){
+      let url = 'rembug/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    rembugDelete(payload, token){
+      let url = 'rembug/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
 }
 export default easycoApi
