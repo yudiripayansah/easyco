@@ -60,15 +60,15 @@
             show-empty
             :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'"
           >
-            <template #cell(no)="item">
-              {{ item.index + 1 }}
+            <template #cell(no)="data">
+              {{ data.index + 1 }}
             </template>
-            <template #cell(action)="item">
+            <template #cell(action)="data">
               <b-button
                 variant="danger"
                 size="xs"
                 class="mx-1"
-                @click="doDelete(item, true)"
+                @click="doDelete(data.item, true)"
                 v-b-tooltip.hover
                 title="Hapus"
               >
@@ -78,7 +78,7 @@
                 variant="success"
                 size="xs"
                 class="mx-1"
-                @click="doUpdate(item)"
+                @click="doUpdate(data.item)"
                 v-b-tooltip.hover
                 title="Ubah"
               >
@@ -98,7 +98,7 @@
       </b-row>
     </b-card>
     <b-modal title="Form Rembug" id="modal-form" hide-footer size="lg" centered>
-      <b-form @submit="doSave(e)">
+      <b-form @submit="doSave">
         <b-row>
           <b-col cols="6">
             <b-form-group label="Kode Rembug" label-for="kode_rembug">
