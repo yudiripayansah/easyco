@@ -301,5 +301,51 @@ const easycoApi = {
     }
     return axios.post(url, payload, config)
   },
+  // cabang
+  cabangRead(payload, token){
+    let url = 'cabang/read'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  cabangDetail(payload, token){
+    let url = 'cabang/detail?'+payload
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
+  cabangCreate(payload, token){
+    let url = 'cabang/create'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  cabangUpdate(payload, token){
+    let url = 'cabang/update'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  cabangDelete(payload, token){
+    let url = 'cabang/delete?'+payload
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
 }
 export default easycoApi
