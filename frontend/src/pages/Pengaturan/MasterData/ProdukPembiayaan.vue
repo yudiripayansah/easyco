@@ -79,7 +79,7 @@
           </b-col>
           <b-col cols="6">
             <b-form-group label="Periode Angsuran" label-for="periode_angsuran">
-              <b-form-input id="periode_angsuran" v-model="$v.form.data.periode_angsuran.$model"
+              <b-form-select :options="opt.periode_angsuran" id="periode_angsuran" v-model="$v.form.data.periode_angsuran.$model"
                 :state="validateState('periode_angsuran')" />
             </b-form-group>
           </b-col>
@@ -103,18 +103,18 @@
           </b-col>
           <b-col cols="4">
             <b-form-group label="Kode GL" label-for="kode_gl">
-              <b-form-input id="kode_gl" v-model="$v.form.data.kode_gl.$model" :state="validateState('kode_gl')" />
+              <b-form-select :options="opt.kode_gl" id="kode_gl" v-model="$v.form.data.kode_gl.$model" :state="validateState('kode_gl')" />
             </b-form-group>
           </b-col>
           <b-col cols="4">
             <b-form-group label="Flag Wakalah" label-for="flag_wakalah">
-              <b-form-input id="flag_wakalah" v-model="$v.form.data.flag_wakalah.$model"
+              <b-form-select :options="opt.flag_wakalah" id="flag_wakalah" v-model="$v.form.data.flag_wakalah.$model"
                 :state="validateState('flag_wakalah')" />
             </b-form-group>
           </b-col>
           <b-col cols="4">
             <b-form-group label="Flag Pdd" label-for="flag_pdd">
-              <b-form-input id="flag_pdd" v-model="$v.form.data.flag_pdd.$model" :state="validateState('flag_pdd')" />
+              <b-form-select :options="opt.flag_pdd" id="flag_pdd" v-model="$v.form.data.flag_pdd.$model" :state="validateState('flag_pdd')" />
             </b-form-group>
           </b-col>
           <b-col cols="12" class="d-flex justify-content-end border-top pt-5">
@@ -274,6 +274,10 @@
           loading: false
         },
         opt: {
+          periode_angsuran: ['periode angsuran 1','periode angsuran 2','periode angsuran 3'],
+          kode_gl: ['kode GL 1','kode GL 2','kode GL 3'],
+          flag_wakalah: ['flag wakalah 1','flag wakalah 2','flag wakalah 3'],
+          flag_pdd: ['flag pdd 1','flag pdd 2','flag pdd 3'],
           perPage: [10,25,50,100],
           role: ['admin','user','staff','accounting'],
           cabang: ['cabang 1','cabang 2','cabang 3'],

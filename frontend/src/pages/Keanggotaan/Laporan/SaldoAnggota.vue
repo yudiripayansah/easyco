@@ -49,7 +49,7 @@
           </b-col>
         </b-row>
       </b-card>
-      <b-modal title="PREVIEW LAPORAN REGISTRASI ANGGOTA" id="modal-pdf" hide-footer size="xl" centered>
+      <!-- <b-modal title="PREVIEW LAPORAN REGISTRASI ANGGOTA" id="modal-pdf" hide-footer size="xl" centered>
         <div id="table-print" class="p-5">
           <h5 class="text-center">KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )</h5>
           <h5 class="text-center">LAPORAN REGISTRASI ANGGOTA</h5>
@@ -62,6 +62,66 @@
               {{ item.index + 1 }}
             </template>
           </b-table>
+        </div>
+        <b-row>
+          <b-col cols="12" sm="12" class="d-flex justify-content-end border-top pt-5">
+            <b-button variant="secondary" @click="$bvModal.hide('modal-pdf')">Cancel
+            </b-button>
+            <b-button variant="danger" type="button" class="ml-3" @click="doPrintPdf()">
+              Simpan PDF
+            </b-button>
+          </b-col>
+        </b-row>
+      </b-modal> -->
+      <b-modal title="PREVIEW LAPORAN REGISTRASI ANGGOTA" id="modal-pdf" hide-footer size="xl" centered>
+        <div id="table-print" class="p-5">
+          <h5 class="text-center">KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )</h5>
+          <h5 class="text-center">LAPORAN REGISTRASI ANGGOTA</h5>
+          <h5 class="text-center" v-show="report.cabang">{{ report.cabang }}</h5>
+          <h6 class="text-center mb-5 pb-5" v-show="report.from && report.to">Tanggal {{ dateFormatId(report.from) }} s.d
+            {{ dateFormatId(report.to) }}</h6>
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr class="text-center">
+                    <th rowspan="2">No</th>
+                    <th rowspan="2">No anggota</th>
+                    <th rowspan="2">Nama anggota</th>
+                    <th rowspan="2">Nama Majelis</th>
+                    <th rowspan="2">Nama Cabang</th>
+                    <th rowspan="2">Desa</th>
+                    <th rowspan="2">No Telp</th>
+                    <th colspan="5">Saldo</th>
+                </tr>
+                <tr class="text-center">
+                    <th>Simpok</th>
+                    <th>Simwa</th>
+                    <th>Sukalera</th>
+                    <th>Taber</th>
+                    <th>pembiayaan</th>
+                </tr>
+              </thead>
+              <tbody v-if="report.items.length > 0">
+                <tr v-for="(report,reportIndex) in report.items" :key="`report-${reportIndex}`">
+                  <td>{{ reportIndex + 1 }}</td>
+                  <td>{{ report.no_anggota }}</td>
+                  <td>{{ report.nama_anggota }}</td>
+                  <td>{{ report.nama_rembug }}</td>
+                  <td>{{ report.nama_cabang }}</td>
+                  <td>{{ report.desa }}</td>
+                  <td>{{ report.no_telp }}</td>
+                  <td class="text-right">Rp {{ thousand(report.simpok) }}</td>
+                  <td class="text-right">Rp {{ thousand(report.simwa) }}</td>
+                  <td class="text-right">Rp {{ thousand(report.simsuk) }}</td>
+                  <td class="text-right">Rp {{ thousand(0) }}</td>
+                  <td class="text-right">Rp {{ thousand(0) }}</td>
+                </tr>
+              </tbody>
+                <tbody v-else>
+                <tr class="text-center">
+                  <td colspan="12">There's no data to display...</td>
+                </tr>
+              </tbody>
+            </table>
         </div>
         <b-row>
           <b-col cols="12" sm="12" class="d-flex justify-content-end border-top pt-5">

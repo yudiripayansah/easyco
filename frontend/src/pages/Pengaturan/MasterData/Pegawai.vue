@@ -88,7 +88,7 @@
           </b-col>
           <b-col cols="4">
             <b-form-group label="Jabatan" label-for="jabatan">
-              <b-form-input id="jabatan" v-model="$v.form.data.jabatan.$model" :state="validateState('jabatan')" />
+              <b-form-select :options="opt.jabatan" id="jabatan" v-model="$v.form.data.jabatan.$model" :state="validateState('jabatan')" />
             </b-form-group>
           </b-col>
           <b-col cols="4">
@@ -99,8 +99,14 @@
           </b-col>
           <b-col cols="4">
             <b-form-group label="Jenis Kelamin" label-for="jenis_kelamin">
-              <b-form-input id="jenis_kelamin" v-model="$v.form.data.jenis_kelamin.$model"
-                :state="validateState('jenis_kelamin')" />
+              <input class="form-check-input ml-2" type="radio" name="flexRadioDefault" value="W" v-model="form.data.default_saldo">
+              <label class="form-check-label ml-7">
+                Pria
+              </label>
+            <input class="form-check-input ml-7" type="radio" name="flexRadioDefault" value="P" v-model="form.data.default_saldo" checked>
+              <label class="form-check-label ml-12">
+                Wanita
+              </label>
             </b-form-group>
           </b-col>
           <b-col cols="12" class="d-flex justify-content-end border-top pt-5">
@@ -244,6 +250,7 @@
           loading: false
         },
         opt: {
+          jabatan: ['guru','Dokter','Atlit'],
           perPage: [10,25,50,100],
           role: ['admin','user','staff','accounting'],
           cabang: ['cabang 1','cabang 2','cabang 3'],

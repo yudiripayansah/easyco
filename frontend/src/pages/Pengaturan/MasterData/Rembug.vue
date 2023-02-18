@@ -73,19 +73,19 @@
           </b-col>
           <b-col cols="6">
             <b-form-group label="Kode Cabang" label-for="kode_cabang">
-              <b-form-input id="kode_cabang" v-model="$v.form.data.kode_cabang.$model"
+              <b-form-select :options="opt.kode_cabang" id="kode_cabang" v-model="$v.form.data.kode_cabang.$model"
                 :state="validateState('kode_cabang')" />
             </b-form-group>
           </b-col>
           <b-col cols="6">
             <b-form-group label="Kode Petugas" label-for="kode_petugas">
-              <b-form-input id="kode_petugas" v-model="$v.form.data.kode_petugas.$model"
+              <b-form-select :options="opt.kode_petugas" id="kode_petugas" v-model="$v.form.data.kode_petugas.$model"
                 :state="validateState('kode_petugas')" />
             </b-form-group>
           </b-col>
           <b-col cols="4">
             <b-form-group label="Kode Desa" label-for="kode_desa">
-              <b-form-input id="kode_desa" v-model="$v.form.data.kode_desa.$model"
+              <b-form-select :options="opt.kode_desa" id="kode_desa" v-model="$v.form.data.kode_desa.$model"
                 :state="validateState('kode_desa')" />
             </b-form-group>
           </b-col>
@@ -97,7 +97,7 @@
           </b-col>
           <b-col cols="4">
             <b-form-group label="Hari Transaksi" label-for="hari_transaksi">
-              <b-form-input id="hari_transaksi" v-model="$v.form.data.hari_transaksi.$model"
+              <b-form-select :options="opt.hari_transaksi" id="hari_transaksi" v-model="$v.form.data.hari_transaksi.$model"
                 :state="validateState('hari_transaksi')" />
             </b-form-group>
           </b-col>
@@ -109,8 +109,14 @@
           </b-col>
           <b-col cols="4">
             <b-form-group label="Status Aktif" label-for="status_aktif">
-              <b-form-input id="status_aktif" v-model="$v.form.data.status_aktif.$model"
-                :state="validateState('status_aktif')" />
+              <input class="form-check-input ml-2" type="radio" name="flexRadioDefault" value="W" v-model="form.data.default_saldo">
+              <label class="form-check-label ml-7">
+                Aktif
+              </label>
+            <input class="form-check-input ml-7" type="radio" name="flexRadioDefault" value="P" v-model="form.data.default_saldo" checked>
+              <label class="form-check-label ml-12">
+                Non aktif
+              </label>
             </b-form-group>
           </b-col>
           <b-col cols="12" class="d-flex justify-content-end border-top pt-5">
@@ -263,6 +269,10 @@
         },
         opt: {
           perPage: [10,25,50,100],
+          kode_cabang: ['kode cabang 1','kode cabang 2','kode cabang 3'],
+          kode_petugas: ['kode petugas 1','kode petugas 2','kode petugas 3'],
+          kode_desa: ['kode desa 1','kode desa 2','kode desa 3'],
+          hari_transaksi: ['senin','selasa','rabu','kamis','jumat','sabtu','minggu'],
           role: ['admin','user','staff','accounting'],
           cabang: ['cabang 1','cabang 2','cabang 3'],
           status: ['aktif','non aktif']

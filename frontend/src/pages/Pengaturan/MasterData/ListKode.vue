@@ -62,7 +62,7 @@
         <b-row>
           <b-col cols="6">
             <b-form-group label="Nama Kode" label-for="nama_kode">
-              <b-form-input id="nama_kode" v-model="$v.form.data.nama_kode.$model"
+              <b-form-select :options="opt.nama_kode" id="nama_kode" v-model="$v.form.data.nama_kode.$model"
                 :state="validateState('nama_kode')" />
             </b-form-group>
           </b-col>
@@ -179,6 +179,7 @@
           loading: false
         },
         opt: {
+          nama_kode: ['nama kode 1','nama kode 2','nama kode 3'],
           perPage: [10,25,50,100],
           role: ['admin','user','staff','accounting'],
           cabang: ['cabang 1','cabang 2','cabang 3'],

@@ -79,7 +79,7 @@
           </b-col>
           <b-col cols="6">
             <b-form-group label="Jenis Akad" label-for="jenis_akad">
-              <b-form-input id="jenis_akad" v-model="$v.form.data.jenis_akad.$model"
+              <b-form-select :options="opt.jenis_akad" id="jenis_akad" v-model="$v.form.data.jenis_akad.$model"
                 :state="validateState('jenis_akad')" />
             </b-form-group>
           </b-col>
@@ -97,7 +97,7 @@
           </b-col>
           <b-col cols="4">
             <b-form-group label="Jenis Tabungan" label-for="jenis tabungan">
-              <b-form-input id="jenis_tabungan" v-model="$v.form.data.jenis_tabungan.$model"
+              <b-form-select :options="opt.jenis_tabungan" id="jenis_tabungan" v-model="$v.form.data.jenis_tabungan.$model"
                 :state="validateState('jenis_tabungan')" />
             </b-form-group>
           </b-col>
@@ -109,7 +109,7 @@
           </b-col>
           <b-col cols="4">
             <b-form-group label="Periode Setoran" label-for="periode_setoran">
-              <b-form-input id="periode_setoran" v-model="$v.form.data.periode_setoran.$model"
+              <b-form-select :options="opt.periode_setoran" id="periode_setoran" v-model="$v.form.data.periode_setoran.$model"
                 :state="validateState('periode_setoran')" />
             </b-form-group>
           </b-col>
@@ -121,7 +121,7 @@
           </b-col>
           <b-col cols="4">
             <b-form-group label="Kode GL" label-for="kode_gl">
-              <b-form-input id="kode_gl" v-model="$v.form.data.kode_gl.$model" :state="validateState('kode_gl')" />
+              <b-form-select :options="opt.kode_gl" id="kode_gl" v-model="$v.form.data.kode_gl.$model" :state="validateState('kode_gl')" />
             </b-form-group>
           </b-col>
           <b-col cols="4">
@@ -302,6 +302,10 @@
           loading: false
         },
         opt: {
+          jenis_akad: ['Wadiah','Mudharabah','Musyarakah'],
+          jenis_tabungan: ['Tabungan Konvensional','Tabungan Berjangka','Tabungan Haji'],
+          periode_setoran: ['periode setoran 1','periode setoran 2','periode setoran 3'],
+          kode_gl: ['kode GL 1','kode GL 2','kode GL 3'],
           perPage: [10,25,50,100],
           role: ['admin','user','staff','accounting'],
           cabang: ['cabang 1','cabang 2','cabang 3'],

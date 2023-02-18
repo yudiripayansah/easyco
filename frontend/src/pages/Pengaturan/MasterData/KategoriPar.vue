@@ -74,7 +74,7 @@
           </b-col>
           <b-col cols="6">
             <b-form-group label="Kategori Par" label-for="kategori_par">
-              <b-form-input id="kategori_par" v-model="$v.form.data.kategori_par.$model"
+              <b-form-select :options="opt.kategori_par" id="kategori_par" v-model="$v.form.data.kategori_par.$model"
                 :state="validateState('kategori_par')" />
             </b-form-group>
           </b-col>
@@ -193,6 +193,7 @@ export default {
         loading: false
       },
       opt: {
+        kategori_par: ['kategori par 1','kategori par 2','kategori par 3'],
         perPage: [10,25,50,100],
         role: ['admin','user','staff','accounting'],
         cabang: ['cabang 1','cabang 2','cabang 3'],

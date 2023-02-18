@@ -72,18 +72,24 @@
           </b-col>
           <b-col cols="6">
             <b-form-group label="Tipe" label-for="tipe">
-              <b-form-input id="tipe" v-model="$v.form.data.tipe.$model" :state="validateState('tipe')" />
+              <b-form-select :options="opt.tipe" id="tipe" v-model="$v.form.data.tipe.$model" :state="validateState('tipe')" />
             </b-form-group>
           </b-col>
           <b-col cols="6">
             <b-form-group label="Group" label-for="group">
-              <b-form-input id="group" v-model="$v.form.data.group.$model" :state="validateState('group')" />
+              <b-form-select :options="opt.group" id="group" v-model="$v.form.data.group.$model" :state="validateState('group')" />
             </b-form-group>
           </b-col>
           <b-col cols="4">
             <b-form-group label="Default Saldo" label-for="default_saldo">
-              <b-form-input id="default_saldo" v-model="$v.form.data.default_saldo.$model"
-                :state="validateState('default_saldo')" />
+              <input class="form-check-input ml-2" type="radio" name="flexRadioDefault" value="W" v-model="form.data.default_saldo">
+              <label class="form-check-label ml-7">
+                saldo awal
+              </label>
+            <input class="form-check-input ml-7" type="radio" name="flexRadioDefault" value="P" v-model="form.data.default_saldo" checked>
+              <label class="form-check-label ml-12">
+                saldo akhir
+              </label>
             </b-form-group>
           </b-col>
           <b-col cols="12" class="d-flex justify-content-end border-top pt-5">
@@ -203,6 +209,8 @@ export default {
         loading: false
       },
       opt: {
+        tipe: ['tipe 1','tipe 2','tipe 3'],
+        group: ['gruop 1','gruop 2','gruop 3'],
         perPage: [10,25,50,100],
         role: ['admin','user','staff','accounting'],
         cabang: ['cabang 1','cabang 2','cabang 3'],
