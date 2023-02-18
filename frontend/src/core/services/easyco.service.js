@@ -393,5 +393,51 @@ const easycoApi = {
       }
       return axios.get(url, config)
     },
+     // Produk Tabungan
+     prdtabunganRead(payload, token){
+      let url = 'prdtabungan/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prdtabunganDetail(payload, token){
+      let url = 'prdtabungan/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    prdtabunganCreate(payload, token){
+      let url = 'prdtabungan/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prdtabunganUpdate(payload, token){
+      let url = 'prdtabungan/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prdtabunganDelete(payload, token){
+      let url = 'prdtabungan/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
 }
 export default easycoApi
