@@ -63,6 +63,12 @@
             <template #cell(no)="data">
               {{ data.index + 1 }}
             </template>
+            <template #cell(kode_akad)="data">
+              {{ getKodeAkad(data.item.kode_akad) }}
+            </template>
+            <template #cell(flag_wakalah)="data">
+              {{ getFlagWakalah(data.item.flag_wakalah) }}
+            </template>
             <template #cell(action)="data">
               <b-button
                 variant="danger"
@@ -357,13 +363,6 @@ export default {
             tdClass: "",
           },
           {
-            key: "created_at",
-            sortable: true,
-            label: "Dibuat Tanggal",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
             key: "action",
             sortable: false,
             label: "Action",
@@ -589,6 +588,27 @@ export default {
           this.notify("danger", "Error", error);
         }
       }
+    },
+    getKodeAkad(val) {
+      let res = this.opt.kode_akad.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
+    },
+    getPeriodeAngsuran(val) {
+      let res = this.opt.periode_angsuran.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
+    },
+    getFlagWakalah(val) {
+      let res = this.opt.flag_wakalah.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
     },
     doClearForm() {
       this.form.data = {

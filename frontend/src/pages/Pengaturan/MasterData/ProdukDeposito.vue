@@ -63,6 +63,9 @@
             <template #cell(no)="data">
               {{ data.index + 1 }}
             </template>
+            <template #cell(periode_setoran)="data">
+              {{ getPeriodeSetoran(data.item.periode_setoran) }}
+            </template>
             <template #cell(action)="data">
               <b-button
                 variant="danger"
@@ -338,13 +341,6 @@ export default {
             tdClass: "",
           },
           {
-            key: "created_at",
-            sortable: true,
-            label: "Dibuat Tanggal",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
             key: "action",
             sortable: false,
             label: "Action",
@@ -515,6 +511,13 @@ export default {
           this.notify("danger", "Error", error);
         }
       }
+    },
+    getPeriodeSetoran(val) {
+      let res = this.opt.periode_setoran.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
     },
     doClearForm() {
       this.form.data = {

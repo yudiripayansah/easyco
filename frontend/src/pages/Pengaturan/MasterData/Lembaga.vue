@@ -354,13 +354,6 @@ export default {
             tdClass: "",
           },
           {
-            key: "created_at",
-            sortable: true,
-            label: "Dibuat Tanggal",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
             key: "action",
             sortable: false,
             label: "Action",

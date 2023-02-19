@@ -63,6 +63,9 @@
             <template #cell(no)="data">
               {{ data.index + 1 }}
             </template>
+            <template #cell(jenis_kelamin)="data">
+              {{ getJenisKelamin(data.item.jenis_kelamin) }}
+            </template>
             <template #cell(action)="data">
               <b-button
                 variant="danger"
@@ -509,6 +512,13 @@ export default {
           this.notify("danger", "Error", error);
         }
       }
+    },
+    getJenisKelamin(val) {
+      let res = this.opt.jenis_kelamin.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
     },
     doClearForm() {
       this.form.data = {

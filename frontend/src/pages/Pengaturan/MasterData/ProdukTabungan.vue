@@ -63,6 +63,15 @@
             <template #cell(no)="data">
               {{ data.index + 1 }}
             </template>
+            <template #cell(jenis_akad)="data">
+              {{ getJenisAkad(data.item.jenis_akad) }}
+            </template>
+            <template #cell(jenis_tabungan)="data">
+              {{ getJenisTabungan(data.item.jenis_tabungan) }}
+            </template>
+            <template #cell(periode_setoran)="data">
+              {{ getPeriodeSetoran(data.item.periode_setoran) }}
+            </template>
             <template #cell(action)="data">
               <b-button
                 variant="danger"
@@ -391,13 +400,6 @@ export default {
             tdClass: "",
           },
           {
-            key: "created_at",
-            sortable: true,
-            label: "Dibuat Tanggal",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
             key: "action",
             sortable: false,
             label: "Action",
@@ -601,6 +603,27 @@ export default {
           this.notify("danger", "Error", error);
         }
       }
+    },
+    getJenisAkad(val) {
+      let res = this.opt.jenis_akad.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
+    },
+    getJenisTabungan(val) {
+      let res = this.opt.jenis_tabungan.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
+    },
+    getPeriodeSetoran(val) {
+      let res = this.opt.periode_setoran.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
     },
     doClearForm() {
       this.form.data = {

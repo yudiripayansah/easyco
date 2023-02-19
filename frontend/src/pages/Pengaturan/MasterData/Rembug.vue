@@ -63,6 +63,9 @@
             <template #cell(no)="data">
               {{ data.index + 1 }}
             </template>
+            <template #cell(hari_transaksi)="data">
+              {{ getHariTransaksi(data.item.hari_transaksi) }}
+            </template>
             <template #cell(action)="data">
               <b-button
                 variant="danger"
@@ -510,6 +513,13 @@ export default {
           this.notify("danger", "Error", error);
         }
       }
+    },
+    getHariTransaksi(val) {
+      let res = this.opt.hari_transaksi.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
     },
     doClearForm() {
       this.form.data = {
