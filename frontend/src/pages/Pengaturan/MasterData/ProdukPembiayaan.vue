@@ -69,6 +69,9 @@
             <template #cell(flag_wakalah)="data">
               {{ getFlagWakalah(data.item.flag_wakalah) }}
             </template>
+            <template #cell(periode_angsuran)="data">
+              {{ getPeriodeAngsuran(data.item.periode_angsuran) }}
+            </template>
             <template #cell(action)="data">
               <b-button
                 variant="danger"
