@@ -623,5 +623,51 @@ const easycoApi = {
       }
       return axios.get(url, config)
     },
+     // GL
+     glRead(payload, token){
+      let url = 'gl/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    glDetail(payload, token){
+      let url = 'gl/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    glCreate(payload, token){
+      let url = 'gl/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    glUpdate(payload, token){
+      let url = 'gl/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    glDelete(payload, token){
+      let url = 'gl/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
 }
 export default easycoApi
