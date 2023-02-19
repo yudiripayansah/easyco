@@ -485,5 +485,51 @@ const easycoApi = {
       }
       return axios.get(url, config)
     },
+     // Produk Deposito
+     prddepositoRead(payload, token){
+      let url = 'prddeposito/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prddepositoDetail(payload, token){
+      let url = 'prddeposito/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    prddepositoCreate(payload, token){
+      let url = 'prddeposito/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prddepositoUpdate(payload, token){
+      let url = 'prddeposito/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prddepositoDelete(payload, token){
+      let url = 'prddeposito/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
 }
 export default easycoApi
