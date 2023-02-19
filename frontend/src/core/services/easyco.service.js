@@ -669,5 +669,51 @@ const easycoApi = {
       }
       return axios.get(url, config)
     },
+     // KATEGORI PAR
+     katgoriparRead(payload, token){
+      let url = 'katgoripar/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    katgoriparDetail(payload, token){
+      let url = 'katgoripar/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    katgoriparCreate(payload, token){
+      let url = 'katgoripar/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    katgoriparUpdate(payload, token){
+      let url = 'katgoripar/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    katgoriparDelete(payload, token){
+      let url = 'katgoripar/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
 }
 export default easycoApi
