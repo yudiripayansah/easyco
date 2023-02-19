@@ -531,5 +531,51 @@ const easycoApi = {
       }
       return axios.get(url, config)
     },
+     // LEMBAGA
+     lembagaRead(payload, token){
+      let url = 'lembaga/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    lembagaDetail(payload, token){
+      let url = 'lembaga/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    lembagaCreate(payload, token){
+      let url = 'lembaga/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    lembagaUpdate(payload, token){
+      let url = 'lembaga/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    lembagaDelete(payload, token){
+      let url = 'lembaga/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
 }
 export default easycoApi
