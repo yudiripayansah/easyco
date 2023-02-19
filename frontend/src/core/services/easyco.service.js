@@ -715,5 +715,51 @@ const easycoApi = {
       }
       return axios.get(url, config)
     },
+     // LIST KODE
+     listkodeRead(payload, token){
+      let url = 'listkode/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    listkodeDetail(payload, token){
+      let url = 'listkode/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    listkodeCreate(payload, token){
+      let url = 'listkode/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    listkodeUpdate(payload, token){
+      let url = 'listkode/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    listkodeDelete(payload, token){
+      let url = 'listkode/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
 }
 export default easycoApi
