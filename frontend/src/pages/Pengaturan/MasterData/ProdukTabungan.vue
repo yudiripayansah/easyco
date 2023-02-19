@@ -60,8 +60,8 @@
             show-empty
             :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'"
           >
-            <template #cell(no)="item">
-              {{ item.index + 1 }}
+            <template #cell(no)="data">
+              {{ data.index + 1 }}
             </template>
             <template #cell(action)="data">
               <b-button
