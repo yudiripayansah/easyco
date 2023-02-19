@@ -577,5 +577,51 @@ const easycoApi = {
       }
       return axios.get(url, config)
     },
+     // PEGAWAI
+     pegawaiRead(payload, token){
+      let url = 'pegawai/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    pegawaiDetail(payload, token){
+      let url = 'pegawai/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    pegawaiCreate(payload, token){
+      let url = 'pegawai/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    pegawaiUpdate(payload, token){
+      let url = 'pegawai/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    pegawaiDelete(payload, token){
+      let url = 'pegawai/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
 }
 export default easycoApi
