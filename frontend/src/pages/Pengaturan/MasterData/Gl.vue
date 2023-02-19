@@ -63,6 +63,15 @@
             <template #cell(no)="data">
               {{ data.index + 1 }}
             </template>
+            <template #cell(tipe_gl)="data">
+              {{ getTipeGl(data.item.tipe_gl) }}
+            </template>
+            <template #cell(default_saldo)="data">
+              {{ getDefaultSaldo(data.item.default_saldo) }}
+            </template>
+            <template #cell(flag_akses)="data">
+              {{ getFlagAkses(data.item.flag_akses) }}
+            </template>
             <template #cell(action)="data">
               <b-button
                 variant="danger"
@@ -477,6 +486,27 @@ export default {
           this.notify("danger", "Error", error);
         }
       }
+    },
+    getTipeGl(val) {
+      let res = this.opt.tipe_gl.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
+    },
+    getDefaultSaldo(val) {
+      let res = this.opt.default_saldo.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
+    },
+    getFlagAkses(val) {
+      let res = this.opt.flag_akses.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
     },
     doClearForm() {
       (this.form.data = {
