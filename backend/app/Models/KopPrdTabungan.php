@@ -96,7 +96,7 @@ class KopPrdTabungan extends Model
 
     function read($search, $sortBy, $sortDir, $offset, $perPage)
     {
-        $show = DB::table('kop_prd_tabungan')->orderBy($sortBy, $sortDir);
+        $show = KopPrdTabungan::orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $show->skip($offset)->take($perPage);

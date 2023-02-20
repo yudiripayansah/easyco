@@ -17,7 +17,7 @@ class CreateKopPrdPembiayaanTable extends Migration
             $table->id();
             $table->string('kode_produk', 3)->unique();
             $table->integer('kode_akad')->comment('0 = Wadiah, 1 = Mudhorobah, 2 = Musyarokah, 3 = Ijarah, 4 = Murobahah, 5 = Istishna, 6 = Qordh');
-            $table->string('kode_gl', 20);
+            $table->string('kode_gl', 20)->nullable(TRUE);
             $table->string('nama_produk', 50);
             $table->string('nama_singkat', 20);
             $table->integer('periode_angsuran')->comment('0 = Harian, 1 = Mingguan, 2 = Bulanan, 3 = Jatuh Tempo, 4 = Skema Khusus');

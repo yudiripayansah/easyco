@@ -74,7 +74,7 @@ class KopCabang extends Model
 
     function read($search, $cabang, $sortBy, $sortDir, $offset, $perPage)
     {
-        $show = DB::table('kop_cabang')->orderBy($sortBy, $sortDir);
+        $show = KopCabang::orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $show->skip($offset)->take($perPage);

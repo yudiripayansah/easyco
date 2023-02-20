@@ -20,7 +20,7 @@ class CreateKopTabunganTable extends Migration
             $table->string('kode_produk', 3);
             $table->string('no_anggota', 20);
             $table->string('no_rekening', 25)->unique();
-            $table->decimal('saldo', 14, 2)->nullable(TRUE)->default(0);
+            $table->decimal('saldo', 14, 0)->nullable(TRUE)->default(0);
             $table->integer('flag_taber')->nullable(TRUE)->default(0)->comment('0 = Tidak, 1 = Ya');
             $table->integer('jangka_waktu')->nullable(TRUE)->default(0);
             $table->integer('periode_setoran')->nullable(TRUE)->default(1)->comment('0 = Harian, 1 = Mingguan, 2 = Bulanan');

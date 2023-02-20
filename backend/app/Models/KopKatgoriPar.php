@@ -80,7 +80,7 @@ class KopKatgoriPar extends Model
 
     function read($search, $sortBy, $sortDir, $offset, $perPage)
     {
-        $show = DB::table('kop_katgori_par')->orderBy($sortBy, $sortDir);
+        $show = KopKatgoriPar::orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $show->skip($offset)->take($perPage);
