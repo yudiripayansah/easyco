@@ -79,7 +79,7 @@ class KopUser extends Model
 
     function read($search, $sortBy, $sortDir, $offset, $perPage)
     {
-        $show = DB::table('kop_user')->orderBy($sortBy, $sortDir);
+        $show = KopUser::orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $show->skip($offset)->take($perPage);

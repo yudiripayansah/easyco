@@ -7,6 +7,7 @@ use App\Models\KopAnggota;
 use App\Models\KopAnggotaUser;
 use App\Models\KopKartuAngsuran;
 use App\Models\KopPembiayaan;
+use App\Models\KopTabungan;
 use App\Models\KopTrxAnggota;
 use Exception;
 use Illuminate\Http\Request;
@@ -205,6 +206,16 @@ class AnggotaUser extends Controller
         $all = $request->all();
 
         $get = KopAnggota::member_dashboard($all['nama_user']);
+        $get2 = KopTabungan::tpl_saving($all['nama_user']);
+
+        $saving = array();
+
+        foreach ($get2 as $tab) {
+            $saving[] = array(
+                'product_name' => $tab['nama_singkat'],
+                'saldo' => $tab['saldo'] * 1
+            );
+        }
 
         $data = array(
             'no_anggota' => $get->no_anggota,
@@ -215,7 +226,7 @@ class AnggotaUser extends Controller
             'simwa' => $get->simwa * 1,
             'simsuk' => $get->simsuk * 1,
             'saldo_outstanding' => $get->saldo_outstanding * 1,
-            'saldo_tab_berencana' => $get->saldo_tab_berencana * 1
+            'saldo_tab_berencana' => $saving
         );
 
         $res = array(
@@ -391,24 +402,28 @@ class AnggotaUser extends Controller
 
         $get_history = KopKartuAngsuran::get_history_financing($all['no_rekening']);
 
-        for ($i = 0; $i < count($get_history); $i++) {
-            $tgl_angsuran = $get_history[$i]->tgl_angsuran;
-            $tgl_bayar = $get_history[$i]->tgl_bayar;
-            $angsuran_ke = $get_history[$i]->angsuran_ke;
-            $angsuran_pokok = $get_history[$i]->angsuran_pokok;
-            $angsuran_margin = $get_history[$i]->angsuran_margin;
-            $saldo_pokok = $get_history[$i]->saldo_pokok;
-            $saldo_margin = $get_history[$i]->saldo_margin;
+        if (count($get_history) > 0) {
+            for ($i = 0; $i < count($get_history); $i++) {
+                $tgl_angsuran = $get_history[$i]->tgl_angsuran;
+                $tgl_bayar = $get_history[$i]->tgl_bayar;
+                $angsuran_ke = $get_history[$i]->angsuran_ke;
+                $angsuran_pokok = $get_history[$i]->angsuran_pokok;
+                $angsuran_margin = $get_history[$i]->angsuran_margin;
+                $saldo_pokok = $get_history[$i]->saldo_pokok;
+                $saldo_margin = $get_history[$i]->saldo_margin;
 
-            $data[] = array(
-                'tgl_angsuran' => $tgl_angsuran,
-                'tgl_bayar' => $tgl_bayar,
-                'angsuran_ke' => $angsuran_ke,
-                'angsuran_pokok' => $angsuran_pokok * 1,
-                'angsuran_margin' => $angsuran_margin * 1,
-                'saldo_pokok' => $saldo_pokok * 1,
-                'saldo_margin' => $saldo_margin * 1
-            );
+                $data[] = array(
+                    'tgl_angsuran' => $tgl_angsuran,
+                    'tgl_bayar' => $tgl_bayar,
+                    'angsuran_ke' => $angsuran_ke,
+                    'angsuran_pokok' => $angsuran_pokok * 1,
+                    'angsuran_margin' => $angsuran_margin * 1,
+                    'saldo_pokok' => $saldo_pokok * 1,
+                    'saldo_margin' => $saldo_margin * 1
+                );
+            }
+        } else {
+            $data = array();
         }
 
         $res = array(

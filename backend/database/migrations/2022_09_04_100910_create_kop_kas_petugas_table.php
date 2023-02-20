@@ -20,7 +20,7 @@ class CreateKopKasPetugasTable extends Migration
             $table->string('id_user', 32);
             $table->string('kode_kas_petugas', 20)->unique();
             $table->string('kode_petugas', 20)->unique();
-            $table->string('kode_gl', 20);
+            $table->string('kode_gl', 20)->nullable(TRUE);
             $table->string('nama_kas_petugas', 100);
             $table->decimal('saldo', 14, 2)->nullable(TRUE)->default(0);
             $table->integer('jenis_kas_petugas')->comment('0 = Kas Petugas, 1 = Kas Teller');

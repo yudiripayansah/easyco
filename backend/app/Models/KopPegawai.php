@@ -83,7 +83,7 @@ class KopPegawai extends Model
 
     function read($search, $sortBy, $sortDir, $offset, $perPage)
     {
-        $show = DB::table('kop_pegawai')->orderBy($sortBy, $sortDir);
+        $show = KopPegawai::orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $show->skip($offset)->take($perPage);

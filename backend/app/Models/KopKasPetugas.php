@@ -82,7 +82,7 @@ class KopKasPetugas extends Model
 
     function read($search, $sortBy, $sortDir, $offset, $perPage)
     {
-        $show = DB::table('kop_kas_petugas')->orderBy($sortBy, $sortDir);
+        $show = KopKasPetugas::orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $show->skip($offset)->take($perPage);

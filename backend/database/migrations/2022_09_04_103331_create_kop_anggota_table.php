@@ -45,6 +45,7 @@ class CreateKopAnggotaTable extends Migration
             $table->date('tgl_gabung');
             $table->integer('status')->nullable(TRUE)->default(1)->comment('0 = Registrasi, 1 = Aktif, 2 = Tidak Aktif, 3 = Menunggu Verifikasi Keluar');
             $table->date('tanggal_keluar')->nullable(TRUE);
+            $table->string('no_anggota_lama', 20)->nullable(TRUE);
             $table->string('created_by', 30);
             $table->timestamps();
             $table->string('updated_by', 30)->nullable(TRUE);

@@ -16,7 +16,7 @@ class CreateKopPrdTabunganTable extends Migration
         Schema::create('kop_prd_tabungan', function (Blueprint $table) {
             $table->id();
             $table->string('kode_produk', 3)->unique();
-            $table->string('kode_gl', 20);
+            $table->string('kode_gl', 20)->nullable(TRUE);
             $table->string('nama_produk', 50);
             $table->string('nama_singkat', 20);
             $table->integer('jenis_akad')->nullable(TRUE)->default(0)->comment('0 = Wadiah, 1 = Mudhorobah');

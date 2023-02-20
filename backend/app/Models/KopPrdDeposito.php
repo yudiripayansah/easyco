@@ -89,7 +89,7 @@ class KopPrdDeposito extends Model
 
     function read($search, $sortBy, $sortDir, $offset, $perPage)
     {
-        $show = DB::table('kop_prd_deposito')->orderBy($sortBy, $sortDir);
+        $show = KopPrdDeposito::orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $show->skip($offset)->take($perPage);

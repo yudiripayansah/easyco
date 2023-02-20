@@ -78,7 +78,7 @@ class KopListKode extends Model
 
     function read($search, $sortBy, $sortDir, $offset, $perPage)
     {
-        $show = DB::table('kop_list_kode')->orderBy($sortBy, $sortDir);
+        $show = KopListKode::orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $show->skip($offset)->take($perPage);

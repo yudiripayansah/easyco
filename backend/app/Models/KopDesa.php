@@ -77,7 +77,7 @@ class KopDesa extends Model
 
     function read($search, $sortBy, $sortDir, $offset, $perPage)
     {
-        $show = DB::table('kop_desa')->orderBy($sortBy, $sortDir);
+        $show = KopDesa::orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $show->skip($offset)->take($perPage);

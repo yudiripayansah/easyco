@@ -77,7 +77,7 @@ class KopKecamatan extends Model
 
     function read($search, $sortBy, $sortDir, $offset, $perPage)
     {
-        $show = DB::table('kop_kecamatan')->orderBy($sortBy, $sortDir);
+        $show = KopKecamatan::orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $show->skip($offset)->take($perPage);

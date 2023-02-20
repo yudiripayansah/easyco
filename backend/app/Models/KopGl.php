@@ -81,7 +81,7 @@ class KopGl extends Model
 
     function read($search, $sortBy, $sortDir, $offset, $perPage)
     {
-        $show = DB::table('kop_gl')->orderBy($sortBy, $sortDir);
+        $show = KopGl::orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $show->skip($offset)->take($perPage);

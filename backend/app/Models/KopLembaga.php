@@ -89,7 +89,7 @@ class KopLembaga extends Model
 
     function read($search, $sortBy, $sortDir, $offset, $perPage)
     {
-        $show = DB::table('kop_lembaga')->orderBy($sortBy, $sortDir);
+        $show = KopLembaga::orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $show->skip($offset)->take($perPage);
