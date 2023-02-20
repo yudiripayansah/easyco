@@ -393,5 +393,373 @@ const easycoApi = {
       }
       return axios.get(url, config)
     },
+     // Produk Tabungan
+     prdtabunganRead(payload, token){
+      let url = 'prdtabungan/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prdtabunganDetail(payload, token){
+      let url = 'prdtabungan/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    prdtabunganCreate(payload, token){
+      let url = 'prdtabungan/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prdtabunganUpdate(payload, token){
+      let url = 'prdtabungan/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prdtabunganDelete(payload, token){
+      let url = 'prdtabungan/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+     // Produk Pembiayaan
+     prdpembiayaanRead(payload, token){
+      let url = 'prdpembiayaan/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prdpembiayaanDetail(payload, token){
+      let url = 'prdpembiayaan/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    prdpembiayaanCreate(payload, token){
+      let url = 'prdpembiayaan/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prdpembiayaanUpdate(payload, token){
+      let url = 'prdpembiayaan/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prdpembiayaanDelete(payload, token){
+      let url = 'prdpembiayaan/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+     // Produk Deposito
+     prddepositoRead(payload, token){
+      let url = 'prddeposito/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prddepositoDetail(payload, token){
+      let url = 'prddeposito/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    prddepositoCreate(payload, token){
+      let url = 'prddeposito/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prddepositoUpdate(payload, token){
+      let url = 'prddeposito/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    prddepositoDelete(payload, token){
+      let url = 'prddeposito/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+     // LEMBAGA
+     lembagaRead(payload, token){
+      let url = 'lembaga/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    lembagaDetail(payload, token){
+      let url = 'lembaga/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    lembagaCreate(payload, token){
+      let url = 'lembaga/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    lembagaUpdate(payload, token){
+      let url = 'lembaga/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    lembagaDelete(payload, token){
+      let url = 'lembaga/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+     // PEGAWAI
+     pegawaiRead(payload, token){
+      let url = 'pegawai/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    pegawaiDetail(payload, token){
+      let url = 'pegawai/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    pegawaiCreate(payload, token){
+      let url = 'pegawai/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    pegawaiUpdate(payload, token){
+      let url = 'pegawai/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    pegawaiDelete(payload, token){
+      let url = 'pegawai/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+     // GL
+     glRead(payload, token){
+      let url = 'gl/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    glDetail(payload, token){
+      let url = 'gl/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    glCreate(payload, token){
+      let url = 'gl/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    glUpdate(payload, token){
+      let url = 'gl/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    glDelete(payload, token){
+      let url = 'gl/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+     // KATEGORI PAR
+     katgoriparRead(payload, token){
+      let url = 'katgoripar/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    katgoriparDetail(payload, token){
+      let url = 'katgoripar/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    katgoriparCreate(payload, token){
+      let url = 'katgoripar/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    katgoriparUpdate(payload, token){
+      let url = 'katgoripar/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    katgoriparDelete(payload, token){
+      let url = 'katgoripar/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+     // LIST KODE
+     listkodeRead(payload, token){
+      let url = 'listkode/read'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    listkodeDetail(payload, token){
+      let url = 'listkode/detail?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
+    listkodeCreate(payload, token){
+      let url = 'listkode/create'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    listkodeUpdate(payload, token){
+      let url = 'listkode/update'
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.post(url, payload, config)
+    },
+    listkodeDelete(payload, token){
+      let url = 'listkode/delete?'+payload
+      let config = {
+        headers: {
+          'token': token
+        }
+      }
+      return axios.get(url, config)
+    },
 }
 export default easycoApi

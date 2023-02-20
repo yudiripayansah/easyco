@@ -1,11 +1,21 @@
 <template>
   <div>
-    <h1 class="mb-5">{{$route.name}}</h1>
+    <h1 class="mb-5">{{ $route.name }}</h1>
     <b-card>
       <b-row no-gutters>
-        <b-col cols="12" class="d-flex justify-content-end mb-5 pb-5 border-bottom">
-          <b-button variant="success" @click="$bvModal.show('modal-form');doClearForm()" v-b-tooltip.hover
-            title="Tambah Data Baru">
+        <b-col
+          cols="12"
+          class="d-flex justify-content-end mb-5 pb-5 border-bottom"
+        >
+          <b-button
+            variant="success"
+            @click="
+              $bvModal.show('modal-form');
+              doClearForm();
+            "
+            v-b-tooltip.hover
+            title="Tambah Data Baru"
+          >
             <b-icon icon="plus" />
             Tambah Baru
           </b-button>
@@ -15,7 +25,10 @@
             <b-col cols="6">
               <div class="w-100 max-200 pr-5">
                 <b-input-group size="sm" prepend="Per Halaman">
-                  <b-form-select v-model="paging.perPage" :options="opt.perPage" />
+                  <b-form-select
+                    v-model="paging.perPage"
+                    :options="opt.perPage"
+                  />
                 </b-input-group>
               </div>
             </b-col>
@@ -35,68 +48,137 @@
           </b-row>
         </b-col>
         <b-col cols="12">
-          <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
-            show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
-            <template #cell(no)="item">
-              {{item.index + 1}}
+          <b-table
+            responsive
+            bordered
+            outlined
+            small
+            striped
+            hover
+            :fields="table.fields"
+            :items="table.items"
+            show-empty
+            :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'"
+          >
+            <template #cell(no)="data">
+              {{ data.index + 1 }}
             </template>
-            <template #cell(action)="item">
-              <b-button variant="danger" size="xs" class="mx-1" @click="doDelete(item,true)" v-b-tooltip.hover
-                title="Hapus">
+            <template #cell(action)="data">
+              <b-button
+                variant="danger"
+                size="xs"
+                class="mx-1"
+                @click="doDelete(data.item, true)"
+                v-b-tooltip.hover
+                title="Hapus"
+              >
                 <b-icon icon="trash" />
               </b-button>
-              <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Ubah">
+              <b-button
+                variant="success"
+                size="xs"
+                class="mx-1"
+                @click="doUpdate(data.item)"
+                v-b-tooltip.hover
+                title="Ubah"
+              >
                 <b-icon icon="pencil" />
               </b-button>
             </template>
           </b-table>
         </b-col>
         <b-col cols="12" class="justify-content-end d-flex">
-          <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
+          <b-pagination
+            v-model="paging.page"
+            :total-rows="table.totalRows"
+            :per-page="paging.perPage"
+          >
           </b-pagination>
         </b-col>
       </b-row>
     </b-card>
-    <b-modal title="Form List Kode" id="modal-form" hide-footer size="lg" centered>
+    <b-modal
+      title="Form List Kode"
+      id="modal-form"
+      hide-footer
+      size="lg"
+      centered
+    >
       <b-form @submit="doSave()">
         <b-row>
           <b-col cols="6">
-            <b-form-group label="Nama Kode" label-for="nama_kode">
-              <b-form-input id="nama_kode" v-model="$v.form.data.nama_kode.$model"
-                :state="validateState('nama_kode')" />
+            <b-form-group label="Kode Value" label-for="kode_value">
+              <b-form-input
+                id="kode_value"
+                v-model="$v.form.data.kode_value.$model"
+                :state="validateState('kode_value')"
+              />
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Kode Value" label-for="kode_value">
-              <b-form-input id="kode_value" v-model="$v.form.data.kode_value.$model"
-                :state="validateState('kode_value')" />
+            <b-form-group label="Nama Kode" label-for="nama_kode">
+              <b-form-input
+                id="nama_kode"
+                v-model="$v.form.data.nama_kode.$model"
+                :state="validateState('nama_kode')"
+              />
             </b-form-group>
           </b-col>
           <b-col cols="6">
             <b-form-group label="Kode Display" label-for="kode_display">
-              <b-form-input id="kode_display" v-model="$v.form.data.kode_display.$model" type="kode_display"
-                :state="validateState('kode_display')" />
+              <b-form-input
+                id="kode_display"
+                v-model="$v.form.data.kode_display.$model"
+                type="kode_display"
+                :state="validateState('kode_display')"
+              />
             </b-form-group>
           </b-col>
           <b-col cols="12" class="d-flex justify-content-end border-top pt-5">
-            <b-button variant="secondary" @click="$bvModal.hide('modal-form')" :disabled="form.loading">Cancel
+            <b-button
+              variant="secondary"
+              @click="$bvModal.hide('modal-form')"
+              :disabled="form.loading"
+              >Cancel
             </b-button>
-            <b-button variant="primary" type="submit" :disabled="form.loading" class="ml-3">
-              {{form.loading ? 'Memproses...' : 'Simpan' }}
+            <b-button
+              variant="primary"
+              type="submit"
+              :disabled="form.loading"
+              class="ml-3"
+            >
+              {{ form.loading ? "Memproses..." : "Simpan" }}
             </b-button>
           </b-col>
         </b-row>
       </b-form>
     </b-modal>
-    <b-modal title="Delete" id="modal-delete" hide-footer size="sm" header-bg-variant="warning"
-      body-bg-variant="warning" centered>
+    <b-modal
+      title="Delete"
+      id="modal-delete"
+      hide-footer
+      size="sm"
+      header-bg-variant="warning"
+      body-bg-variant="warning"
+      centered
+    >
       <p class="text-center py-3">Anda yakin ingin menghapus data ini?</p>
       <div class="d-flex justify-content-end">
-        <b-button variant="light" type="button" :disabled="remove.loading" @click="$bvModal.hide('modal-delete')">Tidak
+        <b-button
+          variant="light"
+          type="button"
+          :disabled="remove.loading"
+          @click="$bvModal.hide('modal-delete')"
+          >Tidak
         </b-button>
-        <b-button variant="danger" class="ml-3" type="button" :disabled="remove.loading"
-          @click="doDelete(remove.data,false)">
-          {{remove.loading ? 'Memproses...' : 'Ya' }}
+        <b-button
+          variant="danger"
+          class="ml-3"
+          type="button"
+          :disabled="remove.loading"
+          @click="doDelete(remove.data, false)"
+        >
+          {{ remove.loading ? "Memproses..." : "Ya" }}
         </b-button>
       </div>
     </b-modal>
@@ -104,180 +186,222 @@
 </template>
   
   <script>
-  import { validationMixin } from "vuelidate";
-  import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
-  export default {
-    name: "Pengguna",
-    components: {},
-    data() {
-      return {
-        form: {
-          data: {
-            id: null,
-            nama_kode: null,
-            kode_value: null,
-            kode_display: null, 
-          },
-          loading: false,
-        },
-        table: {
-          fields: [
-            {
-              key: 'no',
-              sortable: false,
-              label: 'No',
-              thClass: 'text-center w-5p',
-              tdClass: 'text-center'
-            },
-            {
-              key: 'nama_kode',
-              sortable: true,
-              label: 'Nama Kode',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'kode_value',
-              sortable: true,
-              label: 'Kode Value',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'kode_display',
-              sortable: true,
-              label: 'Kode Display',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'created_at',
-              sortable: true,
-              label: 'Dibuat Tanggal',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'action',
-              sortable: false,
-              label: 'Action',
-              thClass: 'text-center w-10p',
-              tdClass: 'text-center'
-            },
-          ],
-          items: [],
-          loading: false,
-        },
-        paging: {
-          page: 1,
-          perPage: 10
-        },
-        remove: {
-          data: {
-  
-          },
-          loading: false
-        },
-        opt: {
-          perPage: [10,25,50,100],
-          role: ['admin','user','staff','accounting'],
-          cabang: ['cabang 1','cabang 2','cabang 3'],
-          status: ['aktif','non aktif']
-        }
-      }
-    },
-    mixins: [validationMixin],
-    validations: {
+import { mapGetters } from "vuex";
+import { validationMixin } from "vuelidate";
+import { required } from "vuelidate/lib/validators";
+import easycoApi from "@/core/services/easyco.service";
+export default {
+  name: "Pengguna",
+  components: {},
+  data() {
+    return {
       form: {
         data: {
-          nama_kode: {
-            required
-          },
-          kode_value: {
-            required
-          },
-          kode_display: {
-            required
-          },
-        }
-      }
-    },
-    mounted() {
-      this.doGet()
-    },
-    methods: {
-      validateState(name) {
-        const { $dirty, $error } = this.$v.form.data[name];
-        return $dirty ? !$error : null;
-      },
-      async doGet() {
-        this.table.loading = true
-        setTimeout(() => {
-          this.table.loading = false
-          this.table.items = [
-            {
-              nama_kode: 'Nama Kode User',
-              kode_value: 'Data Kode Value',
-              kode_display: 'Data Kode Display',
-              created_at: 'Tanggal Dibuat',
-            },
-          ]
-          this.doInfo('Data berhasil diambil','Berhasil','success')
-        },5000)
-      },
-      async doSave() {
-        this.$v.form.$touch();
-        if (!this.$v.form.$anyError) {
-          this.form.loading = true
-          setTimeout(() => {
-            this.form.loading = false
-            this.$bvModal.hide('modal-form')
-            let newItems = {...this.form.data}
-            let date = new Date()
-            newItems.created_at = date.toLocaleDateString() 
-            newItems.id = this.table.items.length + 1
-            this.table.items.push(newItems)
-            this.doClearForm()
-            this.doInfo('Data berhasil disimpan','Berhasil','success')
-          }, 5000);
-        }
-      },
-      async doUpdate(item) {
-        console.log(item)
-        this.form.data = {...item.item}
-        this.$bvModal.show('modal-form')
-      },
-      async doDelete(item,prompt) {
-        if(prompt){
-          this.remove.data = item
-          this.$bvModal.show('modal-delete')
-        } else {
-          this.remove.loading = true
-          setTimeout(() => {
-            this.remove.loading = false
-            this.$bvModal.hide('modal-delete')
-            this.doInfo('Data berhasil dihapus','Berhasil','success')
-          }, 5000);
-        }
-      },
-      doClearForm() {
-        this.form.data = {
           id: null,
           nama_kode: null,
           kode_value: null,
           kode_display: null,
-        }
-        this.$v.form.$reset()
+          created_by: null,
+        },
+        loading: false,
       },
-      doInfo(msg,title,variant) {
-        this.$bvToast.toast(msg, {
-          title: title,
-          variant: variant,
-          solid: true,
-          toaster: 'b-toaster-bottom-right'
-        })
+      table: {
+        fields: [
+          {
+            key: "no",
+            sortable: false,
+            label: "No",
+            thClass: "text-center w-5p",
+            tdClass: "text-center",
+          },
+          {
+            key: "nama_kode",
+            sortable: true,
+            label: "Nama Kode",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "kode_value",
+            sortable: true,
+            label: "Kode Value",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "kode_display",
+            sortable: true,
+            label: "Kode Display",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "action",
+            sortable: false,
+            label: "Action",
+            thClass: "text-center w-10p",
+            tdClass: "text-center",
+          },
+        ],
+        items: [],
+        loading: false,
+      },
+      paging: {
+        page: 1,
+        perPage: 10,
+      },
+      remove: {
+        data: {},
+        loading: false,
+      },
+      opt: {
+        perPage: [10, 25, 50, 100],
+      },
+    };
+  },
+  mixins: [validationMixin],
+  validations: {
+    form: {
+      data: {
+        nama_kode: {
+          required,
+        },
+        kode_value: {
+          required,
+        },
+        kode_display: {
+          required,
+        },
+      },
+    },
+  },
+  computed: {
+    ...mapGetters(["user"]),
+  },
+  watch: {
+    paging: {
+      handler(val) {
+        this.doGet();
+      },
+      deep: true,
+    },
+  },
+  methods: {
+    validateState(name) {
+      const { $dirty, $error } = this.$v.form.data[name];
+      return $dirty ? !$error : null;
+    },
+    async doGet() {
+      let payload = this.paging;
+      payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
+      this.table.loading = true;
+      try {
+        let req = await easycoApi.listkodeRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
+        if (status) {
+          this.table.items = data;
+          this.table.totalRows = total;
+        }
+        this.table.loading = false;
+      } catch (error) {
+        this.table.loading = false;
+        console.error(error);
       }
-    }
-  };
-  </script>
+    },
+    async doSave(e) {
+      this.$v.form.$touch();
+      if (!this.$v.form.$anyError) {
+        this.form.loading = true;
+        try {
+          let payload = this.form.data;
+          payload.created_by = this.user.id;
+          let req = false;
+          if (payload.id) {
+            req = await easycoApi.listkodeUpdate(payload, this.user.token);
+          } else {
+            req = await easycoApi.listkodeCreate(payload, this.user.token);
+          }
+          let { status } = req.data;
+          if (status) {
+            this.notify("success", "Success", "Data berhasil disimpan");
+            this.doGet();
+            this.$bvModal.hide("modal-form");
+          } else {
+            this.notify("danger", "Error", "Data gagal disimpan");
+          }
+          this.form.loading = false;
+        } catch (error) {
+          this.notify("danger", "Error", error);
+          this.form.loading = false;
+        }
+      } else {
+        e.preventDefault();
+      }
+    },
+    async doUpdate(item) {
+      try {
+        let req = await easycoApi.listkodeDetail(
+          `id=${item.id}`,
+          this.user.token
+        );
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.form.data = data;
+          this.$bvModal.show("modal-form");
+        }
+      } catch (error) {
+        console.log(error);
+        this.notify("danger", "Error", "Gagal mengambil data");
+      }
+    },
+    async doDelete(item, prompt) {
+      if (prompt) {
+        this.remove.data = item;
+        this.$bvModal.show("modal-delete");
+      } else {
+        this.remove.loading = true;
+        try {
+          let req = await easycoApi.listkodeDelete(
+            `id=${this.remove.data.id}`,
+            this.user.token
+          );
+          let { status } = req.data;
+          if (status) {
+            this.remove.loading = false;
+            this.$bvModal.hide("modal-delete");
+            this.notify("success", "Success", "Data berhasil dihapus");
+            this.doGet();
+          } else {
+            this.notify("danger", "Error", "Data gagal dihapus");
+          }
+        } catch (error) {
+          this.notify("danger", "Error", error);
+        }
+      }
+    },
+    doClearForm() {
+      this.form.data = {
+        id: null,
+        nama_kode: null,
+        kode_value: null,
+        kode_display: null,
+        created_by: null,
+      };
+      this.$v.form.$reset();
+    },
+    notify(type, title, msg) {
+      this.$bvToast.toast(msg, {
+        title: title,
+        autoHideDelay: 5000,
+        variant: type,
+        toaster: "b-toaster-bottom-right",
+        appendToast: true,
+      });
+    },
+  },
+  mounted() {
+    this.doGet();
+  },
+};
+</script>
     

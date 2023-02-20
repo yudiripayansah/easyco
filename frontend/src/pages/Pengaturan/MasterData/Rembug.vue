@@ -60,15 +60,18 @@
             show-empty
             :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'"
           >
-            <template #cell(no)="item">
-              {{ item.index + 1 }}
+            <template #cell(no)="data">
+              {{ data.index + 1 }}
             </template>
-            <template #cell(action)="item">
+            <template #cell(hari_transaksi)="data">
+              {{ getHariTransaksi(data.item.hari_transaksi) }}
+            </template>
+            <template #cell(action)="data">
               <b-button
                 variant="danger"
                 size="xs"
                 class="mx-1"
-                @click="doDelete(item, true)"
+                @click="doDelete(data.item, true)"
                 v-b-tooltip.hover
                 title="Hapus"
               >
@@ -78,7 +81,7 @@
                 variant="success"
                 size="xs"
                 class="mx-1"
-                @click="doUpdate(item)"
+                @click="doUpdate(data.item)"
                 v-b-tooltip.hover
                 title="Ubah"
               >
@@ -510,6 +513,13 @@ export default {
           this.notify("danger", "Error", error);
         }
       }
+    },
+    getHariTransaksi(val) {
+      let res = this.opt.hari_transaksi.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
     },
     doClearForm() {
       this.form.data = {
