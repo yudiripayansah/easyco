@@ -347,5 +347,143 @@ const easycoApi = {
     }
     return axios.get(url, config)
   },
+  // kotakab
+  kotakabRead(payload, token){
+    let url = 'kotakab/read'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  kotakabDetail(payload, token){
+    let url = 'kotakab/detail?'+payload
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
+  kotakabCreate(payload, token){
+    let url = 'kotakab/create'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  kotakabUpdate(payload, token){
+    let url = 'kotakab/update'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  kotakabDelete(payload, token){
+    let url = 'kotakab/delete?'+payload
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
+  // kecamatan
+  kecamatanRead(payload, token){
+    let url = 'kecamatan/read'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  kecamatanDetail(payload, token){
+    let url = 'kecamatan/detail?'+payload
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
+  kecamatanCreate(payload, token){
+    let url = 'kecamatan/create'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  kecamatanUpdate(payload, token){
+    let url = 'kecamatan/update'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  kecamatanDelete(payload, token){
+    let url = 'kecamatan/delete?'+payload
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
+  // desa
+  desaRead(payload, token){
+    let url = 'desa/read'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  desaDetail(payload, token){
+    let url = 'desa/detail?'+payload
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
+  desaCreate(payload, token){
+    let url = 'desa/create'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  desaUpdate(payload, token){
+    let url = 'desa/update'
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.post(url, payload, config)
+  },
+  desaDelete(payload, token){
+    let url = 'desa/delete?'+payload
+    let config = {
+      headers: {
+        'token': token
+      }
+    }
+    return axios.get(url, config)
+  },
 }
 export default easycoApi

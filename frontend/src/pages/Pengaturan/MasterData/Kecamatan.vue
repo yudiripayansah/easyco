@@ -37,15 +37,15 @@
         <b-col cols="12">
           <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
             show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
-            <template #cell(no)="item">
-              {{item.index + 1}}
+            <template #cell(no)="data">
+              {{data.index + 1}}
             </template>
-            <template #cell(action)="item">
-              <b-button variant="danger" size="xs" class="mx-1" @click="doDelete(item,true)" v-b-tooltip.hover
+            <template #cell(action)="data">
+              <b-button variant="danger" size="xs" class="mx-1" @click="doDelete(data.item,true)" v-b-tooltip.hover
                 title="Hapus">
                 <b-icon icon="trash" />
               </b-button>
-              <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Ubah">
+              <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(data.item)" v-b-tooltip.hover title="Ubah">
                 <b-icon icon="pencil" />
               </b-button>
             </template>
@@ -103,10 +103,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { validationMixin } from "vuelidate";
-import { required } from 'vuelidate/lib/validators'
+import { required } from 'vuelidate/lib/validators';
+import easycoApi from '@/core/services/easyco.service';
 export default {
-  name: "Pengguna",
+  name: "kecamatan",
   components: {},
   data() {
     return {
@@ -116,6 +118,7 @@ export default {
           kode_kota: null,
           kode_kecamatan: null,
           nama_kecamatan: null,
+          created_by: null,
         },
         loading: false,
       },
@@ -166,22 +169,21 @@ export default {
         ],
         items: [],
         loading: false,
+        totalRows: 0
       },
       paging: {
         page: 1,
-        perPage: 10
+        perPage: 10,
+        sortDesc: true,
+        sortBy: 'id',
+        search: ''
       },
       remove: {
-        data: {
-
-        },
+        data: Object,
         loading: false
       },
       opt: {
-        perPage: [10,25,50,100],
-        role: ['admin','user','staff','accounting'],
-        cabang: ['cabang 1','cabang 2','cabang 3'],
-        status: ['aktif','non aktif']
+        perPage: [10,25,50,100]
       }
     }
   },
@@ -201,8 +203,16 @@ export default {
       }
     }
   },
-  mounted() {
-    this.doGet()
+  computed: {
+    ...mapGetters(["user"]),
+  },
+  watch: {
+    paging: {
+      handler(val) {
+        this.doGet()
+      },
+      deep: true
+    }
   },
   methods: {
     validateState(name) {
@@ -210,41 +220,64 @@ export default {
       return $dirty ? !$error : null;
     },
     async doGet() {
+      let payload = this.paging
+      payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
       this.table.loading = true
-      setTimeout(() => {
+      try {
+        let req = await easycoApi.kecamatanRead(payload, this.user.token)
+        let { data, status, msg, total } = req.data
+        if (status) {
+          this.table.items = data
+          this.table.totalRows = total
+        }
         this.table.loading = false
-        this.table.items = [
-          {
-            kode_kota: 'Kode Kota User',
-            kode_kecamatan: 'Kode Kecamtan User',
-            nama_kecamatan: 'Data Nama Kecamatan',
-            created_at: 'Tanggal Dibuat',
-          },
-        ]
-        this.doInfo('Data berhasil diambil','Berhasil','success')
-      },5000)
+      } catch (error) {
+        this.table.loading = false
+        console.error(error)
+      }
     },
-    async doSave() {
+    async doSave(e) {
       this.$v.form.$touch();
       if (!this.$v.form.$anyError) {
         this.form.loading = true
-        setTimeout(() => {
+        try {
+          let payload = this.form.data
+          payload.created_by = this.user.id
+          let req = false
+          if(payload.id) {
+            req = await easycoApi.kecamatanUpdate(payload,this.user.token)
+          } else {
+            req = await easycoApi.kecamatanCreate(payload,this.user.token)
+          }
+          let { status } = req.data
+          if(status) {
+            this.notify('success','Success','Data berhasil disimpan')
+            this.doGet()
+            this.$bvModal.hide('modal-form')
+          } else {
+            this.notify('danger','Error','Data gagal disimpan')
+          }
           this.form.loading = false
-          this.$bvModal.hide('modal-form')
-          let newItems = {...this.form.data}
-          let date = new Date()
-          newItems.created_at = date.toLocaleDateString() 
-          newItems.id = this.table.items.length + 1
-          this.table.items.push(newItems)
-          this.doClearForm()
-          this.doInfo('Data berhasil disimpan','Berhasil','success')
-        }, 5000);
+        } catch (error) {
+          this.notify('danger','Error',error)
+          this.form.loading = false
+        }
+      } else {
+        e.preventDefault()
       }
     },
     async doUpdate(item) {
-      console.log(item)
-      this.form.data = {...item.item}
-      this.$bvModal.show('modal-form')
+      try {
+        let req = await easycoApi.kecamatanDetail(`id=${item.id}`,this.user.token)
+        let { data, status, msg } = req.data
+        if(status) {
+          this.form.data = data
+          this.$bvModal.show('modal-form')
+        }
+      } catch (error) {
+        console.log(error)
+        this.notify('danger','Error','Gagal mengambil data')
+      }
     },
     async doDelete(item,prompt) {
       if(prompt){
@@ -252,31 +285,45 @@ export default {
         this.$bvModal.show('modal-delete')
       } else {
         this.remove.loading = true
-        setTimeout(() => {
-          this.remove.loading = false
-          this.$bvModal.hide('modal-delete')
-          this.doInfo('Data berhasil dihapus','Berhasil','success')
-        }, 5000);
+        try {
+          let req = await easycoApi.kecamatanDelete(`id=${this.remove.data.id}`,this.user.token)
+          let { status } = req.data
+          if(status) {
+            this.remove.loading = false
+            this.$bvModal.hide('modal-delete')
+            this.notify('success','Success','Data berhasil dihapus')
+            this.doGet()
+          } else {
+            this.notify('danger','Error','Data gagal dihapus')
+          }
+        } catch (error) {
+          this.notify('danger','Error',error)
+        }
       }
     },
     doClearForm() {
       this.form.data = {
         id: null,
-        kode_kota: null,
         kode_kecamatan: null,
+        kode_kota: null,
         nama_kecamatan: null,
+        created_by: null
       }
       this.$v.form.$reset()
     },
-    doInfo(msg,title,variant) {
+    notify(type, title, msg) {
       this.$bvToast.toast(msg, {
         title: title,
-        variant: variant,
-        solid: true,
-        toaster: 'b-toaster-bottom-right'
+        autoHideDelay: 5000,
+        variant: type,
+        toaster: 'b-toaster-bottom-right',
+        appendToast: true
       })
     }
-  }
+  },
+  mounted() {
+    this.doGet()
+  },
 };
 </script>
   
