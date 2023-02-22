@@ -276,8 +276,8 @@
     </b-modal>
   </div>
 </template>
-  
-  <script>
+
+<script>
 import { mapGetters } from "vuex";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -659,4 +659,3 @@ export default {
   },
 };
 </script>
-    
