@@ -165,7 +165,7 @@ class TplController extends Controller
 
         // ANGSURAN
         $getFinancing = KopPembiayaan::tpl_deposit($no_anggota)->first();
-        $no_rekening = (isset($getFinancing->no_rekening) ? $getFinancing->no_rekening : '');
+        $rekening_angsuran = (isset($getFinancing->no_rekening) ? $getFinancing->no_rekening : '');
         $angsuran = (isset($getFinancing->angsuran) ? $getFinancing->angsuran : 0);
         $angsuran_pokok = (isset($getFinancing->angsuran_pokok) ? $getFinancing->angsuran_pokok : 0);
         $angsuran_margin = (isset($getFinancing->angsuran_margin) ? $getFinancing->angsuran_margin : 0);
@@ -174,6 +174,7 @@ class TplController extends Controller
 
         // PENCAIRAN
         $getDroping = KopPembiayaan::tpl_droping($no_anggota)->first();
+        $rekening_pencairan = (isset($getDroping->no_rekening) ? $getDroping->no_rekening : 0);
         $pokok = (isset($getDroping->pokok) ? $getDroping->pokok : 0);
         $biaya_administrasi = (isset($getDroping->biaya_administrasi) ? $getDroping->biaya_administrasi : 0);
         $biaya_asuransi_jiwa = (isset($getDroping->biaya_asuransi_jiwa) ? $getDroping->biaya_asuransi_jiwa : 0);
@@ -181,6 +182,12 @@ class TplController extends Controller
         $biaya_notaris = (isset($getDroping->biaya_notaris) ? $getDroping->biaya_notaris : 0);
         $tabungan_persen = (isset($getDroping->tabungan_persen) ? $getDroping->tabungan_persen : 0);
         $dana_kebajikan = (isset($getDroping->dana_kebajikan) ? $getDroping->dana_kebajikan : 0);
+
+        if ($rekening_angsuran == '') {
+            $no_rekening = $rekening_pencairan;
+        } else {
+            $no_rekening = $rekening_angsuran;
+        }
 
         // SIMPANAN WAJIB
         $param = array('no_anggota' => $no_anggota);
@@ -325,18 +332,20 @@ class TplController extends Controller
 
         // ANGSURAN PEMBIAYAAN
         for ($a = 0; $a < count($angsuran); $a++) {
-            $data_trx_anggota[] = array(
-                'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
-                'id_trx_rembug' => $uuid,
-                'no_anggota' => $no_anggota,
-                'no_rekening' => $no_rekening,
-                'trx_date' => $trx_date,
-                'amount' => $angsuran[$a]['amount'],
-                'flag_debet_credit' => 'C',
-                'trx_type' => $angsuran[$a]['id'],
-                'description' => 'Bayar ' . $angsuran[$a]['nama'],
-                'created_by' => $kode_petugas
-            );
+            if ($angsuran[$a]['amount'] > 0) {
+                $data_trx_anggota[] = array(
+                    'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                    'id_trx_rembug' => $uuid,
+                    'no_anggota' => $no_anggota,
+                    'no_rekening' => $no_rekening,
+                    'trx_date' => $trx_date,
+                    'amount' => $angsuran[$a]['amount'],
+                    'flag_debet_credit' => 'C',
+                    'trx_type' => $angsuran[$a]['id'],
+                    'description' => 'Bayar ' . $angsuran[$a]['nama'],
+                    'created_by' => $kode_petugas
+                );
+            }
         }
 
         // PENCAIRAN
@@ -344,7 +353,7 @@ class TplController extends Controller
             $data_droping = array(
                 'status_droping' => 1,
                 'droping_by' => $kode_petugas,
-                'droping_at' => $trx_date
+                'droping_at' => date('Y-m-d H:i:s')
             );
         } else {
             $data_droping = array(
@@ -355,60 +364,68 @@ class TplController extends Controller
         }
 
         // SETORAN SUKARELA
-        $data_trx_anggota[] = array(
-            'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
-            'id_trx_rembug' => $uuid,
-            'no_anggota' => $no_anggota,
-            'no_rekening' => NULL,
-            'trx_date' => $trx_date,
-            'amount' => $setoran_sukarela,
-            'flag_debet_credit' => 'C',
-            'trx_type' => '13',
-            'description' => 'Bayar Simsuk',
-            'created_by' => $kode_petugas
-        );
-
-        // SETORAN SIMPANAN WAJIB
-        $data_trx_anggota[] = array(
-            'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
-            'id_trx_rembug' => $uuid,
-            'no_anggota' => $no_anggota,
-            'no_rekening' => NULL,
-            'trx_date' => $trx_date,
-            'amount' => $setoran_simpanan_wajib,
-            'flag_debet_credit' => 'C',
-            'trx_type' => '12',
-            'description' => 'Bayar Simwa',
-            'created_by' => $kode_petugas
-        );
-
-        // PENARIKAN SUKARELA
-        $data_trx_anggota[] = array(
-            'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
-            'id_trx_rembug' => $uuid,
-            'no_anggota' => $no_anggota,
-            'no_rekening' => NULL,
-            'trx_date' => $trx_date,
-            'amount' => $penarikan_sukarela,
-            'flag_debet_credit' => 'D',
-            'trx_type' => '22',
-            'description' => 'Penarikan Tabungan',
-            'created_by' => $kode_petugas
-        );
-
-        for ($i = 0; $i < $count; $i++) {
+        if ($setoran_sukarela > 0) {
             $data_trx_anggota[] = array(
                 'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
                 'id_trx_rembug' => $uuid,
                 'no_anggota' => $no_anggota,
-                'no_rekening' => $no_rekening_tabungan[$i],
+                'no_rekening' => NULL,
                 'trx_date' => $trx_date,
-                'amount' => $amount_tabungan[$i],
+                'amount' => $setoran_sukarela,
                 'flag_debet_credit' => 'C',
-                'trx_type' => '21',
-                'description' => 'Setoran Tabungan',
+                'trx_type' => '13',
+                'description' => 'Bayar Simsuk',
                 'created_by' => $kode_petugas
             );
+        }
+
+        // SETORAN SIMPANAN WAJIB
+        if ($setoran_simpanan_wajib > 0) {
+            $data_trx_anggota[] = array(
+                'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                'id_trx_rembug' => $uuid,
+                'no_anggota' => $no_anggota,
+                'no_rekening' => NULL,
+                'trx_date' => $trx_date,
+                'amount' => $setoran_simpanan_wajib,
+                'flag_debet_credit' => 'C',
+                'trx_type' => '12',
+                'description' => 'Bayar Simwa',
+                'created_by' => $kode_petugas
+            );
+        }
+
+        // PENARIKAN SUKARELA
+        if ($penarikan_sukarela > 0) {
+            $data_trx_anggota[] = array(
+                'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                'id_trx_rembug' => $uuid,
+                'no_anggota' => $no_anggota,
+                'no_rekening' => NULL,
+                'trx_date' => $trx_date,
+                'amount' => $penarikan_sukarela,
+                'flag_debet_credit' => 'D',
+                'trx_type' => '22',
+                'description' => 'Penarikan Tabungan',
+                'created_by' => $kode_petugas
+            );
+        }
+
+        for ($i = 0; $i < $count; $i++) {
+            if ($amount_tabungan[$i] > 0) {
+                $data_trx_anggota[] = array(
+                    'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                    'id_trx_rembug' => $uuid,
+                    'no_anggota' => $no_anggota,
+                    'no_rekening' => $no_rekening_tabungan[$i],
+                    'trx_date' => $trx_date,
+                    'amount' => $amount_tabungan[$i],
+                    'flag_debet_credit' => 'C',
+                    'trx_type' => '21',
+                    'description' => 'Setoran Tabungan',
+                    'created_by' => $kode_petugas
+                );
+            }
         }
 
         $validate = KopTrxRembug::validateAdd($data_trx_rembug);
