@@ -33,41 +33,6 @@ const routes = [
             name: 'Dashboard',
             component: () => import(/* webpackChunkName: "dashboard" */ '../views/Transaksi/Dashboard.vue')
           },
-          // {
-          //   path: 'pembiayaan/:no_anggota?',
-          //   name: 'Pembiayaan',
-          //   component: () => import(/* webpackChunkName: "pembiayaan" */ '../views/Transaksi/Pembiayaan.vue')
-          // },
-          {
-            path: 'pembiayaan-pengajuan/:no_anggota?',
-            name: 'PembiayaanPengajuan',
-            component: () => import(/* webpackChunkName: "pembiayaan-pengajuan" */ '../views/Transaksi/PembiayaanPengajuan.vue')
-          },
-          {
-            path: 'pembiayaan-rab/:no_anggota?',
-            name: 'PembiayaanRab',
-            component: () => import(/* webpackChunkName: "pembiayaan-rab" */ '../views/Transaksi/PembiayaanRab.vue')
-          },
-          {
-            path: 'pembiayaan-wakalah/:no_anggota?',
-            name: 'PembiayaanWakalah',
-            component: () => import(/* webpackChunkName: "pembiayaan-wakalah" */ '../views/Transaksi/PembiayaanWakalah.vue')
-          },
-          {
-            path: 'pembiayaan-akad/:no_anggota?',
-            name: 'PembiayaanAkad',
-            component: () => import(/* webpackChunkName: "pembiayaan-akad" */ '../views/Transaksi/PembiayaanAkad.vue')
-          },
-          {
-            path: 'registrasi-anggota/:no_anggota?',
-            name: 'RegistrasiAnggota',
-            component: () => import(/* webpackChunkName: "registrasi-anggota" */ '../views/Transaksi/RegistrasiAnggota.vue')
-          },
-          {
-            path: 'rekening',
-            name: 'Rekening',
-            component: () => import(/* webpackChunkName: "rekening" */ '../views/Transaksi/Rekening.vue')
-          },
           {
             path: 'setoran',
             name: 'Setoran',
@@ -86,24 +51,73 @@ const routes = [
         component: () => import(/* webpackChunkName: "anggota" */ '../views/Anggota.vue')
       },
       {
-        path: 'pengumuman',
-        name: 'Pengumuman',
-        component: () => import(/* webpackChunkName: "pengumuman" */ '../views/Pengumuman.vue')
-      },
-      {
         path: 'keanggotaan',
         name: 'Keanggotaan',
-        component: () => import(/* webpackChunkName: "keanggotaan" */ '../views/Keanggotaan.vue')
+        component: () => import(/* webpackChunkName: "keanggotaan" */ '../views/Keanggotaan'),
+        redirect: '/keanggotaan/dashboard',
+        children: [    
+          {
+            path: 'dashboard',
+            name: 'KeanggotaanDashboard',
+            component: () => import(/* webpackChunkName: "keanggotaandashboard" */ '../views/Keanggotaan/Dashboard.vue')
+          },
+          {
+            path: 'registrasiMasuk',
+            name: 'KeanggotaanRegistrasiMasuk',
+            component: () => import(/* webpackChunkName: "keanggotaanregistrasiMasuk" */ '../views/Keanggotaan/RegistrasiMasuk.vue')
+          },
+          {
+            path: 'registrasiKeluar',
+            name: 'KeanggotaanRegistrasiKeluar',
+            component: () => import(/* webpackChunkName: "keanggotaanregistrasiKeluar" */ '../views/Keanggotaan/RegistrasiKeluar.vue')
+          },
+        ]
       },
       {
         path: 'pembiayaan',
         name: 'Pembiayaan',
-        component: () => import(/* webpackChunkName: "pembiayaan" */ '../views/Pembiayaan.vue')
+        component: () => import(/* webpackChunkName: "pembiayaan" */ '../views/Pembiayaan'),
+        redirect: '/pembiayaan/dashboard',
+        children: [    
+          {
+            path: 'dashboard',
+            name: 'PembiayaanDashboard',
+            component: () => import(/* webpackChunkName: "pembiayaandashboard" */ '../views/Pembiayaan/Dashboard.vue')
+          },
+          {
+            path: 'pencairan',
+            name: 'PembiayaanPencairan',
+            component: () => import(/* webpackChunkName: "pembiayaanpencairan" */ '../views/Pembiayaan/Pencairan.vue')
+          },
+          {
+            path: 'pengajuan',
+            name: 'PembiayaanPengajuan',
+            component: () => import(/* webpackChunkName: "pembiayaanpengajuan" */ '../views/Pembiayaan/Pengajuan.vue')
+          },
+        ]
       },
       {
         path: 'tabungan',
         name: 'Tabungan',
-        component: () => import(/* webpackChunkName: "tabungan" */ '../views/Tabungan.vue')
+        component: () => import(/* webpackChunkName: "tabungan" */ '../views/Tabungan'),
+        redirect: '/tabungan/dashboard',
+        children: [    
+          {
+            path: 'dashboard',
+            name: 'TabunganDashboard',
+            component: () => import(/* webpackChunkName: "tabungandashboard" */ '../views/Tabungan/Dashboard.vue')
+          },
+          {
+            path: 'pencairan',
+            name: 'TabunganPencairan',
+            component: () => import(/* webpackChunkName: "tabunganpencairan" */ '../views/Tabungan/Pencairan.vue')
+          },
+          {
+            path: 'registrasi',
+            name: 'TabunganRegistrasi',
+            component: () => import(/* webpackChunkName: "tabunganregistrasi" */ '../views/Tabungan/Registrasi.vue')
+          },
+        ]
       },
     ]
   },
