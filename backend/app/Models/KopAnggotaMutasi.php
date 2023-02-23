@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class KopAnggotaMutasi extends Model
@@ -112,5 +113,21 @@ class KopAnggotaMutasi extends Model
         }
 
         return $res;
+    }
+
+    function get_saldo_keluar($no_anggota)
+    {
+        $show = KopAnggota::select(DB::raw('COALESCE(SUM(kpb.saldo_pokok),0) AS saldo_pokok'), DB::raw('COALESCE(SUM(kpb.saldo_margin),0) AS saldo_margin'), DB::raw('COALESCE(SUM(kpb.saldo_catab),0) AS saldo_catab'), DB::raw('COALESCE(SUM(kpb.saldo_minggon),0) AS saldo_minggon'), DB::raw('COALESCE(SUM(kop_anggota.simpok),0) AS simpok'), DB::raw('COALESCE(SUM(kop_anggota.simwa),0) AS simwa'), DB::raw('COALESCE(SUM(kop_anggota.simsuk),0) AS simsuk'), DB::raw('COALESCE(SUM(kt.saldo),0) AS saldo_tabungan'), DB::raw('0 AS saldo_deposito'), DB::raw('0 AS bonus_bagihasil'))
+            ->leftjoin('kop_pengajuan AS kp', 'kp.no_anggota', 'kop_anggota.no_anggota')
+            ->leftjoin('kop_pembiayaan AS kpb', function ($join) {
+                $join->on('kpb.no_pengajuan', 'kp.no_pengajuan')->where('kpb.status_rekening', 1);
+            })
+            ->leftjoin('kop_tabungan AS kt', function ($joins) {
+                $joins->on('kt.no_anggota', 'kop_anggota.no_anggota')->where('kt.status_rekening', 1);
+            })
+            ->where('kop_anggota.no_anggota', $no_anggota)
+            ->first();
+
+        return $show;
     }
 }
