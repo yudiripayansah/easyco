@@ -40,6 +40,9 @@
             <template #cell(no)="data">
               {{data.index + 1}}
             </template>
+            <template #cell(kode_kecamatan)="data">
+              {{ getKodeKecamatan(data.item.kode_kecamatan) }}
+            </template>
             <template #cell(action)="data">
               <b-button variant="danger" size="xs" class="mx-1" @click="doDelete(data.item,true)" v-b-tooltip.hover
                 title="Hapus">
@@ -62,7 +65,7 @@
         <b-row>
           <b-col cols="6">
             <b-form-group label="Kode Kecamatan" label-for="kode_kecamatan">
-              <b-form-input id="kode_kecamtan" v-model="$v.form.data.kode_kecamatan.$model"
+              <b-form-select id="kode_kecamatan" :options="opt.kode_kecamatan" v-model="$v.form.data.kode_kecamatan.$model"
                 :state="validateState('kode_kecamatan')" />
             </b-form-group>
           </b-col>
@@ -116,7 +119,7 @@ export default {
       form: {
         data: {
           id: null,
-          kode_kecamatan: null,
+          kode_kecamatan: 0,
           kode_desa: null,
           nama_desa: null,
           created_by: null,
@@ -184,7 +187,8 @@ export default {
         loading: false
       },
       opt: {
-        perPage: [10,25,50,100]
+        perPage: [10,25,50,100],
+        kode_kecamatan: []
       }
     }
   },
@@ -220,6 +224,31 @@ export default {
       const { $dirty, $error } = this.$v.form.data[name];
       return $dirty ? !$error : null;
     },
+    async doGetKecamatan() {
+      let payload = {...this.paging}
+      payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
+      payload.perPage = '~'
+      try {
+        let req = await easycoApi.kecamatanRead(payload, this.user.token)
+        let { data, status, msg, total } = req.data
+        if (status) {
+          this.opt.kode_kecamatan = [
+            {
+              value: 0,
+              text: 'kecamatan'
+            }
+          ]
+          data.map((item) => {
+            this.opt.kode_kecamatan.push({
+              value: item.kode_kecamatan,
+              text: item.nama_kecamatan
+            })
+          })
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    },
     async doGet() {
       let payload = this.paging
       payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
@@ -254,6 +283,7 @@ export default {
           if(status) {
             this.notify('success','Success','Data berhasil disimpan')
             this.doGet()
+            this.doGetKecamatan()
             this.$bvModal.hide('modal-form')
           } else {
             this.notify('danger','Error','Data gagal disimpan')
@@ -294,6 +324,7 @@ export default {
             this.$bvModal.hide('modal-delete')
             this.notify('success','Success','Data berhasil dihapus')
             this.doGet()
+            this.doGetKecamatan()
           } else {
             this.notify('danger','Error','Data gagal dihapus')
           }
@@ -305,7 +336,7 @@ export default {
     doClearForm() {
       this.form.data = {
         id: null,
-        kode_kecamatan: null,
+        kode_kecamatan: 0,
         kode_desa: null,
         nama_desa: null,
         created_by: null,
@@ -324,6 +355,7 @@ export default {
   },
   mounted() {
     this.doGet()
+    this.doGetKecamatan()
   },
 };
 </script>

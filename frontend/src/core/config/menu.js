@@ -45,7 +45,7 @@ const menu = [
           {
             target: 'profil-anggota',
             label: 'Profil Anggota',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Keanggotaan/Laporan/ProfilAnggota.vue'),
           },
           {
             target: 'saldo-anggota',

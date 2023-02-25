@@ -40,6 +40,9 @@
             <template #cell(no)="data">
               {{data.index + 1}}
             </template>
+            <template #cell(kode_kota)="data">
+              {{ getKodeKota(data.item.kode_kota) }}
+            </template>
             <template #cell(action)="data">
               <b-button variant="danger" size="xs" class="mx-1" @click="doDelete(data.item,true)" v-b-tooltip.hover
                 title="Hapus">
@@ -62,7 +65,8 @@
         <b-row>
           <b-col cols="6">
             <b-form-group label="Kode Kota" label-for="kode_kota">
-              <b-form-input id="kode_kota" v-model="form.data.kode_kota" :state="validateState('kode_kota')" />
+              <b-form-select id="kode_kota" :options="opt.kode_kota" v-model="$v.form.data.kode_kota.$model"
+                :state="validateState('kode_kota')" />
             </b-form-group>
           </b-col>
           <b-col cols="6">
@@ -115,7 +119,7 @@ export default {
       form: {
         data: {
           id: null,
-          kode_kota: null,
+          kode_kota: 0,
           kode_kecamatan: null,
           nama_kecamatan: null,
           created_by: null,
@@ -183,7 +187,8 @@ export default {
         loading: false
       },
       opt: {
-        perPage: [10,25,50,100]
+        perPage: [10,25,50,100],
+        kode_kota: []
       }
     }
   },
@@ -219,6 +224,31 @@ export default {
       const { $dirty, $error } = this.$v.form.data[name];
       return $dirty ? !$error : null;
     },
+    async doGetKotakab() {
+      let payload = {...this.paging}
+      payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
+      payload.perPage = '~'
+      try {
+        let req = await easycoApi.kotakabRead(payload, this.user.token)
+        let { data, status, msg, total } = req.data
+        if (status) {
+          this.opt.kode_kota = [
+            {
+              value: 0,
+              text: 'kota'
+            }
+          ]
+          data.map((item) => {
+            this.opt.kode_kota.push({
+              value: item.kode_kota,
+              text: item.nama_kota
+            })
+          })
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    },
     async doGet() {
       let payload = this.paging
       payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
@@ -253,6 +283,7 @@ export default {
           if(status) {
             this.notify('success','Success','Data berhasil disimpan')
             this.doGet()
+            this.doGetKotakab()
             this.$bvModal.hide('modal-form')
           } else {
             this.notify('danger','Error','Data gagal disimpan')
@@ -293,6 +324,7 @@ export default {
             this.$bvModal.hide('modal-delete')
             this.notify('success','Success','Data berhasil dihapus')
             this.doGet()
+            this.doGetKotakab()
           } else {
             this.notify('danger','Error','Data gagal dihapus')
           }
@@ -301,11 +333,18 @@ export default {
         }
       }
     },
+    getKodeKota(val) {
+      let res = this.opt.kode_kota.find((i) => i.value == val)
+      if(res){
+        return res.text
+      }
+      return '-'
+    },
     doClearForm() {
       this.form.data = {
         id: null,
         kode_kecamatan: null,
-        kode_kota: null,
+        kode_kota: 0,
         nama_kecamatan: null,
         created_by: null
       }
@@ -323,6 +362,7 @@ export default {
   },
   mounted() {
     this.doGet()
+    this.doGetKotakab()
   },
 };
 </script>
