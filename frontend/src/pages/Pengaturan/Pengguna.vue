@@ -58,7 +58,7 @@
       </b-row>
     </b-card>
     <b-modal title="Form Pengguna" id="modal-form" hide-footer size="lg" centered>
-      <b-form @submit="doSave()">
+      <b-form @submit="doSave">
         <b-row>
           <b-col cols="6">
             <b-form-group label="Kode User" label-for="kode">
@@ -125,8 +125,10 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import { validationMixin } from "vuelidate";
-import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
+import { required, email, minLength } from "vuelidate/lib/validators";
+import easycoApi from "@/core/services/easyco.service";
 export default {
   name: "Pengguna",
   components: {},
@@ -225,10 +227,7 @@ export default {
         loading: false
       },
       opt: {
-        perPage: [10,25,50,100],
-        role: ['admin','user','staff','accounting'],
-        cabang: ['cabang 1','cabang 2','cabang 3'],
-        status: ['aktif','non aktif']
+        perPage: [10,25,50,100]
       }
     }
   },
@@ -267,81 +266,156 @@ export default {
       const { $dirty, $error } = this.$v.form.data[name];
       return $dirty ? !$error : null;
     },
-    async doGet() {
-      this.table.loading = true
-      setTimeout(() => {
-        this.table.loading = false
-        this.table.items = [
-          {
-            kode: '123456789',
-            nama: 'Nama User',
-            email: 'user@email.com',
-            role: 'user',
-            password: 'Password User',
-            status: 'aktif',
-            cabang: 'cabang 1',
-            created_at: 'Tanggal Dibuat',
-          },
-        ]
-        this.doInfo('Data berhasil diambil','Berhasil','success')
-      },5000)
+    async doGetCabang() {
+      let payload = { ...this.paging };
+      payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
+      payload.perPage = "~";
+      try {
+        let req = await easycoApi.cabangRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
+        if (status) {
+          this.opt.induk_cabang = [
+            {
+              value: 0,
+              text: "Induk",
+            },
+          ];
+          data.map((item) => {
+            this.opt.induk_cabang.push({
+              value: item.kode_cabang,
+              text: item.nama_cabang,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
     },
-    async doSave() {
+    async doGet() {
+      let payload = this.paging;
+      payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
+      this.table.loading = true;
+      try {
+        let req = await easycoApi.cabangRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
+        if (status) {
+          this.table.items = data;
+          this.table.totalRows = total;
+        }
+        this.table.loading = false;
+      } catch (error) {
+        this.table.loading = false;
+        console.error(error);
+      }
+    },
+    async doSave(e) {
       this.$v.form.$touch();
       if (!this.$v.form.$anyError) {
-        this.form.loading = true
-        setTimeout(() => {
-          this.form.loading = false
-          this.$bvModal.hide('modal-form')
-          let newItems = {...this.form.data}
-          let date = new Date()
-          newItems.created_at = date.toLocaleDateString() 
-          newItems.id = this.table.items.length + 1
-          this.table.items.push(newItems)
-          this.doClearForm()
-          this.doInfo('Data berhasil disimpan','Berhasil','success')
-        }, 5000);
+        this.form.loading = true;
+        try {
+          let payload = this.form.data;
+          payload.created_by = this.user.id;
+          let req = false;
+          if (payload.id) {
+            req = await easycoApi.cabangUpdate(payload, this.user.token);
+          } else {
+            req = await easycoApi.cabangCreate(payload, this.user.token);
+          }
+          let { status } = req.data;
+          if (status) {
+            this.notify("success", "Success", "Data berhasil disimpan");
+            this.doGet();
+            this.doGetCabang();
+            this.$bvModal.hide("modal-form");
+          } else {
+            this.notify("danger", "Error", "Data gagal disimpan");
+          }
+          this.form.loading = false;
+        } catch (error) {
+          this.notify("danger", "Error", error);
+          this.form.loading = false;
+        }
+      } else {
+        e.preventDefault();
       }
     },
     async doUpdate(item) {
-      console.log(item)
-      this.form.data = {...item.item}
-      this.$bvModal.show('modal-form')
-    },
-    async doDelete(item,prompt) {
-      if(prompt){
-        this.remove.data = item
-        this.$bvModal.show('modal-delete')
-      } else {
-        this.remove.loading = true
-        setTimeout(() => {
-          this.remove.loading = false
-          this.$bvModal.hide('modal-delete')
-          this.doInfo('Data berhasil dihapus','Berhasil','success')
-        }, 5000);
+      try {
+        let req = await easycoApi.cabangDetail(
+          `id=${item.id}`,
+          this.user.token
+        );
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.form.data = data;
+          this.$bvModal.show("modal-form");
+        }
+      } catch (error) {
+        console.log(error);
+        this.notify("danger", "Error", "Gagal mengambil data");
       }
+    },
+    async doDelete(item, prompt) {
+      if (prompt) {
+        this.remove.data = item;
+        this.$bvModal.show("modal-delete");
+      } else {
+        this.remove.loading = true;
+        try {
+          let req = await easycoApi.cabangDelete(
+            `id=${this.remove.data.id}`,
+            this.user.token
+          );
+          let { status } = req.data;
+          if (status) {
+            this.remove.loading = false;
+            this.$bvModal.hide("modal-delete");
+            this.notify("success", "Success", "Data berhasil dihapus");
+            this.doGet();
+            this.doGetCabang();
+          } else {
+            this.notify("danger", "Error", "Data gagal dihapus");
+          }
+        } catch (error) {
+          this.notify("danger", "Error", error);
+        }
+      }
+    },
+    getJenisCabang(val) {
+      let res = this.opt.jenis_cabang.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
+    },
+    getIndukCabang(val) {
+      let res = this.opt.induk_cabang.find((i) => i.value == val);
+      if (res) {
+        return res.text;
+      }
+      return "-";
     },
     doClearForm() {
       this.form.data = {
         id: null,
-        kode: 'Auto Generated',
-        nama: null,
-        email: null,
-        password: null,
-        role: null,
-        status: null,
-        cabang: null,
-      }
-      this.$v.form.$reset()
+        kode_cabang: null,
+        nama_cabang: null,
+        induk_cabang: 0,
+        jenis_cabang: null,
+        pimpinan_cabang: null,
+        created_by: null,
+      };
+      this.$v.form.$reset();
     },
-    doInfo(msg,title,variant) {
+    notify(type, title, msg) {
       this.$bvToast.toast(msg, {
         title: title,
-        variant: variant,
-        solid: true,
-        toaster: 'b-toaster-bottom-right'
-      })
-    }
+        autoHideDelay: 5000,
+        variant: type,
+        toaster: "b-toaster-bottom-right",
+        appendToast: true,
+      });
+    },
   }
 };
 </script>

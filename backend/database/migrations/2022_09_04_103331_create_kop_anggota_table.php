@@ -40,8 +40,8 @@ class CreateKopAnggotaTable extends Migration
             $table->string('ket_pekerjaan', 50)->nullable(TRUE);
             $table->decimal('pendapatan_perbulan', 14, 0)->nullable(TRUE)->default(0);
             $table->decimal('simpok', 14, 0)->nullable(TRUE)->default(0);
-            $table->decimal('simwa', 14, 2)->nullable(TRUE)->default(0);
-            $table->decimal('simsuk', 14, 2)->nullable(TRUE)->default(0);
+            $table->decimal('simwa', 14, 0)->nullable(TRUE)->default(0);
+            $table->decimal('simsuk', 14, 0)->nullable(TRUE)->default(0);
             $table->date('tgl_gabung');
             $table->integer('status')->nullable(TRUE)->default(1)->comment('0 = Registrasi, 1 = Aktif, 2 = Tidak Aktif, 3 = Menunggu Verifikasi Keluar');
             $table->date('tanggal_keluar')->nullable(TRUE);

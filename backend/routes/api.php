@@ -136,6 +136,7 @@ Route::prefix('anggotauk')->middleware('checkToken')->group(function () {
 });
 
 Route::prefix('anggotamutasi')->middleware('checkToken')->group(function () {
+  Route::get('/saldo_anggota', [AnggotaMutasiController::class, 'saldo_anggota']);
   Route::post('/create', [AnggotaMutasiController::class, 'create']);
   Route::post('/read', [AnggotaMutasiController::class, 'read']);
   Route::get('/detail', [AnggotaMutasiController::class, 'detail']);

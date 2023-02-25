@@ -1,354 +1,339 @@
 <template>
-    <div>
-      <h1 class="mb-5">{{$route.name}}</h1>
-      <b-card>
-        <b-row no-gutters>
-          <b-col cols="12" class="d-flex justify-content-end mb-5 pb-5 border-bottom">
-            <b-button variant="success" @click="$bvModal.show('modal-form');doClearForm()" v-b-tooltip.hover
-              title="Tambah Data Baru">
-              <b-icon icon="plus" />
-              Tambah Baru
-            </b-button>
-          </b-col>
-          <b-col cols="12" class="mb-5">
-            <b-row no-gutters>
-              <b-col cols="8" class="mb-5">
-              <div class="row">
-                <b-col cols="6">
-                  <b-input-group prepend="Cabang" class="mb-3">
-                    <b-form-select v-model="paging.cabang" :options="opt.cabang" />
-                  </b-input-group>
-                </b-col>
-                <b-col cols="6">
-                  <b-input-group prepend="Tanggal" class="mb-3">
-                    <b-form-datepicker v-model="paging.from"/>
-                  </b-input-group>
-                </b-col>
-              </div>
-            </b-col>
-            </b-row>
-          </b-col>
-          <b-col cols="12">
-            <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
-              show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
-              <template #cell(no)="item">
-                {{item.index + 1}}
-              </template>
-              <template #cell(action)="item">
-                <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Edit">
-                  <b-icon icon="pencil" />
+  <div>
+    <h1 class="mb-5">{{ $route.name }}</h1>
+    <b-card>
+      <b-row no-gutters>
+        <b-col>
+          <b-form @submit="doSave">
+            <b-row>
+              <b-col cols="6">
+                <b-form-group label="Cabang">
+                  <b-select v-model="form.data.kode_cabang" :options="opt.cabang" :state="validateState('kode_cabang')"/>
+                </b-form-group>
+              </b-col>
+              <b-col cols="6">
+                <b-form-group label="No Ref">
+                  <b-input v-model="form.data.voucher_no" />
+                </b-form-group>
+              </b-col>
+              <b-col cols="6">
+                <b-form-group label="Tanggal">
+                  <b-form-datepicker v-model="form.data.voucher_date" :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" :state="validateState('voucher_date')"/>
+                </b-form-group>
+              </b-col>
+              <b-col cols="6">
+                <b-form-group label="Keterangan">
+                  <b-textarea v-model="form.data.description" :state="validateState('description')"/>
+                </b-form-group>
+              </b-col>
+              <b-col cols="12">
+                <table class="table table-bordered">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th>No</th>
+                      <th width="25%">Akun</th>
+                      <th width="25%">Deskripsi</th>
+                      <th width="25%">Debet</th>
+                      <th width="25%">Kredit</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(gl,glIndex) in form.data.detail" :key="`gl-${glIndex}`">
+                      <td class="text-center">
+                        {{ glIndex + 1 }}
+                      </td>
+                      <td>
+                        <b-form-select v-model="gl.kode_gl" :options="opt.gl"/>
+                      </td>
+                      <td>
+                        <b-form-input v-model="gl.description"/>
+                      </td>
+                      <td>
+                        <b-input-group prepend="Rp ">
+                          <vue-numeric class="form-control" separator="." v-model="gl.amount_debet" v-on:keyup.native="countTotal" :disabled="gl.amount_kredit > 0"/>
+                        </b-input-group>
+                      </td>
+                      <td>
+                        <b-input-group prepend="Rp ">
+                          <vue-numeric class="form-control" separator="." v-model="gl.amount_kredit" v-on:keyup.native="countTotal" :disabled="gl.amount_debet > 0"/>
+                        </b-input-group>
+                      </td>
+                      <td class="text-center">
+                        <b-button
+                          variant="danger"
+                          size="xs"
+                          class="mx-1"
+                          @click="deleteItem(glIndex)"
+                          v-b-tooltip.hover
+                          title="Hapus"
+                        >
+                          <b-icon icon="trash" />
+                        </b-button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-right" colspan="3">Total:</td>
+                      <td class="text-right">Rp {{ thousand(form.data.total_debet) }}</td>
+                      <td class="text-right">Rp {{ thousand(form.data.total_kredit) }}</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td colspan="6">
+                        <b-button variant="success" block @click="addItem()">
+                          Tambah <b-icon icon="plus"/>
+                        </b-button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </b-col>
+              <b-col
+                cols="12"
+                class="d-flex justify-content-end border-top pt-5"
+              >
+                <b-button
+                  variant="secondary"
+                  @click="doClearForm()"
+                  :disabled="form.loading"
+                  >Batal
                 </b-button>
-              </template>
-            </b-table>
-          </b-col>
-          <b-col cols="12" class="justify-content-end d-flex">
-            <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
-            </b-pagination>
-          </b-col>
-        </b-row>
-      </b-card>
-      <b-modal title="Form Transaksi Jurnal Umum" id="modal-form" hide-footer size="lg" centered>
-        <b-form @submit="doSave()">
-          <b-row>
-            <b-col cols="6">
-            <b-form-group label="cabang">
-              <b-select v-model="form.data.cabang" :options="opt.cabang" />
-            </b-form-group>
-          </b-col>
-            <b-col cols="6">
-            <b-form-group label="No Ref">
-              <b-input v-model="form.data.no_ref" />
-            </b-form-group>
-          </b-col>
-            <b-col cols="6">
-            <b-form-group label="Tanggal">
-              <b-form-datepicker v-model="paging.tanggal"/>
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group label="Keterangan">
-              <b-textarea v-model="form.data.ket" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group label="No Transaksi">
-              <b-input v-model="form.data.no_transaksi"/>
-            </b-form-group>
-          </b-col>
-          <b-col cols="12">
-            <table class="table">
-                <thead class="thead-dark">
-                    <tr>
-                    <th scope="col">No</th>
-                    <th scope="col">No Akun</th>
-                    <th scope="col">Metode</th>
-                    <th scope="col">Jumlah</th>
-                    <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                    <th scope="row">1</th>
-                    <td><b-select v-model="form.data.no_akun_1" :options="opt.no_akun_1" /></td>
-                    <td><b-select v-model="form.data.metode_1" :options="opt.metode_1" /></td>
-                    <td>-</td>
-                    <td><b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Ceklis">V</b-button>
-                        <b-button variant="danger" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Silang">X</b-button>
-                    </td>
-                    </tr>
-                    <tr>
-                    <th scope="row">2</th>
-                    <td><b-select v-model="form.data.no_akun_2" :options="opt.no_akun_2" /></td>
-                    <td><b-select v-model="form.data.metode_2" :options="opt.metode_2" /></td>
-                    <td>-</td>
-                    <td><b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Ceklis">V</b-button>
-                        <b-button variant="danger" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Silang">X</b-button>
-                    </td>
-                    </tr>
-                </tbody>
-            </table>
-          </b-col>
-            <b-col cols="12" class="d-flex justify-content-end border-top pt-5">
-              <b-button variant="secondary" @click="$bvModal.hide('modal-form')" :disabled="form.loading">Cancel
-              </b-button>
-              <b-button variant="primary" type="submit" :disabled="form.loading" class="ml-3">
-                {{form.loading ? 'Memproses...' : 'Simpan' }}
-              </b-button>
-            </b-col>
-          </b-row>
-        </b-form>
-      </b-modal>
-      <b-modal title="Delete" id="modal-delete" hide-footer size="sm" header-bg-variant="warning"
-        body-bg-variant="warning" centered>
-        <p class="text-center py-3">Anda yakin ingin menghapus data ini?</p>
-        <div class="d-flex justify-content-end">
-          <b-button variant="light" type="button" :disabled="remove.loading" @click="$bvModal.hide('modal-delete')">Tidak
-          </b-button>
-          <b-button variant="danger" class="ml-3" type="button" :disabled="remove.loading"
-            @click="doDelete(remove.data,false)">
-            {{remove.loading ? 'Memproses...' : 'Ya' }}
-          </b-button>
-        </div>
-      </b-modal>
-      <b-modal title="Delete" id="modal-delete" hide-footer size="sm" header-bg-variant="warning"
-        body-bg-variant="warning" centered>
-        <p class="text-center py-3">Anda yakin ingin menghapus data ini?</p>
-        <div class="d-flex justify-content-end">
-          <b-button variant="light" type="button" :disabled="remove.loading" @click="$bvModal.hide('modal-delete')">Tidak
-          </b-button>
-          <b-button variant="danger" class="ml-3" type="button" :disabled="remove.loading"
-            @click="doDelete(remove.data,false)">
-            {{remove.loading ? 'Memproses...' : 'Ya' }}
-          </b-button>
-        </div>
-      </b-modal>
-    </div>
-  </template>
-  
-  <script>
-  import { validationMixin } from "vuelidate";
-  import { required, sameAs, email, minLength } from 'vuelidate/lib/validators'
-  export default {
-    name: "Transaksi Jurnal Umum",
-    components: {},
-    data() {
-      return {
-        form: {
-          data: {
-            id: null,
-            cabang: null,
-            no_ref: null,
-            tanggal: null,
-            no_transaksi: null,
-            no_akun: null,
-            debit: null,
-            kredit: null,
-            keterangan: null,
-          },
-          loading: false,
-        },
-        table: {
-          fields: [
-            {
-              key: 'no',
-              sortable: false,
-              label: 'No',
-              thClass: 'text-center w-5p',
-              tdClass: 'text-center'
-            },
-            {
-              key: 'tanggal',
-              sortable: true,
-              label: 'Tanggal',
-              thClass: 'text-center',
-              tdClass: 'text-center'
-            },
-            {
-              key: 'no_voucher',
-              sortable: true,
-              label: 'No Voucher',
-              thClass: 'text-center',
-              tdClass: 'text-center'
-            },
-            {
-              key: 'keterangan',
-              sortable: true,
-              label: 'Keterangan',
-              thClass: 'text-left',
-              tdClass: ''
-            },
-            {
-              key: 'jumlah',
-              sortable: true,
-              label: 'Jumlah',
-              thClass: 'text-right',
-              tdClass: 'text-right',
-            },
-            {
-              key: 'action',
-              sortable: false,
-              label: 'Action',
-              thClass: 'text-center w-10p',
-              tdClass: 'text-center'
-            },
-          ],
-          items: [],
-          loading: false,
-        },
-        paging: {
-          page: 1,
-          perPage: 10
-        },
-        remove: {
-          data: {
-  
-          },
-          loading: false
-        },
-        opt: {
-          perPage: [10,25,50,100],
-          role: ['admin','user','staff','accounting'],
-          cabang: ['cabang 1','cabang 2','cabang 3'],
-          petugas: ['Andi','Danu'],
-          no_akun_1: ['101020101 BRI CAB SUDIRMAN','101010101 KAS BESAR'],
-          no_akun_2: ['101020101 BRI CAB SUDIRMAN','101010101 KAS BESAR'],
-          metode_1: ['Cash','Debit','kredit'],
-          metode_2: ['Cash','Debit','kredit'],
-        }
-      }
-    },
-    mixins: [validationMixin],
-    validations: {
+                <b-button
+                  variant="primary"
+                  type="submit"
+                  :disabled="form.loading"
+                  class="ml-3"
+                >
+                  {{ form.loading ? "Memproses..." : "Simpan" }}
+                </b-button>
+              </b-col>
+            </b-row>
+          </b-form>
+        </b-col>
+      </b-row>
+    </b-card>
+  </div>
+</template>
+
+<script>
+import { mapGetters } from "vuex";
+import { validationMixin } from "vuelidate";
+import { required } from "vuelidate/lib/validators";
+import easycoApi from "@/core/services/easyco.service";
+import helper from "@/core/helper"
+export default {
+  name: "TransaksiJurnalUmum",
+  components: {},
+  data() {
+    return {
       form: {
         data: {
-          cabang: {
-            required
-          },
-          no_ref: {
-            required,
-          },
-          tanggal: {
-            required,
-          },
-          keterangan: {
-            required,
-          },
-          no_transaksi: {
-            required,
-          },
-          no_akun: {
-            required,
-          },
-          debit: {
-            required,
-          },
-          kredit: {
-            required,
-          },
-        }
-      }
-    },
-    mounted() {
-      this.doGet()
-    },
-    methods: {
-      validateState(name) {
-        const { $dirty, $error } = this.$v.form.data[name];
-        return $dirty ? !$error : null;
-      },
-      async doGet() {
-        this.table.loading = true
-        setTimeout(() => {
-          this.table.loading = false
-          this.table.items = [
+          id: null,
+          kode_cabang: null,
+          voucher_date: null,
+          voucher_no: null,
+          no_referensi: null,
+          description: null,
+          created_by: null,
+          detail: [
             {
-              tanggal: '01-12-22',
-              no_voucher: '221201-01001',
-              keterangan: 'Setor Tunai Ke BRI',
-              jumlah: '78.250.000',
+              kode_gl: null,
+              amount_kredit: 0,
+              amount_debet: 0,
+              description: null,
+              flag_dc: null
             },
-          ]
-          this.doInfo('Data berhasil diambil','Berhasil','success')
-        },5000)
+          ],
+          total_debet: 0,
+          total_kredit: 0,
+        },
+        loading: false,
       },
-      async doSave() {
-        this.$v.form.$touch();
-        if (!this.$v.form.$anyError) {
-          this.form.loading = true
-          setTimeout(() => {
-            this.form.loading = false
-            this.$bvModal.hide('modal-form')
-            let newItems = {...this.form.data}
-            let date = new Date()
-            newItems.created_at = date.toLocaleDateString() 
-            newItems.id = this.table.items.length + 1
-            this.table.items.push(newItems)
-            this.doClearForm()
-            this.doInfo('Data berhasil disimpan','Berhasil','success')
-          }, 5000);
-        }
+      opt: {
+        perPage: [10, 25, 50, 100],
+        gl: [],
+        cabang: []
       },
-      async doUpdate(item) {
-        console.log(item)
-        this.form.data = {...item.item}
-        this.$bvModal.show('modal-form')
+    };
+  },
+  mixins: [validationMixin],
+  validations: {
+    form: {
+      data: {
+        kode_cabang: {
+          required,
+        },
+        voucher_date: {
+          required,
+        },
+        description: {
+          required,
+        },
       },
-      async doDelete(item,prompt) {
-        if(prompt){
-          this.remove.data = item
-          this.$bvModal.show('modal-delete')
-        } else {
-          this.remove.loading = true
-          setTimeout(() => {
-            this.remove.loading = false
-            this.$bvModal.hide('modal-delete')
-            this.doInfo('Data berhasil dihapus','Berhasil','success')
-          }, 5000);
-        }
-      },
-      doClearForm() {
-        this.form.data = {
-            id: null,
-            cabang: null,
-            no_ref: null,
-            tanggal: null,
-            keterangan: null,
-            no_transaksi: null,
-            no_akun: null,
-            debit: null,
-            kredit: null,
-        }
-        this.$v.form.$reset()
-      },
-      doInfo(msg,title,variant) {
-        this.$bvToast.toast(msg, {
-          title: title,
-          variant: variant,
-          solid: true,
-          toaster: 'b-toaster-bottom-right'
-        })
+    },
+  },
+  mounted() {
+    this.doGetGl()
+    this.doGetCabang()
+  },
+  computed: {
+    ...mapGetters(["user"]),
+  },
+  methods: {
+    ...helper,
+    validateState(name) {
+      const { $dirty, $error } = this.$v.form.data[name];
+      return $dirty ? !$error : null;
+    },
+    async doGetCabang() {
+      let payload = {
+        perPage: '~',
+        page: 1,
+        sortBy: 'nama_cabang',
+        sortDir: 'ASC',
+        search: null
       }
-    }
-  };
-  </script>
-    
+      this.opt.cabang = []
+      try {
+        let req = await easycoApi.cabangRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
+        if (status) {
+          data.map((item) => {
+            this.opt.cabang.push({
+              text: item.nama_cabang,
+              value: item.kode_cabang
+            })
+          })
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doGetGl() {
+      let payload = {
+        perPage: '~',
+        page: 1,
+        sortBy: 'nama_gl',
+        sortDir: 'ASC',
+        search: null
+      }
+      this.opt.gl = []
+      try {
+        let req = await easycoApi.glRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
+        if (status) {
+          data.map((item) => {
+            this.opt.gl.push({
+              text: item.nama_gl,
+              value: item.kode_gl
+            })
+          })
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doSave(e) {
+      this.$v.form.$touch();
+      if (!this.$v.form.$anyError) {
+        this.form.loading = true;
+        try {
+          let payload = this.form.data;
+          let error = 0
+          payload.detail.map((item,index) => {
+            if(item.amount_debet > 0){
+              item.amount = item.amount_debet
+              item.flag_dc = 'D'
+            } else {
+              item.amount = item.amount_kredit
+              item.flag_dc = 'C'
+            }
+            if(!item.kode_gl) {
+              error++
+            }
+          })
+          if(error < 1){
+            if(payload.total_debet > 0 || payload.total_kredit > 0){
+              if(payload.total_debet == payload.total_kredit){
+                payload.created_by = this.user.id;
+                let req = await easycoApi.jurnalUmumCreate(payload, this.user.token);
+                let { status } = req.data;
+                if (status) {
+                  this.notify("success", "Success", "Data berhasil disimpan");
+                  this.doClearForm()
+                } else {
+                  this.notify("danger", "Error", "Data gagal disimpan");
+                }
+              } else {
+                this.notify("danger", "Error", "Total Debet dan Kredit Belum seimbang");
+              }
+            } else {
+              this.notify("danger", "Error", "Masukan minimal 1 jurnal");
+            }
+          } else {
+            this.notify("danger", "Error", "Terdapat jurnal yang tidak memiliki data akun");
+          }
+          this.form.loading = false;
+        } catch (error) {
+          this.notify("danger", "Error", error);
+          this.form.loading = false;
+        }
+      } else {
+        e.preventDefault();
+      }
+    },
+    addItem() {
+      this.form.data.detail.push({
+        kode_gl: null,
+        amount_kredit: 0,
+        amount_debet: 0,
+        description: null,
+        flag_dc: null
+      })
+    },
+    deleteItem(idx) {
+      if(this.form.data.detail.length > 1){
+        this.form.data.detail.splice(idx,1)
+      }
+    },
+    countTotal() {
+      this.form.data.total_debet = 0
+      this.form.data.total_kredit = 0
+      this.form.data.detail.map((item) => {
+        this.form.data.total_debet += item.amount_debet
+        this.form.data.total_kredit += item.amount_kredit
+      })
+    },
+    doClearForm() {
+      this.form.data = {
+        id: null,
+        kode_cabang: null,
+        voucher_date: null,
+        voucher_no: null,
+        no_referensi: null,
+        description: null,
+        created_by: null,
+        detail: [
+          {
+            kode_gl: null,
+            amount_kredit: 0,
+            amount_debet: 0,
+            description: null,
+            flag_dc: null
+          },
+        ],
+      };
+      this.$v.form.$reset();
+    },
+    notify(type, title, msg) {
+      this.$bvToast.toast(msg, {
+        title: title,
+        autoHideDelay: 5000,
+        variant: type,
+        toaster: "b-toaster-bottom-right",
+        appendToast: true,
+      });
+    },
+  },
+};
+</script>

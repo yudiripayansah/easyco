@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KopAnggota;
 use App\Models\KopAnggotaMutasi;
 use Exception;
 use Illuminate\Http\Request;
@@ -9,6 +10,21 @@ use Illuminate\Support\Facades\DB;
 
 class AnggotaMutasiController extends Controller
 {
+    function saldo_anggota(Request $request)
+    {
+        $data = KopAnggotaMutasi::get_saldo_keluar($request->no_anggota);
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $data,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
     function create(Request $request)
     {
         $data = $request->all();
@@ -23,6 +39,12 @@ class AnggotaMutasiController extends Controller
             try {
                 $create = KopAnggotaMutasi::create($data);
                 $find = KopAnggotaMutasi::find($create->id);
+
+                $param = array('no_anggota' => $request->no_anggota);
+                $anggota = KopAnggota::where($param)->first();
+                $get = KopAnggota::find($anggota->id);
+                $get->status = 3;
+                $get->save();
 
                 $res = array(
                     'status' => TRUE,

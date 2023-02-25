@@ -900,5 +900,61 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
+  // user
+  userRead(payload, token) {
+    let url = "user/read";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  userDetail(payload, token) {
+    let url = "user/detail?" + payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.get(url, config);
+  },
+  userCreate(payload, token) {
+    let url = "user/create";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  userUpdate(payload, token) {
+    let url = "user/update";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  userDelete(payload, token) {
+    let url = "user/delete?" + payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.get(url, config);
+  },
+  // jurnal umum
+  jurnalUmumCreate(payload, token) {
+    let url = "general_ledger/create";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
 };
 export default easycoApi;
