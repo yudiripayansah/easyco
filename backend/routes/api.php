@@ -25,6 +25,7 @@ use App\Http\Controllers\RegistrasiAkadController;
 use App\Http\Controllers\RembugController;
 use App\Http\Controllers\TplController;
 use App\Http\Controllers\TrxGl;
+use App\Http\Controllers\TrxRembug;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -255,6 +256,11 @@ Route::prefix('trx_member')->middleware('checkToken')->group(function () {
   Route::post('/penerimaan_angsuran', [TplController::class, 'penerimaan_angsuran']);
   Route::post('/kartu_angsuran', [TplController::class, 'kartu_angsuran']);
   Route::post('/transaksi_majelis', [TplController::class, 'transaksi_majelis']);
+});
+
+Route::prefix('trx_rembug')->middleware('checkToken')->group(function () {
+  Route::post('/read', [TrxRembug::class, 'read']);
+  Route::post('/verifikasi', [TrxRembug::class, 'verifikasi']);
 });
 /* END BACK OFFICE */
 
