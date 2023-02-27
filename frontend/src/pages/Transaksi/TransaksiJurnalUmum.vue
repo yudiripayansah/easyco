@@ -224,7 +224,7 @@ export default {
         if (status) {
           data.map((item) => {
             this.opt.gl.push({
-              text: item.nama_gl,
+              text: `${item.kode_gl} - ${item.nama_gl}`,
               value: item.kode_gl
             })
           })

@@ -218,7 +218,7 @@ const menu = [
       {
         target: 'verifikasi-transaksi-rembug',
         label: 'Verifikasi Transaksi Rembug',
-        component: import('@/pages/Dummy.vue'),
+        component: import('@/pages/Transaksi/VerifikasiTransaksiRembug.vue'),
       },
       {
         target: 'transaksi-kas-petugas',
