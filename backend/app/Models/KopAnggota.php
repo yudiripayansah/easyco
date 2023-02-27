@@ -141,4 +141,15 @@ class KopAnggota extends Model
 
         return $show;
     }
+
+    function get_profile($no_anggota)
+    {
+        $show = KopAnggota::select('kop_anggota.*', 'kau.*', DB::raw('(CASE WHEN kop_anggota.kode_rembug IS NULL THEN \'Individu\' ELSE kr.nama_rembug END) AS nama_rembug'))
+            ->join('kop_anggota_uk AS kau', 'kau.no_anggota', 'kop_anggota.no_anggota')
+            ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', 'kop_anggota.kode_rembug')
+            ->where('kop_anggota.no_anggota', $no_anggota)
+            ->first();
+
+        return $show;
+    }
 }

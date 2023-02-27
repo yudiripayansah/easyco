@@ -111,4 +111,14 @@ class KopTrxAnggota extends Model
 
         return $show;
     }
+
+    function get_exist($no_anggota, $trx_date)
+    {
+        $show = KopTrxAnggota::select(DB::raw('COUNT(*) AS jumlah'))
+            ->where('no_anggota', $no_anggota)
+            ->where('trx_date', $trx_date)
+            ->first();
+
+        return $show;
+    }
 }

@@ -298,8 +298,6 @@ class TplController extends Controller
 
     function process_deposit(Request $request)
     {
-        $uuid = collect(DB::select('SELECT uuid() AS id_trx_rembug'))->first()->id_trx_rembug;
-
         $kode_cabang = $request->kode_cabang;
         $kode_rembug = $request->kode_rembug;
         $kode_petugas = $request->kode_petugas;
@@ -319,6 +317,19 @@ class TplController extends Controller
         $pokok = $request->pokok;
 
         $count = count($no_rekening_tabungan);
+
+        $check = KopTrxRembug::get_exist($kode_rembug, $kode_petugas, $trx_date);
+        $check2 = KopTrxAnggota::get_exist($no_anggota, $trx_date);
+        $param2 = array(
+            'no_anggota' => $no_anggota,
+            'trx_date' => $trx_date
+        );
+
+        if ($check->count() > 0) {
+            $uuid = $check['id_trx_rembug'];
+        } else {
+            $uuid = collect(DB::select('SELECT uuid() AS id_trx_rembug'))->first()->id_trx_rembug;
+        }
 
         $data_trx_rembug = array(
             'id_trx_rembug' => $uuid,
@@ -346,21 +357,6 @@ class TplController extends Controller
                     'created_by' => $kode_petugas
                 );
             }
-        }
-
-        // PENCAIRAN
-        if ($pokok > 0) {
-            $data_droping = array(
-                'status_droping' => 1,
-                'droping_by' => $kode_petugas,
-                'droping_at' => date('Y-m-d H:i:s')
-            );
-        } else {
-            $data_droping = array(
-                'status_droping' => 0,
-                'droping_by' => NULL,
-                'droping_at' => NULL
-            );
         }
 
         // SETORAN SUKARELA
@@ -411,6 +407,7 @@ class TplController extends Controller
             );
         }
 
+        // SETORAN TABER
         for ($i = 0; $i < $count; $i++) {
             if ($amount_tabungan[$i] > 0) {
                 $data_trx_anggota[] = array(
@@ -435,9 +432,15 @@ class TplController extends Controller
 
         if ($validate['status'] === TRUE or $validate2['status'] === TRUE) {
             try {
-                KopTrxRembug::create($data_trx_rembug);
+                if ($check->count() == 0) {
+                    KopTrxRembug::create($data_trx_rembug);
+                }
+
+                if ($check2['jumlah'] > 0) {
+                    KopTrxAnggota::where($param2)->forceDelete();
+                }
+
                 KopTrxAnggota::insert($data_trx_anggota);
-                KopPembiayaan::where('no_rekening', '=', $no_rekening)->update($data_droping);
 
                 $res = array(
                     'status' => TRUE,
