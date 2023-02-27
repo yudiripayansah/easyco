@@ -956,5 +956,33 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+  // transaksi rembug
+  transaksiRembugRead(payload, token) {
+    let url = "trx_rembug/read";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  transaksiRembugDetail(payload, token) {
+    let url = "trx_rembug/verifikasi";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  transaksiRembugProses(payload, token) {
+    let url = "trx_rembug/proses_verifikasi";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
 };
 export default easycoApi;

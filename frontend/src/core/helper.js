@@ -27,13 +27,13 @@ const removeThousand = (num) => {
   }
 }
 
-const dateFormatId = (date) => {
+const dateFormatId = (date, sepparator='-') => {
   if(date) {
     let theDate = new Date(date)
     let d = theDate.getDate()
     let m = theDate.getMonth() + 1
     let y = theDate.getFullYear()
-    return `${d}-${m}-${y}`
+    return `${d}${sepparator}${m}${sepparator}${y}`
   } else {
     return null
   }
