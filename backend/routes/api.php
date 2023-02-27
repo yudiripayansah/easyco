@@ -25,6 +25,7 @@ use App\Http\Controllers\RegistrasiAkadController;
 use App\Http\Controllers\RembugController;
 use App\Http\Controllers\TplController;
 use App\Http\Controllers\TrxGl;
+use App\Http\Controllers\TrxRembug;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -231,17 +232,35 @@ Route::prefix('general_ledger')->middleware('checkToken')->group(function () {
   Route::post('/create', [TrxGl::class, 'create']);
 });
 
-Route::prefix('laporan/list/excel')->middleware('checkToken')->group(function () {
-  Route::get('/anggota_masuk', [LaporanController::class, 'list_excel_anggota_masuk']);
-  Route::get('/pengajuan', [LaporanController::class, 'list_excel_pengajuan']);
-  Route::get('/regis_akad', [LaporanController::class, 'list_excel_regis_akad']);
-  Route::get('/pencairan', [LaporanController::class, 'list_excel_pencairan']);
+Route::prefix('laporan')->middleware('checkToken')->group(function () {
+  Route::prefix('list')->group(function () {
+    Route::prefix('excel')->group(function () {
+      Route::get('/anggota_masuk', [LaporanController::class, 'list_excel_anggota_masuk']);
+      Route::get('/pengajuan', [LaporanController::class, 'list_excel_pengajuan']);
+      Route::get('/regis_akad', [LaporanController::class, 'list_excel_regis_akad']);
+      Route::get('/pencairan', [LaporanController::class, 'list_excel_pencairan']);
+    });
+
+    Route::prefix('pdf')->group(function () {
+      Route::post('/profil_anggota', [LaporanController::class, 'list_pdf_profil_anggota']);
+      Route::post('/detail_profil_anggota', [LaporanController::class, 'list_pdf_detail_profil_anggota']);
+    });
+  });
+
+  Route::prefix('rekap')->group(function () {
+    //
+  });
 });
 
 Route::prefix('trx_member')->middleware('checkToken')->group(function () {
   Route::post('/penerimaan_angsuran', [TplController::class, 'penerimaan_angsuran']);
   Route::post('/kartu_angsuran', [TplController::class, 'kartu_angsuran']);
   Route::post('/transaksi_majelis', [TplController::class, 'transaksi_majelis']);
+});
+
+Route::prefix('trx_rembug')->middleware('checkToken')->group(function () {
+  Route::post('/read', [TrxRembug::class, 'read']);
+  Route::post('/verifikasi', [TrxRembug::class, 'verifikasi']);
 });
 /* END BACK OFFICE */
 

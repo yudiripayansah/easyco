@@ -20,6 +20,7 @@ class CreateKopTrxRembugTable extends Migration
             $table->string('kode_rembug', 20);
             $table->string('kode_petugas', 20);
             $table->date('trx_date');
+            $table->decimal('infaq', 14, 0)->nullable(TRUE)->default(0);
             $table->string('created_by', 30);
             $table->timestamps();
             $table->string('updated_by', 30)->nullable(TRUE);
