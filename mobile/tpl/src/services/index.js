@@ -37,10 +37,20 @@ const transSetoranProses = (payload, token) => {
   }
   return Axios.post('/tpl/transaction/process_deposit', payload, config)
 }
+// Anggota
+const anggotaCreate = (payload, token) => {
+  let config = {
+    headers: {
+      'token': token
+    }
+  }
+  return Axios.post('/anggota/create', payload, config);
+}
 export default {
   authLogin,
   infoRembug,
   infoMember,
   transSetoranDeposit,
-  transSetoranProses
+  transSetoranProses,
+  anggotaCreate
 }
