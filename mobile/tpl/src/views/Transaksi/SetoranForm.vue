@@ -561,7 +561,7 @@ export default {
             msg: req.data.msg
           }
           setTimeout(() => {
-            this.$router.push('/anggota/'+this.rembug+'/'+this.trx_date).catch(()=>{});
+            this.$router.push('/anggota/'+this.rembug).catch(()=>{});
           },500)
         } else {
           this.alert = {
