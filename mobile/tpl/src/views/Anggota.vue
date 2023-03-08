@@ -50,7 +50,7 @@ export default {
       if(!kode_rembug) {
         kode_rembug = this.$route.params.kode_rembug
       } else {
-        this.$router.push(`/anggota/${kode_rembug}`)
+        this.$router.push(`/anggota/${kode_rembug}`).catch(()=>{});
       }
       if(this.$route.params.date) {
         today = this.$route.params.date
@@ -91,12 +91,19 @@ export default {
         }
         this.list.loading = false
       }
-    }
+    },
+    getDate(){
+      let today = new Date()
+      let day = today.getDate()
+      let month = today.getMonth()+1
+      let year = today.getFullYear()
+      return `${day}/${month}/${year}`
+    },
   },
   mounted() {
     this.getAnggota(false)
     this.list.rembug = this.$route.params.kode_rembug
-    this.list.date = this.$route.params.date
+    this.list.date = this.getDate()
   }
 }
 </script>
