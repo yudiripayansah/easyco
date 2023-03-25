@@ -121,4 +121,14 @@ class KopTrxAnggota extends Model
 
         return $show;
     }
+
+    function total_droping($id_trx_rembug)
+    {
+        $show = KopTrxAnggota::select(DB::raw('SUM(amount) AS kas_awal'))
+            ->where('id_trx_rembug', $id_trx_rembug)
+            ->where('trx_type', 31)
+            ->first();
+
+        return $show;
+    }
 }
