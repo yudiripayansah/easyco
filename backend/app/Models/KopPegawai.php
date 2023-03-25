@@ -81,7 +81,7 @@ class KopPegawai extends Model
         return $res;
     }
 
-    function read($search, $sortBy, $sortDir, $offset, $perPage)
+    function read($search, $sortBy, $sortDir, $offset, $perPage, $kode_cabang)
     {
         $show = KopPegawai::orderBy($sortBy, $sortDir);
 
@@ -95,7 +95,21 @@ class KopPegawai extends Model
                 ->orWhere('jabatan', 'LIKE', '%' . $search . '%');
         }
 
+        if ($kode_cabang) {
+            $show->where('kode_cabang', $kode_cabang);
+        }
+
         $show = $show->get();
+
+        return $show;
+    }
+
+    function generateKodePegawai($kode_cabang)
+    {
+        $show = KopPegawai::select(DB::raw('CAST(MAX(RIGHT(kode_pgw,4)) AS INTEGER) AS kode_pgw'))
+            ->where('kode_cabang', $kode_cabang)
+            ->withTrashed()
+            ->first();
 
         return $show;
     }

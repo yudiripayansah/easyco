@@ -315,17 +315,20 @@ class TplController extends Controller
         $amount_tabungan = $request->amount_tabungan;
 
         $pokok = $request->pokok;
+        $biaya_administrasi = $request->biaya_administrasi;
+        $biaya_asuransi_jiwa = $request->biaya_asuransi_jiwa;
 
         $count = count($no_rekening_tabungan);
 
         $check = KopTrxRembug::get_exist($kode_rembug, $kode_petugas, $trx_date);
+        $counts = KopTrxRembug::get_count($kode_rembug, $kode_petugas, $trx_date);
         $check2 = KopTrxAnggota::get_exist($no_anggota, $trx_date);
         $param2 = array(
             'no_anggota' => $no_anggota,
             'trx_date' => $trx_date
         );
 
-        if ($check->count() > 0) {
+        if ($counts['jumlah'] > 0) {
             $uuid = $check['id_trx_rembug'];
         } else {
             $uuid = collect(DB::select('SELECT uuid() AS id_trx_rembug'))->first()->id_trx_rembug;
@@ -425,6 +428,48 @@ class TplController extends Controller
             }
         }
 
+        // PENCAIRAN PEMBIAYAAN
+        if ($pokok > 0) {
+            $data_trx_anggota[] = array(
+                'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                'id_trx_rembug' => $uuid,
+                'no_anggota' => $no_anggota,
+                'no_rekening' => $no_rekening,
+                'trx_date' => $trx_date,
+                'amount' => $pokok,
+                'flag_debet_credit' => 'D',
+                'trx_type' => '31',
+                'description' => 'Terima Pencairan Pembiayaan',
+                'created_by' => $kode_petugas
+            );
+
+            $data_trx_anggota[] = array(
+                'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                'id_trx_rembug' => $uuid,
+                'no_anggota' => $no_anggota,
+                'no_rekening' => $no_rekening,
+                'trx_date' => $trx_date,
+                'amount' => $biaya_administrasi,
+                'flag_debet_credit' => 'C',
+                'trx_type' => '35',
+                'description' => 'Bayar By Admin Pembiayaan',
+                'created_by' => $kode_petugas
+            );
+
+            $data_trx_anggota[] = array(
+                'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                'id_trx_rembug' => $uuid,
+                'no_anggota' => $no_anggota,
+                'no_rekening' => $no_rekening,
+                'trx_date' => $trx_date,
+                'amount' => $biaya_asuransi_jiwa,
+                'flag_debet_credit' => 'C',
+                'trx_type' => '36',
+                'description' => 'Bayar By Asuransi Pembiayaan',
+                'created_by' => $kode_petugas
+            );
+        }
+
         $validate = KopTrxRembug::validateAdd($data_trx_rembug);
         $validate2 = KopTrxAnggota::validateAdd($data_trx_anggota);
 
@@ -432,7 +477,7 @@ class TplController extends Controller
 
         if ($validate['status'] === TRUE or $validate2['status'] === TRUE) {
             try {
-                if ($check->count() == 0) {
+                if ($counts['jumlah'] == 0) {
                     KopTrxRembug::create($data_trx_rembug);
                 }
 

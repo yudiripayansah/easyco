@@ -58,6 +58,17 @@ class KopTrxRembug extends Model
         return $show;
     }
 
+    function get_count($kode_rembug, $kode_petugas, $trx_date)
+    {
+        $show = KopTrxRembug::select(DB::raw('COUNT(*) AS jumlah'))
+            ->where('kode_rembug', $kode_rembug)
+            ->where('kode_petugas', $kode_petugas)
+            ->where('trx_date', $trx_date)
+            ->first();
+
+        return $show;
+    }
+
     function get_all_transaction($branch_code, $from_date, $thru_date)
     {
         $show = KopTrxRembug::select('kop_trx_rembug.id_trx_rembug', 'kr.kode_rembug', 'kr.nama_rembug', 'kc.nama_cabang', 'kop_trx_rembug.trx_date', 'kkp.nama_kas_petugas', 'kop_trx_rembug.infaq')
@@ -136,7 +147,7 @@ class KopTrxRembug extends Model
             FROM kop_trx_anggota AS kta
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
             JOIN kop_pembiayaan AS kp ON kp.no_rekening = kta.no_rekening
-            WHERE ktr.id_trx_rembug = '$id_trx_rembug' AND kta.trx_type = '32'
+            WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '32'
             GROUP BY kta.no_anggota,kp.angsuran_pokok
         ) AS a ON a.no_anggota = ka.no_anggota
         LEFT JOIN (
@@ -145,7 +156,7 @@ class KopTrxRembug extends Model
             SUM(kta.amount) AS angsuran
             FROM kop_trx_anggota AS kta
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
-            WHERE ktr.id_trx_rembug = '$id_trx_rembug' AND kta.trx_type IN('32','33','34')
+            WHERE ktr.id_trx_rembug = ? AND kta.trx_type IN('32','33','34')
             GROUP BY 1
         ) AS b ON b.no_anggota = ka.no_anggota
         LEFT JOIN (
@@ -154,7 +165,7 @@ class KopTrxRembug extends Model
             SUM(kta.amount) AS setoran_sukarela
             FROM kop_trx_anggota AS kta
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
-            WHERE ktr.id_trx_rembug = '$id_trx_rembug' AND kta.trx_type = '13'
+            WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '13'
             GROUP BY 1
         ) AS c ON c.no_anggota = ka.no_anggota
         LEFT JOIN (
@@ -163,7 +174,7 @@ class KopTrxRembug extends Model
             SUM(kta.amount) AS setoran_simpok
             FROM kop_trx_anggota AS kta
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
-            WHERE ktr.id_trx_rembug = '$id_trx_rembug' AND kta.trx_type = '11'
+            WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '11'
             GROUP BY 1
         ) AS d ON d.no_anggota = ka.no_anggota
         LEFT JOIN (
@@ -172,7 +183,7 @@ class KopTrxRembug extends Model
             SUM(kta.amount) AS setoran_taber
             FROM kop_trx_anggota AS kta
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
-            WHERE ktr.id_trx_rembug = '$id_trx_rembug' AND kta.trx_type = '21'
+            WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '21'
             GROUP BY 1
         ) AS e ON e.no_anggota = ka.no_anggota
         LEFT JOIN (
@@ -181,7 +192,7 @@ class KopTrxRembug extends Model
             SUM(kta.amount) AS penarikan_sukarela
             FROM kop_trx_anggota AS kta
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
-            WHERE ktr.id_trx_rembug = '$id_trx_rembug' AND kta.trx_type = '22'
+            WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '22'
             GROUP BY 1
         ) AS f ON f.no_anggota = ka.no_anggota
         LEFT JOIN (
@@ -194,12 +205,12 @@ class KopTrxRembug extends Model
             JOIN kop_pengajuan AS kpg ON kpg.no_pengajuan = kp.no_pengajuan
             JOIN kop_trx_anggota AS kta ON kta.no_anggota = kpg.no_anggota
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
-            WHERE ktr.id_trx_rembug = '$id_trx_rembug' AND kp.status_rekening = '1' AND kp.status_droping = '0'
+            WHERE ktr.id_trx_rembug = ? AND kp.status_rekening = '1' AND kp.status_droping = '0'
             GROUP BY 1,2,3,4
         ) AS g ON g.no_anggota = ka.no_anggota
         WHERE ka.status <> 2";
 
-        $show = DB::select($statement);
+        $show = DB::select($statement, [$id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug]);
 
         return $show;
     }
