@@ -161,7 +161,7 @@
                   <tr>
                     <td class="text-center align-center" colspan="2">Angsuran</td>
                     <td class="text-center align-center" rowspan="2">Tab. Sukarela</td>
-                    <td class="text-center align-center" rowspan="2">Tab. Rembug Simpok</td>
+                    <td class="text-center align-center" rowspan="2">Tab. Simwa/ Simpok</td>
                     <td class="text-center align-center" rowspan="2">Tab. Berencana</td>
                     <td class="text-center align-center" rowspan="2">Tab. Sukarela</td>
                     <td class="text-center align-center" rowspan="2">Plafon</td>
@@ -177,7 +177,7 @@
                   <tr v-for="(item,idx) in form.detail" :key="idx">
                     <td>{{item.no_anggota}}</td>
                     <td>{{item.nama_anggota}}</td>
-                    <td><b-form-select/></td>
+                    <td><b-form-select value="H"/></td>
                     <td><b-form-input :value="thousand(item.frek)" class="text-right"/></td>
                     <td><b-form-input :value="thousand(item.angsuran)" class="text-right"/></td>
                     <td><b-form-input :value="thousand(item.setoran_sukarela)" class="text-right"/></td>

@@ -56,6 +56,36 @@ class PegawaiController extends Controller
         return $response;
     }
 
+    public function generate_kode_pegawai(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+
+        $maximum = KopPegawai::generateKodePegawai($kode_cabang);
+
+        $format = '0000';
+
+        if ($maximum->count() == 0) {
+            $val = 1;
+        } else {
+            $val = $maximum['kode_pgw'] + 1;
+        }
+
+        $kode = $format . $val;
+        $kode = substr($kode, -4);
+
+        $data = array('kode_pegawai' => $kode_cabang . $kode);
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $data,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
     public function read(Request $request)
     {
         $offset = 0;
@@ -63,6 +93,7 @@ class PegawaiController extends Controller
         $perPage = '~';
         $sortDir = 'ASC';
         $sortBy = 'tgl_gabung';
+        $kode_cabang = '';
         $search = NULL;
         $total = 0;
         $totalPage = 1;
@@ -83,6 +114,10 @@ class PegawaiController extends Controller
             $sortBy = $request->sortBy;
         }
 
+        if ($request->kode_cabang) {
+            $kode_cabang = $request->kode_cabang;
+        }
+
         if ($request->search) {
             $search = strtoupper($request->search);
         }
@@ -91,7 +126,7 @@ class PegawaiController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopPegawai::read($search, $sortBy, $sortDir, $offset, $perPage);
+        $read = KopPegawai::read($search, $sortBy, $sortDir, $offset, $perPage, $kode_cabang);
 
         $data = array();
 

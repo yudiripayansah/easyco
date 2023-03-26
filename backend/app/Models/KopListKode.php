@@ -76,7 +76,7 @@ class KopListKode extends Model
         return $res;
     }
 
-    function read($search, $sortBy, $sortDir, $offset, $perPage)
+    function read($search, $sortBy, $sortDir, $offset, $perPage, $nama_kode)
     {
         $show = KopListKode::orderBy($sortBy, $sortDir);
 
@@ -87,6 +87,10 @@ class KopListKode extends Model
         if ($search <> NULL) {
             $show->where('nama_kode', 'LIKE', '%' . $search . '%')
                 ->orWhere('kode_display', 'LIKE', '%' . $search . '%');
+        }
+
+        if ($nama_kode) {
+            $show->where('nama_kode', $nama_kode);
         }
 
         $show = $show->get();
