@@ -54,6 +54,36 @@ class KecamatanController extends Controller
         return $response;
     }
 
+    public function generate_kode_kecamatan(Request $request)
+    {
+        $kode_kota = $request->kode_kota;
+
+        $maximum = KopKecamatan::generateKodeKecamatan($kode_kota);
+
+        $format = '00';
+
+        if ($maximum->count() == 0) {
+            $val = 1;
+        } else {
+            $val = $maximum['kode_kecamatan'] + 1;
+        }
+
+        $kode = $format . $val;
+        $kode = substr($kode, -2);
+
+        $data = array('kode_kecamatan' => $kode_kota . $kode);
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $data,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
     public function read(Request $request)
     {
         $offset = 0;
