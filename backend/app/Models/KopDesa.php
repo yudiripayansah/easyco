@@ -92,4 +92,14 @@ class KopDesa extends Model
 
         return $show;
     }
+
+    function generateKodeDesa($kode_kecamatan)
+    {
+        $show = KopDesa::select(DB::raw('CAST(MAX(RIGHT(kode_desa,2)) AS INTEGER) AS kode_desa'))
+            ->where('kode_kecamatan', $kode_kecamatan)
+            ->withTrashed()
+            ->first();
+
+        return $show;
+    }
 }

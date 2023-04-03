@@ -6,6 +6,7 @@ use App\Exports\ListAnggotaMasukExport;
 use App\Exports\ListPengajuanExport;
 use App\Exports\ListRegisAkadExport;
 use App\Exports\ListPencairanExport;
+use App\Exports\ListSaldoAnggotaExport;
 use App\Models\KopAnggota;
 use App\Models\KopCabang;
 use App\Models\KopPembiayaan;
@@ -41,6 +42,13 @@ class LaporanController extends Controller
         $list = new ListPencairanExport($request->kode_cabang, $request->jenis_pembiayaan, $request->kode_petugas, $request->kode_rembug, $request->produk, $request->from_date, $request->thru_date);
 
         return $list->download('list_pencairan_' . $request->kode_cabang . '_' . $request->kode_rembug . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+    }
+
+    function list_excel_saldo_anggota(Request $request)
+    {
+        $list = new ListSaldoAnggotaExport($request->kode_cabang, $request->kode_rembug, $request->from_date, $request->thru_date);
+
+        return $list->download('list_saldo_anggota_' . $request->kode_cabang . '_' . $request->kode_rembug . '.xlsx');
     }
 
     function list_pdf_profil_anggota(Request $request)

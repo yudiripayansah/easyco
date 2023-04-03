@@ -101,9 +101,15 @@ class KopAnggota extends Model
 
     function report_list($kode_cabang, $kode_rembug, $from_date, $thru_date)
     {
-        $show = KopAnggota::select('kc.nama_cabang', 'kr.nama_rembug', 'kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kop_anggota.jenis_kelamin', 'kop_anggota.ibu_kandung', 'kop_anggota.tempat_lahir', 'kop_anggota.tgl_lahir', 'kop_anggota.alamat', 'kop_anggota.desa', 'kop_anggota.kecamatan', 'kop_anggota.kabupaten', 'kop_anggota.no_ktp', 'kop_anggota.no_telp', 'kop_anggota.pendidikan', 'kop_anggota.status_perkawinan', 'kop_anggota.nama_pasangan', 'kop_anggota.pekerjaan', 'kop_anggota.ket_pekerjaan', 'kop_anggota.pendapatan_perbulan', 'kop_anggota.tgl_gabung', 'kop_anggota.status')
+        $show = KopAnggota::select('kop_anggota.*', 'kc.nama_cabang', 'kr.nama_rembug', DB::raw('COALESCE(kp.saldo_pokok+kp.saldo_margin,0) AS saldo_outstanding'))
             ->join('kop_cabang AS kc', 'kc.kode_cabang', '=', 'kop_anggota.kode_cabang')
-            ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'kop_anggota.kode_rembug');
+            ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'kop_anggota.kode_rembug')
+            ->leftjoin('kop_pengajuan AS kpg', function ($join) {
+                $join->on('kpg.no_anggota', 'kop_anggota.no_anggota')->where('kpg.status_pengajuan', 1);
+            })
+            ->leftjoin('kop_pembiayaan AS kp', function ($join) {
+                $join->on('kp.no_pengajuan', 'kpg.no_pengajuan')->where('kp.status_rekening', 1);
+            });
 
         if ($kode_cabang <> '~') {
             $show->where('kc.kode_cabang', $kode_cabang);
@@ -113,8 +119,11 @@ class KopAnggota extends Model
             $show->where('kr.kode_rembug', $kode_rembug);
         }
 
-        $show->whereBetween('kop_anggota.tgl_gabung', [$from_date, $thru_date])
-            ->orderBy('kc.kode_cabang', 'ASC')
+        if ($from_date <> '~' and $thru_date <> '~') {
+            $show->whereBetween('kop_anggota.tgl_gabung', [$from_date, $thru_date]);
+        }
+
+        $show->orderBy('kc.kode_cabang', 'ASC')
             ->orderBy('kr.kode_rembug', 'ASC')
             ->orderBy('kop_anggota.no_anggota', 'ASC');
 

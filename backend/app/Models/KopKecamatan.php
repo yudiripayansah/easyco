@@ -92,4 +92,14 @@ class KopKecamatan extends Model
 
         return $show;
     }
+
+    function generateKodeKecamatan($kode_kota)
+    {
+        $show = KopKecamatan::select(DB::raw('CAST(MAX(RIGHT(kode_kecamatan,2)) AS INTEGER) AS kode_kecamatan'))
+            ->where('kode_kota', $kode_kota)
+            ->withTrashed()
+            ->first();
+
+        return $show;
+    }
 }
