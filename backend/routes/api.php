@@ -246,6 +246,14 @@ Route::prefix('laporan')->middleware('checkToken')->group(function () {
       Route::get('/saldo_anggota', [LaporanController::class, 'list_excel_saldo_anggota']);
     });
 
+    Route::prefix('csv')->group(function () {
+      Route::get('/anggota_masuk', [LaporanController::class, 'list_csv_anggota_masuk']);
+      Route::get('/pengajuan', [LaporanController::class, 'list_csv_pengajuan']);
+      Route::get('/regis_akad', [LaporanController::class, 'list_csv_regis_akad']);
+      Route::get('/pencairan', [LaporanController::class, 'list_csv_pencairan']);
+      Route::get('/saldo_anggota', [LaporanController::class, 'list_csv_saldo_anggota']);
+    });
+
     Route::prefix('pdf')->group(function () {
       Route::post('/profil_anggota', [LaporanController::class, 'list_pdf_profil_anggota']);
       Route::post('/detail_profil_anggota', [LaporanController::class, 'list_pdf_detail_profil_anggota']);

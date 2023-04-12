@@ -1,14 +1,38 @@
 <table>
     <thead>
+        @if($format == 'excel')
         <tr>
-            <th>No</th>
-            <th>Cabang</th>
-            <th>Tgl. Gabung</th>
-            <th>Nama</th>
-            <th>NIK</th>
-            <th>No. Anggota</th>
-            <th>Rembug</th>
-            <th>Status</th>
+            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="8">KSPPS MITRA SEJAHTERA RAYA INDONESIA</th>
+        </tr>
+        <tr>
+            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="8">{{ $cabang }}</th>
+        </tr>
+        <tr>
+            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="8">LAPORAN LIST ANGGOTA MASUK</th>
+        </tr>
+        <tr>
+            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="8">PERIODE : {{ $tanggal1 }} s.d {{ $tanggal2 }}</th>
+        </tr>
+        <tr>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+        </tr>
+        @endif
+        <tr>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">No</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Cabang</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Tgl. Gabung</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Nama</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">NIK</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">No. Anggota</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Rembug</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Status</th>
         </tr>
     </thead>
     <tbody>
@@ -25,14 +49,14 @@
         {{ $status_keanggotaan = 'Menunggu Verifikasi Anggota Keluar' }}
         @endif
         <tr>
-            <td>{{ $no++ }}</td>
-            <td>{{ $masuk->nama_cabang }}</td>
-            <td>{{ $masuk->tgl_gabung }}</td>
-            <td>{{ $masuk->nama_anggota }}</td>
-            <td>'{{ $masuk->no_ktp }}</td>
-            <td>'{{ $masuk->no_anggota }}</td>
-            <td>{{ $masuk->nama_rembug }}</td>
-            <td>{{ $status_keanggotaan }}</td>
+            <td style="border: 1px solid #000;">{{ $no++ }}</td>
+            <td style="border: 1px solid #000;">{{ $masuk->nama_cabang }}</td>
+            <td style="border: 1px solid #000;">{{ $masuk->tgl_gabung }}</td>
+            <td style="border: 1px solid #000;">{{ $masuk->nama_anggota }}</td>
+            <td style="border: 1px solid #000;">'{{ $masuk->no_ktp }}</td>
+            <td style="border: 1px solid #000;">'{{ $masuk->no_anggota }}</td>
+            <td style="border: 1px solid #000;">{{ $masuk->nama_rembug }}</td>
+            <td style="border: 1px solid #000;">{{ $status_keanggotaan }}</td>
         </tr>
         @endforeach
     </tbody>
