@@ -18,37 +18,212 @@ class LaporanController extends Controller
 {
     function list_excel_anggota_masuk(Request $request)
     {
-        $list = new ListAnggotaMasukExport($request->kode_cabang, $request->kode_rembug, $request->from_date, $request->thru_date);
+        $list = new ListAnggotaMasukExport($request->kode_cabang, $request->kode_rembug, $request->from_date, $request->thru_date, 'excel');
 
-        return $list->download('list_anggota_masuk_' . $request->kode_cabang . '_' . $request->kode_rembug . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+        if ($request->kode_cabang <> '~') {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = str_replace(' ', '_', $branch->nama_cabang);
+        } else {
+            $cabang = 'SEMUA_CABANG';
+        }
+
+        if ($request->kode_rembug <> '~') {
+            $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
+            $rembug = str_replace(' ', '_', $cm->nama_rembug);
+        } else {
+            $rembug = 'SEMUA_REMBUG';
+        }
+
+        return $list->download('LAPORAN_LIST_ANGGOTA_MASUK_' . $cabang . '_' . $rembug . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+    }
+
+    function list_csv_anggota_masuk(Request $request)
+    {
+        $list = new ListAnggotaMasukExport($request->kode_cabang, $request->kode_rembug, $request->from_date, $request->thru_date, 'csv');
+
+        if ($request->kode_cabang <> '~') {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = str_replace(' ', '_', $branch->nama_cabang);
+        } else {
+            $cabang = 'SEMUA_CABANG';
+        }
+
+        if ($request->kode_rembug <> '~') {
+            $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
+            $rembug = str_replace(' ', '_', $cm->nama_rembug);
+        } else {
+            $rembug = 'SEMUA_REMBUG';
+        }
+
+        return $list->download('LAPORAN_LIST_ANGGOTA_MASUK_' . $cabang . '_' . $rembug . '_' . $request->from_date . '_' . $request->thru_date . '.csv');
     }
 
     function list_excel_pengajuan(Request $request)
     {
-        $list = new ListPengajuanExport($request->kode_cabang, $request->jenis_pembiayaan, $request->kode_petugas, $request->kode_rembug, $request->from_date, $request->thru_date);
+        $list = new ListPengajuanExport($request->kode_cabang, $request->jenis_pembiayaan, $request->kode_petugas, $request->kode_rembug, $request->from_date, $request->thru_date, 'excel');
 
-        return $list->download('list_pengajuan_' . $request->kode_cabang . '_' . $request->kode_rembug . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+        if ($request->kode_cabang <> '~') {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = str_replace(' ', '_', $branch->nama_cabang);
+        } else {
+            $cabang = 'SEMUA_CABANG';
+        }
+
+        if ($request->kode_rembug <> '~') {
+            $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
+            $rembug = str_replace(' ', '_', $cm->nama_rembug);
+        } else {
+            $rembug = 'SEMUA_REMBUG';
+        }
+
+        return $list->download('LAPORAN_LIST_PENGAJUAN_' . $cabang . '_' . $rembug . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+    }
+
+    function list_csv_pengajuan(Request $request)
+    {
+        $list = new ListPengajuanExport($request->kode_cabang, $request->jenis_pembiayaan, $request->kode_petugas, $request->kode_rembug, $request->from_date, $request->thru_date, 'csv');
+
+        if ($request->kode_cabang <> '~') {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = str_replace(' ', '_', $branch->nama_cabang);
+        } else {
+            $cabang = 'SEMUA_CABANG';
+        }
+
+        if ($request->kode_rembug <> '~') {
+            $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
+            $rembug = str_replace(' ', '_', $cm->nama_rembug);
+        } else {
+            $rembug = 'SEMUA_REMBUG';
+        }
+
+        return $list->download('LAPORAN_LIST_PENGAJUAN_' . $cabang . '_' . $rembug . '_' . $request->from_date . '_' . $request->thru_date . '.csv');
     }
 
     function list_excel_regis_akad(Request $request)
     {
-        $list = new ListRegisAkadExport($request->kode_cabang, $request->jenis_pembiayaan, $request->kode_petugas, $request->kode_rembug, $request->produk, $request->from_date, $request->thru_date);
+        $list = new ListRegisAkadExport($request->kode_cabang, $request->jenis_pembiayaan, $request->kode_petugas, $request->kode_rembug, $request->produk, $request->from_date, $request->thru_date, 'excel');
 
-        return $list->download('list_registrasi_akad_' . $request->kode_cabang . '_' . $request->kode_rembug . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+        if ($request->kode_cabang <> '~') {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = str_replace(' ', '_', $branch->nama_cabang);
+        } else {
+            $cabang = 'SEMUA_CABANG';
+        }
+
+        if ($request->kode_rembug <> '~') {
+            $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
+            $rembug = str_replace(' ', '_', $cm->nama_rembug);
+        } else {
+            $rembug = 'SEMUA_REMBUG';
+        }
+
+        return $list->download('LAPORAN_LIST_REGISTRASI_AKAD_' . $cabang . '_' . $rembug . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+    }
+
+    function list_csv_regis_akad(Request $request)
+    {
+        $list = new ListRegisAkadExport($request->kode_cabang, $request->jenis_pembiayaan, $request->kode_petugas, $request->kode_rembug, $request->produk, $request->from_date, $request->thru_date, 'csv');
+
+        if ($request->kode_cabang <> '~') {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = str_replace(' ', '_', $branch->nama_cabang);
+        } else {
+            $cabang = 'SEMUA_CABANG';
+        }
+
+        if ($request->kode_rembug <> '~') {
+            $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
+            $rembug = str_replace(' ', '_', $cm->nama_rembug);
+        } else {
+            $rembug = 'SEMUA_REMBUG';
+        }
+
+        return $list->download('LAPORAN_LIST_REGISTRASI_AKAD_' . $cabang . '_' . $rembug . '_' . $request->from_date . '_' . $request->thru_date . '.csv');
     }
 
     function list_excel_pencairan(Request $request)
     {
-        $list = new ListPencairanExport($request->kode_cabang, $request->jenis_pembiayaan, $request->kode_petugas, $request->kode_rembug, $request->produk, $request->from_date, $request->thru_date);
+        $list = new ListPencairanExport($request->kode_cabang, $request->jenis_pembiayaan, $request->kode_petugas, $request->kode_rembug, $request->produk, $request->from_date, $request->thru_date, 'excel');
 
-        return $list->download('list_pencairan_' . $request->kode_cabang . '_' . $request->kode_rembug . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+        if ($request->kode_cabang <> '~') {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = str_replace(' ', '_', $branch->nama_cabang);
+        } else {
+            $cabang = 'SEMUA_CABANG';
+        }
+
+        if ($request->kode_rembug <> '~') {
+            $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
+            $rembug = str_replace(' ', '_', $cm->nama_rembug);
+        } else {
+            $rembug = 'SEMUA_REMBUG';
+        }
+
+        return $list->download('LAPORAN_LIST_PENCAIRAN_' . $cabang . '_' . $rembug . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+    }
+
+    function list_csv_pencairan(Request $request)
+    {
+        $list = new ListPencairanExport($request->kode_cabang, $request->jenis_pembiayaan, $request->kode_petugas, $request->kode_rembug, $request->produk, $request->from_date, $request->thru_date, 'csv');
+
+        if ($request->kode_cabang <> '~') {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = str_replace(' ', '_', $branch->nama_cabang);
+        } else {
+            $cabang = 'SEMUA_CABANG';
+        }
+
+        if ($request->kode_rembug <> '~') {
+            $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
+            $rembug = str_replace(' ', '_', $cm->nama_rembug);
+        } else {
+            $rembug = 'SEMUA_REMBUG';
+        }
+
+        return $list->download('LAPORAN_LIST_PENCAIRAN_' . $cabang . '_' . $rembug . '_' . $request->from_date . '_' . $request->thru_date . '.csv');
     }
 
     function list_excel_saldo_anggota(Request $request)
     {
-        $list = new ListSaldoAnggotaExport($request->kode_cabang, $request->kode_rembug, $request->from_date, $request->thru_date);
+        $list = new ListSaldoAnggotaExport($request->kode_cabang, $request->kode_rembug, $request->from_date, $request->thru_date, 'excel');
 
-        return $list->download('list_saldo_anggota_' . $request->kode_cabang . '_' . $request->kode_rembug . '.xlsx');
+        if ($request->kode_cabang <> '~') {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = str_replace(' ', '_', $branch->nama_cabang);
+        } else {
+            $cabang = 'SEMUA_CABANG';
+        }
+
+        if ($request->kode_rembug <> '~') {
+            $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
+            $rembug = str_replace(' ', '_', $cm->nama_rembug);
+        } else {
+            $rembug = 'SEMUA_REMBUG';
+        }
+
+        return $list->download('LAPORAN_SALDO_ANGGOTA_' . $cabang . '_' . $rembug . '.xlsx');
+    }
+
+    function list_csv_saldo_anggota(Request $request)
+    {
+        $list = new ListSaldoAnggotaExport($request->kode_cabang, $request->kode_rembug, $request->from_date, $request->thru_date, 'csv');
+
+        if ($request->kode_cabang <> '~') {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = str_replace(' ', '_', $branch->nama_cabang);
+        } else {
+            $cabang = 'SEMUA_CABANG';
+        }
+
+        if ($request->kode_rembug <> '~') {
+            $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
+            $rembug = str_replace(' ', '_', $cm->nama_rembug);
+        } else {
+            $rembug = 'SEMUA_REMBUG';
+        }
+
+        return $list->download('LAPORAN_SALDO_ANGGOTA_' . $cabang . '_' . $rembug . '.csv');
     }
 
     function list_pdf_profil_anggota(Request $request)

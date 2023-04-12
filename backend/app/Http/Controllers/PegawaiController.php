@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KopPegawai;
+use App\Models\KopUser;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -93,10 +94,14 @@ class PegawaiController extends Controller
         $perPage = '~';
         $sortDir = 'ASC';
         $sortBy = 'tgl_gabung';
-        $kode_cabang = '';
         $search = NULL;
         $total = 0;
         $totalPage = 1;
+
+        $token = $request->header('token');
+        $param = array('token' => $token);
+        $get = KopUser::where($param)->first();
+        $kode_cabang = $get->kode_cabang;
 
         if ($request->page) {
             $page = $request->page;
@@ -140,7 +145,7 @@ class PegawaiController extends Controller
                 'alamat_pgw' => $rd->alamat_pgw,
                 'no_ktp' => $rd->no_ktp,
                 'no_hp' => $rd->no_hp,
-                'jabatan' => $rd->jabatan,
+                'jabatan' => strtoupper($rd->kode_display),
                 'tgl_gabung' => $rd->tgl_gabung
             );
         }
