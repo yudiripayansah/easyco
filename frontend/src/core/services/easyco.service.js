@@ -863,6 +863,15 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
+  kecamatanGenerate(payload, token) {
+    let url = "kecamatan/generate";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
   // desa
   desaRead(payload, token) {
     let url = "desa/read";
@@ -908,6 +917,15 @@ const easycoApi = {
       },
     };
     return axios.get(url, config);
+  },
+  desaGenerate(payload, token) {
+    let url = "desa/generate";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
   },
   // user
   userRead(payload, token) {

@@ -10,8 +10,7 @@
       </div>
       Registrasi Calon Anggota
     </h6>
-    <v-select solo label="Cabang" class="mb-3 mt-4" hide-details />
-    <v-select solo label="Rembug" class="mb-3 mt-4" hide-details />
+    <v-select solo label="Rembug" class="mb-3 mt-4" hide-details :items="opt.rembug" v-model="form.data.kode_rembug"/>
     <v-container class="pa-0">
       <div class="bt-page-indicator d-flex justify-space-between pt-3">
         <span
@@ -87,7 +86,7 @@
                   label="Jenis Kelamin"
                   hide-details
                   :items="opt.jenis_kelamin"
-                  v-model="form.jenis_kelamin"
+                  v-model="form.data.jenis_kelamin"
                 />
               </v-col>
               <v-col cols="12">
@@ -118,6 +117,7 @@
                   outlined
                   v-model="form.data.tgl_lahir"
                   label="Tanggal Lahir"
+                  type="date"
                 />
               </v-col>
               <v-col cols="12">
@@ -147,7 +147,7 @@
                   label="Pendidikan"
                   hide-details
                   :items="opt.pendidikan"
-                  v-model="form.pendidikan"
+                  v-model="form.data.pendidikan"
                 />
               </v-col>
               <v-col cols="12">
@@ -157,7 +157,7 @@
                   label="Pekerjaan"
                   hide-details
                   :items="opt.pekerjaan"
-                  v-model="form.pekerjaan"
+                  v-model="form.data.pekerjaan"
                 />
               </v-col>
               <v-col cols="12">
@@ -197,7 +197,7 @@
                   label="Status Pernikahan"
                   hide-details
                   :items="opt.status_perkawinan"
-                  v-model="form.status_perkawinan"
+                  v-model="form.data.status_perkawinan"
                 />
               </v-col>
             </v-row>
@@ -235,6 +235,7 @@
                   outlined
                   v-model="form.data.p_tgllahir"
                   label="Tanggal Lahir"
+                  type="date"
                 />
               </v-col>
               <v-col cols="12">
@@ -264,7 +265,7 @@
                   label="Pendidikan"
                   hide-details
                   :items="opt.pendidikan"
-                  v-model="form.p_pendidikan"
+                  v-model="form.data.p_pendidikan"
                 />
               </v-col>
               <v-col cols="12">
@@ -274,7 +275,7 @@
                   label="Pekerjaan"
                   hide-details
                   :items="opt.pekerjaan"
-                  v-model="form.p_pekerjaan"
+                  v-model="form.data.p_pekerjaan"
                 />
               </v-col>
               <v-col cols="12">
@@ -369,7 +370,7 @@
                   label="Status"
                   hide-details
                   :items="opt.rumah_status"
-                  v-model="form.rumah_status"
+                  v-model="form.data.rumah_status"
                 />
               </v-col>
               <v-col cols="12">
@@ -379,7 +380,7 @@
                   label="Ukuran"
                   hide-details
                   :items="opt.rumah_ukuran"
-                  v-model="form.rumah_ukuran"
+                  v-model="form.data.rumah_ukuran"
                 />
               </v-col>
               <v-col cols="12">
@@ -389,7 +390,7 @@
                   label="Atap"
                   hide-details
                   :items="opt.rumah_atap"
-                  v-model="form.rumah_atap"
+                  v-model="form.data.rumah_atap"
                 />
               </v-col>
               <v-col cols="12">
@@ -399,7 +400,7 @@
                   label="Dinding"
                   hide-details
                   :items="opt.rumah_dinding"
-                  v-model="form.rumah_dinding"
+                  v-model="form.data.rumah_dinding"
                 />
               </v-col>
               <v-col cols="12">
@@ -409,7 +410,7 @@
                   label="Lantai"
                   hide-details
                   :items="opt.rumah_lantai"
-                  v-model="form.rumah_lantai"
+                  v-model="form.data.rumah_lantai"
                 />
               </v-col>
             </v-row>
@@ -515,7 +516,7 @@
                   label="Usaha"
                   hide-details
                   :items="opt.ush_rumahtangga"
-                  v-model="form.ush_rumahtangga"
+                  v-model="form.data.ush_rumahtangga"
                 />
               </v-col>
               <v-col cols="12">
@@ -544,7 +545,7 @@
                   autocomplete="off"
                   hide-details
                   outlined
-                  v-model="form.data.ush"
+                  v-model="form.data.ush_omset"
                   label="Omset"
                 />
               </v-col>
@@ -636,6 +637,12 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-snackbar
+      v-model="alert.show"
+      timeout="3000"
+    >
+      {{ alert.msg }}
+    </v-snackbar>
   </div>
 </template>
 
@@ -646,16 +653,20 @@ import { mapGetters, mapActions } from "vuex";
 import services from "@/services";
 export default {
   name: "Keangotaan",
+  components: {
+    Toast
+  },
   data() {
     return {
       form: {
         data: {
-          kode_rembug: "101010001",
+          kode_cabang: null,
+          kode_rembug: null,
           nama_anggota: "AMINAH",
           jenis_kelamin: "W",
           ibu_kandung: "IBU AMINAH",
           tempat_lahir: "PEKALONGAN",
-          tgl_lahir: "01/01/2000",
+          tgl_lahir: null,
           alamat: "JL KU",
           desa: "DESAKU",
           kecamatan: "KCMKU",
@@ -664,54 +675,54 @@ export default {
           no_ktp: "3215000000000004",
           no_npwp: "0",
           no_telp: "0815",
-          pendidikan: "3",
-          status_perkawinan: "1",
+          pendidikan: 3,
+          status_perkawinan: 1,
           nama_pasangan: "AMIN",
-          pekerjaan: "5",
+          pekerjaan: 5,
           ket_pekerjaan: "BURUH",
-          pendapatan_perbulan: "1000000",
-          tgl_gabung: "10/12/2022",
-          created_by: "1",
+          pendapatan_perbulan: 1000000,
+          tgl_gabung: null,
+          created_by: null,
           p_nama: "PAS AMINAH",
           p_tmplahir: "BOGOR",
-          p_tgllahir: "01/01/1992",
-          usia: "30",
+          p_tgllahir: null,
+          usia: 30,
           p_noktp: "327104010119920001",
-          p_nohp: "0",
-          p_pendidikan: "3",
-          p_pekerjaan: "1",
+          p_nohp: "0812",
+          p_pendidikan: 3,
+          p_pekerjaan: 1,
           p_ketpekerjaan: "KARYAWAN",
-          p_pendapatan: "3000000",
-          jml_anak: "0",
-          jml_tanggungan: "1",
-          rumah_status: "l",
-          rumah_ukuran: "3",
-          rumah_atap: "1",
-          rumah_dinding: "1",
-          rumah_lantai: "3",
-          rumah_jamban: "3",
-          rumah_air: "1",
-          lahan_sawah: "0",
-          lahan_kebun: "0",
-          lahan_pekarangan: "0",
-          ternak_sapi: "0",
-          ternak_domba: "0",
-          ternak_unggas: "0",
-          elc_kulkas: "1",
-          elc_tv: "1",
-          elc_hp: "1",
-          kend_sepeda: "0",
-          kend_motor: "1",
-          ush_rumahtangga: "1",
+          p_pendapatan: 300000,
+          jml_anak: 0,
+          jml_tanggungan: 1,
+          rumah_status: 1,
+          rumah_ukuran: 1,
+          rumah_atap: 1,
+          rumah_dinding: 1,
+          rumah_lantai: 3,
+          rumah_jamban: 3,
+          rumah_air: 1,
+          lahan_sawah: 0,
+          lahan_kebun: 0,
+          lahan_pekarangan: 0,
+          ternak_sapi: 0,
+          ternak_domba: 0,
+          ternak_unggas: 0,
+          elc_kulkas: 1,
+          elc_tv: 1,
+          elc_hp: 1,
+          kend_sepeda: 0,
+          kend_motor: 1,
+          ush_rumahtangga: 1,
           ush_komoditi: "Warung Sembako",
           ush_lokasi: "Di rumah",
-          ush_omset: "5000000",
-          by_beras: "150000",
-          by_dapur: "1500000",
-          by_listrik: "400000",
-          by_telpon: "200000",
-          by_sekolah: "0",
-          by_lain: "0",
+          ush_omset: 5000000,
+          by_beras: 200000,
+          by_dapur: 500000,
+          by_listrik: 200000,
+          by_telpon: 100000,
+          by_sekolah: 0,
+          by_lain: 0,
         },
       },
       opt: {
@@ -800,12 +811,13 @@ export default {
           { value: 6, text: "Perikanan" },
           { value: 99, text: "Lainnya" },
         ],
-        rembug: [],
-        cabang: [],
+        rembug: []
       },
       step: 1,
-      rembug: null,
-      cabang: null,
+      alert: {
+        show: false,
+        msg: ''
+      },
     };
   },
   computed: {
@@ -813,19 +825,27 @@ export default {
   },
   methods: {
     ...helper,
+    setForm(){
+      this.form.data.created_by = this.user.id
+      this.form.data.kode_cabang = this.user.kode_cabang
+      this.form.data.tgl_gabung = this.today()
+      console.log(this.form.data.tgl_gabung)
+      this.getRembug()
+    },
     move(step) {
       if (step > 5) {
         this.doRegisterAnggota();
+      } else {
+        this.step = step;
+        window.scrollTo(0, 0);
       }
-      this.step = step;
-      window.scrollTo(0, 0);
     },
     async getRembug() {
       let day = new Date().getDay();
-      day = 3;
+      day = 1;
       let payload = new FormData();
-      payload.append("fa_code", this.user.fa_code);
-      payload.append("day", day);
+      payload.append("kode_petugas", this.user.kode_petugas);
+      payload.append("hari_transaksi", day);
       try {
         let req = await services.infoRembug(payload, this.user.token);
         if (req.status === 200) {
@@ -833,8 +853,8 @@ export default {
           this.opt.rembug = [];
           data.map((rembug, index) => {
             this.opt.rembug.push({
-              text: rembug.cm_name,
-              value: rembug.cm_code,
+              text: rembug.nama_rembug,
+              value: rembug.kode_rembug,
             });
           });
         } else {
@@ -852,33 +872,43 @@ export default {
     },
     async doRegisterAnggota() {
       let payload = new FormData();
-      let payloadData = this.register.data;
-      for (let key in payloadData) {
-        payload.append(key, payloadData[key]);
-      }
-      try {
-        let req = await services.anggotaCreate(payload, this.user.token);
-        if (req.status === 200) {
+      let payloadData = this.form.data;
+      if(this.form.data.kode_cabang && this.form.data.kode_rembug){
+        for (let key in payloadData) {
+          payload.append(key, payloadData[key]);
+        }
+        try {
+          let req = await services.anggotaCreate(payload, this.user.token);
+          if (req.status === 200) {
+            this.alert = {
+              show: true,
+              msg: "Regis Anggota Berhasil",
+            };
+            setTimeout(() => {
+              this.$router.push(`/keanggotaan/dashboard`);
+            }, 2000);
+          } else {
+            this.alert = {
+              show: true,
+              msg: "Regis Anggota Gagal",
+            };
+          }
+        } catch (error) {
           this.alert = {
             show: true,
-            msg: "Regis Anggota Berhasil Dibuat",
-          };
-          setTimeout(() => {
-            this.$router.push(`/registrasiMasuk`);
-          }, 1000);
-        } else {
-          this.alert = {
-            show: true,
-            msg: "Regis Anggota Gagal Dibuat",
+            msg: error,
           };
         }
-      } catch (error) {
+      } else {
         this.alert = {
           show: true,
-          msg: error,
+          msg: 'Silahkan pilih Rembug',
         };
       }
     },
   },
+  mounted() {
+    this.setForm()
+  }
 };
 </script>

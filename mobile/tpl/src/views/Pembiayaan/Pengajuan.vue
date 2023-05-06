@@ -11,7 +11,23 @@
       </div>
       Pengajuan Pembiayaan
     </h6>
-    <PengajuanHeader />
+    <div>
+      <Camera class="mt-5"/>
+      <v-select solo label="Rembug" class="mb-3 mt-3" hide-details/>
+      <v-select solo label="Pilih Anggota" class="mb-3" hide-details/>
+      <v-select solo label="No Pengajuan" class="mb-3" hide-details :items="opt.noPengajuan" v-model="form.noPengajuan"/>
+      <v-container class="pa-0 mb-3">
+        <v-card class="white elevation-3 rounded-lg pa-3 align-items-end mb-3">
+          <v-container class="d-flex justify-space-between pa-0">
+            <div class="d-flex flex-column">
+              <h5 class="text-h5 font-weight-bold">John Doe</h5>
+              <span class="text-caption grey--text">11228877665453</span>
+              <span class="indigo--text lighten-1 font-weight-black">Rembug Mawar</span>
+            </div>
+          </v-container>
+        </v-card>
+      </v-container>
+    </div>
     <v-container class="pa-0">
       <div class="bt-page-indicator d-flex justify-space-between pt-3">
         <span
@@ -630,81 +646,43 @@
   </div>
 </template>
 <script>
+import Camera from '@/components/Camera.vue'
 import helper from "@/utils/helper";
-import Toast from "@/components/Toast";
 import { mapGetters, mapActions } from "vuex";
 import services from "@/services";
-import Camera from "../../components/Camera.vue";
-import PengajuanHeader from "../../components/PengajuanHeader.vue";
 export default {
   name: "PembiayaanPengajuan",
   components: {
     Camera,
-    PengajuanHeader,
   },
   data() {
     return {
       form: {
         data: {
-          cif_no: null,
-          amount: 0,
-          financing_type: null,
-          peruntukan: null,
-          rencana_droping: null,
-          pembiayaan_ke: 1,
-          periode_jangka_waktu: 1,
-          jangka_waktu: 0,
-          description: null,
-          tanggal_pengajuan: null,
-          created_by: null,
-          pyd: 1,
-          map_no: null,
-          ttd_anggota: null,
-          ttd_pasangan: null,
-          sumber_pengembalian: null,
-          jenis_usaha: "",
-          komoditi: "",
-          lama_usaha: "",
-          lokasi_usaha: "",
-          surat_ijin_usaha: "",
-          aset_usaha: "",
-          nilai_aset: 0,
-          persediaan_awal: 0,
-          belanja_pembelian: 0,
-          persediaan_akhir: 0,
-          hpp: 0,
-          omset: 0,
-          laba_kotor: 0,
-          piutang: 0,
-          biaya_usaha: 0,
-          sewa_tempat: 0,
-          total_biaya_usaha: 0,
-          keuntungan_usaha: 0,
-          telepon_anggota: null,
-          pekerjaan_anggota: null,
-          telepon_pasangan: null,
-          pekerjaan_pasangan: null,
-          pendapatan_gaji: 0,
-          pendapatan_usaha: 0,
-          pendapatan_lainnya: 0,
-          total_pendapatan: 0,
-          jumlah_tanggungan: null,
-          biaya_rumah_tangga: 0,
-          biaya_rekening: 0,
-          biaya_kontrakan: 0,
-          biaya_pendidikan: 0,
-          hutang_lainnya: 0,
-          total_biaya: 0,
-          saving_power: 0,
-          repayment_capacity: 0,
-          doc_ktp: null,
-          doc_kk: null,
-          doc_pendukung: null,
-          token: null,
+          no_anggota:null,
+          kode_petugas:null,
+          tanggal_pengajuan:null,
+          jumlah_pengajuan:null,
+          pengajuan_ke:null,
+          peruntukan:null,
+          keterangan_peruntukan:null,
+          rencana_droping:null,
+          jangka_waktu:null,
+          rencana_periode_jwaktu:null,
+          jenis_pembiayaan:null,
+          sumber_pengembalian:null,
+          doc_ktp:null,
+          doc_kk:null,
+          doc_pendukung:null,
+          ttd_anggota:null,
+          ttd_suami:null,
+          ttd_ketua_majelis:null,
+          ttd_tpl:null,
+          created_by:null,
         },
       },
       opt: {
-        financing_type: [
+        jenis_pembiayaan: [
           { value: 0, text: "Kelompok" },
           { value: 1, text: "Individu" },
         ],
@@ -729,6 +707,7 @@ export default {
           { value: 6, text: "Karyawan Swasta" },
         ],
         periode_jangka_waktu: [
+          { value: 0, text: "Harian" },
           { value: 1, text: "Mingguan" },
           { value: 2, text: "Bulanan" },
           { value: 3, text: "Jatuh Tempo" },

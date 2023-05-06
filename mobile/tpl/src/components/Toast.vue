@@ -1,9 +1,9 @@
 <template>
   <v-snackbar
-      v-model="show"
+      v-model="sShow"
       :timeout="timeout"
     >
-      {{ msg }}
+      {{ sMsg }}
     </v-snackbar>
 </template>
 <script>
@@ -11,7 +11,9 @@ export default {
   props: ['show', 'msg'],
   data(){
     return {
-      timeout: 3000
+      timeout: 3000,
+      sShow: this.show,
+      sMsg: this.msg
     }
   }
 }
