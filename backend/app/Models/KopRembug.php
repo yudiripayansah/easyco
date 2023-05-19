@@ -85,7 +85,7 @@ class KopRembug extends Model
         return $res;
     }
 
-    function read($search, $sortBy, $sortDir, $offset, $perPage)
+    function read($search, $sortBy, $sortDir, $offset, $perPage, $kode_cabang)
     {
         $show = KopRembug::orderBy($sortBy, $sortDir);
 
@@ -96,6 +96,10 @@ class KopRembug extends Model
         if ($search <> NULL) {
             $show->where('kode_rembug', 'LIKE', '%' . $search . '%')
                 ->orWhere('nama_rembug', 'LIKE', '%' . $search . '%');
+        }
+
+        if ($kode_cabang) {
+            $show->where('kode_cabang', $kode_cabang);
         }
 
         $show = $show->get();
@@ -116,6 +120,16 @@ class KopRembug extends Model
             ->groupBy('kop_rembug.kode_rembug', 'kop_rembug.nama_rembug', 'kd.nama_desa')
             ->orderBy('kop_rembug.kode_rembug', 'ASC')
             ->get();
+
+        return $show;
+    }
+
+    function generateKodeRembug($kode_cabang)
+    {
+        $show = KopRembug::select(DB::raw('CAST(MAX(RIGHT(kode_rembug,4)) AS INTEGER) AS kode_rembug'))
+            ->where('kode_cabang', $kode_cabang)
+            ->withTrashed()
+            ->first();
 
         return $show;
     }

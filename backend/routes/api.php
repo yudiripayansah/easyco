@@ -56,6 +56,7 @@ Route::prefix('cabang')->middleware('checkToken')->group(function () {
 
 Route::prefix('pegawai')->middleware('checkToken')->group(function () {
   Route::post('/create', [PegawaiController::class, 'create']);
+  Route::post('/generate', [PegawaiController::class, 'generate_kode_pegawai']);
   Route::post('/read', [PegawaiController::class, 'read']);
   Route::get('/detail', [PegawaiController::class, 'detail']);
   Route::post('/update', [PegawaiController::class, 'update']);
@@ -112,6 +113,7 @@ Route::prefix('kaspetugas')->middleware('checkToken')->group(function () {
 
 Route::prefix('rembug')->middleware('checkToken')->group(function () {
   Route::post('/create', [RembugController::class, 'create']);
+  Route::post('/generate', [RembugController::class, 'generate_kode_rembug']);
   Route::post('/read', [RembugController::class, 'read']);
   Route::get('/detail', [RembugController::class, 'detail']);
   Route::post('/update', [RembugController::class, 'update']);
@@ -261,6 +263,7 @@ Route::prefix('trx_member')->middleware('checkToken')->group(function () {
 Route::prefix('trx_rembug')->middleware('checkToken')->group(function () {
   Route::post('/read', [TrxRembug::class, 'read']);
   Route::post('/verifikasi', [TrxRembug::class, 'verifikasi']);
+  Route::post('/proses_verifikasi', [TrxRembug::class, 'proses_verifikasi']);
 });
 /* END BACK OFFICE */
 

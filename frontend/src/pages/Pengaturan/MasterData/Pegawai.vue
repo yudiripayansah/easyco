@@ -111,10 +111,9 @@
         <b-row>
           <b-col cols="6">
             <b-form-group label="Kode Cabang" label-for="kode_cabang">
-              <b-form-input
-                id="kode_cabang"
+              <b-select
                 v-model="form.data.kode_cabang"
-                :state="validateState('kode_cabang')"
+                :options="opt.kode_cabang"
               />
             </b-form-group>
           </b-col>
@@ -122,7 +121,7 @@
             <b-form-group label="Kode Pegawai" label-for="kode_pgw">
               <b-form-input
                 id="kode_pgw"
-                v-model="form.data.kode_pgw"
+                v-model="$v.form.data.kode_pgw.$model"
                 :state="validateState('kode_pgw')"
               />
             </b-form-group>
@@ -372,6 +371,8 @@ export default {
             text: "Wanita",
           },
         ],
+        kode_cabang: [],
+        kode_pegawai: [],
       },
     };
   },
@@ -520,6 +521,24 @@ export default {
       }
       return "-";
     },
+    async doGetKodeCabang() {
+      let payload = null;
+      try {
+        let req = await easycoApi.getKodeCabang(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.kode_cabang = [];
+          data.map((item) => {
+            this.opt.kode_cabang.push({
+              value: Number(item.kode_cabang),
+              text: item.nama_cabang,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
     doClearForm() {
       this.form.data = {
         id: null,
@@ -548,6 +567,7 @@ export default {
   },
   mounted() {
     this.doGet();
+    this.doGetKodeCabang();
   },
 };
 </script>

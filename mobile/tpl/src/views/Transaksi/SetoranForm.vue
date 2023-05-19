@@ -418,7 +418,6 @@ export default {
               formData.taber.push(dataTaber)
             })
             this.form.data = {...formData}
-            console.log(formData)
             this.countTotalSetoran()
           } else {
             this.alert = {
@@ -588,7 +587,7 @@ export default {
     getDate(){
       let today = new Date()
       let day = today.getDate()
-      let month = today.getMonth()
+      let month = today.getMonth()+1
       let year = today.getFullYear()
       return `${day}/${month}/${year}`
     },

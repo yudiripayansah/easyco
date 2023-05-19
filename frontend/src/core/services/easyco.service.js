@@ -579,6 +579,15 @@ const easycoApi = {
     return axios.get(url, config);
   },
   // PEGAWAI
+  pegawaiGenerate(payload, token) {
+    let url = "pegawai/generate";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
   pegawaiRead(payload, token) {
     let url = "pegawai/read";
     let config = {
@@ -977,6 +986,26 @@ const easycoApi = {
   },
   transaksiRembugProses(payload, token) {
     let url = "trx_rembug/proses_verifikasi";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  // GET KODE CABANG
+  getKodeCabang(payload, token) {
+    let url = "cabang/read";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  // GET KODE PEGAWAI
+  getKodePegawai(payload, token) {
+    let url = "pegawai/generate";
     let config = {
       headers: {
         token: token,

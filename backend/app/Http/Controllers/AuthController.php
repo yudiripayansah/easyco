@@ -57,7 +57,9 @@ class AuthController extends Controller
 
                             $get2 = KopKasPetugas::where($param2)->first();
 
-                            $param3 = array('kode_petugas' => $get2->kode_petugas);
+                            $kode_petugas = (isset($get2->kode_petugas) ? $get2->kode_petugas : null);
+
+                            $param3 = array('kode_petugas' => $kode_petugas);
 
                             $get3 = KopRembug::where($param3)->first();
 
@@ -66,7 +68,7 @@ class AuthController extends Controller
                                 'id_user' => $get->id_user,
                                 'kode_cabang' => $get->kode_cabang,
                                 'kode_pgw' => $get->kode_pgw,
-                                'kode_petugas' => (isset($get2->kode_petugas) ? $get2->kode_petugas : null),
+                                'kode_petugas' => $kode_petugas,
                                 'hari_transaksi' => (isset($get3->hari_transaksi) ? $get3->hari_transaksi : null),
                                 'kode_kas_petugas' => (isset($get2->kode_kas_petugas) ? $get2->kode_kas_petugas : null),
                                 'saldo_awal' => (isset($get2->saldo) ? $get2->saldo : 0),

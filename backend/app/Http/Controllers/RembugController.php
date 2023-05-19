@@ -54,6 +54,36 @@ class RembugController extends Controller
         return $response;
     }
 
+    public function generate_kode_rembug(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+
+        $maximum = KopRembug::generateKodeRembug($kode_cabang);
+
+        $format = '0000';
+
+        if ($maximum->count() == 0) {
+            $val = 1;
+        } else {
+            $val = $maximum['kode_rembug'] + 1;
+        }
+
+        $kode = $format . $val;
+        $kode = substr($kode, -4);
+
+        $data = array('kode_rembug' => $kode_cabang . $kode);
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $data,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
     public function read(Request $request)
     {
         $offset = 0;
@@ -61,6 +91,7 @@ class RembugController extends Controller
         $perPage = '~';
         $sortDir = 'ASC';
         $sortBy = 'kode_rembug';
+        $kode_cabang = '';
         $search = NULL;
         $total = 0;
         $totalPage = 1;
@@ -81,6 +112,10 @@ class RembugController extends Controller
             $sortBy = $request->sortBy;
         }
 
+        if ($request->kode_cabang) {
+            $kode_cabang = $request->kode_cabang;
+        }
+
         if ($request->search) {
             $search = strtoupper($request->search);
         }
@@ -89,7 +124,7 @@ class RembugController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopRembug::read($search, $sortBy, $sortDir, $offset, $perPage);
+        $read = KopRembug::read($search, $sortBy, $sortDir, $offset, $perPage, $kode_cabang);
 
         $data = array();
 

@@ -76,5 +76,19 @@ body {
         }
       }
     }
+    .bt-registrasi-anggota-masuk {
+      .bt-page-indicator {
+        span {
+          width: 40px;
+          height: 40px;
+        }
+      }
+      .bt-page-step-item {
+        width: 100%;
+        .v-card {
+          width: 100%;
+        }
+      }
+    }
   }
 }

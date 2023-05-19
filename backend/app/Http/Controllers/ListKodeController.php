@@ -61,6 +61,7 @@ class ListKodeController extends Controller
         $perPage = '~';
         $sortDir = 'ASC';
         $sortBy = 'nama_kode';
+        $nama_kode = '';
         $search = NULL;
         $total = 0;
         $totalPage = 1;
@@ -81,6 +82,10 @@ class ListKodeController extends Controller
             $sortBy = $request->sortBy;
         }
 
+        if ($request->nama_kode) {
+            $nama_kode = $request->nama_kode;
+        }
+
         if ($request->search) {
             $search = $request->search;
         }
@@ -89,7 +94,7 @@ class ListKodeController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopListKode::read($search, $sortBy, $sortDir, $offset, $perPage);
+        $read = KopListKode::read($search, $sortBy, $sortDir, $offset, $perPage, $nama_kode);
 
         $data = array();
 

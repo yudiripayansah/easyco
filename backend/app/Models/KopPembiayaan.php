@@ -148,7 +148,7 @@ class KopPembiayaan extends Model
 
     function rembug($kode_cabang)
     {
-        $show = DB::table('kop_rembug')->where('kode_cabang', $kode_cabang)->orderBy('id', 'ASC')->get();
+        $show = KopRembug::where('kode_cabang', $kode_cabang)->orderBy('id', 'ASC')->get();
 
         return $show;
     }
