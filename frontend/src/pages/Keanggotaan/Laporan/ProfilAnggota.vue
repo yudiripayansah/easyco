@@ -11,7 +11,7 @@
               </b-input-group>
             </b-col>
             <b-col>
-              <b-input-group prepend="Rembug">
+              <b-input-group prepend="Majelis">
                 <b-form-select v-model="paging.kode_rembug" :options="opt.kode_rembug" />
               </b-input-group>
             </b-col>
