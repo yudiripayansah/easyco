@@ -93,7 +93,6 @@
             </template>
           </b-table>
         </b-col>
-<<<<<<< HEAD
         <b-col cols="12" class="justify-content-end d-flex">
           <b-pagination
             v-model="paging.page"
@@ -101,122 +100,6 @@
             :per-page="paging.perPage"
           >
           </b-pagination>
-=======
-        <b-col cols="12" :sm="(form.setRembug) ? '6' : '4'">
-          <b-form-group label="Cabang">
-            <b-select v-model="form.data.kode_cabang" :options="opt.cabang" @change="doGetRembug()"/>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12" sm="6" v-show="form.setRembug">
-          <b-form-group label="Majelis">
-            <b-select v-model="form.data.kode_rembug" :options="opt.rembug"/>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12" :sm="(form.setRembug) ? '6' : '4'">
-          <b-form-group label="Nama">
-            <b-input v-model="form.data.nama_anggota" />
-          </b-form-group>
-        </b-col>
-        <b-col cols="12" :sm="(form.setRembug) ? '6' : '4'">
-          <b-form-group label="Jenis Kelamin">
-            <input class="form-check-input ml-2" type="radio" name="flexRadioDefault" value="W" v-model="form.data.jenis_kelamin">
-              <label class="form-check-label ml-7">
-                Wanita
-              </label>
-            <input class="form-check-input ml-7" type="radio" name="flexRadioDefault" value="P" v-model="form.data.jenis_kelamin" checked>
-              <label class="form-check-label ml-12">
-                Pria
-              </label>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12" sm="6">
-          <b-form-group label="Tempat / Tanggal Lahir">
-            <b-row>
-              <b-col cols="12" sm="6">
-                <b-input v-model="form.data.tempat_lahir"/>
-              </b-col>
-              <b-col cols="12" sm="6">
-                <b-input-group class="mb-3">
-                  <b-form-input
-                    v-model="form.data.tgl_lahir"
-                    type="text"
-                    autocomplete="off"
-                  ></b-form-input>
-                  <b-input-group-append>
-                    <b-form-datepicker
-                      button-only
-                      right
-                      :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" v-model="form.data.tgl_lahir"
-                    ></b-form-datepicker>
-                  </b-input-group-append>
-                </b-input-group>
-                <!-- <b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" v-model="form.data.tgl_lahir"/> -->
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12" sm="2">
-          <b-form-group label="Nama Ibu Kandung">
-            <b-input v-model="form.data.ibu_kandung"/>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12" sm="2">
-          <b-form-group label="NIK">
-            <b-input v-model="form.data.no_ktp" maxlength="16"/>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12" sm="2">
-          <b-form-group label="NPWP">
-            <b-input v-model="form.data.no_npwp"/>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12" sm="12">
-          <b-form-group label="Alamat">
-            <b-textarea v-model="form.data.alamat"/>
-            <b-row class="mt-3">
-              <b-col cols="12" sm="3">
-                <b-form-group label="Desa">
-                  <b-input v-model="form.data.desa"/>
-                </b-form-group>
-              </b-col>
-              <b-col cols="12" sm="3">
-                <b-form-group label="Kecamatan">
-                  <b-input v-model="form.data.kecamatan"/>
-                </b-form-group>
-              </b-col>
-              <b-col cols="12" sm="3">
-                <b-form-group label="Kabupaten">
-                  <b-input v-model="form.data.kabupaten"/>
-                </b-form-group>
-              </b-col>
-              <b-col cols="12" sm="3">
-                <b-form-group label="Kode Pos">
-                  <b-input v-model="form.data.kodepos"/>
-                </b-form-group>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12" sm="6">
-          <b-form-group label="No.Telp / HP">
-            <b-input placeholder="0858123456" v-model="form.data.no_telp" />
-          </b-form-group>
-        </b-col>
-        <b-col cols="12" sm="6">
-          <b-form-group label="Pendidikan Terakhir">
-            <b-select :options="opt.pendidikan" v-model="form.data.pendidikan"/>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12" sm="6">
-          <b-form-group label="Pekerjaan">
-            <b-select :options="opt.pekerjaan" v-model="form.data.pekerjaan"/>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12" sm="6">
-          <b-form-group label="Keterangan Pekerjaan">
-            <b-input v-model="form.data.ket_pekerjaan"/>
-          </b-form-group>
->>>>>>> 6158a12cee65bbd726588eb5bf9d28a2e803196f
         </b-col>
       </b-row>
     </b-card>
