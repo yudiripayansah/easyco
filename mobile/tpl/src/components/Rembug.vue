@@ -93,20 +93,8 @@
         <v-container class="pa-0 d-flex justify-space-between">
           <v-row class="justify-end">
             <v-col cols="4">
-<<<<<<< HEAD
-              <router-link
-                :to="`/transaksi/setoran-form/${list.rembug}/${agt.no_anggota}/${list.date}`"
-              >
-                <v-btn
-                  small
-                  block
-                  class="indigo lighten-1 white--text rounded-lg"
-                  type="submit"
-                >
-=======
               <router-link :to="`/transaksi/setoran-form/${list.rembug}/${agt.no_anggota}`">
                 <v-btn small block class="indigo lighten-1 white--text rounded-lg" type="submit">
->>>>>>> 5315dfbb4565fe2c117663e10f8322f8e3daf553
                   Transaksi
                 </v-btn>
               </router-link>
