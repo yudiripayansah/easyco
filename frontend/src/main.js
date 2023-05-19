@@ -27,6 +27,8 @@ import "@/core/plugins/metronic";
 import "@mdi/font/css/materialdesignicons.css";
 import "@/core/plugins/formvalidation";
 import VueNumeric from 'vue-numeric'
+import excel from 'vue-excel-export'
+Vue.use(excel)
 Vue.use(VueNumeric)
 
 new Vue({
