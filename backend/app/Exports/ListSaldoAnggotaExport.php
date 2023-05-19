@@ -8,7 +8,7 @@ use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromView;
 
-class ListAnggotaMasukExport implements FromView
+class ListSaldoAnggotaExport implements FromView
 {
     use Exportable;
 
@@ -41,16 +41,10 @@ class ListAnggotaMasukExport implements FromView
             $cabang = 'SEMUA CABANG';
         }
 
-        foreach ($show as $item) {
-            $item->tgl_gabung = date('d/m/Y', strtotime($item->tgl_gabung));
-        }
-
-        return view('listanggotamasuk', [
+        return view('listsaldoanggota', [
             'format' => $format,
-            'anggotamasuk' => $show,
-            'cabang' => $cabang,
-            'tanggal1' => date('d/m/Y', strtotime($this->from_date)),
-            'tanggal2' => date('d/m/Y', strtotime($this->thru_date))
+            'saldoanggota' => $show,
+            'cabang' => $cabang
         ]);
     }
 }

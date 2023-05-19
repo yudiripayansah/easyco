@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KopRembug;
+use App\Models\KopUser;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -91,10 +92,14 @@ class RembugController extends Controller
         $perPage = '~';
         $sortDir = 'ASC';
         $sortBy = 'kode_rembug';
-        $kode_cabang = '';
         $search = NULL;
         $total = 0;
         $totalPage = 1;
+
+        $token = $request->header('token');
+        $param = array('token' => $token);
+        $get = KopUser::where($param)->first();
+        $kode_cabang = $get->kode_cabang;
 
         if ($request->page) {
             $page = $request->page;

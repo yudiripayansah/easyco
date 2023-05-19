@@ -244,9 +244,15 @@ class AnggotaController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopAnggota::select('kop_anggota.*', 'kop_cabang.nama_cabang', 'kop_rembug.nama_rembug')
+        $read = KopAnggota::select('kop_anggota.*', 'kop_cabang.nama_cabang', 'kop_rembug.nama_rembug', DB::raw('COALESCE(kop_pembiayaan.saldo_pokok+kop_pembiayaan.saldo_margin,0) AS saldo_outstanding'))
             ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang')
-            ->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', 'kop_anggota.kode_rembug');
+            ->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', 'kop_anggota.kode_rembug')
+            ->leftjoin('kop_pengajuan', function ($join) {
+                $join->on('kop_pengajuan.no_anggota', 'kop_anggota.no_anggota')->where('kop_pengajuan.status_pengajuan', 1);
+            })
+            ->leftjoin('kop_pembiayaan', function ($join) {
+                $join->on('kop_pembiayaan.no_pengajuan', 'kop_pengajuan.no_pengajuan')->where('kop_pembiayaan.status_rekening', 1);
+            });
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);

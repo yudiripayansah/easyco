@@ -66,13 +66,13 @@
           <b-col cols="6">
             <b-form-group label="Kode Kecamatan" label-for="kode_kecamatan">
               <b-form-select id="kode_kecamatan" :options="opt.kode_kecamatan" v-model="$v.form.data.kode_kecamatan.$model"
-                :state="validateState('kode_kecamatan')" />
+                :state="validateState('kode_kecamatan')" @change="doGenerateKodeDesa()"/>
             </b-form-group>
           </b-col>
           <b-col cols="6">
             <b-form-group label="Kode Desa" label-for="kode_desa">
               <b-form-input id="kode_desa" v-model="$v.form.data.kode_desa.$model"
-                :state="validateState('kode_desa')" />
+                :state="validateState('kode_desa')" disabled/>
             </b-form-group>
           </b-col>
           <b-col cols="6">
@@ -157,13 +157,6 @@ export default {
             tdClass: ''
           },
           {
-            key: 'created_at',
-            sortable: true,
-            label: 'Dibuat Tanggal',
-            thClass: 'text-center',
-            tdClass: ''
-          },
-          {
             key: 'action',
             sortable: false,
             label: 'Action',
@@ -223,6 +216,26 @@ export default {
     validateState(name) {
       const { $dirty, $error } = this.$v.form.data[name];
       return $dirty ? !$error : null;
+    },
+    getKodeKecamatan(kode) {
+      let kecamatan = this.opt.kode_kecamatan.find((item) => item.value == kode)
+      if(kecamatan){
+        return kecamatan.text
+      }
+    },
+    async doGenerateKodeDesa() {
+      let payload = {
+        kode_kota: this.form.data.kode_kota
+      };
+      try {
+        let req = await easycoApi.desaGenerate(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.form.data.kode_desa = data.kode_desa
+        }
+      } catch (error) {
+        console.error(error);
+      }
     },
     async doGetKecamatan() {
       let payload = {...this.paging}
