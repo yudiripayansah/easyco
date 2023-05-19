@@ -7,7 +7,10 @@
           <div class="row">
             <b-col>
               <b-input-group prepend="No Rekening">
-                <b-form-select v-model="paging.no_rekening" :options="opt.no_rekening" />
+                <b-form-select
+                  v-model="paging.no_rekening"
+                  :options="opt.no_rekening"
+                />
               </b-input-group>
             </b-col>
             <b-col>
@@ -17,98 +20,137 @@
             </b-col>
           </div>
           <div class="row">
-            <b-col><br>
+            <b-col
+              ><br />
               <b-input-group prepend="Nama">
                 <b-form-input v-model="paging.nama" />
               </b-input-group>
             </b-col>
-            <b-col><br>
+            <b-col
+              ><br />
               <b-input-group prepend="Margin">
                 <b-form-input v-model="paging.margin" />
               </b-input-group>
             </b-col>
           </div>
           <div class="row">
-            <b-col><br>
+            <b-col
+              ><br />
               <b-input-group prepend="Majelis">
                 <b-form-input v-model="paging.majelis" />
               </b-input-group>
             </b-col>
-            <b-col><br>
+            <b-col
+              ><br />
               <b-input-group prepend="JK Waktu">
                 <b-form-input v-model="paging.jk_waktu" />
               </b-input-group>
             </b-col>
           </div>
           <div class="row">
-            <b-col><br>
+            <b-col
+              ><br />
               <b-input-group prepend="Desa">
                 <b-form-input v-model="paging.desa" />
               </b-input-group>
             </b-col>
-            <b-col><br>
+            <b-col
+              ><br />
               <b-input-group prepend="Angs Pokok">
                 <b-form-input v-model="paging.angs_pokok" />
               </b-input-group>
             </b-col>
           </div>
           <div class="row">
-            <b-col><br>
+            <b-col
+              ><br />
               <b-input-group prepend="produk">
                 <b-form-input v-model="paging.produk" />
               </b-input-group>
             </b-col>
-            <b-col><br>
+            <b-col
+              ><br />
               <b-input-group prepend="Angs Margin">
                 <b-form-input v-model="paging.angs_margin" />
               </b-input-group>
             </b-col>
           </div>
           <div class="row">
-            <b-col><br>
+            <b-col
+              ><br />
               <b-input-group prepend="Tanggal">
-                <b-form-datepicker v-model="paging.from"
-                      :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" />
+                <b-form-datepicker
+                  v-model="paging.from"
+                  :date-format-options="{
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                  }"
+                  locale="id"
+                />
               </b-input-group>
             </b-col>
-            <b-col><br>
+            <b-col
+              ><br />
               <b-input-group prepend="Total Angs">
                 <b-form-input v-model="paging.plafon" />
               </b-input-group>
             </b-col>
           </div>
           <div class="row">
-            <b-col><br>
+            <b-col
+              ><br />
               <b-input-group prepend="Mulai Angs">
-                <b-form-datepicker v-model="paging.from"
-                      :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" />
+                <b-form-datepicker
+                  v-model="paging.from"
+                  :date-format-options="{
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                  }"
+                  locale="id"
+                />
               </b-input-group>
             </b-col>
           </div>
         </b-col>
         <b-col cols="4" class="d-flex justify-content-end align-items-start">
           <b-button-group>
-            <b-button text="Button" variant="danger" @click="$bvModal.show('modal-pdf');">
+            <b-button
+              text="Button"
+              variant="danger"
+              @click="$bvModal.show('modal-pdf')"
+            >
               PDF
             </b-button>
-            <b-button text="Button" variant="success">
-              XLS
-            </b-button>
-            <b-button text="Button" variant="warning">
-              CSV
-            </b-button>
+            <b-button text="Button" variant="success"> XLS </b-button>
+            <b-button text="Button" variant="warning"> CSV </b-button>
           </b-button-group>
         </b-col>
         <b-col cols="12">
-          <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
-            show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
+          <b-table
+            responsive
+            bordered
+            outlined
+            small
+            striped
+            hover
+            :fields="table.fields"
+            :items="table.items"
+            show-empty
+            :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'"
+          >
             <template #cell(no)="item">
               {{ item.index + 1 }}
             </template>
           </b-table>
         </b-col>
         <b-col cols="12" class="justify-content-end d-flex">
-          <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
+          <b-pagination
+            v-model="paging.page"
+            :total-rows="table.totalRows"
+            :per-page="paging.perPage"
+          >
           </b-pagination>
         </b-col>
       </b-row>
@@ -137,55 +179,86 @@
         </b-col>
       </b-row>
     </b-modal> -->
-    <b-modal title="PREVIEW LAPORAN KARTU ANGSURAN" id="modal-pdf" hide-footer size="xl" centered>
+    <b-modal
+      title="PREVIEW LAPORAN KARTU ANGSURAN"
+      id="modal-pdf"
+      hide-footer
+      size="xl"
+      centered
+    >
       <div id="table-print" class="p-5">
-        <h5 class="text-center">KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )</h5>
+        <h5 class="text-center">
+          KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
+        </h5>
         <h5 class="text-center">LAPORAN KARTU ANGSURAN</h5>
         <h5 class="text-center" v-show="report.cabang">{{ report.cabang }}</h5>
-        <h6 class="text-center mb-5 pb-5" v-show="report.from && report.to">Tanggal {{ dateFormatId(report.from) }} s.d
-          {{ dateFormatId(report.to) }}</h6>
-          <table class="table table-bordered table-striped">
-            <thead>
-              <tr class="text-center">
-                  <th rowspan="2">No</th>
-                  <th colspan="2">Tanggal</th>
-                  <th colspan="2">Angsuran</th>
-                  <th colspan="2">Angsuran</th>
-                  <th colspan="2">Valid</th>
-              </tr>
-              <tr class="text-center">
-                <th>Angsur</th>
-                <th>Bayar</th>
-                <th>Ke</th>
-                <th>Jumlah</th>
-                <th>Pokok</th>
-                <th>Margin</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody v-if="report.items.length > 0">
-              <tr v-for="(report,reportIndex) in report.items" :key="`report-${reportIndex}`">
-                <td>{{ reportIndex + 1 }}</td>
-                <td>{{ report.tanggal }}</td>
-                <td>{{ report.no_trans }}</td>
-                <td>{{ report.keterangan }}</td>
-                <td>{{ report.no_akun }}</td>
-                <td>{{ report.debit }}</td>
-                <td>{{ report.kredit }}</td>
-              </tr>
-            </tbody>
-              <tbody v-else>
-              <tr class="text-center">
-                <td colspan="12">There's no data to display...</td>
-              </tr>
-            </tbody>
-          </table>
+        <h6 class="text-center mb-5 pb-5" v-show="report.from && report.to">
+          Tanggal {{ dateFormatId(report.from) }} s.d
+          {{ dateFormatId(report.to) }}
+        </h6>
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr class="text-center">
+              <th rowspan="2">No</th>
+              <th colspan="2">Tanggal</th>
+              <th colspan="2">Angsuran</th>
+              <th colspan="2">Angsuran</th>
+              <th colspan="2">Valid</th>
+            </tr>
+            <tr class="text-center">
+              <th>Angsur</th>
+              <th>Bayar</th>
+              <th>Ke</th>
+              <th>Jumlah</th>
+              <th>Pokok</th>
+              <th>Margin</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody v-if="report.items.length > 0">
+            <tr
+              v-for="(report, reportIndex) in report.items"
+              :key="`report-${reportIndex}`"
+            >
+              <td>{{ reportIndex + 1 }}</td>
+              <td>{{ report.tanggal }}</td>
+              <td>{{ report.no_trans }}</td>
+              <td>{{ report.keterangan }}</td>
+              <td>{{ report.no_akun }}</td>
+              <td>{{ report.debit }}</td>
+              <td>{{ report.kredit }}</td>
+            </tr>
+          </tbody>
+          <tbody v-else>
+            <tr class="text-center">
+              <td colspan="12">There's no data to display...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <b-row>
-        <b-col cols="12" sm="12" class="d-flex justify-content-end border-top pt-5">
-          <b-button variant="secondary" @click="$bvModal.hide('modal-pdf')">Cancel
+        <b-col
+          cols="12"
+          sm="12"
+          class="d-flex justify-content-end border-top pt-5"
+        >
+          <b-button variant="secondary" @click="$bvModal.hide('modal-pdf')"
+            >Cancel
           </b-button>
-          <b-button variant="danger" type="button" class="ml-3" @click="doPrintPdf()">
+          <b-button
+            variant="danger"
+            type="button"
+            class="ml-3"
+            @click="doPrintPdf()"
+          >
+            Cetak PDF
+          </b-button>
+          <b-button
+            variant="warning"
+            type="button"
+            class="ml-3"
+            @click="doSavePdf()"
+          >
             Simpan PDF
           </b-button>
         </b-col>
@@ -195,10 +268,10 @@
 </template>
   
 <script>
-import helper from '@/core/helper'
+import helper from "@/core/helper";
 import html2pdf from "html2pdf.js";
-import { mapGetters } from 'vuex'
-import easycoApi from '@/core/services/easyco.service'
+import { mapGetters } from "vuex";
+import easycoApi from "@/core/services/easyco.service";
 export default {
   name: "LaporanSaldoAnggota",
   components: {},
@@ -207,116 +280,116 @@ export default {
       table: {
         fields: [
           {
-            key: 'no',
+            key: "no",
             sortable: false,
-            label: 'No',
-            thClass: 'text-center w-5p',
-            tdClass: 'text-center'
+            label: "No",
+            thClass: "text-center w-5p",
+            tdClass: "text-center",
           },
           {
-            key: 'tanggal',
+            key: "tanggal",
             sortable: true,
-            label: 'Tanggal',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "Tanggal",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
-            key: 'no_trans',
+            key: "no_trans",
             sortable: true,
-            label: 'No Transaksi',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "No Transaksi",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
-            key: 'keterangan',
+            key: "keterangan",
             sortable: true,
-            label: 'Keterangan',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "Keterangan",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
-            key: 'no_akun',
+            key: "no_akun",
             sortable: true,
-            label: 'No Akun',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "No Akun",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
-            key: 'debit',
+            key: "debit",
             sortable: true,
-            label: 'Debit',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "Debit",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
-            key: 'kredit',
+            key: "kredit",
             sortable: true,
-            label: 'kredit',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "kredit",
+            thClass: "text-center",
+            tdClass: "",
           },
         ],
         items: [],
         loading: false,
-        totalRows: 0
+        totalRows: 0,
       },
       report: {
         fields: [
           {
-            key: 'no',
+            key: "no",
             sortable: false,
-            label: 'No',
-            thClass: 'text-center w-5p',
-            tdClass: 'text-center'
+            label: "No",
+            thClass: "text-center w-5p",
+            tdClass: "text-center",
           },
           {
-            key: 'tanggal',
+            key: "tanggal",
             sortable: false,
-            label: 'Tanggal',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "Tanggal",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
-            key: 'no_trans',
+            key: "no_trans",
             sortable: false,
-            label: 'No Trans',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "No Trans",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
-            key: 'keterangan',
+            key: "keterangan",
             sortable: false,
-            label: 'keterangan',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "keterangan",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
-            key: 'no_akun',
+            key: "no_akun",
             sortable: false,
-            label: 'No Akun',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "No Akun",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
-            key: 'no_telp',
+            key: "no_telp",
             sortable: false,
-            label: 'No Telp',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "No Telp",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
-            key: 'debit',
+            key: "debit",
             sortable: false,
-            label: 'Debit',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "Debit",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
-            key: 'kredit',
+            key: "kredit",
             sortable: false,
-            label: 'kredit',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "kredit",
+            thClass: "text-center",
+            tdClass: "",
           },
         ],
         items: [],
@@ -324,23 +397,23 @@ export default {
         totalRows: 0,
         cabang: null,
         from: null,
-        to: null
+        to: null,
       },
       paging: {
         page: 1,
         perPage: 10,
         sortDesc: true,
-        sortBy: 'kop_anggota.id',
-        search: '',
-        status: '~',
+        sortBy: "kop_anggota.id",
+        search: "",
+        status: "~",
         cabang: 0,
         from: null,
-        to: null
+        to: null,
       },
       opt: {
-        cabang: []
-      }
-    }
+        cabang: [],
+      },
+    };
   },
   computed: {
     ...mapGetters(["user"]),
@@ -348,136 +421,170 @@ export default {
   watch: {
     paging: {
       handler(val) {
-        this.doGet()
+        this.doGet();
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   mounted() {
     // this.doGet()
-    this.doGetCabang()
+    this.doGetCabang();
   },
   methods: {
     ...helper,
     doPrintPdf() {
-      let filename = 'LAPORAN KARTU ANGSURAN'
+      let filename = "LAPORAN KARTU ANGSURAN";
       if (this.report.cabang) {
-        filename += ` - Cabang ${this.report.cabang}`
+        filename += ` - Cabang ${this.report.cabang}`;
       }
       if (this.report.from && this.report.to) {
-        filename += ` - Dari ${this.dateFormatId(this.report.from)} Sampai ${this.dateFormatId(this.report.to)}`
+        filename += ` - Dari ${this.dateFormatId(
+          this.report.from
+        )} Sampai ${this.dateFormatId(this.report.to)}`;
+      }
+      let element = document.getElementById("table-print");
+      let options = {
+        margin: 0,
+        filename: `${filename}.pdf`,
+        jsPDF: {
+          unit: "in",
+          format: "a4",
+          orientation: "landscape",
+        },
+      };
+      html2pdf()
+        .set(options)
+        .from(element)
+        .toPdf()
+        .get("pdf")
+        .then(function (pdf) {
+          console.log("hi");
+          window.open(pdf.output("bloburl"), "_blank");
+        });
+    },
+    doSavePdf() {
+      let filename = "LAPORAN KARTU ANGSURAN";
+      if (this.report.cabang) {
+        filename += ` - Cabang ${this.report.cabang}`;
+      }
+      if (this.report.from && this.report.to) {
+        filename += ` - Dari ${this.dateFormatId(
+          this.report.from
+        )} Sampai ${this.dateFormatId(this.report.to)}`;
       }
 
       html2pdf(document.getElementById("table-print"), {
         margin: 0,
         filename: `${filename}.pdf`,
         jsPDF: {
-          unit: 'in',
-          format: 'a4',
-          orientation: 'landscape'
-        }
+          unit: "in",
+          format: "a4",
+          orientation: "landscape",
+        },
       });
     },
     getCabangName(id) {
-      if(id > 0) {
-        let cabangName = this.opt.cabang.find((i => i.value == id))
+      if (id > 0) {
+        let cabangName = this.opt.cabang.find((i) => i.value == id);
         if (cabangName) {
-          console.log(cabangName.text)
-          return cabangName.text
+          console.log(cabangName.text);
+          return cabangName.text;
         } else {
-          return null
+          return null;
         }
       } else {
-        return null
+        return null;
       }
     },
     async doGetCabang() {
       let payload = {
-        perPage: '~',
+        perPage: "~",
         page: 1,
-        sortBy: 'nama_cabang',
-        sortDir: 'ASC',
-        search: ''
-      }
+        sortBy: "nama_cabang",
+        sortDir: "ASC",
+        search: "",
+      };
       try {
-        let req = await easycoApi.cabangRead(payload, this.user.token)
-        let { data, status, msg } = req.data
+        let req = await easycoApi.cabangRead(payload, this.user.token);
+        let { data, status, msg } = req.data;
         if (status) {
-          this.opt.cabang = [{
-            value: 0,
-            text: 'All'
-          }]
+          this.opt.cabang = [
+            {
+              value: 0,
+              text: "All",
+            },
+          ];
           data.map((item) => {
             this.opt.cabang.push({
               value: item.kode_cabang,
-              text: item.nama_cabang
-            })
-          })
+              text: item.nama_cabang,
+            });
+          });
         }
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     },
     async doGet() {
-      let payload = this.paging
-      payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
-      payload.perPage = 10
-      this.table.loading = true
+      let payload = this.paging;
+      payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
+      payload.perPage = 10;
+      this.table.loading = true;
       try {
-        let req = await easycoApi.anggotaRead(payload, this.user.token)
-        let { data, status, msg, total } = req.data
+        let req = await easycoApi.anggotaRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
         if (status) {
-          this.table.items = data
-          this.table.totalRows = total
+          this.table.items = data;
+          this.table.totalRows = total;
         } else {
-          this.notify('danger', 'Error', msg)
+          this.notify("danger", "Error", msg);
         }
-        this.table.loading = false
+        this.table.loading = false;
       } catch (error) {
-        this.table.loading = false
-        console.error(error)
-        this.notify('danger', 'Error', error)
+        this.table.loading = false;
+        console.error(error);
+        this.notify("danger", "Error", error);
       }
     },
     async doGetReport() {
-      let payload = this.paging
-      payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
-      payload.perPage = '~'
-      this.report.loading = true
-      this.report.from = payload.from
-      this.report.to = payload.to
-      this.report.cabang = this.getCabangName(payload.cabang)
+      let payload = this.paging;
+      payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
+      payload.perPage = "~";
+      this.report.loading = true;
+      this.report.from = payload.from;
+      this.report.to = payload.to;
+      this.report.cabang = this.getCabangName(payload.cabang);
       try {
-        let req = await easycoApi.anggotaRead(payload, this.user.token)
-        let { data, status, msg, total } = req.data
+        let req = await easycoApi.anggotaRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
         if (status) {
-          this.report.items = data
-          this.report.totalRows = total
+          this.report.items = data;
+          this.report.totalRows = total;
         } else {
-          this.notify('danger', 'Error', msg)
+          this.notify("danger", "Error", msg);
         }
-        this.report.loading = false
+        this.report.loading = false;
       } catch (error) {
-        this.report.loading = false
-        console.error(error)
-        this.notify('danger', 'Error', error)
+        this.report.loading = false;
+        console.error(error);
+        this.notify("danger", "Error", error);
       }
     },
     async excel() {
-      let payload = this.paging
+      let payload = this.paging;
       try {
-        let req = await easycoApi.anggotaExcel(payload, this.user.token)
-        console.log(req)
-        let fileName = 'Laporan Anggota.xls'
-        const url = window.URL.createObjectURL(new Blob([req.data]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', fileName)
-        document.body.appendChild(link)
-        link.click()
+        let req = await easycoApi.anggotaExcel(payload, this.user.token);
+        console.log(req);
+        let fileName = "Laporan Anggota.xls";
+        const url = window.URL.createObjectURL(new Blob([req.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
       } catch (error) {
-        console.log(error)
-        this.notify('danger', 'Error', error)
+        console.log(error);
+        this.notify("danger", "Error", error);
       }
     },
     doInfo(msg, title, variant) {
@@ -485,18 +592,18 @@ export default {
         title: title,
         variant: variant,
         solid: true,
-        toaster: 'b-toaster-bottom-right'
-      })
+        toaster: "b-toaster-bottom-right",
+      });
     },
     notify(type, title, msg) {
       this.$bvToast.toast(msg, {
         title: title,
         autoHideDelay: 5000,
         variant: type,
-        toaster: 'b-toaster-bottom-right',
-        appendToast: true
-      })
-    }
-  }
+        toaster: "b-toaster-bottom-right",
+        appendToast: true,
+      });
+    },
+  },
 };
 </script>
