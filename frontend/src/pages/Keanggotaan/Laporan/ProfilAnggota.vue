@@ -504,9 +504,11 @@ export default {
         cabang: 0,
         from: null,
         to: null,
+        anggota: null,
       },
       opt: {
         cabang: [],
+        anggota: [],
       },
     };
   },
@@ -524,6 +526,7 @@ export default {
   mounted() {
     this.doGet();
     this.doGetCabang();
+    this.doGetAnggota();
   },
   methods: {
     ...helper,
@@ -620,6 +623,27 @@ export default {
         console.error(error);
       }
     },
+    async doGetAnggota() {
+      let payload = null;
+      try {
+        let req = await easycoApi.anggotaRead(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          data.map((item) => {
+            this.opt.anggota.push({
+              value: Number(item.no_anggota),
+              text: item.nama_anggota,
+              data: item,
+            });
+          });
+        } else {
+          this.notify("danger", "Error", msg);
+        }
+      } catch (error) {
+        console.error(error);
+        this.notify("danger", "Login Error", error);
+      }
+    },
     //async doGettable1() {
     //let payload = this.paging
     //payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
@@ -662,6 +686,27 @@ export default {
     //this.notify('danger', 'Error', error)
     //}
     //},
+    async doGet() {
+      let payload = this.paging;
+      console.log(payload);
+      payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
+      this.table_1.loading = true;
+      try {
+        let req = await easycoApi.anggotaRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
+        if (status) {
+          this.table_1.items = data;
+          this.table_1.totalRows = total;
+        } else {
+          this.notify("danger", "Error", msg);
+        }
+        this.table_1.loading = false;
+      } catch (error) {
+        this.table_1.loading = false;
+        console.error(error);
+        this.notify("danger", "Error", error);
+      }
+    },
     async doGetReport() {
       let payload = this.paging;
       payload.sortDir = payload.sortDesc ? "DESC" : "ASC";

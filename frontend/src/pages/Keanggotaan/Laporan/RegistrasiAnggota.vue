@@ -34,7 +34,9 @@
             >
               PDF
             </b-button>
-            <b-button text="Button" variant="success"> XLS </b-button>
+            <b-button text="Button" variant="success" @click="excel">
+              XLS
+            </b-button>
             <b-button text="Button" variant="warning"> CSV </b-button>
           </b-button-group>
         </b-col>
@@ -403,7 +405,7 @@ export default {
       payload.perPage = 10;
       this.table.loading = true;
       try {
-        let req = await easycoApi.anggotaRead(payload, this.user.token);
+        let req = await easycoApi.rembugRead(payload.cabang, this.user.token);
         let { data, status, msg, total } = req.data;
         if (status) {
           this.table.items = data;
@@ -445,7 +447,10 @@ export default {
     async excel() {
       let payload = this.paging;
       try {
-        let req = await easycoApi.anggotaExcel(payload, this.user.token);
+        let req = await easycoApi.anggotaExcel(
+          `?kode_cabang=10101&kode_rembug=~&from_date=2022-12-01&thru_date=2022-12-31`,
+          this.user.token
+        );
         console.log(req);
         let fileName = "Laporan Anggota.xls";
         const url = window.URL.createObjectURL(new Blob([req.data]));

@@ -71,13 +71,13 @@ const easycoApi = {
   },
   anggotaExcel(payload, token) {
     let url =
-      "laporan/list/excel/anggota_masuk?kode_cabang=10101&kode_rembug=101010001&from_date=2022-09-01&thru_date=2022-09-07";
+      "laporan/list/excel/anggota_masuk" + payload;
     let config = {
       headers: {
         token: token,
       },
     };
-    return axios.get(url, config);
+    return axios.get(url, payload, config);
   },
   // Petugas
   petugasRead(payload, token) {
@@ -1006,6 +1006,16 @@ const easycoApi = {
   // GET KODE PEGAWAI
   getKodePegawai(payload, token) {
     let url = "pegawai/generate";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+
+  getAnggota(payload, token) {
+    let url = "laporan/list/pdf/profil_anggota";
     let config = {
       headers: {
         token: token,
