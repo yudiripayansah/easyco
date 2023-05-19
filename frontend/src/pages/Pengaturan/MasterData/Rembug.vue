@@ -104,7 +104,28 @@
       <b-form @submit="doSave">
         <b-row>
           <b-col cols="6">
-            <b-form-group label="Kode Rembug" label-for="kode_rembug">
+            <b-form-group label="Kode Cabang" label-for="kode_cabang">
+              <b-select
+                v-model="$v.form.data.kode_cabang.$model"
+                :state="validateState('kode_cabang')"
+                :options="opt.cabang"
+                id="kode_cabang"
+                @change="doGetPetugas()"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="6">
+            <b-form-group label="Kode Petugas" label-for="kode_petugas">
+              <b-select
+                id="kode_petugas"
+                v-model="$v.form.data.kode_petugas.$model"
+                :state="validateState('kode_petugas')"
+                :options="opt.petugas"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="6">
+            <b-form-group label="Kode Majelis" label-for="kode_rembug">
               <b-form-input
                 id="kode_rembug"
                 v-model="form.data.kode_rembug"
@@ -113,7 +134,7 @@
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Nama Rembug" label-for="nama_rembug">
+            <b-form-group label="Nama Majelis" label-for="nama_rembug">
               <b-form-input
                 id="nama_rembug"
                 v-model="$v.form.data.nama_rembug.$model"
@@ -121,30 +142,13 @@
               />
             </b-form-group>
           </b-col>
-          <b-col cols="6">
-            <b-form-group label="Kode Cabang" label-for="kode_cabang">
-              <b-form-input
-                id="kode_cabang"
-                v-model="$v.form.data.kode_cabang.$model"
-                :state="validateState('kode_cabang')"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group label="Kode Petugas" label-for="kode_petugas">
-              <b-form-input
-                id="kode_petugas"
-                v-model="$v.form.data.kode_petugas.$model"
-                :state="validateState('kode_petugas')"
-              />
-            </b-form-group>
-          </b-col>
           <b-col cols="4">
             <b-form-group label="Kode Desa" label-for="kode_desa">
-              <b-form-input
+              <b-select
                 id="kode_desa"
                 v-model="$v.form.data.kode_desa.$model"
                 :state="validateState('kode_desa')"
+                :options="opt.desa"
               />
             </b-form-group>
           </b-col>
@@ -269,14 +273,14 @@ export default {
           {
             key: "kode_rembug",
             sortable: true,
-            label: "Kode Rembug",
+            label: "Kode Majelis",
             thClass: "text-center",
             tdClass: "",
           },
           {
             key: "nama_rembug",
             sortable: true,
-            label: "Nama Rembug",
+            label: "Nama Majelis",
             thClass: "text-center",
             tdClass: "",
           },
@@ -373,6 +377,9 @@ export default {
             text: "Sabtu",
           },
         ],
+        cabang: [],
+        petugas: [],
+        desa: []
       },
     };
   },
@@ -403,10 +410,7 @@ export default {
         },
         jam_transaksi: {
           required,
-        },
-        created_by: {
-          required,
-        },
+        }
       },
     },
   },
@@ -425,6 +429,63 @@ export default {
     validateState(name) {
       const { $dirty, $error } = this.$v.form.data[name];
       return $dirty ? !$error : null;
+    },
+    async doGetCabang() {
+      let payload = null;
+      try {
+        let req = await easycoApi.getKodeCabang(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.cabang = [];
+          data.map((item) => {
+            this.opt.cabang.push({
+              value: Number(item.kode_cabang),
+              text: item.nama_cabang,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doGetPetugas() {
+      this.form.data.kode_rembug = this.form.data.kode_cabang
+      let payload = {
+        kode_cabang: this.form.data.kode_cabang
+      };
+      try {
+        let req = await easycoApi.pegawaiRead(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.petugas = [];
+          data.map((item) => {
+            this.opt.petugas.push({
+              value: item.kode_pgw,
+              text: item.nama_pgw,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doGetDesa() {
+      let payload = null;
+      try {
+        let req = await easycoApi.desaRead(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.desa = [];
+          data.map((item) => {
+            this.opt.desa.push({
+              value: item.kode_desa,
+              text: item.nama_desa,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
     },
     async doGet() {
       let payload = this.paging;
@@ -548,6 +609,8 @@ export default {
   },
   mounted() {
     this.doGet();
+    this.doGetCabang();
+    this.doGetDesa()
   },
 };
 </script>

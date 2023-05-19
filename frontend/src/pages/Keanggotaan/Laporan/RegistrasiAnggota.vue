@@ -163,9 +163,9 @@ export default {
           {
             key: "nama_rembug",
             sortable: true,
-            label: "Nama Rembug",
-            thClass: "text-center",
-            tdClass: "",
+            label: 'Nama Majelis',
+            thClass: 'text-center',
+            tdClass: ''
           },
           {
             key: "nama_cabang",

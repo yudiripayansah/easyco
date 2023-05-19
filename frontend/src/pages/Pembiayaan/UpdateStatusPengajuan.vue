@@ -62,7 +62,7 @@
               </b-form-group>
             </b-col>
             <b-col cols="10">
-              <b-form-group label="Rembug" label-for="rembug">
+              <b-form-group label="Majelis" label-for="Majelis">
                 <b-form-input id="rembug" v-model="$v.form.data.rembug.$model" :state="validateState('rembug')" />
               </b-form-group>
             </b-col>

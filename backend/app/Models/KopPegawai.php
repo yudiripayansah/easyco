@@ -83,7 +83,15 @@ class KopPegawai extends Model
 
     function read($search, $sortBy, $sortDir, $offset, $perPage, $kode_cabang)
     {
-        $show = KopPegawai::orderBy($sortBy, $sortDir);
+        $show = KopPegawai::select('kop_pegawai.*', 'klk.kode_display')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'kop_pegawai.kode_cabang')
+            ->join('kop_list_kode AS klk', function ($join) {
+                $join->on('klk.kode_value', DB::raw('kop_pegawai.jabatan::INTEGER'))->where('klk.nama_kode', 'jabatan');
+            });
+
+        if ($kode_cabang != '00000') {
+            $show->where('kc.kode_cabang', $kode_cabang);
+        }
 
         if ($perPage != '~') {
             $show->skip($offset)->take($perPage);
@@ -95,9 +103,7 @@ class KopPegawai extends Model
                 ->orWhere('jabatan', 'LIKE', '%' . $search . '%');
         }
 
-        if ($kode_cabang) {
-            $show->where('kode_cabang', $kode_cabang);
-        }
+        $show->orderBy($sortBy, $sortDir);
 
         $show = $show->get();
 

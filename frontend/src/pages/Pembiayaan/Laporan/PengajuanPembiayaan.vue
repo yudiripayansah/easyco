@@ -50,8 +50,17 @@
             >
               PDF
             </b-button>
-            <b-button text="Button" variant="success"> XLS </b-button>
-            <b-button text="Button" variant="warning"> CSV </b-button>
+            <export-excel
+              class= "btn btn-success"
+              :data= "report.items"
+              :fields= "report.field_excel"
+              worksheet= "Sheet 1"
+              name= "Pengajuan_Pembiayaan.xls">
+              XLS
+            </export-excel>
+            <b-button text="Button" variant="warning" @click="csvExport(report.items)">
+              CSV
+            </b-button>
           </b-button-group>
         </b-col>
         <b-col cols="12">
@@ -203,9 +212,9 @@ export default {
           {
             key: "nama_rembug",
             sortable: true,
-            label: "Rembug",
-            thClass: "text-center",
-            tdClass: "",
+            label: 'Majelis',
+            thClass: 'text-center',
+            tdClass: ''
           },
           {
             key: "no_pengajuan",
@@ -292,6 +301,26 @@ export default {
             tdClass: "text-right",
           },
         ],
+        field_excel: {
+          'No': {
+              field: 'no_pengajuan',
+              callback: (value) => {
+                  return this.getIndex(value)
+              }
+          },
+          'Cabang': 'nama_cabang',
+          'Tanggal': 'tanggal_pengajuan',
+          'Nama': 'nama_anggota',
+          'Rembug': 'nama_rembug',
+          'No Pengajuan': 'no_pengajuan',
+          'Jumlah': 'jumlah_pengajuan',
+          'Status': {
+              field: 'status_pengajuan',
+              callback: (value) => {
+                  return this.showStatus(value);
+              }
+          }
+        },
         items: [],
         loading: false,
         totalRows: 0,
@@ -327,8 +356,9 @@ export default {
     },
   },
   mounted() {
-    this.doGet();
-    this.doGetCabang();
+    this.doGet()
+    this.doGetCabang()
+    this.doGetReport()
   },
   methods: {
     ...helper,
@@ -382,6 +412,39 @@ export default {
           orientation: "landscape",
         },
       });
+    },
+    csvExport(arrData) {
+      let csvData = []
+      arrData.map((item,index) => {
+        let cData = {
+          'No':index+1,
+          'Cabang':item.nama_cabang,
+          'Tanggal':item.tanggal_pengajuan,
+          'Nama':item.nama_anggota,
+          'Rembug':item.nama_rembug,
+          'No Pengajuan':item.no_pengajuan,
+          'Jumlah':item.jumlah_pengajuan,
+          'Status':this.showStatus(item.status_pengajuan)
+        }
+        csvData.push(cData)
+      })
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += [
+        Object.keys(csvData[0]).join(";"),
+        ...csvData.map(item => Object.values(item).join(";"))
+      ]
+        .join("\n")
+        .replace(/(^\[)|(\]$)/gm, "");
+
+      const data = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", data);
+      link.setAttribute("download", "Pengajuan_Pembiayaan.csv");
+      link.click();
+    },
+    getIndex(value){
+      let index = this.report.items.findIndex((val) => val.no_pengajuan == value)
+      return index + 1
     },
     getCabangName(id) {
       if (id > 0) {

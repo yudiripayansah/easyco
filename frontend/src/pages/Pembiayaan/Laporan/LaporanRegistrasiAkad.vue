@@ -211,9 +211,9 @@ export default {
           {
             key: "nama_rembug",
             sortable: true,
-            label: "Rembug",
-            thClass: "text-center",
-            tdClass: "text-center",
+            label: 'Majelis',
+            thClass: 'text-center',
+            tdClass: 'text-center'
           },
           {
             key: "no_rekening",

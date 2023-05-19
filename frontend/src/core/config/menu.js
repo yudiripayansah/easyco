@@ -212,12 +212,12 @@ const menu = [
     children: [
       {
         target: 'transaksi-rembug',
-        label: 'Transaksi Rembug',
+        label: 'Transaksi Majelis',
         component: import('@/pages/Dummy.vue'),
       },
       {
         target: 'verifikasi-transaksi-rembug',
-        label: 'Verifikasi Transaksi Rembug',
+        label: 'Verifikasi Transaksi Majelis',
         component: import('@/pages/Transaksi/VerifikasiTransaksiRembug.vue'),
       },
       {
@@ -247,7 +247,7 @@ const menu = [
         children: [
           {
             target: 'transaksi-rembug',
-            label: 'Laporan Transaksi Rembug',
+            label: 'Laporan Transaksi Majelis',
             component: import('@/pages/Transaksi/Laporan/LaporanTransaksiMajelis'),
           },
           {
@@ -367,7 +367,7 @@ const menu = [
           },
           {
             target: 'rembug',
-            label: 'Rembug',
+            label: 'Majelis',
             component: import('@/pages/Pengaturan/MasterData/Rembug'),
           },
           {

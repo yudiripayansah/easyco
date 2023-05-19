@@ -55,8 +55,8 @@ Route::prefix('cabang')->middleware('checkToken')->group(function () {
 });
 
 Route::prefix('pegawai')->middleware('checkToken')->group(function () {
-  Route::post('/create', [PegawaiController::class, 'create']);
   Route::post('/generate', [PegawaiController::class, 'generate_kode_pegawai']);
+  Route::post('/create', [PegawaiController::class, 'create']);
   Route::post('/read', [PegawaiController::class, 'read']);
   Route::get('/detail', [PegawaiController::class, 'detail']);
   Route::post('/update', [PegawaiController::class, 'update']);
@@ -80,6 +80,7 @@ Route::prefix('kotakab')->middleware('checkToken')->group(function () {
 });
 
 Route::prefix('kecamatan')->middleware('checkToken')->group(function () {
+  Route::post('/generate', [KecamatanController::class, 'generate_kode_kecamatan']);
   Route::post('/create', [KecamatanController::class, 'create']);
   Route::post('/read', [KecamatanController::class, 'read']);
   Route::get('/detail', [KecamatanController::class, 'detail']);
@@ -88,6 +89,7 @@ Route::prefix('kecamatan')->middleware('checkToken')->group(function () {
 });
 
 Route::prefix('desa')->middleware('checkToken')->group(function () {
+  Route::post('/generate', [DesaController::class, 'generate_kode_desa']);
   Route::post('/create', [DesaController::class, 'create']);
   Route::post('/read', [DesaController::class, 'read']);
   Route::get('/detail', [DesaController::class, 'detail']);
@@ -241,6 +243,15 @@ Route::prefix('laporan')->middleware('checkToken')->group(function () {
       Route::get('/pengajuan', [LaporanController::class, 'list_excel_pengajuan']);
       Route::get('/regis_akad', [LaporanController::class, 'list_excel_regis_akad']);
       Route::get('/pencairan', [LaporanController::class, 'list_excel_pencairan']);
+      Route::get('/saldo_anggota', [LaporanController::class, 'list_excel_saldo_anggota']);
+    });
+
+    Route::prefix('csv')->group(function () {
+      Route::get('/anggota_masuk', [LaporanController::class, 'list_csv_anggota_masuk']);
+      Route::get('/pengajuan', [LaporanController::class, 'list_csv_pengajuan']);
+      Route::get('/regis_akad', [LaporanController::class, 'list_csv_regis_akad']);
+      Route::get('/pencairan', [LaporanController::class, 'list_csv_pencairan']);
+      Route::get('/saldo_anggota', [LaporanController::class, 'list_csv_saldo_anggota']);
     });
 
     Route::prefix('pdf')->group(function () {

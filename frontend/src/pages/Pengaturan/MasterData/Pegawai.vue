@@ -107,13 +107,14 @@
       size="lg"
       centered
     >
-      <b-form @submit="doSave()">
+      <b-form @submit="doSave">
         <b-row>
           <b-col cols="6">
             <b-form-group label="Kode Cabang" label-for="kode_cabang">
               <b-select
                 v-model="form.data.kode_cabang"
                 :options="opt.kode_cabang"
+                @change="doGenerateKodePegawai()"
               />
             </b-form-group>
           </b-col>
@@ -123,6 +124,7 @@
                 id="kode_pgw"
                 v-model="$v.form.data.kode_pgw.$model"
                 :state="validateState('kode_pgw')"
+                disabled
               />
             </b-form-group>
           </b-col>
@@ -164,10 +166,10 @@
           </b-col>
           <b-col cols="4">
             <b-form-group label="Jabatan" label-for="jabatan">
-              <b-form-input
-                id="jabatan"
+              <b-select
                 v-model="$v.form.data.jabatan.$model"
                 :state="validateState('jabatan')"
+                :options="opt.jabatan"
               />
             </b-form-group>
           </b-col>
@@ -372,7 +374,7 @@ export default {
           },
         ],
         kode_cabang: [],
-        kode_pegawai: [],
+        jabatan: []
       },
     };
   },
@@ -539,6 +541,40 @@ export default {
         console.error(error);
       }
     },
+    async doGenerateKodePegawai() {
+      let payload = {
+        kode_cabang: this.form.data.kode_cabang
+      };
+      try {
+        let req = await easycoApi.getKodePegawai(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.form.data.kode_pgw = data.kode_pegawai
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doGetJabatan() {
+      let payload = {
+        nama_kode: 'jabatan'
+      };
+      try {
+        let req = await easycoApi.listkodeRead(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.jabatan = [];
+          data.map((item) => {
+            this.opt.jabatan.push({
+              value: Number(item.kode_value),
+              text: item.kode_display,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
     doClearForm() {
       this.form.data = {
         id: null,
@@ -568,6 +604,7 @@ export default {
   mounted() {
     this.doGet();
     this.doGetKodeCabang();
+    this.doGetJabatan();
   },
 };
 </script>

@@ -39,12 +39,48 @@ export default {
           { text: 'No. Pengajuan 8', value: '8' },
           { text: 'No. Pengajuan 9', value: '9' },
           { text: 'No. Pengajuan 10', value: '10' },
-        ]
+        ],
+        rembug: []
       },
       form: {
         noPengajuan: '0'
       }
     }
+  },
+  methods: {
+    async getRembug() {
+      let day = new Date().getDay();
+      day = 1;
+      let payload = new FormData();
+      payload.append("kode_petugas", this.user.kode_petugas);
+      payload.append("hari_transaksi", day);
+      try {
+        let req = await services.infoRembug(payload, this.user.token);
+        if (req.status === 200) {
+          let { data } = req.data;
+          this.opt.rembug = [];
+          data.map((rembug, index) => {
+            this.opt.rembug.push({
+              text: rembug.nama_rembug,
+              value: rembug.kode_rembug,
+            });
+          });
+        } else {
+          this.alert = {
+            show: true,
+            msg: data.message,
+          };
+        }
+      } catch (error) {
+        this.alert = {
+          show: true,
+          msg: `Error on get rembug ${error}`,
+        };
+      }
+    },
+  },
+  mounted() {
+    this.getRembug()
   }
 }
 </script>
