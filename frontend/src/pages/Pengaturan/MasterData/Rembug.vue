@@ -125,7 +125,7 @@
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Kode Rembug" label-for="kode_rembug">
+            <b-form-group label="Kode Majelis" label-for="kode_rembug">
               <b-form-input
                 id="kode_rembug"
                 v-model="form.data.kode_rembug"
@@ -134,7 +134,7 @@
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Nama Rembug" label-for="nama_rembug">
+            <b-form-group label="Nama Majelis" label-for="nama_rembug">
               <b-form-input
                 id="nama_rembug"
                 v-model="$v.form.data.nama_rembug.$model"
@@ -273,14 +273,14 @@ export default {
           {
             key: "kode_rembug",
             sortable: true,
-            label: "Kode Rembug",
+            label: "Kode Majelis",
             thClass: "text-center",
             tdClass: "",
           },
           {
             key: "nama_rembug",
             sortable: true,
-            label: "Nama Rembug",
+            label: "Nama Majelis",
             thClass: "text-center",
             tdClass: "",
           },

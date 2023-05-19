@@ -20,7 +20,7 @@
                   </b-input-group>
                 </b-col>
                 <b-col cols="4">
-                  <b-input-group prepend="Rembug" class="mb-3">
+                  <b-input-group prepend="Majelis" class="mb-3">
                     <b-form-select v-model="paging.rembug" :options="opt.rembug" />
                   </b-input-group>
                 </b-col>
@@ -149,7 +149,7 @@ export default {
           {
             key: 'nama_rembug',
             sortable: true,
-            label: 'Rembug',
+            label: 'Majelis',
             thClass: 'text-center',
             tdClass: ''
           },
