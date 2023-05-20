@@ -141,21 +141,9 @@
           {{ dateFormatId(report.to) }}
         </h6>
         <b-row class="mt-5 mb-3">
-<<<<<<< HEAD
-          <b-col cols="6">
-            Petugas: Nama Petugas
-          </b-col>
-          <b-col cols="6">
-            Tanggal: Tanggal
-          </b-col>
-          <b-col cols="6">
-            Majelis: Nama Majelis
-          </b-col>
-=======
           <b-col cols="6"> Petugas: Nama Petugas </b-col>
           <b-col cols="6"> Tanggal: Tanggal </b-col>
           <b-col cols="6"> Rembug: Nama Rembug </b-col>
->>>>>>> 6e4eba65fed1847d7c813c129243cd98ce6e6b0d
         </b-row>
         <table
           role="table"
@@ -304,21 +292,9 @@
           <!---->
         </table>
         <b-row class="mt-5 mb-3">
-<<<<<<< HEAD
-          <b-col cols="6">
-            Petugas: Nama Petugas
-          </b-col>
-          <b-col cols="6">
-            Tanggal: Tanggal
-          </b-col>
-          <b-col cols="6">
-            Majelis: Nama Majelis
-          </b-col>
-=======
           <b-col cols="6"> Petugas: Nama Petugas </b-col>
           <b-col cols="6"> Tanggal: Tanggal </b-col>
           <b-col cols="6"> Rembug: Nama Rembug </b-col>
->>>>>>> 6e4eba65fed1847d7c813c129243cd98ce6e6b0d
         </b-row>
         <table
           role="table"
