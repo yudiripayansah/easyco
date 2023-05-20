@@ -34,22 +34,10 @@
             >
               PDF
             </b-button>
-            <export-excel
-              class="btn btn-success"
-              :data="report.items"
-              :fields="report.field_excel"
-              worksheet="Sheet 1"
-              name="Registrasi_Anggota.xls"
-            >
+            <b-button text="Button" variant="success" @click="exportXls()">
               XLS
-            </export-excel>
-            <b-button
-              text="Button"
-              variant="warning"
-              @click="csvExport(report.items)"
-            >
-              CSV
             </b-button>
+            <b-button text="Button" variant="warning"> CSV </b-button>
           </b-button-group>
         </b-col>
         <b-col cols="12">
@@ -384,6 +372,18 @@ export default {
           orientation: "landscape",
         },
       });
+    },
+    async exportXls() {
+      let payload = `kode_cabang=${this.paging.cabang}&kode_rembug=~&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let req = await easycoApi.anggotaExcel(payload);
+      console.log(req.data);
+      const url = window.URL.createObjectURL(new Blob([req.data]));
+      const link = document.createElement("a");
+      let fileName = "Anggota_Masuk.xls";
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
     },
     getCabangName(id) {
       if (id > 0) {

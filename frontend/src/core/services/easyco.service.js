@@ -71,11 +71,12 @@ const easycoApi = {
   },
   anggotaExcel(payload, token) {
     let url =
-      "laporan/list/excel/anggota_masuk" + payload;
+      "laporan/list/excel/anggota_masuk?"+payload;
     let config = {
       headers: {
         token: token,
       },
+      responseType: 'blob'
     };
     return axios.get(url, payload, config);
   },
