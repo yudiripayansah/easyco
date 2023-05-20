@@ -71,11 +71,12 @@ const easycoApi = {
   },
   anggotaExcel(payload, token) {
     let url =
-      "laporan/list/excel/anggota_masuk?kode_cabang=10101&kode_rembug=101010001&from_date=2022-09-01&thru_date=2022-09-07";
+      "laporan/list/excel/anggota_masuk?"+payload;
     let config = {
       headers: {
         token: token,
       },
+      responseType: 'blob'
     };
     return axios.get(url, config);
   },
