@@ -113,11 +113,6 @@
     >
       <b-form @submit="doSave()">
         <b-row>
-          <!-- <b-col cols="12" sm="4">
-            <b-form-group label="Cabang">
-              <b-select v-model="form.data.kode_cabang" :options="opt.cabang" @change="doGetRembug()"/>
-            </b-form-group>
-          </b-col> -->
           <b-col cols="12" sm="6">
             <b-form-group label="Petugas">
               <b-select
@@ -572,7 +567,7 @@ export default {
         sortDesc: true,
         sortBy: "id",
         search: "",
-        status: [0, 1],
+        status: [0],
         jenis_pembiayaan: "~",
         petugas: "~",
         rembug: "~",
@@ -731,6 +726,7 @@ export default {
     },
     async doGet() {
       let payload = this.paging;
+      console.log(payload);
       payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
       this.table.loading = true;
       try {

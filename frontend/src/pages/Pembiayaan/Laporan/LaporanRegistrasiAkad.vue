@@ -50,8 +50,22 @@
             >
               PDF
             </b-button>
-            <b-button text="Button" variant="success"> XLS </b-button>
-            <b-button text="Button" variant="warning"> CSV </b-button>
+            <export-excel
+              class="btn btn-success"
+              :data="report.items"
+              :fields="report.field_excel"
+              worksheet="Sheet 1"
+              name="Registrasi_akad.xls"
+            >
+              XLS
+            </export-excel>
+            <b-button
+              text="Button"
+              variant="warning"
+              @click="csvExport(report.items)"
+            >
+              CSV
+            </b-button>
           </b-button-group>
         </b-col>
         <b-col cols="12">
@@ -169,8 +183,8 @@
 </template>
     
 <script>
-import helper from "@/core/helper";
 import html2pdf from "html2pdf.js";
+import helper from "@/core/helper";
 import { mapGetters } from "vuex";
 import easycoApi from "@/core/services/easyco.service";
 export default {
@@ -211,9 +225,9 @@ export default {
           {
             key: "nama_rembug",
             sortable: true,
-            label: 'Majelis',
-            thClass: 'text-center',
-            tdClass: 'text-center'
+            label: "Majelis",
+            thClass: "text-center",
+            tdClass: "text-center",
           },
           {
             key: "no_rekening",
@@ -266,68 +280,85 @@ export default {
           },
           {
             key: "nama_cabang",
-            sortable: false,
+            sortable: true,
             label: "Cabang",
             thClass: "text-center",
             tdClass: "",
           },
           {
             key: "tanggal_registrasi",
-            sortable: false,
+            sortable: true,
             label: "Tanggal",
             thClass: "text-center",
             tdClass: "",
           },
           {
             key: "nama_anggota",
-            sortable: false,
+            sortable: true,
             label: "Nama",
             thClass: "text-center",
             tdClass: "",
           },
           {
             key: "nama_rembug",
-            sortable: false,
-            label: "Rembug",
+            sortable: true,
+            label: "Majelis",
             thClass: "text-center",
             tdClass: "text-center",
           },
           {
             key: "no_rekening",
-            sortable: false,
+            sortable: true,
             label: "No Rek",
             thClass: "text-center",
             tdClass: "text-right",
           },
           {
             key: "nama_produk",
-            sortable: false,
+            sortable: true,
             label: "Produk",
             thClass: "text-center",
             tdClass: "text-right",
           },
           {
             key: "pokok",
-            sortable: false,
+            sortable: true,
             label: "Plafon",
             thClass: "text-center",
             tdClass: "text-right",
           },
           {
             key: "margin",
-            sortable: false,
+            sortable: true,
             label: "Margin",
             thClass: "text-center",
             tdClass: "text-right",
           },
           {
             key: "jangka_waktu",
-            sortable: false,
+            sortable: true,
             label: "Jk Waktu",
             thClass: "text-center",
             tdClass: "text-right",
           },
         ],
+        field_excel: {
+          No: {
+            field: "no_rekening",
+            callback: (value) => {
+              return this.getIndex(value);
+            },
+          },
+          Cabang: "nama_cabang",
+          Tanggal: "tanggal_registrasi",
+          Nama: "nama_anggota",
+          Majelis: "nama_rembug",
+          "No Rek": "no_rekening",
+          Produk: "nama_produk",
+          Plafon: "pokok",
+          Margin: "margin",
+          "JK Waktu": "jangka_waktu",
+        },
         items: [],
         loading: false,
         totalRows: 0,
@@ -341,7 +372,6 @@ export default {
         sortDesc: true,
         sortBy: "kop_pembiayaan.tanggal_registrasi",
         search: "",
-        status_rekening: [0, 1, 2, 3],
         cabang: null,
         from: null,
         to: null,
@@ -365,6 +395,7 @@ export default {
   mounted() {
     this.doGet();
     this.doGetCabang();
+    this.doGetReport();
   },
   methods: {
     ...helper,
@@ -418,6 +449,43 @@ export default {
           orientation: "landscape",
         },
       });
+    },
+    csvExport(arrData) {
+      let csvData = [];
+      arrData.map((item, index) => {
+        let cData = {
+          No: index + 1,
+          Cabang: item.nama_cabang,
+          Tanggal: item.tanggal_registrasi,
+          Nama: item.nama_anggota,
+          Majelis: item.nama_rembug,
+          "No Rek": item.no_rekening,
+          Produk: item.nama_produk,
+          Plafon: item.pokok,
+          Margin: item.margin,
+          "JK Waktu": item.jangka_waktu,
+        };
+        csvData.push(cData);
+      });
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += [
+        Object.keys(csvData[0]).join(";"),
+        ...csvData.map((item) => Object.values(item).join(";")),
+      ]
+        .join("\n")
+        .replace(/(^\[)|(\]$)/gm, "");
+
+      const data = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", data);
+      link.setAttribute("download", "Registrasi_Akad.csv");
+      link.click();
+    },
+    getIndex(value) {
+      let index = this.report.items.findIndex(
+        (val) => val.no_rekening == value
+      );
+      return index + 1;
     },
     getCabangName(id) {
       if (id > 0) {

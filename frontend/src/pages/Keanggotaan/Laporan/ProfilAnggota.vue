@@ -12,7 +12,10 @@
             </b-col>
             <b-col>
               <b-input-group prepend="Majelis">
-                <b-form-select v-model="paging.kode_rembug" :options="opt.kode_rembug" />
+                <b-form-select
+                  v-model="paging.kode_rembug"
+                  :options="opt.kode_rembug"
+                />
               </b-input-group>
             </b-col>
             <b-col>
@@ -59,8 +62,22 @@
             >
               PDF
             </b-button>
-            <b-button text="Button" variant="success"> XLS </b-button>
-            <b-button text="Button" variant="warning"> CSV </b-button>
+            <export-excel
+              class="btn btn-success"
+              :data="report.items"
+              :fields="report.field_excel"
+              worksheet="Sheet 1"
+              name="Profil_Anggota.xls"
+            >
+              XLS
+            </export-excel>
+            <b-button
+              text="Button"
+              variant="warning"
+              @click="csvExport(report.items)"
+            >
+              CSV
+            </b-button>
           </b-button-group>
         </b-col>
         <b-col cols="12">
@@ -487,6 +504,21 @@ export default {
             tdClass: "",
           },
         ],
+        field_excel: {
+          No: {
+            field: "nama_anggota",
+            callback: (value) => {
+              return this.getIndex(value);
+            },
+          },
+          Nama: "nama_anggota",
+          Majelis: "nama_rembug",
+          Cabang: "nama_cabang",
+          Desa: "nama_rembug",
+          "No Tlp": "no_telp",
+          Alamat: "alamat",
+          "TGL Gabung": "tgl_gabung",
+        },
         items: [],
         loading: false,
         totalRows: 0,

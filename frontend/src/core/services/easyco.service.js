@@ -1041,5 +1041,38 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+  // KAS PETUGAS
+  getKasPetugas(payload, token) {
+    let url = "kaspetugas/read";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+
+  // PROSES TRX KAS PETUGAS
+  trxKasPetugas(payload, token) {
+    let url = "trx_rembug/proses_kas_petugas";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  
+  // UODATE PENGAJUAN KOMITE
+  updateKomite(payload, token) {
+    let url = "pengajuan/update_komite";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+
 };
 export default easycoApi;

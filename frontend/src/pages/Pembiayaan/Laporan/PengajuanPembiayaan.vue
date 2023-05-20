@@ -51,14 +51,19 @@
               PDF
             </b-button>
             <export-excel
-              class= "btn btn-success"
-              :data= "report.items"
-              :fields= "report.field_excel"
-              worksheet= "Sheet 1"
-              name= "Pengajuan_Pembiayaan.xls">
+              class="btn btn-success"
+              :data="report.items"
+              :fields="report.field_excel"
+              worksheet="Sheet 1"
+              name="Pengajuan_Pembiayaan.xls"
+            >
               XLS
             </export-excel>
-            <b-button text="Button" variant="warning" @click="csvExport(report.items)">
+            <b-button
+              text="Button"
+              variant="warning"
+              @click="csvExport(report.items)"
+            >
               CSV
             </b-button>
           </b-button-group>
@@ -212,9 +217,9 @@ export default {
           {
             key: "nama_rembug",
             sortable: true,
-            label: 'Majelis',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "Majelis",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
             key: "no_pengajuan",
@@ -302,24 +307,24 @@ export default {
           },
         ],
         field_excel: {
-          'No': {
-              field: 'no_pengajuan',
-              callback: (value) => {
-                  return this.getIndex(value)
-              }
+          No: {
+            field: "no_pengajuan",
+            callback: (value) => {
+              return this.getIndex(value);
+            },
           },
-          'Cabang': 'nama_cabang',
-          'Tanggal': 'tanggal_pengajuan',
-          'Nama': 'nama_anggota',
-          'Rembug': 'nama_rembug',
-          'No Pengajuan': 'no_pengajuan',
-          'Jumlah': 'jumlah_pengajuan',
-          'Status': {
-              field: 'status_pengajuan',
-              callback: (value) => {
-                  return this.showStatus(value);
-              }
-          }
+          Cabang: "nama_cabang",
+          Tanggal: "tanggal_pengajuan",
+          Nama: "nama_anggota",
+          Majelis: "nama_rembug",
+          "No Pengajuan": "no_pengajuan",
+          Jumlah: "jumlah_pengajuan",
+          Status: {
+            field: "status_pengajuan",
+            callback: (value) => {
+              return this.showStatus(value);
+            },
+          },
         },
         items: [],
         loading: false,
@@ -356,9 +361,9 @@ export default {
     },
   },
   mounted() {
-    this.doGet()
-    this.doGetCabang()
-    this.doGetReport()
+    this.doGet();
+    this.doGetCabang();
+    this.doGetReport();
   },
   methods: {
     ...helper,
@@ -414,24 +419,24 @@ export default {
       });
     },
     csvExport(arrData) {
-      let csvData = []
-      arrData.map((item,index) => {
+      let csvData = [];
+      arrData.map((item, index) => {
         let cData = {
-          'No':index+1,
-          'Cabang':item.nama_cabang,
-          'Tanggal':item.tanggal_pengajuan,
-          'Nama':item.nama_anggota,
-          'Rembug':item.nama_rembug,
-          'No Pengajuan':item.no_pengajuan,
-          'Jumlah':item.jumlah_pengajuan,
-          'Status':this.showStatus(item.status_pengajuan)
-        }
-        csvData.push(cData)
-      })
+          No: index + 1,
+          Cabang: item.nama_cabang,
+          Tanggal: item.tanggal_pengajuan,
+          Nama: item.nama_anggota,
+          Majelis: item.nama_rembug,
+          "No Pengajuan": item.no_pengajuan,
+          Jumlah: item.jumlah_pengajuan,
+          Status: this.showStatus(item.status_pengajuan),
+        };
+        csvData.push(cData);
+      });
       let csvContent = "data:text/csv;charset=utf-8,";
       csvContent += [
         Object.keys(csvData[0]).join(";"),
-        ...csvData.map(item => Object.values(item).join(";"))
+        ...csvData.map((item) => Object.values(item).join(";")),
       ]
         .join("\n")
         .replace(/(^\[)|(\]$)/gm, "");
@@ -442,9 +447,11 @@ export default {
       link.setAttribute("download", "Pengajuan_Pembiayaan.csv");
       link.click();
     },
-    getIndex(value){
-      let index = this.report.items.findIndex((val) => val.no_pengajuan == value)
-      return index + 1
+    getIndex(value) {
+      let index = this.report.items.findIndex(
+        (val) => val.no_pengajuan == value
+      );
+      return index + 1;
     },
     getCabangName(id) {
       if (id > 0) {

@@ -34,10 +34,22 @@
             >
               PDF
             </b-button>
-            <b-button text="Button" variant="success" @click="excel">
+            <export-excel
+              class="btn btn-success"
+              :data="report.items"
+              :fields="report.field_excel"
+              worksheet="Sheet 1"
+              name="Registrasi_Anggota.xls"
+            >
               XLS
+            </export-excel>
+            <b-button
+              text="Button"
+              variant="warning"
+              @click="csvExport(report.items)"
+            >
+              CSV
             </b-button>
-            <b-button text="Button" variant="warning"> CSV </b-button>
           </b-button-group>
         </b-col>
         <b-col cols="12">
@@ -135,8 +147,8 @@
 </template>
   
 <script>
-import helper from "@/core/helper";
 import html2pdf from "html2pdf.js";
+import helper from "@/core/helper";
 import { mapGetters } from "vuex";
 import easycoApi from "@/core/services/easyco.service";
 export default {
@@ -163,9 +175,9 @@ export default {
           {
             key: "nama_rembug",
             sortable: true,
-            label: 'Nama Majelis',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "Nama Majelis",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
             key: "nama_cabang",
@@ -266,6 +278,21 @@ export default {
             tdClass: "",
           },
         ],
+        field_excel: {
+          No: {
+            field: "nama_anggota",
+            callback: (value) => {
+              return this.getIndex(value);
+            },
+          },
+          Nama: "nama_anggota",
+          Majelis: "nama_rembug",
+          Cabang: "nama_cabang",
+          Desa: "nama_rembug",
+          "No Tlp": "no_telp",
+          Alamat: "alamat",
+          "TGL Gabung": "tgl_gabung",
+        },
         items: [],
         loading: false,
         totalRows: 0,
@@ -303,6 +330,7 @@ export default {
   mounted() {
     this.doGet();
     this.doGetCabang();
+    this.doGetReport();
   },
   methods: {
     ...helper,
@@ -444,25 +472,40 @@ export default {
         this.notify("danger", "Error", error);
       }
     },
-    async excel() {
-      let payload = this.paging;
-      try {
-        let req = await easycoApi.anggotaExcel(
-          `?kode_cabang=10101&kode_rembug=~&from_date=2022-12-01&thru_date=2022-12-31`,
-          this.user.token
-        );
-        console.log(req);
-        let fileName = "Laporan Anggota.xls";
-        const url = window.URL.createObjectURL(new Blob([req.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", fileName);
-        document.body.appendChild(link);
-        link.click();
-      } catch (error) {
-        console.log(error);
-        this.notify("danger", "Error", error);
-      }
+    csvExport(arrData) {
+      let csvData = [];
+      arrData.map((item, index) => {
+        let cData = {
+          No: index + 1,
+          Nama: item.nama_anggota,
+          Majelis: item.nama_rembug,
+          Cabang: item.nama_cabang,
+          Desa: item.nama_rembug,
+          "No Tlp": item.no_telp,
+          Alamat: item.alamat,
+          "TGL Gabung": item.tgl_gabung,
+        };
+        csvData.push(cData);
+      });
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += [
+        Object.keys(csvData[0]).join(";"),
+        ...csvData.map((item) => Object.values(item).join(";")),
+      ]
+        .join("\n")
+        .replace(/(^\[)|(\]$)/gm, "");
+
+      const data = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", data);
+      link.setAttribute("download", "Pengajuan_Pembiayaan.csv");
+      link.click();
+    },
+    getIndex(value) {
+      let index = this.report.items.findIndex(
+        (val) => val.nama_anggota == value
+      );
+      return index + 1;
     },
     doInfo(msg, title, variant) {
       this.$bvToast.toast(msg, {

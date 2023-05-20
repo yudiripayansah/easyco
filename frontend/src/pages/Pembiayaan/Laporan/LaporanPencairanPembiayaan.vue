@@ -50,8 +50,22 @@
             >
               PDF
             </b-button>
-            <b-button text="Button" variant="success"> XLS </b-button>
-            <b-button text="Button" variant="warning"> CSV </b-button>
+            <export-excel
+              class="btn btn-success"
+              :data="report.items"
+              :fields="report.field_excel"
+              worksheet="Sheet 1"
+              name="Pencairan_pembiayaan.xls"
+            >
+              XLS
+            </export-excel>
+            <b-button
+              text="Button"
+              variant="warning"
+              @click="csvExport(report.items)"
+            >
+              CSV
+            </b-button>
           </b-button-group>
         </b-col>
         <b-col cols="12">
@@ -211,9 +225,9 @@ export default {
           {
             key: "nama_rembug",
             sortable: true,
-            label: 'Majelis',
-            thClass: 'text-center',
-            tdClass: 'text-center'
+            label: "Majelis",
+            thClass: "text-center",
+            tdClass: "text-center",
           },
           {
             key: "no_rekening",
@@ -328,6 +342,23 @@ export default {
             tdClass: "text-right",
           },
         ],
+        field_excel: {
+          No: {
+            field: "no_rekening",
+            callback: (value) => {
+              return this.getIndex(value);
+            },
+          },
+          Cabang: "nama_cabang",
+          Tanggal: "tanggal_registrasi",
+          Nama: "nama_anggota",
+          Majelis: "nama_rembug",
+          "No Rek": "no_rekening",
+          Produk: "nama_produk",
+          Plafon: "pokok",
+          Margin: "margin",
+          "JK Waktu": "jangka_waktu",
+        },
         items: [],
         loading: false,
         totalRows: 0,
@@ -366,6 +397,7 @@ export default {
   mounted() {
     this.doGet();
     this.doGetCabang();
+    this.doGetReport();
   },
   methods: {
     ...helper,
@@ -419,6 +451,43 @@ export default {
           orientation: "landscape",
         },
       });
+    },
+    csvExport(arrData) {
+      let csvData = [];
+      arrData.map((item, index) => {
+        let cData = {
+          No: index + 1,
+          Cabang: item.nama_cabang,
+          Tanggal: item.tanggal_registrasi,
+          Nama: item.nama_anggota,
+          Majelis: item.nama_rembug,
+          "No Rek": item.no_rekening,
+          Produk: item.nama_produk,
+          Plafon: item.pokok,
+          Margin: item.margin,
+          "JK Waktu": item.jangka_waktu,
+        };
+        csvData.push(cData);
+      });
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += [
+        Object.keys(csvData[0]).join(";"),
+        ...csvData.map((item) => Object.values(item).join(";")),
+      ]
+        .join("\n")
+        .replace(/(^\[)|(\]$)/gm, "");
+
+      const data = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", data);
+      link.setAttribute("download", "Pencairan_pembiayaan.csv");
+      link.click();
+    },
+    getIndex(value) {
+      let index = this.report.items.findIndex(
+        (val) => val.no_rekening == value
+      );
+      return index + 1;
     },
     getCabangName(id) {
       if (id > 0) {
