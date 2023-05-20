@@ -267,13 +267,13 @@ const easycoApi = {
     return axios.get(url, config);
   },
   verifikasiAkadApprove(payload, token) {
-    let url = "registrasiakad/approve" + payload;
+    let url = "registrasiakad/approve";
     let config = {
       headers: {
         token: token,
       },
     };
-    return axios.get(url, config);
+    return axios.post(url, payload, config);
   },
   verifikasiAkadReject(payload, token) {
     let url = "registrasiakad/reject" + payload;
