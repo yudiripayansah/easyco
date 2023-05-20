@@ -29,16 +29,8 @@
                   </b-input-group>
                 </b-col>
                 <b-col cols="4">
-<<<<<<< HEAD
                   <b-input-group prepend="Majelis" class="mb-3">
                     <b-form-select v-model="paging.rembug" :options="opt.rembug" />
-=======
-                  <b-input-group prepend="Rembug" class="mb-3">
-                    <b-form-select
-                      v-model="paging.rembug"
-                      :options="opt.rembug"
-                    />
->>>>>>> 6e4eba65fed1847d7c813c129243cd98ce6e6b0d
                   </b-input-group>
                 </b-col>
                 <b-col cols="6">
