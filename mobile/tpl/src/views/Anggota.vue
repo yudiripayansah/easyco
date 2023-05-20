@@ -7,7 +7,12 @@
       Anggota
     </h6>
     <Rembug class="mt-5" target="transaksi/dashboard" :list="list" @refreshAnggota="getAnggota" :total="total"/>
-    <Toast :show="alert.show" :msg="alert.msg"/>
+    <v-snackbar
+      v-model="alert.show"
+      :timeout="5000"
+    >
+      {{ alert.msg }}
+    </v-snackbar>
   </div>
 </template>
 <script>
@@ -57,8 +62,12 @@ export default {
       }
       let payload = new FormData()
       payload.append('kode_rembug', kode_rembug)
-      if(today)
+      if(today) {
         payload.append('today', today)
+      }
+      else {
+        payload.append('today', this.getDate())
+      }
       this.list.anggota = []
       this.list.loading = true
       try {
@@ -97,7 +106,7 @@ export default {
       let day = today.getDate()
       let month = today.getMonth()+1
       let year = today.getFullYear()
-      return `${day}/${month}/${year}`
+      return `${year}-${month}-${day}`
     },
   },
   mounted() {

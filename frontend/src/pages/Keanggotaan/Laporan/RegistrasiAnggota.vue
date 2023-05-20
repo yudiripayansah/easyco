@@ -34,9 +34,7 @@
             >
               PDF
             </b-button>
-            <b-button text="Button" variant="success" @click="exportXls()">
-              XLS
-            </b-button>
+            <b-button text="Button" variant="success" @click="exportXls()"> XLS </b-button>
             <b-button text="Button" variant="warning"> CSV </b-button>
           </b-button-group>
         </b-col>
@@ -135,8 +133,8 @@
 </template>
   
 <script>
-import html2pdf from "html2pdf.js";
 import helper from "@/core/helper";
+import html2pdf from "html2pdf.js";
 import { mapGetters } from "vuex";
 import easycoApi from "@/core/services/easyco.service";
 export default {
@@ -163,9 +161,9 @@ export default {
           {
             key: "nama_rembug",
             sortable: true,
-            label: "Nama Majelis",
-            thClass: "text-center",
-            tdClass: "",
+            label: 'Nama Majelis',
+            thClass: 'text-center',
+            tdClass: ''
           },
           {
             key: "nama_cabang",
@@ -266,21 +264,6 @@ export default {
             tdClass: "",
           },
         ],
-        field_excel: {
-          No: {
-            field: "nama_anggota",
-            callback: (value) => {
-              return this.getIndex(value);
-            },
-          },
-          Nama: "nama_anggota",
-          Majelis: "nama_rembug",
-          Cabang: "nama_cabang",
-          Desa: "nama_rembug",
-          "No Tlp": "no_telp",
-          Alamat: "alamat",
-          "TGL Gabung": "tgl_gabung",
-        },
         items: [],
         loading: false,
         totalRows: 0,
@@ -318,7 +301,6 @@ export default {
   mounted() {
     this.doGet();
     this.doGetCabang();
-    this.doGetReport();
   },
   methods: {
     ...helper,
@@ -374,16 +356,16 @@ export default {
       });
     },
     async exportXls() {
-      let payload = `kode_cabang=${this.paging.cabang}&kode_rembug=~&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
-      let req = await easycoApi.anggotaExcel(payload);
-      console.log(req.data);
-      const url = window.URL.createObjectURL(new Blob([req.data]));
-      const link = document.createElement("a");
-      let fileName = "Anggota_Masuk.xls";
-      link.href = url;
-      link.setAttribute("download", fileName);
-      document.body.appendChild(link);
-      link.click();
+      let payload = `kode_cabang=${this.paging.cabang}&kode_rembug=~&from_date=${this.paging.from}&thru_date=${this.paging.to}`
+      let req = await easycoApi.anggotaExcel(payload)
+      console.log(req.data)
+      const url = window.URL.createObjectURL(new Blob([req.data]))
+      const link = document.createElement('a')
+      let fileName = 'Anggota_Masuk.xls'
+      link.href = url
+      link.setAttribute('download', fileName)
+      document.body.appendChild(link)
+      link.click()
     },
     getCabangName(id) {
       if (id > 0) {
@@ -433,7 +415,7 @@ export default {
       payload.perPage = 10;
       this.table.loading = true;
       try {
-        let req = await easycoApi.rembugRead(payload.cabang, this.user.token);
+        let req = await easycoApi.anggotaRead(payload, this.user.token);
         let { data, status, msg, total } = req.data;
         if (status) {
           this.table.items = data;
@@ -472,40 +454,22 @@ export default {
         this.notify("danger", "Error", error);
       }
     },
-    csvExport(arrData) {
-      let csvData = [];
-      arrData.map((item, index) => {
-        let cData = {
-          No: index + 1,
-          Nama: item.nama_anggota,
-          Majelis: item.nama_rembug,
-          Cabang: item.nama_cabang,
-          Desa: item.nama_rembug,
-          "No Tlp": item.no_telp,
-          Alamat: item.alamat,
-          "TGL Gabung": item.tgl_gabung,
-        };
-        csvData.push(cData);
-      });
-      let csvContent = "data:text/csv;charset=utf-8,";
-      csvContent += [
-        Object.keys(csvData[0]).join(";"),
-        ...csvData.map((item) => Object.values(item).join(";")),
-      ]
-        .join("\n")
-        .replace(/(^\[)|(\]$)/gm, "");
-
-      const data = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", data);
-      link.setAttribute("download", "Pengajuan_Pembiayaan.csv");
-      link.click();
-    },
-    getIndex(value) {
-      let index = this.report.items.findIndex(
-        (val) => val.nama_anggota == value
-      );
-      return index + 1;
+    async excel() {
+      let payload = this.paging;
+      try {
+        let req = await easycoApi.anggotaExcel(payload, this.user.token);
+        console.log(req);
+        let fileName = "Laporan Anggota.xls";
+        const url = window.URL.createObjectURL(new Blob([req.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+      } catch (error) {
+        console.log(error);
+        this.notify("danger", "Error", error);
+      }
     },
     doInfo(msg, title, variant) {
       this.$bvToast.toast(msg, {
