@@ -69,6 +69,8 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+
+  // laporan excel
   anggotaExcel(payload, token) {
     let url =
       "laporan/list/excel/anggota_masuk?"+payload;
@@ -80,6 +82,108 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
+  saldoAnggotaExcel(payload, token) {
+    let url =
+      "laporan/list/excel/saldo_anggota?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  pengajuanPembiayaanExcel(payload, token) {
+    let url =
+      "laporan/list/excel/pengajuan?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  pencairanPembiayaanExcel(payload, token) {
+    let url =
+      "laporan/list/excel/pencairan?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  registrasiAkadExcel(payload, token) {
+    let url =
+      "laporan/list/excel/regis_akad?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+
+  // laporan csv
+  anggotaCsv(payload, token) {
+    let url =
+      "laporan/list/csv/anggota_masuk?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  saldoAnggotaCsv(payload, token) {
+    let url =
+      "laporan/list/csv/saldo_anggota?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  pengajuanPembiayaanCsv(payload, token) {
+    let url =
+      "laporan/list/csv/pengajuan?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  pencairanPembiayaanCsv(payload, token) {
+    let url =
+      "laporan/list/csv/pencairan?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  registrasiAkadCsv(payload, token) {
+    let url =
+      "laporan/list/csv/regis_akad?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+
   // Petugas
   petugasRead(payload, token) {
     let url = "pengajuan/fa";

@@ -50,20 +50,10 @@
             >
               PDF
             </b-button>
-            <export-excel
-              class="btn btn-success"
-              :data="report.items"
-              :fields="report.field_excel"
-              worksheet="Sheet 1"
-              name="Registrasi_akad.xls"
-            >
+            <b-button text="Button" variant="success" @click="exportXls()">
               XLS
-            </export-excel>
-            <b-button
-              text="Button"
-              variant="warning"
-              @click="csvExport(report.items)"
-            >
+            </b-button>
+            <b-button text="Button" variant="warning" @click="exportCsv()">
               CSV
             </b-button>
           </b-button-group>
@@ -342,23 +332,6 @@ export default {
             tdClass: "text-right",
           },
         ],
-        field_excel: {
-          No: {
-            field: "no_rekening",
-            callback: (value) => {
-              return this.getIndex(value);
-            },
-          },
-          Cabang: "nama_cabang",
-          Tanggal: "tanggal_registrasi",
-          Nama: "nama_anggota",
-          Majelis: "nama_rembug",
-          "No Rek": "no_rekening",
-          Produk: "nama_produk",
-          Plafon: "pokok",
-          Margin: "margin",
-          "JK Waktu": "jangka_waktu",
-        },
         items: [],
         loading: false,
         totalRows: 0,
@@ -450,43 +423,31 @@ export default {
         },
       });
     },
-    csvExport(arrData) {
-      let csvData = [];
-      arrData.map((item, index) => {
-        let cData = {
-          No: index + 1,
-          Cabang: item.nama_cabang,
-          Tanggal: item.tanggal_registrasi,
-          Nama: item.nama_anggota,
-          Majelis: item.nama_rembug,
-          "No Rek": item.no_rekening,
-          Produk: item.nama_produk,
-          Plafon: item.pokok,
-          Margin: item.margin,
-          "JK Waktu": item.jangka_waktu,
-        };
-        csvData.push(cData);
-      });
-      let csvContent = "data:text/csv;charset=utf-8,";
-      csvContent += [
-        Object.keys(csvData[0]).join(";"),
-        ...csvData.map((item) => Object.values(item).join(";")),
-      ]
-        .join("\n")
-        .replace(/(^\[)|(\]$)/gm, "");
-
-      const data = encodeURI(csvContent);
+    async exportXls() {
+      let payload = `kode_cabang=${this.paging.cabang}&jenis_pembiayaan=9&kode_petugas=~&kode_rembug=~&produk=99&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let req = await easycoApi.registrasiAkadExcel(payload);
+      console.log(req.data);
+      const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
-      link.setAttribute("href", data);
-      link.setAttribute("download", "Registrasi_Akad.csv");
+      let fileName = "Registrasi_Akad.xls";
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
       link.click();
     },
-    getIndex(value) {
-      let index = this.report.items.findIndex(
-        (val) => val.no_rekening == value
-      );
-      return index + 1;
+    async exportCsv() {
+      let payload = `kode_cabang=${this.paging.cabang}&jenis_pembiayaan=9&kode_petugas=~&kode_rembug=~&produk=99&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let req = await easycoApi.registrasiAkadCsv(payload);
+      console.log(req.data);
+      const url = window.URL.createObjectURL(new Blob([req.data]));
+      const link = document.createElement("a");
+      let fileName = "Registrasi_Akad.csv";
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
     },
+
     getCabangName(id) {
       if (id > 0) {
         let cabangName = this.opt.cabang.find((i) => i.value == id);
