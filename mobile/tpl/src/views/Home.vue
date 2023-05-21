@@ -16,25 +16,25 @@
           <v-col cols="6" class="d-flex justify-end align-center">
             <div style="width: 100%;" class="blue lighten-3 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
             <span class="text-caption font-weight-bold blue--text text--darken-1">Saldo Awal</span>
-            <span class="text-body-2 font-weight-bold white--text text--darken-1">Rp {{kasPetugas.saldoAwal}}</span>
+            <span class="text-body-2 font-weight-bold white--text text--darken-1">Rp {{thousand(kasPetugas.saldoAwal)}}</span>
             </div>
           </v-col>
           <v-col cols="6" class="d-flex justify-start align-center">
             <div style="width: 100%;" class="green lighten-3 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
             <span class="text-caption font-weight-bold green--text text--darken-1">Saldo Akhir</span>
-            <span class="text-body-2 font-weight-bold white--text text--darken-1">Rp {{kasPetugas.saldoAkhir}}</span>
+            <span class="text-body-2 font-weight-bold white--text text--darken-1">Rp {{thousand(kasPetugas.saldoAkhir)}}</span>
             </div>
           </v-col>
           <v-col cols="6" class="d-flex justify-end align-center">
             <div style="width: 100%;" class="light-green lighten-3 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
             <span class="text-caption font-weight-bold light-green--text text--darken-1">Kas Masuk</span>
-            <span class="text-body-2 font-weight-bold white--text text--darken-1">Rp {{kasPetugas.kasMasuk}}</span>
+            <span class="text-body-2 font-weight-bold white--text text--darken-1">Rp {{thousand(kasPetugas.kasMasuk)}}</span>
             </div>
           </v-col>
           <v-col cols="6" class="d-flex justify-start align-center">
             <div style="width: 100%;" class="indigo lighten-3 d-flex justify-center flex-column align-center pa-3 rounded-lg elevation-3">
             <span class="text-caption font-weight-bold indigo--text text--darken-1">Kas Keluar</span>
-            <span class="text-body-2 font-weight-bold white--text text--darken-1">Rp {{kasPetugas.kasKeluar}}</span>
+            <span class="text-body-2 font-weight-bold white--text text--darken-1">Rp {{thousand(kasPetugas.kasKeluar)}}</span>
             </div>
           </v-col>
           <v-col cols="6" class="d-flex justify-end align-center">
@@ -109,7 +109,12 @@
         </v-row>
       </v-card>
     </div>
-    <Toast :show="alert.show" :msg="alert.msg"/>
+    <v-snackbar
+      v-model="alert.show"
+      :timeout="5000"
+    >
+      {{ alert.msg }}
+    </v-snackbar>
   </div>
 </template>
 
@@ -120,6 +125,7 @@ import {
   mapActions
 } from "vuex";
 import services from "@/services";
+import helper from "@/utils/helper";
 export default {
   name: 'Home',
   components: {
@@ -128,6 +134,12 @@ export default {
   data() {
     return {
       rembug: [],
+      kasPetugas: {
+        saldoAwal: 0,
+        saldoAkhir: 0,
+        kasMasuk: 0,
+        kasKeluar: 0
+      },
       alert: {
         show: false,
         msg: ''
@@ -135,15 +147,22 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['user','kasPetugas'])
+    ...mapGetters(['user'])
   },
   methods: {
+    ...helper,
     ...mapActions(['logout','setKasPetugas']),
     doLogout() {
       this.logout();
       this.$router.push('/login').catch(()=>{});
     },
     async getRembug() {
+      this.kasPetugas = {
+        saldoAwal: 0,
+        saldoAkhir: 0,
+        kasMasuk: 0,
+        kasKeluar: 0
+      }
       let hari_transaksi = new Date().getDay();
       hari_transaksi = this.user.hari_transaksi
       let payload = new FormData()
@@ -153,6 +172,43 @@ export default {
         let req = await services.infoRembug(payload, this.user.token)
         if(req.status === 200) {
           this.rembug = req.data.data
+          this.rembug.map((item)=> {
+            this.getAnggota(item.kode_rembug, this.getDate())
+          })
+        } else {
+          this.alert = {
+            show: true,
+            msg: data.message
+          }
+        }
+      } catch (error) {
+        this.alert = {
+          show: true,
+          msg: error
+        }
+      }
+    },
+    async getAnggota(kode_rembug, today) {
+      let payload = new FormData()
+      payload.append('kode_rembug', kode_rembug)
+      if(today)
+        payload.append('today', today)
+      try {
+        let req = await services.infoMember(payload, this.user.token)
+        if(req.status === 200) {
+          let anggota = req.data.data
+          let setoran = 0
+          let penarikan = 0
+          if(anggota){
+            anggota.map((item) => {
+              setoran = setoran + Number(item.total_penerimaan)
+              penarikan = penarikan + Number(item.total_penarikan)
+            })
+          }
+          this.kasPetugas.kasMasuk = this.kasPetugas.kasMasuk + Number(setoran)
+          this.kasPetugas.kasKeluar = this.kasPetugas.kasKeluar + Number(penarikan)
+          this.kasPetugas.saldoAwal = Number(this.user.saldo_awal)
+          this.kasPetugas.saldoAkhir = this.kasPetugas.saldoAwal + this.kasPetugas.kasMasuk - this.kasPetugas.kasKeluar
         } else {
           this.alert = {
             show: true,
@@ -176,7 +232,14 @@ export default {
         }
         this.setKasPetugas(kasPetugas)
       }
-    }
+    },
+    getDate(){
+      let today = new Date()
+      let day = today.getDate()
+      let month = today.getMonth()+1
+      let year = today.getFullYear()
+      return `${year}-${month}-${day}`
+    },
   },
   mounted() {
     this.getRembug()

@@ -299,7 +299,12 @@
         Proses
       </v-btn>
     </v-container>
-    <Toast :show="alert.show" :msg="alert.msg"/>
+    <v-snackbar
+      v-model="alert.show"
+      :timeout="5000"
+    >
+      {{ alert.msg }}
+    </v-snackbar>
   </div>
 </template>
 <script>
