@@ -403,15 +403,16 @@ export default {
         page: 1,
         perPage: 10,
         sortDesc: true,
-        sortBy: "kop_anggota.id",
+        sortBy: "kop_pembiayaan.tanggal_registrasi",
         search: "",
         status: "~",
-        cabang: 0,
+        cabang: "",
         from: null,
         to: null,
       },
       opt: {
         cabang: [],
+        no_rekening: [],
       },
     };
   },
@@ -427,8 +428,9 @@ export default {
     },
   },
   mounted() {
-    // this.doGet()
+    // this.doGet();
     this.doGetCabang();
+    this.doGetNorek();
   },
   methods: {
     ...helper,
@@ -496,6 +498,32 @@ export default {
         return null;
       }
     },
+    async doGetNorek() {
+      let payload = {
+        perPage: "~",
+        page: 1,
+        sortBy: "kop_pembiayaan.no_rekening",
+        sortDir: "ASC",
+        search: "",
+      };
+      try {
+        let req = await easycoApi.regisAkadRead(payload, this.user.token);
+        console.log(req);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.no_rekening = [];
+          data.map((item) => {
+            this.opt.no_rekening.push({
+              value: item.no_rekening,
+              text: item.no_rekening,
+              data: item,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
     async doGetCabang() {
       let payload = {
         perPage: "~",
@@ -531,7 +559,7 @@ export default {
       payload.perPage = 10;
       this.table.loading = true;
       try {
-        let req = await easycoApi.anggotaRead(payload, this.user.token);
+        let req = await easycoApi.regisAkadRead(payload, this.user.token);
         let { data, status, msg, total } = req.data;
         if (status) {
           this.table.items = data;
@@ -567,23 +595,6 @@ export default {
       } catch (error) {
         this.report.loading = false;
         console.error(error);
-        this.notify("danger", "Error", error);
-      }
-    },
-    async excel() {
-      let payload = this.paging;
-      try {
-        let req = await easycoApi.anggotaExcel(payload, this.user.token);
-        console.log(req);
-        let fileName = "Laporan Anggota.xls";
-        const url = window.URL.createObjectURL(new Blob([req.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", fileName);
-        document.body.appendChild(link);
-        link.click();
-      } catch (error) {
-        console.log(error);
         this.notify("danger", "Error", error);
       }
     },

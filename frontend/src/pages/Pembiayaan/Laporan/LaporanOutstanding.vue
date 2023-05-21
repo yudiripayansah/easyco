@@ -30,10 +30,13 @@
                 </b-col>
                 <b-col cols="4">
                   <b-input-group prepend="Majelis" class="mb-3">
-                    <b-form-select v-model="paging.rembug" :options="opt.rembug" />
+                    <b-form-select
+                      v-model="paging.rembug"
+                      :options="opt.rembug"
+                    />
                   </b-input-group>
                 </b-col>
-                <b-col cols="6">
+                <!-- <b-col cols="6">
                   <b-input-group prepend="Dari Tanggal">
                     <b-form-datepicker
                       v-model="paging.from"
@@ -58,7 +61,7 @@
                       locale="id"
                     />
                   </b-input-group>
-                </b-col>
+                </b-col> -->
               </div>
             </b-col>
             <b-col
@@ -76,8 +79,12 @@
                 >
                   PDF
                 </b-button>
-                <b-button text="Button" variant="success"> XLS </b-button>
-                <b-button text="Button" variant="warning"> CSV </b-button>
+                <b-button text="Button" variant="success" @click="exportXls()">
+                  XLS
+                </b-button>
+                <b-button text="Button" variant="warning" @click="exportCsv()">
+                  CSV
+                </b-button>
               </b-button-group>
             </b-col>
           </b-row>
@@ -136,10 +143,10 @@
         </h5>
         <h5 class="text-center">LAPORAN OUTSTANDING</h5>
         <h5 class="text-center" v-show="report.cabang">{{ report.cabang }}</h5>
-        <h6 class="text-center mb-5 pb-5" v-show="report.from && report.to">
+        <!-- <h6 class="text-center mb-5 pb-5" v-show="report.from && report.to">
           Tanggal {{ dateFormatId(report.from) }} s.d
           {{ dateFormatId(report.to) }}
-        </h6>
+        </h6> -->
         <b-table
           responsive
           bordered
@@ -231,9 +238,9 @@ export default {
           {
             key: "nama_rembug",
             sortable: true,
-            label: 'Majelis',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "Majelis",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
             key: "nama_produk",
@@ -443,6 +450,30 @@ export default {
           orientation: "landscape",
         },
       });
+    },
+    async exportXls() {
+      let payload = `kode_cabang=${this.paging.cabang}&kode_petugas=${this.paging.petugas}&kode_rembug=${this.paging.rembug}`;
+      let req = await easycoApi.outstandingPembiayaanExcel(payload);
+      console.log(req.data);
+      const url = window.URL.createObjectURL(new Blob([req.data]));
+      const link = document.createElement("a");
+      let fileName = "Outstanding_Pembiayaan.xls";
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+    },
+    async exportCsv() {
+      let payload = `kode_cabang=${this.paging.cabang}&kode_petugas=${this.paging.petugas}&kode_rembug=${this.paging.rembug}`;
+      let req = await easycoApi.outstandingPembiayaanCsv(payload);
+      console.log(req.data);
+      const url = window.URL.createObjectURL(new Blob([req.data]));
+      const link = document.createElement("a");
+      let fileName = "Outstanding_Pembiayaan.csv";
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
     },
     getCabangName(id) {
       if (id > 0) {

@@ -6,8 +6,11 @@
         <b-col cols="8" class="mb-5">
           <div class="row">
             <b-col cols="12">
-              <b-input-group prepend="Cabang" class="mb-3">
-                <b-form-select v-model="paging.cabang" :options="opt.cabang" />
+              <b-input-group prepend="Petugas" class="mb-3">
+                <b-form-select
+                  v-model="paging.petugas"
+                  :options="opt.petugas"
+                />
               </b-input-group>
             </b-col>
             <b-col>
@@ -70,32 +73,8 @@
         </b-col>
       </b-row>
     </b-card>
-    <!-- <b-modal title="PREVIEW LAPORAN SALDO ANGGOTA" id="modal-pdf" hide-footer size="xl" centered>
-        <div id="table-print" class="p-5">
-          <h5 class="text-center">KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )</h5>
-          <h5 class="text-center">LAPORAN SALDO ANGGOTA</h5>
-          <h5 class="text-center" v-show="report.cabang">{{ report.cabang }}</h5>
-          <h6 class="text-center mb-5 pb-5" v-show="report.from && report.to">Tanggal {{ dateFormatId(report.from) }} s.d
-            {{ dateFormatId(report.to) }}</h6>
-          <b-table responsive bordered outlined small striped hover :fields="report.fields" :items="report.items"
-            show-empty :emptyText="report.loading ? 'Memuat data...' : 'Tidak ada data'" class="mt-5 pt-5 d-block">
-            <template #cell(no)="item">
-              {{ item.index + 1 }}
-            </template>
-          </b-table>
-        </div>
-        <b-row>
-          <b-col cols="12" sm="12" class="d-flex justify-content-end border-top pt-5">
-            <b-button variant="secondary" @click="$bvModal.hide('modal-pdf')">Cancel
-            </b-button>
-            <b-button variant="danger" type="button" class="ml-3" @click="doPrintPdf()">
-              Simpan PDF
-            </b-button>
-          </b-col>
-        </b-row>
-      </b-modal> -->
     <b-modal
-      title="PREVIEW LAPORAN SALDO ANGGOTA"
+      title="PREVIEW LAPORAN TRANSAKSI KAS PETUGAS"
       id="modal-pdf"
       hide-footer
       size="xl"
@@ -105,7 +84,7 @@
         <h5 class="text-center">
           KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
         </h5>
-        <h5 class="text-center">LAPORAN SALDO ANGGOTA</h5>
+        <h5 class="text-center">LAPORAN TRANSAKSI KAS PETUGAS</h5>
         <h5 class="text-center" v-show="report.cabang">{{ report.cabang }}</h5>
         <h6 class="text-center mb-5 pb-5" v-show="report.from && report.to">
           Tanggal {{ dateFormatId(report.from) }} s.d
@@ -114,21 +93,12 @@
         <table class="table table-bordered table-striped">
           <thead>
             <tr class="text-center">
-              <th rowspan="2">No</th>
-              <th rowspan="2">No Anggota</th>
-              <th rowspan="2">Nama Anggota</th>
-              <th rowspan="2">Nama Majelis</th>
-              <th rowspan="2">Nama Cabang</th>
-              <th rowspan="2">Desa</th>
-              <th rowspan="2">No Telp</th>
-              <th colspan="5">Saldo</th>
-            </tr>
-            <tr class="text-center">
-              <th>Simpok</th>
-              <th>Simwa</th>
-              <th>Sukarela</th>
-              <th>Taber</th>
-              <th>Pembiayaan</th>
+              <th>No</th>
+              <th>Tanggal</th>
+              <th>Keterangan</th>
+              <th>Debit</th>
+              <th>Kredit</th>
+              <th>Saldo</th>
             </tr>
           </thead>
           <tbody v-if="report.items.length > 0">
@@ -137,17 +107,11 @@
               :key="`report-${reportIndex}`"
             >
               <td>{{ reportIndex + 1 }}</td>
-              <td>{{ report.no_anggota }}</td>
-              <td>{{ report.nama_anggota }}</td>
-              <td>{{ report.nama_rembug }}</td>
-              <td>{{ report.nama_cabang }}</td>
-              <td>{{ report.desa }}</td>
-              <td>{{ report.no_telp }}</td>
-              <td class="text-right">Rp {{ thousand(report.simpok) }}</td>
-              <td class="text-right">Rp {{ thousand(report.simwa) }}</td>
-              <td class="text-right">Rp {{ thousand(report.simsuk) }}</td>
-              <td class="text-right">Rp {{ thousand(0) }}</td>
-              <td class="text-right">Rp {{ thousand(0) }}</td>
+              <td>{{ report.tanggal }}</td>
+              <td>{{ report.keterangan }}</td>
+              <td>{{ report.debit }}</td>
+              <td>{{ report.kredit }}</td>
+              <td>{{ report.saldo }}</td>
             </tr>
           </tbody>
           <tbody v-else>
@@ -187,7 +151,7 @@
     </b-modal>
   </div>
 </template>
-    
+  
 <script>
 import helper from "@/core/helper";
 import html2pdf from "html2pdf.js";
@@ -208,51 +172,37 @@ export default {
             tdClass: "text-center",
           },
           {
-            key: "nama_anggota",
+            key: "tanggal",
             sortable: true,
-            label: "Nama Anggota",
+            label: "Tanggal",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "nama_rembug",
+            key: "keterangan",
             sortable: true,
-            label: "Nama Majelis",
+            label: "Keterangan",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "nama_cabang",
+            key: "debit",
             sortable: true,
-            label: "Nama Cabang",
+            label: "Debit",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "desa",
+            key: "kredit",
             sortable: true,
-            label: "Desa",
+            label: "Kredit",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "no_telp",
+            key: "saldo",
             sortable: true,
-            label: "No Telp",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "alamat",
-            sortable: true,
-            label: "Alamat",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "tgl_gabung",
-            sortable: true,
-            label: "Tanggal Gabung",
+            label: "Saldo",
             thClass: "text-center",
             tdClass: "",
           },
@@ -271,30 +221,30 @@ export default {
             tdClass: "text-center",
           },
           {
-            key: "nama_anggota",
+            key: "tanggal",
             sortable: false,
-            label: "Nama Anggota",
+            label: "Tanggal",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "nama_rembug",
+            key: "no_trans",
             sortable: false,
-            label: "Nama Rembug",
+            label: "No Trans",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "nama_cabang",
+            key: "keterangan",
             sortable: false,
-            label: "Nama Cabang",
+            label: "keterangan",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "desa",
+            key: "no_akun",
             sortable: false,
-            label: "Desa",
+            label: "No Akun",
             thClass: "text-center",
             tdClass: "",
           },
@@ -306,16 +256,16 @@ export default {
             tdClass: "",
           },
           {
-            key: "alamat",
+            key: "debit",
             sortable: false,
-            label: "Alamat",
+            label: "Debit",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "tgl_gabung",
+            key: "kredit",
             sortable: false,
-            label: "Tanggal Gabung",
+            label: "kredit",
             thClass: "text-center",
             tdClass: "",
           },
@@ -339,7 +289,7 @@ export default {
         to: null,
       },
       opt: {
-        cabang: [],
+        petugas: [],
       },
     };
   },
@@ -355,13 +305,13 @@ export default {
     },
   },
   mounted() {
-    this.doGet();
-    this.doGetCabang();
+    // this.doGet()
+    this.doGetPetugas();
   },
   methods: {
     ...helper,
     doPrintPdf() {
-      let filename = "LAPORAN SALDO ANGGOTA";
+      let filename = "LAPORAN TRANSAKSI KAS PETUGAS";
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
       }
@@ -391,7 +341,7 @@ export default {
         });
     },
     doSavePdf() {
-      let filename = "LAPORAN SALDO ANGGOTA";
+      let filename = "LAPORAN TRANSAKSI KAS PETUGAS";
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
       }
@@ -412,64 +362,44 @@ export default {
       });
     },
     async exportXls() {
-      let payload = `kode_cabang=${this.paging.cabang}&kode_rembug=~&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
-      let req = await easycoApi.saldoAnggotaExcel(payload);
-      console.log(req.data);
+      let payload = `kode_kas_petugas=${this.paging.petugas}&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let req = await easycoApi.kasPetugasExcel(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
-      let fileName = "Saldo_Anggota.xls";
+      let fileName = "Transaksi_Kas_Petugas.xls";
       link.href = url;
       link.setAttribute("download", fileName);
       document.body.appendChild(link);
       link.click();
     },
     async exportCsv() {
-      let payload = `kode_cabang=${this.paging.cabang}&kode_rembug=~&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
-      let req = await easycoApi.saldoAnggotaCsv(payload);
-      console.log(req.data);
+      let payload = `kode_kas_petugas=${this.paging.petugas}&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let req = await easycoApi.kasPetugasCsv(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
-      let fileName = "Saldo_Anggota.csv";
+      let fileName = "Transaksi_Kas_Petugas.csv";
       link.href = url;
       link.setAttribute("download", fileName);
       document.body.appendChild(link);
       link.click();
     },
-    getCabangName(id) {
-      if (id > 0) {
-        let cabangName = this.opt.cabang.find((i) => i.value == id);
-        if (cabangName) {
-          console.log(cabangName.text);
-          return cabangName.text;
-        } else {
-          return null;
-        }
-      } else {
-        return null;
-      }
-    },
-    async doGetCabang() {
+    async doGetPetugas() {
       let payload = {
         perPage: "~",
         page: 1,
-        sortBy: "nama_cabang",
+        sortBy: "kode_kas_petugas",
         sortDir: "ASC",
         search: "",
       };
       try {
-        let req = await easycoApi.cabangRead(payload, this.user.token);
+        let req = await easycoApi.kodeKasPetugas(payload, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
-          this.opt.cabang = [
-            {
-              value: 0,
-              text: "All",
-            },
-          ];
+          this.opt.petugas = [];
           data.map((item) => {
-            this.opt.cabang.push({
-              value: item.kode_cabang,
-              text: item.nama_cabang,
+            this.opt.petugas.push({
+              value: item.kode_kas_petugas,
+              text: item.nama_kas_petugas,
             });
           });
         }
@@ -542,4 +472,3 @@ export default {
   },
 };
 </script>
-  

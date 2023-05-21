@@ -115,9 +115,40 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
+  outstandingPembiayaanExcel(payload, token) {
+    let url =
+      "laporan/list/excel/saldo_outstanding?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
   registrasiAkadExcel(payload, token) {
     let url =
       "laporan/list/excel/regis_akad?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  kasPetugasExcel(payload, token){
+    let url = "laporan/list/excel/kas_petugas?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  jurnalTransaksiExcel(payload, token){
+    let url = "laporan/list/excel/jurnal_transaksi?"+payload;
     let config = {
       headers: {
         token: token,
@@ -172,9 +203,30 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
+  outstandingPembiayaanCsv(payload, token) {
+    let url =
+      "laporan/list/csv/saldo_outstanding?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
   registrasiAkadCsv(payload, token) {
     let url =
       "laporan/list/csv/regis_akad?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  kasPetugasCsv(payload, token){
+    let url = "laporan/list/csv/kas_petugas?"+payload;
     let config = {
       headers: {
         token: token,
@@ -1116,6 +1168,18 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+  // LAPORAN TRANSAKSI KAS PETUGAS
+  kodeKasPetugas(payload, token){
+    let url = "kaspetugas/read";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+ 
+
   // GET KODE CABANG
   getKodeCabang(payload, token) {
     let url = "cabang/read";
