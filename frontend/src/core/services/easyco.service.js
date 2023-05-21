@@ -157,6 +157,16 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
+  kartuAngsuranExcel(payload, token){
+    let url = "laporan/list/excel/kartu_angsuran?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
 
   // laporan csv
   anggotaCsv(payload, token) {
@@ -227,6 +237,16 @@ const easycoApi = {
   },
   kasPetugasCsv(payload, token){
     let url = "laporan/list/csv/kas_petugas?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  kartuAngsuranCsv(payload, token){
+    let url = "laporan/list/csv/kartu_angsuran?"+payload;
     let config = {
       headers: {
         token: token,

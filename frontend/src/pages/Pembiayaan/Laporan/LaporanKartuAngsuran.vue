@@ -123,8 +123,12 @@
             >
               PDF
             </b-button>
-            <b-button text="Button" variant="success"> XLS </b-button>
-            <b-button text="Button" variant="warning"> CSV </b-button>
+            <b-button text="Button" variant="success" @click="exportXls()">
+              XLS
+            </b-button>
+            <b-button text="Button" variant="warning" @click="exportCsv()">
+              CSV
+            </b-button>
           </b-button-group>
         </b-col>
         <b-col cols="12">
@@ -484,6 +488,29 @@ export default {
           orientation: "landscape",
         },
       });
+    },
+    async exportXls() {
+      let payload = `no_rekening=${this.paging.no_rekening}`;
+      let req = await easycoApi.kartuAngsuranExcel(payload);
+      console.log(req.data);
+      const url = window.URL.createObjectURL(new Blob([req.data]));
+      const link = document.createElement("a");
+      let fileName = "Pengajuan_Pembiayaan.xls";
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+    },
+    async exportCsv() {
+      let payload = `no_rekening=${this.paging.no_rekening}`;
+      let req = await easycoApi.kartuAngsuranCsv(payload);
+      const url = window.URL.createObjectURL(new Blob([req.data]));
+      const link = document.createElement("a");
+      let fileName = "Pengajuan_Pembiayaan.csv";
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
     },
     getCabangName(id) {
       if (id > 0) {
