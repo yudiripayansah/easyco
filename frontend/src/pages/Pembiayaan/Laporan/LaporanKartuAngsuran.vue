@@ -495,7 +495,7 @@ export default {
       console.log(req.data);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
-      let fileName = "Pengajuan_Pembiayaan.xls";
+      let fileName = "Kartu_Angsuran.xls";
       link.href = url;
       link.setAttribute("download", fileName);
       document.body.appendChild(link);
@@ -506,7 +506,7 @@ export default {
       let req = await easycoApi.kartuAngsuranCsv(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
-      let fileName = "Pengajuan_Pembiayaan.csv";
+      let fileName = "Kartu_Angsuran.csv";
       link.href = url;
       link.setAttribute("download", fileName);
       document.body.appendChild(link);
