@@ -390,7 +390,7 @@ export default {
       let req = await easycoApi.jurnalTransaksiExcel(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
-      let fileName = "Transaksi_Kas_Petugas.xls";
+      let fileName = "Jurnal_Transaksi.xls";
       link.href = url;
       link.setAttribute("download", fileName);
       document.body.appendChild(link);
