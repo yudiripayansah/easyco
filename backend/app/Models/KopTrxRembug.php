@@ -140,6 +140,7 @@ class KopTrxRembug extends Model
         COALESCE(g.biaya_administrasi,0) AS biaya_administrasi,
         COALESCE(g.biaya_asuransi_jiwa,0) AS biaya_asuransi_jiwa
         FROM kop_anggota AS ka
+        JOIN kop_trx_rembug AS h ON h.kode_rembug = ka.kode_rembug
         LEFT JOIN (
             SELECT
             kta.no_anggota,
@@ -208,9 +209,9 @@ class KopTrxRembug extends Model
             WHERE ktr.id_trx_rembug = ? AND kp.status_rekening = '1' AND kp.status_droping = '0'
             GROUP BY 1,2,3,4
         ) AS g ON g.no_anggota = ka.no_anggota
-        WHERE ka.status <> 2";
+        WHERE h.id_trx_rembug = ? AND ka.status <> 2";
 
-        $show = DB::select($statement, [$id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug]);
+        $show = DB::select($statement, [$id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug]);
 
         return $show;
     }
