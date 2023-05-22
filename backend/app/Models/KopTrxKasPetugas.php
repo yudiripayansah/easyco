@@ -13,7 +13,7 @@ class KopTrxKasPetugas extends Model
     use SoftDeletes;
 
     protected $table = 'kop_trx_kas_petugas';
-    protected $fillable = ['id_trx_kas_petugas', 'kode_kas_petugas', 'debit_credit', 'trx_date', 'voucher_date', 'created_by'];
+    protected $fillable = ['id_trx_kas_petugas', 'kode_kas_petugas', 'jenis_trx', 'jumlah_trx', 'keterangan', 'debit_credit', 'trx_date', 'kode_kas_teller', 'voucher_date', 'created_by'];
 
     public function validateAdd($validate)
     {
@@ -44,5 +44,30 @@ class KopTrxKasPetugas extends Model
         }
 
         return $res;
+    }
+
+    function get_history_cash($kode_kas_petugas, $from_date, $thru_date)
+    {
+        $show = KopTrxKasPetugas::select('*')
+            ->where('kode_kas_petugas', $kode_kas_petugas)
+            ->whereBetween('voucher_date', [$from_date, $thru_date])
+            ->orderBy('voucher_date')
+            ->orderBy('jenis_trx')
+            ->orderBy('created_at')
+            ->get();
+
+        return $show;
+    }
+
+    function get_detail_cash($kode_kas_petugas)
+    {
+        $show = KopTrxKasPetugas::select('kkp.*', 'kkp.nama_kas_petugas', 'kc.nama_cabang')
+            ->join('kop_kas_petugas AS kkp', 'kkp.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_petugas')
+            ->join('kop_pegawai AS kp', 'kp.kode_pgw', 'kkp.kode_petugas')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'kp.kode_cabang')
+            ->where('kop_trx_kas_petugas.kode_kas_petugas', $kode_kas_petugas)
+            ->first();
+
+        return $show;
     }
 }

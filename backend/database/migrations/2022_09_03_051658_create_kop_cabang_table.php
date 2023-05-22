@@ -15,6 +15,7 @@ class CreateKopCabangTable extends Migration
     {
         Schema::create('kop_cabang', function (Blueprint $table) {
             $table->id();
+            $table->string('area_cabang', 6)->nullable(TRUE);
             $table->string('kode_cabang', 6)->unique();
             $table->string('nama_cabang', 30);
             $table->string('induk_cabang', 6)->nullable(TRUE);

@@ -50,6 +50,7 @@ Route::prefix('cabang')->middleware('checkToken')->group(function () {
   Route::post('/create', [CabangController::class, 'create']);
   Route::post('/read', [CabangController::class, 'read']);
   Route::get('/detail', [CabangController::class, 'detail']);
+  Route::get('/dashboard', [CabangController::class, 'dashboard']);
   Route::post('/update', [CabangController::class, 'update']);
   Route::get('/delete', [CabangController::class, 'delete']);
 });
@@ -205,6 +206,7 @@ Route::prefix('pengajuan')->middleware('checkToken')->group(function () {
   Route::post('/read', [PengajuanController::class, 'read']);
   Route::get('/detail', [PengajuanController::class, 'detail']);
   Route::post('/update', [PengajuanController::class, 'update']);
+  Route::post('/update_komite', [PengajuanController::class, 'update_komite']);
   Route::get('/delete', [PengajuanController::class, 'delete']);
 });
 
@@ -228,7 +230,7 @@ Route::prefix('registrasiakad')->middleware('checkToken')->group(function () {
   Route::get('/detail', [RegistrasiAkadController::class, 'detail']);
   Route::post('/update', [RegistrasiAkadController::class, 'update']);
   Route::get('/delete', [RegistrasiAkadController::class, 'delete']);
-  Route::get('/approve', [RegistrasiAkadController::class, 'approve']);
+  Route::post('/approve', [RegistrasiAkadController::class, 'approve']);
   Route::get('/reject', [RegistrasiAkadController::class, 'reject']);
 });
 
@@ -236,7 +238,7 @@ Route::prefix('general_ledger')->middleware('checkToken')->group(function () {
   Route::post('/create', [TrxGl::class, 'create']);
 });
 
-Route::prefix('laporan')->middleware('checkToken')->group(function () {
+Route::prefix('laporan')->group(function () {
   Route::prefix('list')->group(function () {
     Route::prefix('excel')->group(function () {
       Route::get('/anggota_masuk', [LaporanController::class, 'list_excel_anggota_masuk']);
@@ -244,6 +246,10 @@ Route::prefix('laporan')->middleware('checkToken')->group(function () {
       Route::get('/regis_akad', [LaporanController::class, 'list_excel_regis_akad']);
       Route::get('/pencairan', [LaporanController::class, 'list_excel_pencairan']);
       Route::get('/saldo_anggota', [LaporanController::class, 'list_excel_saldo_anggota']);
+      Route::get('/saldo_outstanding', [LaporanController::class, 'list_excel_saldo_outstanding']);
+      Route::get('/kartu_angsuran', [LaporanController::class, 'list_excel_kartu_angsuran']);
+      Route::get('/kas_petugas', [LaporanController::class, 'list_excel_kas_petugas']);
+      Route::get('/jurnal_transaksi', [LaporanController::class, 'list_excel_jurnal_transaksi']);
     });
 
     Route::prefix('csv')->group(function () {
@@ -252,6 +258,9 @@ Route::prefix('laporan')->middleware('checkToken')->group(function () {
       Route::get('/regis_akad', [LaporanController::class, 'list_csv_regis_akad']);
       Route::get('/pencairan', [LaporanController::class, 'list_csv_pencairan']);
       Route::get('/saldo_anggota', [LaporanController::class, 'list_csv_saldo_anggota']);
+      Route::get('/saldo_outstanding', [LaporanController::class, 'list_csv_saldo_outstanding']);
+      Route::get('/kartu_angsuran', [LaporanController::class, 'list_csv_kartu_angsuran']);
+      Route::get('/kas_petugas', [LaporanController::class, 'list_csv_kas_petugas']);
     });
 
     Route::prefix('pdf')->group(function () {
@@ -275,6 +284,8 @@ Route::prefix('trx_rembug')->middleware('checkToken')->group(function () {
   Route::post('/read', [TrxRembug::class, 'read']);
   Route::post('/verifikasi', [TrxRembug::class, 'verifikasi']);
   Route::post('/proses_verifikasi', [TrxRembug::class, 'proses_verifikasi']);
+  Route::post('/read_trx_kas_petugas', [TrxRembug::class, 'read_trx_kas_petugas']);
+  Route::post('/proses_kas_petugas', [TrxRembug::class, 'proses_kas_petugas']);
 });
 /* END BACK OFFICE */
 

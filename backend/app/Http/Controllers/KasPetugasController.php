@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KopKasPetugas;
+use App\Models\KopUser;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -63,6 +64,11 @@ class KasPetugasController extends Controller
         $total = 0;
         $totalPage = 1;
 
+        $token = $request->header('token');
+        $param = array('token' => $token);
+        $get = KopUser::where($param)->first();
+        $cabang = $get->kode_cabang;
+
         if ($request->page) {
             $page = $request->page;
         }
@@ -87,7 +93,7 @@ class KasPetugasController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopKasPetugas::read($search, $sortBy, $sortDir, $offset, $perPage);
+        $read = KopKasPetugas::read($search, $sortBy, $sortDir, $offset, $perPage, $cabang);
 
         $data = array();
 

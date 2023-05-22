@@ -206,6 +206,8 @@ class PengajuanController extends Controller
         $data['ttd_suami'] = $ttd_suami;
         $data['ttd_ketua_majelis'] = $ttd_ketua_majelis;
         $data['ttd_tpl'] = $ttd_tpl;
+        $data['tanggal_pengajuan'] = date('Y-m-d', strtotime($request->tanggal_pengajuan));
+        $data['rencana_droping'] = date('Y-m-d', strtotime($request->rencana_droping));
 
         $data['keterangan_peruntukan'] = strtoupper($request->keterangan_peruntukan);
 
@@ -610,6 +612,39 @@ class PengajuanController extends Controller
                 'data' => $request->all(),
                 'msg' => $validate['msg'],
                 'error' => $validate['errors']
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    public function update_komite(Request $request)
+    {
+        $get = KopPengajuan::find($request->id);
+
+        $get->status_pengajuan = $request->status_pengajuan;
+
+        DB::beginTransaction();
+
+        try {
+            $get->save();
+
+            $res = array(
+                'status' => TRUE,
+                'data' => NULL,
+                'msg' => 'Berhasil!'
+            );
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            $res = array(
+                'status' => FALSE,
+                'data' => $request->all(),
+                'msg' => $e->getMessage()
             );
         }
 
