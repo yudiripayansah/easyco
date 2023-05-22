@@ -141,7 +141,7 @@ const menu = [
       },
       {
         target: 'verifikasi-akad',
-        label: 'Verifikasi Akad',
+        label: 'Pencairan',
         component: import('@/pages/Pembiayaan/VerifikasiAkad.vue'),
       },
       {
@@ -149,11 +149,13 @@ const menu = [
         label: 'Cetak Akad',
         component: import('@/pages/Dummy.vue'),
       },
+      /*
       {
         target: 'pencairan',
         label: 'Pencairan',
         component: import('@/pages/Dummy.vue'),
       },
+      */
       {
         target: 'laporan',
         label: 'Laporan',
