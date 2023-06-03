@@ -13,76 +13,23 @@
     </h6>
     <div>
       <Camera class="mt-5"/>
-      <v-select solo label="Rembug" class="mb-3 mt-3" hide-details/>
-      <v-select solo label="Pilih Anggota" class="mb-3" hide-details/>
-      <v-select solo label="No Pengajuan" class="mb-3" hide-details :items="opt.noPengajuan" v-model="form.noPengajuan"/>
-      <v-container class="pa-0 mb-3">
+      <v-select solo label="Rembug" class="mb-3 mt-3" hide-details :items="opt.rembug" v-model="form.rembug" @change="getAnggota()"/>
+      <v-select solo label="Pilih Anggota" class="mb-3" hide-details :items="opt.anggota" v-model="form.anggota" @change="setAnggota()"/>
+      <v-container class="pa-0 mb-3" v-show="aAnggota.nama_anggota != null">
         <v-card class="white elevation-3 rounded-lg pa-3 align-items-end mb-3">
           <v-container class="d-flex justify-space-between pa-0">
             <div class="d-flex flex-column">
-              <h5 class="text-h5 font-weight-bold">John Doe</h5>
-              <span class="text-caption grey--text">11228877665453</span>
-              <span class="indigo--text lighten-1 font-weight-black">Rembug Mawar</span>
+              <h5 class="text-h5 font-weight-bold">{{ aAnggota.nama_anggota }}</h5>
+              <span class="text-caption grey--text">{{ aAnggota.no_anggota }}</span>
+              <span class="indigo--text lighten-1 font-weight-black">{{ aAnggota.nama_rembug }}</span>
             </div>
           </v-container>
         </v-card>
       </v-container>
     </div>
     <v-container class="pa-0">
-      <div class="bt-page-indicator d-flex justify-space-between pt-3">
-        <span
-          class="d-flex align-center justify-center elevation-3 rounded-circle"
-          :class="
-            step == 1
-              ? 'indigo lighten-1 white--text text--darken-1'
-              : 'indigo lighten-5 indigo--text text--darken-1'
-          "
-        >
-          1
-        </span>
-        <span
-          class="d-flex align-center justify-center elevation-3 rounded-circle"
-          :class="
-            step == 2
-              ? 'indigo lighten-1 white--text text--darken-1'
-              : 'indigo lighten-5 indigo--text text--darken-1'
-          "
-        >
-          2
-        </span>
-        <span
-          class="d-flex align-center justify-center elevation-3 rounded-circle"
-          :class="
-            step == 3
-              ? 'indigo lighten-1 white--text text--darken-1'
-              : 'indigo lighten-5 indigo--text text--darken-1'
-          "
-        >
-          3
-        </span>
-        <span
-          class="d-flex align-center justify-center elevation-3 rounded-circle"
-          :class="
-            step == 4
-              ? 'indigo lighten-1 white--text text--darken-1'
-              : 'indigo lighten-5 indigo--text text--darken-1'
-          "
-        >
-          4
-        </span>
-        <span
-          class="d-flex align-center justify-center elevation-3 rounded-circle"
-          :class="
-            step == 5
-              ? 'indigo lighten-1 white--text text--darken-1'
-              : 'indigo lighten-5 indigo--text text--darken-1'
-          "
-        >
-          5
-        </span>
-      </div>
       <div class="bt-page-steps d-flex pt-5 pb-3">
-        <div class="bt-page-step-item" v-show="step == 1">
+        <div class="bt-page-step-item">
           <v-card class="white elevation-3 rounded-lg pa-3 mb-3">
             <h6 class="text-h6 font-weight-bold mb-4">Data Pengajuan</h6>
             <v-row>
@@ -92,7 +39,8 @@
                   autocomplete="off"
                   hide-details
                   outlined
-                  v-model="form.data.map_no"
+                  disabled
+                  value="Auto Generated"
                   label="No. Pengajuan"
                 />
               </v-col>
@@ -102,8 +50,8 @@
                   outlined
                   label="Jenis Pembiayaan"
                   hide-details
-                  :items="opt.financing_type"
-                  v-model="form.noPengajuan"
+                  :items="opt.jenis_pembiayaan"
+                  v-model="form.data.jenis_pembiayaan"
                 />
               </v-col>
               <v-col cols="12">
@@ -112,18 +60,20 @@
                   autocomplete="off"
                   hide-details
                   outlined
-                  v-model="form.data.map_no"
+                  v-model="form.data.pengajuan_ke"
                   label="Pembiayaan Ke"
+                  disabled
                 />
               </v-col>
               <v-col cols="12">
-                <v-text-field
+                <v-text-field 
                   color="black"
-                  autocomplete="off"
+                  autocomplete="off" 
                   hide-details
                   outlined
-                  v-model="form.data.map_no"
+                  v-model="form.data.jumlah_pengajuan"
                   label="Jumlah Pengajuan"
+                  v-mask="thousandMask"
                 />
               </v-col>
               <v-col cols="12">
@@ -133,7 +83,7 @@
                   label="Periode"
                   hide-details
                   :items="opt.periode_jangka_waktu"
-                  v-model="form.noPengajuan"
+                  v-model="form.data.rencana_periode_jwaktu"
                 />
               </v-col>
               <v-col cols="12">
@@ -142,7 +92,7 @@
                   autocomplete="off"
                   hide-details
                   outlined
-                  v-model="form.data.map_no"
+                  v-model="form.data.jangka_waktu"
                   label="Jangka Waktu"
                 />
               </v-col>
@@ -153,7 +103,7 @@
                   label="Peruntukan"
                   hide-details
                   :items="opt.peruntukan"
-                  v-model="form.noPengajuan"
+                  v-model="form.data.peruntukan"
                 />
               </v-col>
               <v-col cols="12">
@@ -162,8 +112,18 @@
                   autocomplete="off"
                   hide-details
                   outlined
-                  v-model="form.data.map_no"
+                  v-model="form.data.keterangan_peruntukan"
                   label="Keterangan"
+                />
+              </v-col>
+              <v-col cols="12">
+                <v-select
+                  color="black"
+                  outlined
+                  label="Sumber Pengembalian"
+                  hide-details
+                  :items="opt.sumber_pengembalian"
+                  v-model="form.data.sumber_pengembalian"
                 />
               </v-col>
               <v-col cols="12">
@@ -172,8 +132,21 @@
                   autocomplete="off"
                   hide-details
                   outlined
-                  v-model="form.data.map_no"
+                  v-model="form.data.tanggal_pengajuan"
+                  type="date"
                   label="Tanggal Pengajuan"
+                  disabled
+                />
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  color="black"
+                  autocomplete="off"
+                  hide-details
+                  outlined
+                  v-model="form.data.rencana_droping"
+                  type="date"
+                  label="Rencana Dropping"
                 />
               </v-col>
               <v-col cols="12">
@@ -182,7 +155,7 @@
                   autocomplete="off"
                   hide-details
                   outlined
-                  v-model="form.data.map_no"
+                  v-model="form.data.doc_ktp"
                   label="Foto KTP"
                 />
               </v-col>
@@ -192,7 +165,7 @@
                   autocomplete="off"
                   hide-details
                   outlined
-                  v-model="form.data.map_no"
+                  v-model="form.data.doc_kk"
                   label="Foto Kartu Keluarga"
                 />
               </v-col>
@@ -202,447 +175,73 @@
                   autocomplete="off"
                   hide-details
                   outlined
-                  v-model="form.data.map_no"
+                  v-model="form.data.doc_pendukung"
                   label="Foto Dokumen Pendukung"
                 />
               </v-col>
-            </v-row>
-          </v-card>
-        </div>
-        <div class="bt-page-step-item" v-show="step == 2">
-          <v-card class="white elevation-3 rounded-lg pa-3 mb-3">
-            <h6 class="text-h6 font-weight-bold mb-4">Jenis usaha</h6>
-            <v-row>
               <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Jenis Usaha"
-                />
+                <v-card class="pa-3">
+                  <label class="mb-4">Ttd Anggota</label>
+                  <VPerfectSignature :stroke-options="strokeOptions" ref="ttdAnggota" />
+                  <v-btn block class="indigo lighten-1 white--text" @click="clearTtd('ttdAnggota')">
+                    Ulangi
+                  </v-btn>
+                </v-card>
               </v-col>
               <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Komoditi"
-                />
+                <v-card class="pa-3">
+                  <label class="mb-4">Ttd Pasangan</label>
+                  <VPerfectSignature :stroke-options="strokeOptions" ref="ttdPasangan" />
+                  <v-btn block class="indigo lighten-1 white--text" @click="clearTtd('ttdPasangan')">
+                    Ulangi
+                  </v-btn>
+                </v-card>
               </v-col>
               <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Lama Usaha (Dalam Tahun)"
-                />
+                <v-card class="pa-3">
+                  <label class="mb-4">Ttd Ketua Majelis</label>
+                  <VPerfectSignature :stroke-options="strokeOptions" ref="ttdKetuaMajelis" />
+                  <v-btn block class="indigo lighten-1 white--text" @click="clearTtd('ttdKetuaMajelis')">
+                    Ulangi
+                  </v-btn>
+                </v-card>
               </v-col>
               <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Lokasi Usaha"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Surat Izin Usaha"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Aset Usaha"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Nilai Aset"
-                />
-              </v-col>
-            </v-row>
-          </v-card>
-        </div>
-        <div class="bt-page-step-item" v-show="step == 3">
-          <v-card class="white elevation-3 rounded-lg pa-3 mb-3">
-            <h6 class="text-h6 font-weight-bold mb-4">Modal Usaha</h6>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Persediaan Awal"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Belanja/ Pembelian"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Persediaan Akhir"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="HPP"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Omset"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Laba Kotor"
-                />
-              </v-col>
-            </v-row>
-            <h6 class="text-h6 font-weight-bold mb-4 mt-5">Biaya Usaha</h6>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Piutang"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Biaya Usaha"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Sewa Tempat"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Total Biaya Usaha"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Keuntungan Usaha"
-                />
-              </v-col>
-            </v-row>
-          </v-card>
-        </div>
-        <div class="bt-page-step-item" v-show="step == 4">
-          <v-card class="white elevation-3 rounded-lg pa-3 mb-3">
-            <h6 class="text-h6 font-weight-bold mb-4">Data Anggota</h6>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="No Telp Anggota"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-select
-                  color="black"
-                  outlined
-                  label="Pekerjaan Anggota"
-                  hide-details
-                  :items="opt.financing_type"
-                  v-model="form.noPengajuan"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="No Telp Pasangan"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Pekerjaan Pasangan"
-                />
-              </v-col>
-            </v-row>
-            <h6 class="text-h6 font-weight-bold mb-4 mt-5">
-              Pendapatan/ Penghasilan
-            </h6>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Pendapatan Gaji"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Pendapatan Usaha"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Pendapatan Lainnya"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Total Pendapatan"
-                />
-              </v-col>
-            </v-row>
-          </v-card>
-        </div>
-        <div class="bt-page-step-item" v-show="step == 5">
-          <v-card class="white elevation-3 rounded-lg pa-3 mb-3">
-            <h6 class="text-h6 font-weight-bold mb-4">
-              Tanggungan dan Saving Power
-            </h6>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Jumlah Tanggungan"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Biaya Rumah Tangga"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Biaya Kontrakan"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Biaya Pendidikan"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Hutang Lainnya"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Total Biaya"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Saving Power"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="Repayment Capacity"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-textarea
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="TTD Nasabah"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-textarea
-                  color="black"
-                  autocomplete="off"
-                  hide-details
-                  outlined
-                  v-model="form.data.map_no"
-                  label="TTD Pasangan"
-                />
+                <v-card class="pa-3">
+                  <label class="mb-4">Ttd Tpl</label>
+                  <VPerfectSignature :stroke-options="strokeOptions" ref="ttdTpl" />
+                  <v-btn block class="indigo lighten-1 white--text" @click="clearTtd('ttdTpl')">
+                    Ulangi
+                  </v-btn>
+                </v-card>
               </v-col>
             </v-row>
           </v-card>
         </div>
       </div>
       <v-row>
-        <v-col cols="6" class="pb-0" v-show="step > 1">
+        <v-col cols="6" class="pb-0">
+          <router-link to="/pembiayaan">
           <v-btn
             block
             class="indigo lighten-1 white--text"
-            @click="move(step - 1)"
           >
-            Sebelumnya
-          </v-btn>
-        </v-col>
-        <v-col :cols="step > 1 ? 6 : 12" class="pb-0">
-          <v-btn
-            block
-            class="indigo lighten-1 white--text"
-            @click="move(step + 1)"
-          >
-            {{ step == 5 ? "Simpan" : "Selanjutnya" }}
-          </v-btn>
-        </v-col>
-        <!-- <v-col cols="6" class="pb-0">
-          <router-link to="/transaksi/pembiayaan">
-          <v-btn block class="indigo lighten-1 white--text d-flex justify-content-start">
             Kembali
           </v-btn>
           </router-link>
         </v-col>
         <v-col cols="6" class="pb-0">
-          <router-link to="/transaksi/pembiayaan-rab">
-          <v-btn block class="indigo lighten-1 white--text">
-            RAB
+          <v-btn
+            block
+            class="indigo lighten-1 white--text"
+            @click="doSave()"
+          >
+            Simpan
           </v-btn>
-          </router-link> 
-        </v-col> -->
+        </v-col>
       </v-row>
     </v-container>
+    <v-snackbar v-model="alert.show" :timeout="5000">{{ alert.msg }}</v-snackbar>
   </div>
 </template>
 <script>
@@ -650,10 +249,12 @@ import Camera from '@/components/Camera.vue'
 import helper from "@/utils/helper";
 import { mapGetters, mapActions } from "vuex";
 import services from "@/services";
+import VPerfectSignature, { StrokeOptions } from 'v-perfect-signature'
 export default {
   name: "PembiayaanPengajuan",
   components: {
     Camera,
+    VPerfectSignature
   },
   data() {
     return {
@@ -663,7 +264,7 @@ export default {
           kode_petugas:null,
           tanggal_pengajuan:null,
           jumlah_pengajuan:null,
-          pengajuan_ke:null,
+          pengajuan_ke:1,
           peruntukan:null,
           keterangan_peruntukan:null,
           rencana_droping:null,
@@ -696,7 +297,9 @@ export default {
           { value: 9, text: "Lain-Lain" },
           { value: 7, text: "Air bersih & Sanitasi" },
         ],
-        sumber_pengembalian: ["sumber usaha", "gaji"],
+        sumber_pengembalian: [
+          { value: 0, text: "Sumber Usaha" },
+          { value: 1, text: "Non Usaha" },],
         pekerjaan: [
           { value: 0, text: "Ibu Rumah Tangga" },
           { value: 1, text: "Buruh" },
@@ -719,10 +322,21 @@ export default {
       rembug: null,
       anggota: null,
       aAnggota: {
-        nama: null,
-        cif_no: null,
-        cm_name: null,
+        nama_anggota: null,
+        no_anggota: null,
+        nama_rembug: null,
       },
+      alert: {
+        show: false,
+        msg: ''
+      },
+      loading: false,
+      strokeOptions: {
+        size: 5,
+        thinning: 0.75,
+        smoothing: 0.5,
+        streamline: 0.5
+      }
     };
   },
   computed: {
@@ -735,20 +349,20 @@ export default {
       window.scrollTo(0, 0);
     },
     async getRembug() {
-      let day = new Date().getDay();
-      day = 3;
+      let hari_transaksi = new Date().getDay();
+      hari_transaksi = this.user.hari_transaksi;
       let payload = new FormData();
-      payload.append("fa_code", this.user.fa_code);
-      payload.append("day", day);
+      payload.append("kode_petugas", this.user.kode_petugas);
+      payload.append("hari_transaksi", hari_transaksi);
+      this.opt.rembug = [];
+      this.loading = true;
       try {
         let req = await services.infoRembug(payload, this.user.token);
         if (req.status === 200) {
-          let { data } = req.data;
-          this.opt.rembug = [];
-          data.map((rembug, index) => {
+          req.data.data.map((item) => {
             this.opt.rembug.push({
-              text: rembug.cm_name,
-              value: rembug.cm_code,
+              text: item.nama_rembug,
+              value: item.kode_rembug,
             });
           });
         } else {
@@ -757,68 +371,115 @@ export default {
             msg: data.message,
           };
         }
+        this.loading = false;
       } catch (error) {
         this.alert = {
           show: true,
-          msg: `Error on get rembug ${error}`,
+          msg: error,
         };
+        this.loading = false;
       }
     },
-    async getAnggota(cm_code) {
-      if (!cm_code) {
-        cm_code = this.$route.params.cm_code;
-      } else {
-        this.$router.push(`/transaksi/setoran-form/${cm_code}`);
-        this.aAnggota = {
-          nama: null,
-          cif_no: null,
-          cm_name: null,
-        };
-        this.anggota = null;
-      }
-      if (cm_code) {
-        let payload = new FormData();
-        payload.append("cm_code", cm_code);
-        try {
-          let req = await services.infoMember(payload, this.user.token);
-          if (req.status === 200) {
-            this.opt.anggota = [];
-            let { data } = req.data;
-            data.map((anggota, index) => {
-              this.opt.anggota.push({
-                text: anggota.nama,
-                value: anggota.cif_no,
-                data: anggota,
-              });
-              if (anggota.cif_no === this.$route.params.cif_no) {
-                this.aAnggota = anggota;
-              }
+    async getAnggota() {
+      let payload = new FormData()
+      payload.append('kode_rembug', this.form.rembug)
+      this.opt.anggota = []
+      try {
+        let req = await services.infoMember(payload, this.user.token)
+        if(req.status === 200) {
+          req.data.data.map((item) => {
+            this.opt.anggota.push({
+              value: item.no_anggota,
+              text: item.nama_anggota,
+              data: item
             });
+          });
+        } else {
+          this.alert = {
+            show: true,
+            msg: data.message
+          }
+        }
+      } catch (error) {
+        this.alert = {
+          show: true,
+          msg: error
+        }
+      }
+    },
+    async doSave() {
+      console.log('save')
+      let payload = new FormData();
+      let payloadData = {...this.form.data};
+      payloadData.jumlah_pengajuan = Number(this.form.data.jumlah_pengajuan.replace(/\./g,""))
+      payloadData.no_anggota = this.aAnggota.no_anggota
+      payloadData.kode_petugas = this.user.kode_petugas
+      payloadData.created_by = this.user.id
+      payloadData.ttd_anggota = this.$refs.ttdAnggota.toDataURL()
+      payloadData.ttd_suami = this.$refs.ttdPasangan.toDataURL()
+      payloadData.ttd_ketua_majelis = this.$refs.ttdKetuaMajelis.toDataURL()
+      payloadData.ttd_tpl = this.$refs.ttdTpl.toDataURL()
+      payloadData.tanggal_pengajuan = this.formatDate(payloadData.tanggal_pengajuan)
+      payloadData.rencana_droping = this.formatDate(payloadData.rencana_droping)
+      if(payloadData.no_anggota && payloadData.jumlah_pengajuan){
+        for (let key in payloadData) {
+          payload.append(key, payloadData[key]);
+        }
+        try {
+          let req = await services.pembiayaanCreate(payload, this.user.token);
+          if (req.status === 200) {
+            if(req.data.status){
+              this.alert = {
+                show: true,
+                msg: "Pengajuan Pembiayaan Berhasil",
+              };
+              setTimeout(() => {
+                this.$router.push(`/pembiayaan`);
+              }, 2000);
+            } else {
+              this.alert = {
+                show: true,
+                msg: req.data.msg,
+              };
+            }
           } else {
             this.alert = {
               show: true,
-              msg: data.message,
+              msg: "Pengajuan Pembiayaan Gagal",
             };
           }
         } catch (error) {
           this.alert = {
             show: true,
-            msg: `Error on get anggota ${error}`,
+            msg: error,
           };
         }
+      } else {
+        this.alert = {
+          show: true,
+          msg: 'Silahkan pilih Rembug lalu pilih Anggota dan isi Jumlah Pengajuan',
+        };
       }
     },
-    setForm() {
-      let cm_code = this.$route.params.cm_code;
-      let cif_no = this.$route.params.cif_no;
-      this.rembug = cm_code;
-      this.anggota = cif_no ? cif_no : null;
+    getDate(){
+      let today = new Date()
+      let day = today.getDate()
+      let month = today.getMonth()+1
+      let year = today.getFullYear()
+      month = ('0' + month.toString()).slice(-2)
+      return `${year}-${month}-${day}`
     },
+    setAnggota(){
+      let anggota = this.opt.anggota.find((item) => item.value == this.form.anggota).data
+      this.aAnggota = {...anggota}
+    },
+    clearTtd(ttd){
+      this.$refs[ttd].clear()
+    }
   },
   mounted() {
     this.getRembug();
-    this.getAnggota();
-    this.setForm();
+    this.form.data.tanggal_pengajuan = this.getDate()
   },
 };
 </script>
