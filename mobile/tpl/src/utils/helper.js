@@ -36,4 +36,14 @@ const today = () => {
   return currentDate
 }
 
-export default { thousand, thousandMask, removeThousand, today }
+const formatDate = (dt) => {
+  const date = new Date(dt);
+  let day = date.getDate();
+  let month = date.getMonth() + 1;
+  let year = date.getFullYear();
+  month = ('0' + month.toString()).slice(-2)
+  let currentDate = `${day}/${month}/${year}`;
+  return currentDate
+}
+
+export default { thousand, thousandMask, removeThousand, today, formatDate }

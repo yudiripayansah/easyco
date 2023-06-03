@@ -65,7 +65,7 @@
 				</b-col>
 			</b-row>
 		</b-card>
-		<b-modal title="Form Verifikasi Akad" id="modal-form" hide-footer size="xl" centered>
+		<b-modal title="Form Pencairan" id="modal-form" hide-footer size="xl" centered>
 			<b-form @submit="doSave()">
 				<b-row>
 					<!-- <b-col cols="12" sm="4">
@@ -231,14 +231,40 @@
 					</b-col>
 				</b-row>
 				<b-row>
+					<b-col cols="12">
+					<hr>
+				</b-col>
+				<b-col cols="12" sm="6">
+					<b-form-group label="TTD Pencairan" description="Click to upload">
+					<label for="fm-ttd_pencairan" class="w-100" ref="previewImage">
+						<b-img-lazy :src="(form.data.ttd_pencairan) ? form.data.ttd_pencairan : '/media/doc-upload.png'" fluid
+						class="w-100" />
+						<input type="file" ref="fm-ttd_pencairan" hidden id="fm-ttd_pencairan"
+						@change="previewImage($event, 'ttd_pencairan')" accept="image/*">
+					</label>
+					</b-form-group>
+				</b-col>
+				<b-col cols="12" sm="6">
+					<b-form-group label="Doc Pencairan" description="Click to upload">
+					<label for="fm-doc_pencairan" class="w-100" ref="previewImage">
+						<b-img-lazy :src="(form.data.doc_pencairan) ? form.data.doc_pencairan : '/media/doc-upload.png'"
+						fluid class="w-100" />
+						<input type="file" ref="fm-doc_pencairan" hidden id="fm-doc_pencairan"
+						@change="previewImage($event, 'doc_pencairan')" accept="image/*">
+					</label>
+					</b-form-group>
+				</b-col>
+				</b-row>
+				
+				<b-row>
 					<b-col cols="12" sm="12" class="d-flex justify-content-end border-top pt-5">
 						<b-button variant="secondary" @click="$bvModal.hide('modal-form')"
 							:disabled="form.loading">Cancel
 						</b-button>
-						<b-button variant="danger" type="button" :disabled="form.loading" class="ml-3"
+						<!-- <b-button variant="danger" type="button" :disabled="form.loading" class="ml-3"
 							@click="doApproval('reject')">
 							{{ form.loading ? 'Memproses...' : 'Reject' }}
-						</b-button>
+						</b-button> -->
 						<b-button variant="primary" type="button" :disabled="form.loading" class="ml-3"
 							@click="doApproval('approve')">
 							{{ form.loading ? 'Memproses...' : 'Approve' }}
@@ -416,7 +442,8 @@ export default {
 				sortDesc: true,
 				sortBy: 'id',
 				search: '',
-				status_rekening: [0],
+				status_rekening: [1],
+				status_droping: [0],
 				jenis_pembiayaan: '~',
 				petugas: '~',
 				rembug: '~',
@@ -765,14 +792,52 @@ export default {
 				}
 			}
 		},
+		previewImage(event, target) {
+      let theImg = null
+      let vm = this
+      const ttd_pencairan = this.$refs['fm-ttd_pencairan']
+      const ttd_doc_pencairan = this.$refs['fm-doc_pencairan']
+      let reader = new FileReader();
+      switch (target) {
+        case 'ttd_pencairan':
+          theImg = event.target.files[0];
+          reader.readAsDataURL(theImg);
+          reader.onload = function () {
+            vm.form.data.ttd_pencairan = reader.result
+            ttd_pencairan.type = 'text';
+            ttd_pencairan.type = 'file';
+          };
+          reader.onerror = function () {
+            vm.form.data.ttd_pencairan = null
+            ttd_pencairan.type = 'text';
+            ttd_pencairan.type = 'file';
+          };
+          break;
+        case 'doc_pencairan':
+          theImg = event.target.files[0];
+          reader.readAsDataURL(theImg);
+          reader.onload = function () {
+            vm.form.data.doc_pencairan = reader.result
+            doc_pencairan.type = 'text';
+            doc_pencairan.type = 'file';
+          };
+          reader.onerror = function () {
+            vm.form.data.doc_pencairan = null
+            doc_pencairan.type = 'text';
+			doc_pencairan.type = 'file';
+          };
+          break;
+      }
+    },
 		async doApproval(status) {
 			let state = status
 			try {
+				let payload = this.form.data
 				this.form.loading = true
 				let req = false
 				if (state == 'approve') {
 					console.log('approve')
-					req = await easycoApi.verifikasiAkadApprove(`?id=${this.form.data.id}`, this.user.token)
+					req = await easycoApi.verifikasiAkadApprove(payload, this.user.token)
 				} else {
 					console.log('reject')
 					req = await easycoApi.verifikasiAkadReject(`?id=${this.form.data.id}`, this.user.token)

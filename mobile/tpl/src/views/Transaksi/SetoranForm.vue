@@ -8,7 +8,7 @@
       Setoran Form
     </h6>
     <Camera class="mt-5"/>
-    <v-select solo label="Rembug" class="mb-4 mt-5" hide-details :items="opt.rembug" v-model="rembug" @change="getAnggota(rembug)"/>
+    <v-select solo label="Majelis" class="mb-4 mt-5" hide-details :items="opt.rembug" v-model="rembug" @change="getAnggota(rembug)"/>
     <v-select solo label="Anggota" class="mb-4" hide-details :items="opt.anggota" v-model="anggota" @change="getDataSetoran(anggota)"/>
     <v-container class="pa-0" v-show="anggota">
       <v-card class="white elevation-3 rounded-lg pa-3 align-items-end mb-3">
