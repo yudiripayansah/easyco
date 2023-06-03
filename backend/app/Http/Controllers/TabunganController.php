@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\KopTabungan;
+use App\Models\KopUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -30,6 +31,8 @@ class TabunganController extends Controller
         $data['no_rekening'] = $request->no_anggota . $request->kode_produk . $tabungan_ke;
 
         $validate = KopTabungan::validateAdd($data);
+
+        DB::beginTransaction();
 
         if ($validate['status'] === TRUE) {
             try {
@@ -58,6 +61,172 @@ class TabunganController extends Controller
                 'data' => $data,
                 'msg' => $validate['msg'],
                 'error' => $validate['errors']
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    public function read(Request $request)
+    {
+        $offset = 0;
+        $page = 1;
+        $perPage = '~';
+        $sortDir = 'ASC';
+        $sortBy = 'kop_tabungan.tanggal_buka';
+        $search = NULL;
+        $total = 0;
+        $totalPage = 1;
+        $status = 1;
+        $from = NULL;
+        $to = NULL;
+
+        $token = $request->header('token');
+        $param = array('token' => $token);
+        $get = KopUser::where($param)->first();
+        $cabang = $get->kode_cabang;
+
+        if ($request->page) {
+            $page = $request->page;
+        }
+
+        if ($request->perPage) {
+            $perPage = $request->perPage;
+        }
+
+        if ($request->sortDir) {
+            $sortDir = $request->sortDir;
+        }
+
+        if ($request->sortBy) {
+            $sortBy = $request->sortBy;
+        }
+
+        if ($request->search) {
+            $search = strtoupper($request->search);
+        }
+
+        if ($request->from) {
+            $from = str_replace('/', '-', $request->from);
+            $from = date('Y-m-d', strtotime($from));
+        }
+
+        if ($request->to) {
+            $to = str_replace('/', '-', $request->to);
+            $to = date('Y-m-d', strtotime($to));
+        }
+
+        if ($page > 1) {
+            $offset = ($page - 1) * $perPage;
+        }
+
+        $read = KopTabungan::select('kop_tabungan.*', 'kop_anggota.nama_anggota', 'kop_prd_tabungan.nama_produk')
+            ->join('kop_anggota', 'kop_anggota.no_anggota', 'kop_tabungan.no_anggota')
+            ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang')
+            ->join('kop_prd_tabungan', 'kop_prd_tabungan.kode_produk', 'kop_tabungan.kode_produk')
+            ->orderBy($sortBy, $sortDir);
+
+        if ($perPage != '~') {
+            $read->skip($offset)->take($perPage);
+        }
+
+        if ($status && $status != '~') {
+            $read->where('kop_tabungan.status_rekening', $status);
+        }
+
+        if ($cabang != '00000') {
+            $read->where('kop_cabang.kode_cabang', $cabang);
+        }
+
+        if ($search) {
+            $read->where('kop_anggota.no_anggota', 'LIKE', '%' . $search . '%')
+                ->orWhere('kop_tabungan.no_rekening', 'LIKE', '%' . $search . '%');
+        }
+
+        if ($from && $to) {
+            $read->whereBetween('kop_tabungan.tanggal_buka', [$from, $to]);
+        }
+
+        $read = $read->get();
+
+        foreach ($read as $rd) {
+            $useCount = 'used count diubah datanya disini';
+            $rd->used_count = $useCount;
+        }
+
+        if ($search || $cabang || $status || ($from && $to)) {
+            $total = KopTabungan::orderBy($sortBy, $sortDir)
+                ->join('kop_anggota', 'kop_anggota.no_anggota', 'kop_tabungan.no_anggota')
+                ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang')
+                ->join('kop_prd_tabungan', 'kop_prd_tabungan.kode_produk', 'kop_tabungan.kode_produk');
+
+            if ($search) {
+                $total->where('kop_anggota.no_anggota', 'LIKE', '%' . $search . '%')
+                    ->orWhere('kop_tabungan.no_rekening', 'LIKE', '%' . $search . '%');
+            }
+
+            if ($status && $status != '~') {
+                $total->where('kop_tabungan.status_rekening', $status);
+            }
+
+            if ($cabang != '00000') {
+                $total->where('kop_cabang.kode_cabang', $cabang);
+            }
+
+            if ($from && $to) {
+                $total->whereBetween('kop_tabungan.tanggal_buka', [$from, $to]);
+            }
+
+            $total = $total->count();
+        } else {
+            $total = KopTabungan::all()->count();
+        }
+
+        if ($perPage != '~') {
+            $totalPage = ceil($total / $perPage);
+        }
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $read,
+            'page' => $page,
+            'perPage' => $perPage,
+            'sortDir' => $sortDir,
+            'sortBy' => $sortBy,
+            'search' => $search,
+            'total' => $total,
+            'totalPage' => $totalPage,
+            'msg' => 'List data available'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    public function tutup(Request $request)
+    {
+        $get = KopTabungan::find($request->id);
+        $validate = KopTabungan::validateUpdate($request->all());
+
+        $get->status_rekening = 4;
+
+        if ($get->saldo > 0) {
+            $res = array(
+                'status' => FALSE,
+                'data' => $request->all(),
+                'msg' => 'Gagal! Tabungan ini masih memiliki saldo',
+                'error' => NULL
+            );
+        } else {
+            $get->save();
+
+            $res = array(
+                'status' => TRUE,
+                'data' => NULL,
+                'msg' => 'Berhasil!'
             );
         }
 

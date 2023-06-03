@@ -201,6 +201,8 @@ Route::prefix('prdtabungan')->middleware('checkToken')->group(function () {
 
 Route::prefix('tabungan')->middleware('checkToken')->group(function () {
   Route::post('/registrasi', [TabunganController::class, 'registrasi']);
+  Route::post('/read', [TabunganController::class, 'read']);
+  Route::post('/tutup', [TabunganController::class, 'tutup']);
 });
 
 Route::prefix('pengajuan')->middleware('checkToken')->group(function () {
