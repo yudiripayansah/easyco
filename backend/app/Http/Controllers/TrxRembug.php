@@ -8,7 +8,9 @@ use App\Models\KopKartuAngsuran;
 use App\Models\KopPembiayaan;
 use App\Models\KopTabungan;
 use App\Models\KopTrxAnggota;
+use App\Models\KopTrxKasPetugas;
 use App\Models\KopTrxRembug;
+use App\Models\KopUser;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -248,6 +250,207 @@ class TrxRembug extends Controller
                 'status' => FALSE,
                 'data' => $show,
                 'msg' => $e->getMessage()
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    public function read_trx_kas_petugas(Request $request)
+    {
+        $offset = 0;
+        $page = 1;
+        $perPage = '~';
+        $sortDir = 'ASC';
+        $sortBy = 'kop_trx_kas_petugas.voucher_date';
+        $search = NULL;
+        $total = 0;
+        $totalPage = 1;
+        $status = '~';
+        $from = NULL;
+        $to = NULL;
+
+        $token = $request->header('token');
+        $param = array('token' => $token);
+        $get = KopUser::where($param)->first();
+        $cabang = $get->kode_cabang;
+
+        if ($request->page) {
+            $page = $request->page;
+        }
+
+        if ($request->perPage) {
+            $perPage = $request->perPage;
+        }
+
+        if ($request->sortDir) {
+            $sortDir = $request->sortDir;
+        }
+
+        if ($request->sortBy) {
+            $sortBy = $request->sortBy;
+        }
+
+        if ($request->search) {
+            $search = strtoupper($request->search);
+        }
+
+        if ($request->cabang) {
+            $cabang = $request->cabang;
+        }
+
+        if ($request->status) {
+            $status = $request->status;
+        }
+
+        if ($request->from) {
+            $from = str_replace('/', '-', $request->from);
+            $from = date('Y-m-d', strtotime($from));
+        }
+
+        if ($request->to) {
+            $to = str_replace('/', '-', $request->to);
+            $to = date('Y-m-d', strtotime($to));
+        }
+
+        if ($page > 1) {
+            $offset = ($page - 1) * $perPage;
+        }
+
+        $read = KopTrxKasPetugas::select('kop_trx_kas_petugas.*', 'a.nama_kas_petugas', 'b.nama_kas_petugas')
+            ->orderBy($sortBy, $sortDir)
+            ->join('kop_kas_petugas AS a', 'a.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_petugas')
+            ->join('kop_kas_petugas AS b', 'b.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_teller');
+
+        if ($perPage != '~') {
+            $read->skip($offset)->take($perPage);
+        }
+
+        if ($status && $status != '~') {
+            $read->where('kop_trx_kas_petugas.status_trx', $status);
+        }
+
+        if ($cabang != '00000') {
+            $read->where('kop_cabang.kode_cabang', $cabang);
+        }
+
+        if ($search) {
+            $read->where('a.nama_kas_petugas', 'LIKE', '%' . $search . '%')
+                ->orWhere('b.nama_kas_petugas', 'LIKE', '%' . $search . '%');
+        }
+
+        if ($from && $to) {
+            $read->whereBetween('kop_trx_kas_petugas.voucher_date', [$from, $to]);
+        }
+
+        $read = $read->get();
+
+        foreach ($read as $rd) {
+            $useCount = 'used count diubah datanya disini';
+            $rd->used_count = $useCount;
+        }
+
+        if ($search || $cabang || $status || ($from && $to)) {
+            $total = KopTrxKasPetugas::orderBy($sortBy, $sortDir)
+                ->join('kop_kas_petugas AS a', 'a.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_petugas')
+                ->join('kop_kas_petugas AS b', 'b.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_teller');
+
+            if ($search) {
+                $total->where('a.nama_kas_petugas', 'LIKE', '%' . $search . '%')
+                    ->orWhere('b.nama_kas_petugas', 'LIKE', '%' . $search . '%');
+            }
+
+            if ($status && $status != '~') {
+                $total->where('kop_trx_kas_petugas.status_trx', $status);
+            }
+
+            if ($cabang != '00000') {
+                $total->where('kop_cabang.kode_cabang', $cabang);
+            }
+
+            if ($from && $to) {
+                $total->whereBetween('kop_trx_kas_petugas.voucher_date', [$from, $to]);
+            }
+
+            $total = $total->count();
+        } else {
+            $total = KopTrxKasPetugas::all()->count();
+        }
+
+        if ($perPage != '~') {
+            $totalPage = ceil($total / $perPage);
+        }
+
+        foreach ($read as $row) {
+            $row->tgl_gabung = date('d-F-Y', strtotime($row->tgl_gabung));
+        }
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $read,
+            'page' => $page,
+            'perPage' => $perPage,
+            'sortDir' => $sortDir,
+            'sortBy' => $sortBy,
+            'search' => $search,
+            'total' => $total,
+            'totalPage' => $totalPage,
+            'msg' => 'List data available'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    public function proses_kas_petugas(Request $request)
+    {
+        $data = $request->all();
+
+        if ($data['jenis_trx'] == 1) {
+            $data['debit_credit'] = 'D';
+        } else {
+            $data['debit_credit'] = 'C';
+        }
+
+        $data['trx_date'] = date('Y-m-d');
+        $data['created_at'] = date('Y-m-d H:i:s');
+
+        $validate = KopTrxKasPetugas::validateAdd($data);
+
+        DB::beginTransaction();
+
+        if ($validate['status'] === TRUE) {
+            try {
+                $create = KopTrxKasPetugas::create($data);
+                $find = KopTrxKasPetugas::find($create->id);
+
+                $res = array(
+                    'status' => TRUE,
+                    'data' => $find,
+                    'msg' => 'Berhasil!',
+                    'error' => NULL
+                );
+
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+
+                $res = array(
+                    'status' => FALSE,
+                    'data' => $data,
+                    'msg' => $e->getMessage(),
+                    'error' => NULL
+                );
+            }
+        } else {
+            $res = array(
+                'status' => FALSE,
+                'data' => $data,
+                'msg' => $validate['msg'],
+                'error' => $validate['errors']
             );
         }
 

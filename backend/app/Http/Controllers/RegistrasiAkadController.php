@@ -8,6 +8,7 @@ use App\Models\KopUser;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class RegistrasiAkadController extends Controller
 {
@@ -237,6 +238,10 @@ class RegistrasiAkadController extends Controller
         $data['tanggal_jtempo'] = $tanggal_jtempo;
         $data['jtempo_angsuran_next'] = $tanggal_mulai_angsur;
         $data['no_rekening'] = $request->no_anggota . $request->kode_produk . $pengajuan_ke;
+        $data['status_rekening'] = 1;
+        $data['status_droping'] = 0;
+        $data['verified_at'] = date('Y-m-d');
+        $data['verified_by'] = $request->created_by;
 
         $validate = KopPembiayaan::validateAdd($data);
 
@@ -410,6 +415,8 @@ class RegistrasiAkadController extends Controller
             $read->where('kop_pembiayaan.kode_produk', $produk);
         }
 
+        $read->where('kop_pembiayaan.ttd_pencairan', null);
+
         if ($status_rekening && $status_rekening != '~') {
             $read->whereIn('kop_pembiayaan.status_rekening', $status_rekening);
         }
@@ -443,7 +450,8 @@ class RegistrasiAkadController extends Controller
         if ($search || $cabang || $jenis_pembiayaan || $petugas || $rembug || $produk || $status_rekening || ($from && $to)) {
             $total = KopPembiayaan::orderBy($sortBy, $sortDir)
                 ->join('kop_pengajuan', 'kop_pengajuan.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
-                ->join('kop_anggota', 'kop_anggota.no_anggota', 'kop_pengajuan.no_anggota');
+                ->join('kop_anggota', 'kop_anggota.no_anggota', 'kop_pengajuan.no_anggota')
+                ->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', 'kop_anggota.kode_rembug');
 
             if ($cabang != '00000') {
                 $total->where('kop_anggota.kode_cabang', $cabang);
@@ -696,13 +704,36 @@ class RegistrasiAkadController extends Controller
     public function approve(Request $request)
     {
         $id = $request->id;
+        $filePencairan = $request->doc_pencairan;
+        $fileTtdPencairan = $request->ttd_pencairan;
+
+        $data = KopPembiayaan::find($id);
+
+        if (empty($filePencairan)) {
+            $doc_pencairan = NULL;
+        } else {
+            $name_pendukung = 'dokumen_pencairan_' . $data->no_rekening . '.png';
+            $path_pendukung = 'document/' . $name_pendukung;
+
+            Storage::disk('public')->put($path_pendukung, file_get_contents($filePencairan));
+
+            $doc_pencairan = $name_pendukung;
+        }
+
+        if (empty($fileTtdPencairan)) {
+            $ttd_pencairan = NULL;
+        } else {
+            $name_ttd_pencairan = 'ttd_pencairan_' . $data->no_rekening . '.png';
+            $path_ttd_pencairan = 'document/' . $name_ttd_pencairan;
+
+            Storage::disk('public')->put($path_ttd_pencairan, file_get_contents($fileTtdPencairan));
+
+            $ttd_pencairan = $name_ttd_pencairan;
+        }
 
         if ($id) {
-            $data = KopPembiayaan::find($id);
-            $data->status_rekening = 1;
-            $data->status_droping = 0;
-            $data->verified_at = date('Y-m-d H:i:s');
-            $data->verified_by = 'SYS';
+            $data->doc_pencairan = $doc_pencairan;
+            $data->ttd_pencairan = $ttd_pencairan;
 
             DB::beginTransaction();
 

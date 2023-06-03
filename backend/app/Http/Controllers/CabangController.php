@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KopAnggota;
 use App\Models\KopCabang;
+use App\Models\KopPembiayaan;
+use App\Models\KopTabungan;
 use App\Models\KopUser;
 use Exception;
 use Illuminate\Http\Request;
@@ -54,6 +57,48 @@ class CabangController extends Controller
                 'error' => $validate['errors']
             );
         }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    public function dashboard(Request $request)
+    {
+        $token = $request->header('token');
+        $param = array('token' => $token);
+        $get = KopUser::where($param)->first();
+        $cabang = $get->kode_cabang;
+
+        $param_anggota['status'] = 1;
+        $param_outstanding['status_rekening'] = 1;
+        $param_tabungan['status_rekening'] = 1;
+
+        $pembiayaan = KopPembiayaan::select(DB::raw('SUM(saldo_pokok) AS saldo_outstanding'));
+        $tabungan = KopTabungan::select(DB::raw('SUM(saldo) AS saldo_tabungan'));
+
+        if ($cabang <> '00000') {
+            $param_anggota['kode_cabang'] = $cabang;
+            $pembiayaan = $pembiayaan->where(DB::raw('LEFT(no_rekening,5)'), $cabang);
+            $tabungan = $tabungan->where(DB::raw('LEFT(no_rekening,5)'), $cabang);
+        }
+
+        $anggota = KopAnggota::where($param_anggota)->get();
+        $pembiayaan = $pembiayaan->where($param_outstanding)->first();
+        $tabungan = $tabungan->where($param_outstanding)->first();
+
+        $hasil = array(
+            'total_anggota' => $anggota->count(),
+            'total_outstanding' => $pembiayaan['saldo_outstanding'] * 1,
+            'total_tabungan' => $tabungan['saldo_tabungan'] * 1
+        );
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $hasil,
+            'msg' => 'Berhasil!',
+            'error' => NULL
+        );
 
         $response = response()->json($res, 200);
 

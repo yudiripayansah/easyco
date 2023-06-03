@@ -80,9 +80,15 @@ class KopKasPetugas extends Model
         return $res;
     }
 
-    function read($search, $sortBy, $sortDir, $offset, $perPage)
+    function read($search, $sortBy, $sortDir, $offset, $perPage, $cabang)
     {
-        $show = KopKasPetugas::orderBy($sortBy, $sortDir);
+        $show = KopKasPetugas::orderBy($sortBy, $sortDir)
+            ->join('kop_pegawai AS kp', 'kp.kode_pgw', 'kop_kas_petugas.kode_petugas')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'kp.kode_cabang');
+
+        if ($cabang <> '00000') {
+            $show->where('kc.kode_cabang', $cabang);
+        }
 
         if ($perPage != '~') {
             $show->skip($offset)->take($perPage);

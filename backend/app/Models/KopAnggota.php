@@ -83,7 +83,13 @@ class KopAnggota extends Model
 
     function rembug($kode_cabang)
     {
-        $show = DB::table('kop_rembug')->where('kode_cabang', $kode_cabang)->orderBy('id', 'ASC')->get();
+        $show = KopRembug::orderBy('id', 'ASC');
+
+        if ($kode_cabang <> '00000') {
+            $show = $show->where('kode_cabang', $kode_cabang);
+        }
+
+        $show = $show->get();
 
         return $show;
     }

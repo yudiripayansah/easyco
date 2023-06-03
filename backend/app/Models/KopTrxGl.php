@@ -73,4 +73,15 @@ class KopTrxGl extends Model
 
         return $res;
     }
+
+    function get_ledger($kode_cabang, $from_date, $thru_date)
+    {
+        $show = KopTrxGl::select('*')
+            ->where('kode_cabang', $kode_cabang)
+            ->whereBetween('voucher_date', [$from_date, $thru_date])
+            ->orderBy('voucher_date')
+            ->get();
+
+        return $show;
+    }
 }

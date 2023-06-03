@@ -31,7 +31,7 @@
             <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Kantor</th>
             <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Tgl. Registrasi</th>
             <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Nama</th>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Rembug</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Majelis</th>
             <th style="text-align: center; font-weight: bold; border: 1px solid #000;">No. Rekening</th>
             <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Produk</th>
             <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Plafon</th>

@@ -15,6 +15,7 @@ class CreateKopKotaKabupatenTable extends Migration
     {
         Schema::create('kop_kota_kabupaten', function (Blueprint $table) {
             $table->id();
+            $table->integer('kode_provinsi');
             $table->string('kode_kota', 10)->unique();
             $table->string('nama_kota', 100);
             $table->string('created_by', 30);
