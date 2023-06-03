@@ -63,8 +63,12 @@
             >
               PDF
             </b-button>
-            <b-button text="Button" variant="success"> XLS </b-button>
-            <b-button text="Button" variant="warning"> CSV </b-button>
+            <b-button text="Button" variant="success" @click="exportXls()">
+              XLS
+            </b-button>
+            <b-button text="Button" variant="warning" @click="exportCsv()">
+              CSV
+            </b-button>
           </b-button-group>
         </b-col>
         <b-col cols="12">
@@ -246,9 +250,9 @@ export default {
           {
             key: "nama_rembug",
             sortable: true,
-            label: 'Majelis',
-            thClass: 'text-center',
-            tdClass: 'text-center'
+            label: "Majelis",
+            thClass: "text-center",
+            tdClass: "text-center",
           },
           // {
           //   key: 'byr_pokok',

@@ -34,8 +34,12 @@
             >
               PDF
             </b-button>
-            <b-button text="Button" variant="success"> XLS </b-button>
-            <b-button text="Button" variant="warning"> CSV </b-button>
+            <b-button text="Button" variant="success" @click="exportXls()">
+              XLS
+            </b-button>
+            <b-button text="Button" variant="warning" @click="exportCsv()">
+              CSV
+            </b-button>
           </b-button-group>
         </b-col>
         <b-col cols="12">
@@ -185,350 +189,357 @@
 </template>
     
 <script>
-  import helper from '@/core/helper'
-  import html2pdf from "html2pdf.js";
-  import { mapGetters } from 'vuex'
-  import easycoApi from '@/core/services/easyco.service'
-  export default {
-    name: "LaporanSaldoAnggota",
-    components: {},
-    data() {
-      return {
-        table: {
-          fields: [
-            {
-              key: 'no',
-              sortable: false,
-              label: 'No',
-              thClass: 'text-center w-5p',
-              tdClass: 'text-center'
-            },
-            {
-              key: 'nama_anggota',
-              sortable: true,
-              label: 'Nama Anggota',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'nama_rembug',
-              sortable: true,
-              label: 'Nama Majelis',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'nama_cabang',
-              sortable: true,
-              label: 'Nama Cabang',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'desa',
-              sortable: true,
-              label: 'Desa',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'no_telp',
-              sortable: true,
-              label: 'No Telp',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'alamat',
-              sortable: true,
-              label: 'Alamat',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'tgl_gabung',
-              sortable: true,
-              label: 'Tanggal Gabung',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-          ],
-          items: [],
-          loading: false,
-          totalRows: 0
-        },
-        report: {
-          fields: [
-            {
-              key: 'no',
-              sortable: false,
-              label: 'No',
-              thClass: 'text-center w-5p',
-              tdClass: 'text-center'
-            },
-            {
-              key: 'nama_anggota',
-              sortable: false,
-              label: 'Nama Anggota',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'nama_rembug',
-              sortable: false,
-              label: 'Nama Rembug',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'nama_cabang',
-              sortable: false,
-              label: 'Nama Cabang',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'desa',
-              sortable: false,
-              label: 'Desa',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'no_telp',
-              sortable: false,
-              label: 'No Telp',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'alamat',
-              sortable: false,
-              label: 'Alamat',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-            {
-              key: 'tgl_gabung',
-              sortable: false,
-              label: 'Tanggal Gabung',
-              thClass: 'text-center',
-              tdClass: ''
-            },
-          ],
-          items: [],
-          loading: false,
-          totalRows: 0,
-          cabang: null,
-          from: null,
-          to: null
-        },
-        paging: {
-          page: 1,
-          perPage: 10,
-          sortDesc: true,
-          sortBy: 'kop_anggota.id',
-          search: '',
-          status: '~',
-          cabang: 0,
-          from: null,
-          to: null
-        },
-        opt: {
-          cabang: []
-        }
-      }
-    },
-    computed: {
-      ...mapGetters(["user"]),
-    },
-    watch: {
+import helper from "@/core/helper";
+import html2pdf from "html2pdf.js";
+import { mapGetters } from "vuex";
+import easycoApi from "@/core/services/easyco.service";
+export default {
+  name: "LaporanSaldoAnggota",
+  components: {},
+  data() {
+    return {
+      table: {
+        fields: [
+          {
+            key: "no",
+            sortable: false,
+            label: "No",
+            thClass: "text-center w-5p",
+            tdClass: "text-center",
+          },
+          {
+            key: "nama_anggota",
+            sortable: true,
+            label: "Nama Anggota",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "nama_rembug",
+            sortable: true,
+            label: "Nama Majelis",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "nama_cabang",
+            sortable: true,
+            label: "Nama Cabang",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "desa",
+            sortable: true,
+            label: "Desa",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "no_telp",
+            sortable: true,
+            label: "No Telp",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "alamat",
+            sortable: true,
+            label: "Alamat",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "tgl_gabung",
+            sortable: true,
+            label: "Tanggal Gabung",
+            thClass: "text-center",
+            tdClass: "",
+          },
+        ],
+        items: [],
+        loading: false,
+        totalRows: 0,
+      },
+      report: {
+        fields: [
+          {
+            key: "no",
+            sortable: false,
+            label: "No",
+            thClass: "text-center w-5p",
+            tdClass: "text-center",
+          },
+          {
+            key: "nama_anggota",
+            sortable: false,
+            label: "Nama Anggota",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "nama_rembug",
+            sortable: false,
+            label: "Nama Rembug",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "nama_cabang",
+            sortable: false,
+            label: "Nama Cabang",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "desa",
+            sortable: false,
+            label: "Desa",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "no_telp",
+            sortable: false,
+            label: "No Telp",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "alamat",
+            sortable: false,
+            label: "Alamat",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "tgl_gabung",
+            sortable: false,
+            label: "Tanggal Gabung",
+            thClass: "text-center",
+            tdClass: "",
+          },
+        ],
+        items: [],
+        loading: false,
+        totalRows: 0,
+        cabang: null,
+        from: null,
+        to: null,
+      },
       paging: {
-        handler(val) {
-          this.doGet();
+        page: 1,
+        perPage: 10,
+        sortDesc: true,
+        sortBy: "kop_anggota.id",
+        search: "",
+        status: "~",
+        cabang: 0,
+        from: null,
+        to: null,
+      },
+      opt: {
+        cabang: [],
+      },
+    };
+  },
+  computed: {
+    ...mapGetters(["user"]),
+  },
+  watch: {
+    paging: {
+      handler(val) {
+        this.doGet();
+      },
+      deep: true,
+    },
+  },
+  mounted() {
+    this.doGet();
+    this.doGetCabang();
+  },
+  methods: {
+    ...helper,
+    doPrintPdf() {
+      let filename = "LAPORAN SALDO ANGGOTA";
+      if (this.report.cabang) {
+        filename += ` - Cabang ${this.report.cabang}`;
+      }
+      if (this.report.from && this.report.to) {
+        filename += ` - Dari ${this.dateFormatId(
+          this.report.from
+        )} Sampai ${this.dateFormatId(this.report.to)}`;
+      }
+      let element = document.getElementById("table-print");
+      let options = {
+        margin: 0,
+        filename: `${filename}.pdf`,
+        jsPDF: {
+          unit: "in",
+          format: "a4",
+          orientation: "landscape",
         },
-        deep: true,
-      },
-    },
-    mounted() {
-      this.doGet();
-      this.doGetCabang();
-    },
-    methods: {
-      ...helper,
-      doPrintPdf() {
-        let filename = "LAPORAN SALDO ANGGOTA";
-        if (this.report.cabang) {
-          filename += ` - Cabang ${this.report.cabang}`;
-        }
-        if (this.report.from && this.report.to) {
-          filename += ` - Dari ${this.dateFormatId(
-            this.report.from
-          )} Sampai ${this.dateFormatId(this.report.to)}`;
-        }
-        let element = document.getElementById("table-print");
-        let options = {
-          margin: 0,
-          filename: `${filename}.pdf`,
-          jsPDF: {
-            unit: "in",
-            format: "a4",
-            orientation: "landscape",
-          },
-        };
-        html2pdf()
-          .set(options)
-          .from(element)
-          .toPdf()
-          .get("pdf")
-          .then(function (pdf) {
-            console.log("hi");
-            window.open(pdf.output("bloburl"), "_blank");
-          });
-      },
-      doSavePdf() {
-        let filename = "LAPORAN SALDO ANGGOTA";
-        if (this.report.cabang) {
-          filename += ` - Cabang ${this.report.cabang}`;
-        }
-        if (this.report.from && this.report.to) {
-          filename += ` - Dari ${this.dateFormatId(
-            this.report.from
-          )} Sampai ${this.dateFormatId(this.report.to)}`;
-        }
-
-        html2pdf(document.getElementById("table-print"), {
-          margin: 0,
-          filename: `${filename}.pdf`,
-          jsPDF: {
-            unit: "in",
-            format: "a4",
-            orientation: "landscape",
-          },
+      };
+      html2pdf()
+        .set(options)
+        .from(element)
+        .toPdf()
+        .get("pdf")
+        .then(function (pdf) {
+          console.log("hi");
+          window.open(pdf.output("bloburl"), "_blank");
         });
-      },
-      getCabangName(id) {
-        if (id > 0) {
-          let cabangName = this.opt.cabang.find((i) => i.value == id);
-          if (cabangName) {
-            console.log(cabangName.text);
-            return cabangName.text;
-          } else {
-            return null;
-          }
+    },
+    doSavePdf() {
+      let filename = "LAPORAN SALDO ANGGOTA";
+      if (this.report.cabang) {
+        filename += ` - Cabang ${this.report.cabang}`;
+      }
+      if (this.report.from && this.report.to) {
+        filename += ` - Dari ${this.dateFormatId(
+          this.report.from
+        )} Sampai ${this.dateFormatId(this.report.to)}`;
+      }
+
+      html2pdf(document.getElementById("table-print"), {
+        margin: 0,
+        filename: `${filename}.pdf`,
+        jsPDF: {
+          unit: "in",
+          format: "a4",
+          orientation: "landscape",
+        },
+      });
+    },
+    async exportXls() {
+      let payload = `kode_cabang=${this.paging.cabang}&kode_rembug=~&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let req = await easycoApi.saldoAnggotaExcel(payload);
+      console.log(req.data);
+      const url = window.URL.createObjectURL(new Blob([req.data]));
+      const link = document.createElement("a");
+      let fileName = "Saldo_Anggota.xls";
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+    },
+    async exportCsv() {
+      let payload = `kode_cabang=${this.paging.cabang}&kode_rembug=~&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let req = await easycoApi.saldoAnggotaCsv(payload);
+      console.log(req.data);
+      const url = window.URL.createObjectURL(new Blob([req.data]));
+      const link = document.createElement("a");
+      let fileName = "Saldo_Anggota.csv";
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+    },
+    getCabangName(id) {
+      if (id > 0) {
+        let cabangName = this.opt.cabang.find((i) => i.value == id);
+        if (cabangName) {
+          console.log(cabangName.text);
+          return cabangName.text;
         } else {
           return null;
         }
-      },
-      async doGetCabang() {
-        let payload = {
-          perPage: "~",
-          page: 1,
-          sortBy: "nama_cabang",
-          sortDir: "ASC",
-          search: "",
-        };
-        try {
-          let req = await easycoApi.cabangRead(payload, this.user.token);
-          let { data, status, msg } = req.data;
-          if (status) {
-            this.opt.cabang = [
-              {
-                value: 0,
-                text: "All",
-              },
-            ];
-            data.map((item) => {
-              this.opt.cabang.push({
-                value: item.kode_cabang,
-                text: item.nama_cabang,
-              });
-            });
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      },
-      async doGet() {
-        let payload = this.paging;
-        payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
-        payload.perPage = 10;
-        this.table.loading = true;
-        try {
-          let req = await easycoApi.anggotaRead(payload, this.user.token);
-          let { data, status, msg, total } = req.data;
-          if (status) {
-            this.table.items = data;
-            this.table.totalRows = total;
-          } else {
-            this.notify("danger", "Error", msg);
-          }
-          this.table.loading = false;
-        } catch (error) {
-          this.table.loading = false;
-          console.error(error);
-          this.notify("danger", "Error", error);
-        }
-      },
-      async doGetReport() {
-        let payload = this.paging;
-        payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
-        payload.perPage = "~";
-        this.report.loading = true;
-        this.report.from = payload.from;
-        this.report.to = payload.to;
-        this.report.cabang = this.getCabangName(payload.cabang);
-        try {
-          let req = await easycoApi.anggotaRead(payload, this.user.token);
-          let { data, status, msg, total } = req.data;
-          if (status) {
-            this.report.items = data;
-            this.report.totalRows = total;
-          } else {
-            this.notify("danger", "Error", msg);
-          }
-          this.report.loading = false;
-        } catch (error) {
-          this.report.loading = false;
-          console.error(error);
-          this.notify("danger", "Error", error);
-        }
-      },
-      async excel() {
-        let payload = this.paging;
-        try {
-          let req = await easycoApi.anggotaExcel(payload, this.user.token);
-          console.log(req);
-          let fileName = "Laporan Anggota.xls";
-          const url = window.URL.createObjectURL(new Blob([req.data]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", fileName);
-          document.body.appendChild(link);
-          link.click();
-        } catch (error) {
-          console.log(error);
-          this.notify("danger", "Error", error);
-        }
-      },
-      doInfo(msg, title, variant) {
-        this.$bvToast.toast(msg, {
-          title: title,
-          variant: variant,
-          solid: true,
-          toaster: "b-toaster-bottom-right",
-        });
-      },
-      notify(type, title, msg) {
-        this.$bvToast.toast(msg, {
-          title: title,
-          autoHideDelay: 5000,
-          variant: type,
-          toaster: "b-toaster-bottom-right",
-          appendToast: true,
-        });
-      },
+      } else {
+        return null;
+      }
     },
-  };
+    async doGetCabang() {
+      let payload = {
+        perPage: "~",
+        page: 1,
+        sortBy: "nama_cabang",
+        sortDir: "ASC",
+        search: "",
+      };
+      try {
+        let req = await easycoApi.cabangRead(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.cabang = [
+            {
+              value: 0,
+              text: "All",
+            },
+          ];
+          data.map((item) => {
+            this.opt.cabang.push({
+              value: item.kode_cabang,
+              text: item.nama_cabang,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doGet() {
+      let payload = this.paging;
+      payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
+      payload.perPage = 10;
+      this.table.loading = true;
+      try {
+        let req = await easycoApi.anggotaRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
+        if (status) {
+          this.table.items = data;
+          this.table.totalRows = total;
+        } else {
+          this.notify("danger", "Error", msg);
+        }
+        this.table.loading = false;
+      } catch (error) {
+        this.table.loading = false;
+        console.error(error);
+        this.notify("danger", "Error", error);
+      }
+    },
+    async doGetReport() {
+      let payload = this.paging;
+      payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
+      payload.perPage = "~";
+      this.report.loading = true;
+      this.report.from = payload.from;
+      this.report.to = payload.to;
+      this.report.cabang = this.getCabangName(payload.cabang);
+      try {
+        let req = await easycoApi.anggotaRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
+        if (status) {
+          this.report.items = data;
+          this.report.totalRows = total;
+        } else {
+          this.notify("danger", "Error", msg);
+        }
+        this.report.loading = false;
+      } catch (error) {
+        this.report.loading = false;
+        console.error(error);
+        this.notify("danger", "Error", error);
+      }
+    },
+    doInfo(msg, title, variant) {
+      this.$bvToast.toast(msg, {
+        title: title,
+        variant: variant,
+        solid: true,
+        toaster: "b-toaster-bottom-right",
+      });
+    },
+    notify(type, title, msg) {
+      this.$bvToast.toast(msg, {
+        title: title,
+        autoHideDelay: 5000,
+        variant: type,
+        toaster: "b-toaster-bottom-right",
+        appendToast: true,
+      });
+    },
+  },
+};
 </script>
   

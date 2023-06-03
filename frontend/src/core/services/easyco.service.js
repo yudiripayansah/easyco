@@ -69,6 +69,8 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+
+  // laporan excel
   anggotaExcel(payload, token) {
     let url =
       "laporan/list/excel/anggota_masuk?"+payload;
@@ -80,6 +82,180 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
+  saldoAnggotaExcel(payload, token) {
+    let url =
+      "laporan/list/excel/saldo_anggota?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  pengajuanPembiayaanExcel(payload, token) {
+    let url =
+      "laporan/list/excel/pengajuan?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  pencairanPembiayaanExcel(payload, token) {
+    let url =
+      "laporan/list/excel/pencairan?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  outstandingPembiayaanExcel(payload, token) {
+    let url =
+      "laporan/list/excel/saldo_outstanding?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  registrasiAkadExcel(payload, token) {
+    let url =
+      "laporan/list/excel/regis_akad?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  kasPetugasExcel(payload, token){
+    let url = "laporan/list/excel/kas_petugas?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  jurnalTransaksiExcel(payload, token){
+    let url = "laporan/list/excel/jurnal_transaksi?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  kartuAngsuranExcel(payload, token){
+    let url = "laporan/list/excel/kartu_angsuran?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+
+  // laporan csv
+  anggotaCsv(payload, token) {
+    let url =
+      "laporan/list/csv/anggota_masuk?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  saldoAnggotaCsv(payload, token) {
+    let url =
+      "laporan/list/csv/saldo_anggota?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  pengajuanPembiayaanCsv(payload, token) {
+    let url =
+      "laporan/list/csv/pengajuan?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  pencairanPembiayaanCsv(payload, token) {
+    let url =
+      "laporan/list/csv/pencairan?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  outstandingPembiayaanCsv(payload, token) {
+    let url =
+      "laporan/list/csv/saldo_outstanding?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  registrasiAkadCsv(payload, token) {
+    let url =
+      "laporan/list/csv/regis_akad?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  kasPetugasCsv(payload, token){
+    let url = "laporan/list/csv/kas_petugas?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  kartuAngsuranCsv(payload, token){
+    let url = "laporan/list/csv/kartu_angsuran?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+
   // Petugas
   petugasRead(payload, token) {
     let url = "pengajuan/fa";
@@ -1012,6 +1188,18 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+  // LAPORAN TRANSAKSI KAS PETUGAS
+  kodeKasPetugas(payload, token){
+    let url = "kaspetugas/read";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+ 
+
   // GET KODE CABANG
   getKodeCabang(payload, token) {
     let url = "cabang/read";

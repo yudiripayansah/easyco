@@ -253,7 +253,7 @@ const menu = [
           {
             target: 'transaksi-kas-petugas',
             label: 'Laporan Transaksi Kas Petugas',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Transaksi/Laporan/LaporanTransaksiKasPetugas'),
           },
           {
             target: 'jurnal-transaksi',

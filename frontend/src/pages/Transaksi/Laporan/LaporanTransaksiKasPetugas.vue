@@ -6,34 +6,21 @@
         <b-col cols="8" class="mb-5">
           <div class="row">
             <b-col cols="12">
-              <b-input-group prepend="Cabang" class="mb-3">
-                <b-form-select v-model="paging.cabang" :options="opt.cabang" />
+              <b-input-group prepend="Petugas" class="mb-3">
+                <b-form-select
+                  v-model="paging.petugas"
+                  :options="opt.petugas"
+                />
               </b-input-group>
             </b-col>
             <b-col>
               <b-input-group prepend="Dari Tanggal">
-                <b-form-datepicker
-                  v-model="paging.from"
-                  :date-format-options="{
-                    year: 'numeric',
-                    month: 'numeric',
-                    day: 'numeric',
-                  }"
-                  locale="id"
-                />
+                <b-form-datepicker v-model="paging.from" />
               </b-input-group>
             </b-col>
             <b-col>
               <b-input-group prepend="Sampai Tanggal">
-                <b-form-datepicker
-                  v-model="paging.to"
-                  :date-format-options="{
-                    year: 'numeric',
-                    month: 'numeric',
-                    day: 'numeric',
-                  }"
-                  locale="id"
-                />
+                <b-form-datepicker v-model="paging.to" />
               </b-input-group>
             </b-col>
           </div>
@@ -71,18 +58,8 @@
             show-empty
             :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'"
           >
-            <template #cell(jangka_waktu)="item">
-              {{ item.item.jangka_waktu }}
-              {{ getPeriodJangkaWaktu(item.item.periode_jangka_waktu) }}
-            </template>
             <template #cell(no)="item">
               {{ item.index + 1 }}
-            </template>
-            <template #cell(margin)="item">
-              Rp {{ thousand(item.item.margin) }}
-            </template>
-            <template #cell(pokok)="item">
-              Rp {{ thousand(item.item.pokok) }}
             </template>
           </b-table>
         </b-col>
@@ -97,7 +74,7 @@
       </b-row>
     </b-card>
     <b-modal
-      title="PREVIEW LAPORAN REGISTRASI AKAD PEMBIAYAAN"
+      title="PREVIEW LAPORAN TRANSAKSI KAS PETUGAS"
       id="modal-pdf"
       hide-footer
       size="xl"
@@ -107,39 +84,42 @@
         <h5 class="text-center">
           KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
         </h5>
-        <h5 class="text-center">LAPORAN REGISTRASI AKAD PEMBIAYAAN</h5>
+        <h5 class="text-center">LAPORAN TRANSAKSI KAS PETUGAS</h5>
         <h5 class="text-center" v-show="report.cabang">{{ report.cabang }}</h5>
         <h6 class="text-center mb-5 pb-5" v-show="report.from && report.to">
           Tanggal {{ dateFormatId(report.from) }} s.d
           {{ dateFormatId(report.to) }}
         </h6>
-        <b-table
-          responsive
-          bordered
-          outlined
-          small
-          striped
-          hover
-          :fields="report.fields"
-          :items="report.items"
-          show-empty
-          :emptyText="report.loading ? 'Memuat data...' : 'Tidak ada data'"
-          class="mt-5 pt-5 d-block"
-        >
-          <template #cell(jangka_waktu)="item">
-            {{ item.item.jangka_waktu }}
-            {{ getPeriodJangkaWaktu(item.item.periode_jangka_waktu) }}
-          </template>
-          <template #cell(no)="item">
-            {{ item.index + 1 }}
-          </template>
-          <template #cell(margin)="item">
-            Rp {{ thousand(item.item.margin) }}
-          </template>
-          <template #cell(pokok)="item">
-            Rp {{ thousand(item.item.pokok) }}
-          </template>
-        </b-table>
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr class="text-center">
+              <th>No</th>
+              <th>Tanggal</th>
+              <th>Keterangan</th>
+              <th>Debit</th>
+              <th>Kredit</th>
+              <th>Saldo</th>
+            </tr>
+          </thead>
+          <tbody v-if="report.items.length > 0">
+            <tr
+              v-for="(report, reportIndex) in report.items"
+              :key="`report-${reportIndex}`"
+            >
+              <td>{{ reportIndex + 1 }}</td>
+              <td>{{ report.tanggal }}</td>
+              <td>{{ report.keterangan }}</td>
+              <td>{{ report.debit }}</td>
+              <td>{{ report.kredit }}</td>
+              <td>{{ report.saldo }}</td>
+            </tr>
+          </tbody>
+          <tbody v-else>
+            <tr class="text-center">
+              <td colspan="12">There's no data to display...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <b-row>
         <b-col
@@ -171,14 +151,14 @@
     </b-modal>
   </div>
 </template>
-    
+  
 <script>
-import html2pdf from "html2pdf.js";
 import helper from "@/core/helper";
+import html2pdf from "html2pdf.js";
 import { mapGetters } from "vuex";
 import easycoApi from "@/core/services/easyco.service";
 export default {
-  name: "LaporanRegistrasiAnggota",
+  name: "LaporanSaldoAnggota",
   components: {},
   data() {
     return {
@@ -192,67 +172,39 @@ export default {
             tdClass: "text-center",
           },
           {
-            key: "nama_cabang",
-            sortable: true,
-            label: "Cabang",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "tanggal_registrasi",
+            key: "tanggal",
             sortable: true,
             label: "Tanggal",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "nama_anggota",
+            key: "keterangan",
             sortable: true,
-            label: "Nama",
+            label: "Keterangan",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "nama_rembug",
+            key: "debit",
             sortable: true,
-            label: "Majelis",
+            label: "Debit",
             thClass: "text-center",
-            tdClass: "text-center",
+            tdClass: "",
           },
           {
-            key: "no_rekening",
+            key: "kredit",
             sortable: true,
-            label: "No Rek",
+            label: "Kredit",
             thClass: "text-center",
-            tdClass: "text-right",
+            tdClass: "",
           },
           {
-            key: "nama_produk",
+            key: "saldo",
             sortable: true,
-            label: "Produk",
+            label: "Saldo",
             thClass: "text-center",
-            tdClass: "text-right",
-          },
-          {
-            key: "pokok",
-            sortable: true,
-            label: "Plafon",
-            thClass: "text-center",
-            tdClass: "text-right",
-          },
-          {
-            key: "margin",
-            sortable: true,
-            label: "Margin",
-            thClass: "text-center",
-            tdClass: "text-right",
-          },
-          {
-            key: "jangka_waktu",
-            sortable: true,
-            label: "Jk Waktu",
-            thClass: "text-center",
-            tdClass: "text-right",
+            tdClass: "",
           },
         ],
         items: [],
@@ -269,67 +221,53 @@ export default {
             tdClass: "text-center",
           },
           {
-            key: "nama_cabang",
-            sortable: true,
-            label: "Cabang",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "tanggal_registrasi",
-            sortable: true,
+            key: "tanggal",
+            sortable: false,
             label: "Tanggal",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "nama_anggota",
-            sortable: true,
-            label: "Nama",
+            key: "no_trans",
+            sortable: false,
+            label: "No Trans",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "nama_rembug",
-            sortable: true,
-            label: "Majelis",
+            key: "keterangan",
+            sortable: false,
+            label: "keterangan",
             thClass: "text-center",
-            tdClass: "text-center",
+            tdClass: "",
           },
           {
-            key: "no_rekening",
-            sortable: true,
-            label: "No Rek",
+            key: "no_akun",
+            sortable: false,
+            label: "No Akun",
             thClass: "text-center",
-            tdClass: "text-right",
+            tdClass: "",
           },
           {
-            key: "nama_produk",
-            sortable: true,
-            label: "Produk",
+            key: "no_telp",
+            sortable: false,
+            label: "No Telp",
             thClass: "text-center",
-            tdClass: "text-right",
+            tdClass: "",
           },
           {
-            key: "pokok",
-            sortable: true,
-            label: "Plafon",
+            key: "debit",
+            sortable: false,
+            label: "Debit",
             thClass: "text-center",
-            tdClass: "text-right",
+            tdClass: "",
           },
           {
-            key: "margin",
-            sortable: true,
-            label: "Margin",
+            key: "kredit",
+            sortable: false,
+            label: "kredit",
             thClass: "text-center",
-            tdClass: "text-right",
-          },
-          {
-            key: "jangka_waktu",
-            sortable: true,
-            label: "Jk Waktu",
-            thClass: "text-center",
-            tdClass: "text-right",
+            tdClass: "",
           },
         ],
         items: [],
@@ -343,14 +281,15 @@ export default {
         page: 1,
         perPage: 10,
         sortDesc: true,
-        sortBy: "kop_pembiayaan.tanggal_registrasi",
+        sortBy: "kop_anggota.id",
         search: "",
-        cabang: null,
+        status: "~",
+        cabang: 0,
         from: null,
         to: null,
       },
       opt: {
-        cabang: [],
+        petugas: [],
       },
     };
   },
@@ -366,14 +305,13 @@ export default {
     },
   },
   mounted() {
-    this.doGet();
-    this.doGetCabang();
-    this.doGetReport();
+    // this.doGet()
+    this.doGetPetugas();
   },
   methods: {
     ...helper,
     doPrintPdf() {
-      let filename = "LAPORAN REGISTRASI AKAD PEMBIAYAAN";
+      let filename = "LAPORAN TRANSAKSI KAS PETUGAS";
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
       }
@@ -403,7 +341,7 @@ export default {
         });
     },
     doSavePdf() {
-      let filename = "LAPORAN REGISTRASI AKAD";
+      let filename = "LAPORAN TRANSAKSI KAS PETUGAS";
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
       }
@@ -424,80 +362,44 @@ export default {
       });
     },
     async exportXls() {
-      let payload = `kode_cabang=${this.paging.cabang}&jenis_pembiayaan=9&kode_petugas=~&kode_rembug=~&produk=99&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
-      let req = await easycoApi.registrasiAkadExcel(payload);
-      console.log(req.data);
+      let payload = `kode_kas_petugas=${this.paging.petugas}&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let req = await easycoApi.kasPetugasExcel(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
-      let fileName = "Registrasi_Akad.xls";
+      let fileName = "Transaksi_Kas_Petugas.xls";
       link.href = url;
       link.setAttribute("download", fileName);
       document.body.appendChild(link);
       link.click();
     },
     async exportCsv() {
-      let payload = `kode_cabang=${this.paging.cabang}&jenis_pembiayaan=9&kode_petugas=~&kode_rembug=~&produk=99&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
-      let req = await easycoApi.registrasiAkadCsv(payload);
-      console.log(req.data);
+      let payload = `kode_kas_petugas=${this.paging.petugas}&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let req = await easycoApi.kasPetugasCsv(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
-      let fileName = "Registrasi_Akad.csv";
+      let fileName = "Transaksi_Kas_Petugas.csv";
       link.href = url;
       link.setAttribute("download", fileName);
       document.body.appendChild(link);
       link.click();
     },
-
-    getCabangName(id) {
-      if (id > 0) {
-        let cabangName = this.opt.cabang.find((i) => i.value == id);
-        if (cabangName) {
-          console.log(cabangName.text);
-          return cabangName.text;
-        } else {
-          return null;
-        }
-      } else {
-        return null;
-      }
-    },
-    getPeriodJangkaWaktu(val) {
-      let res = "";
-      switch (val) {
-        case 1:
-          res = "Minggu";
-          break;
-        case 2:
-          res = "Bulan";
-          break;
-        default:
-          res = "Hari";
-          break;
-      }
-      return res;
-    },
-    async doGetCabang() {
+    async doGetPetugas() {
       let payload = {
         perPage: "~",
         page: 1,
-        sortBy: "nama_cabang",
+        sortBy: "kode_kas_petugas",
         sortDir: "ASC",
         search: "",
       };
       try {
-        let req = await easycoApi.cabangRead(payload, this.user.token);
+        let req = await easycoApi.kodeKasPetugas(payload, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
-          this.opt.cabang = [
-            {
-              value: null,
-              text: "All",
-            },
-          ];
+          this.opt.petugas = [];
           data.map((item) => {
-            this.opt.cabang.push({
-              value: item.kode_cabang,
-              text: item.nama_cabang,
+            this.opt.petugas.push({
+              value: item.kode_kas_petugas,
+              text: item.nama_kas_petugas,
             });
           });
         }
@@ -511,7 +413,7 @@ export default {
       payload.perPage = 10;
       this.table.loading = true;
       try {
-        let req = await easycoApi.regisAkadRead(payload, this.user.token);
+        let req = await easycoApi.anggotaRead(payload, this.user.token);
         let { data, status, msg, total } = req.data;
         if (status) {
           this.table.items = data;
@@ -523,7 +425,7 @@ export default {
       } catch (error) {
         this.table.loading = false;
         console.error(error);
-        this.notify("danger", "Login Error", error);
+        this.notify("danger", "Error", error);
       }
     },
     async doGetReport() {
@@ -535,7 +437,7 @@ export default {
       this.report.to = payload.to;
       this.report.cabang = this.getCabangName(payload.cabang);
       try {
-        let req = await easycoApi.regisAkadRead(payload, this.user.token);
+        let req = await easycoApi.anggotaRead(payload, this.user.token);
         let { data, status, msg, total } = req.data;
         if (status) {
           this.report.items = data;
@@ -558,7 +460,15 @@ export default {
         toaster: "b-toaster-bottom-right",
       });
     },
+    notify(type, title, msg) {
+      this.$bvToast.toast(msg, {
+        title: title,
+        autoHideDelay: 5000,
+        variant: type,
+        toaster: "b-toaster-bottom-right",
+        appendToast: true,
+      });
+    },
   },
 };
 </script>
-  

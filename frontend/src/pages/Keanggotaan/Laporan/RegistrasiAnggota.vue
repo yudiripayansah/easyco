@@ -34,8 +34,12 @@
             >
               PDF
             </b-button>
-            <b-button text="Button" variant="success" @click="exportXls()"> XLS </b-button>
-            <b-button text="Button" variant="warning"> CSV </b-button>
+            <b-button text="Button" variant="success" @click="exportXls()">
+              XLS
+            </b-button>
+            <b-button text="Button" variant="warning" @click="exportCsv()">
+              CSV
+            </b-button>
           </b-button-group>
         </b-col>
         <b-col cols="12">
@@ -161,9 +165,9 @@ export default {
           {
             key: "nama_rembug",
             sortable: true,
-            label: 'Nama Majelis',
-            thClass: 'text-center',
-            tdClass: ''
+            label: "Nama Majelis",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
             key: "nama_cabang",
@@ -356,16 +360,28 @@ export default {
       });
     },
     async exportXls() {
-      let payload = `kode_cabang=${this.paging.cabang}&kode_rembug=~&from_date=${this.paging.from}&thru_date=${this.paging.to}`
-      let req = await easycoApi.anggotaExcel(payload)
-      console.log(req.data)
-      const url = window.URL.createObjectURL(new Blob([req.data]))
-      const link = document.createElement('a')
-      let fileName = 'Anggota_Masuk.xls'
-      link.href = url
-      link.setAttribute('download', fileName)
-      document.body.appendChild(link)
-      link.click()
+      let payload = `kode_cabang=${this.paging.cabang}&kode_rembug=~&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let req = await easycoApi.anggotaExcel(payload);
+      console.log(req.data);
+      const url = window.URL.createObjectURL(new Blob([req.data]));
+      const link = document.createElement("a");
+      let fileName = "Anggota_Masuk.xls";
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+    },
+    async exportCsv() {
+      let payload = `kode_cabang=${this.paging.cabang}&kode_rembug=~&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let req = await easycoApi.anggotaCsv(payload);
+      console.log(req.data);
+      const url = window.URL.createObjectURL(new Blob([req.data]));
+      const link = document.createElement("a");
+      let fileName = "Anggota_Masuk.csv";
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
     },
     getCabangName(id) {
       if (id > 0) {
@@ -451,23 +467,6 @@ export default {
       } catch (error) {
         this.report.loading = false;
         console.error(error);
-        this.notify("danger", "Error", error);
-      }
-    },
-    async excel() {
-      let payload = this.paging;
-      try {
-        let req = await easycoApi.anggotaExcel(payload, this.user.token);
-        console.log(req);
-        let fileName = "Laporan Anggota.xls";
-        const url = window.URL.createObjectURL(new Blob([req.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", fileName);
-        document.body.appendChild(link);
-        link.click();
-      } catch (error) {
-        console.log(error);
         this.notify("danger", "Error", error);
       }
     },

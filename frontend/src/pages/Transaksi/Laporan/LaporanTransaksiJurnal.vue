@@ -31,8 +31,9 @@
             >
               PDF
             </b-button>
-            <b-button text="Button" variant="success"> XLS </b-button>
-            <b-button text="Button" variant="warning"> CSV </b-button>
+            <b-button text="Button" variant="success" @click="exportXls()">
+              XLS
+            </b-button>
           </b-button-group>
         </b-col>
         <b-col cols="12">
@@ -384,6 +385,17 @@ export default {
         },
       });
     },
+    async exportXls() {
+      let payload = `kode_cabang=${this.paging.cabang}&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let req = await easycoApi.jurnalTransaksiExcel(payload);
+      const url = window.URL.createObjectURL(new Blob([req.data]));
+      const link = document.createElement("a");
+      let fileName = "Jurnal_Transaksi.xls";
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+    },
     getCabangName(id) {
       if (id > 0) {
         let cabangName = this.opt.cabang.find((i) => i.value == id);
@@ -468,23 +480,6 @@ export default {
       } catch (error) {
         this.report.loading = false;
         console.error(error);
-        this.notify("danger", "Error", error);
-      }
-    },
-    async excel() {
-      let payload = this.paging;
-      try {
-        let req = await easycoApi.anggotaExcel(payload, this.user.token);
-        console.log(req);
-        let fileName = "Laporan Anggota.xls";
-        const url = window.URL.createObjectURL(new Blob([req.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", fileName);
-        document.body.appendChild(link);
-        link.click();
-      } catch (error) {
-        console.log(error);
         this.notify("danger", "Error", error);
       }
     },
