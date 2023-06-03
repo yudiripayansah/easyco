@@ -320,7 +320,7 @@ class LaporanController extends Controller
         $getTabungan = KopTabungan::get_profile($request->no_anggota);
         if (count($getTabungan) > 0) {
             foreach ($getTabungan as $tabungan) {
-                $data['tabungan'] = array(
+                $data['tabungan'][] = array(
                     'no_rekening' => $tabungan['no_rekening'],
                     'nama_produk' => $tabungan['nama_produk'],
                     'tanggal_buka' => $tabungan['tanggal_buka'],
@@ -331,7 +331,7 @@ class LaporanController extends Controller
                 );
             }
         } else {
-            $data['tabungan'] = array();
+            $data['tabungan'][] = array();
         }
 
         $getPembiayaan = KopPembiayaan::get_financing_member($request->no_anggota);
@@ -347,7 +347,7 @@ class LaporanController extends Controller
                     $status_rekening = 'Verifikasi Anggota Keluar';
                 }
 
-                $data['pembiayaan'] = array(
+                $data['pembiayaan'][] = array(
                     'no_rekening' => $pembiayaan['no_rekening'],
                     'nama_produk' => $pembiayaan['nama_produk'],
                     'pokok' => $pembiayaan['pokok'],
@@ -361,7 +361,7 @@ class LaporanController extends Controller
                 );
             }
         } else {
-            $data['pembiayaan'] = array();
+            $data['pembiayaan'][] = array();
         }
 
         $res = array(

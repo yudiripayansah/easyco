@@ -258,7 +258,7 @@ class TrxRembug extends Controller
         return $response;
     }
 
-    public function read_trx_kas_petugas(Request $request)
+    function read_trx_kas_petugas(Request $request)
     {
         $offset = 0;
         $page = 1;
@@ -269,13 +269,9 @@ class TrxRembug extends Controller
         $total = 0;
         $totalPage = 1;
         $status = '~';
+        $kode_kas_petugas = '';
         $from = NULL;
         $to = NULL;
-
-        $token = $request->header('token');
-        $param = array('token' => $token);
-        $get = KopUser::where($param)->first();
-        $cabang = $get->kode_cabang;
 
         if ($request->page) {
             $page = $request->page;
@@ -297,8 +293,8 @@ class TrxRembug extends Controller
             $search = strtoupper($request->search);
         }
 
-        if ($request->cabang) {
-            $cabang = $request->cabang;
+        if ($request->kode_kas_petugas) {
+            $kode_kas_petugas = $request->kode_kas_petugas;
         }
 
         if ($request->status) {
@@ -332,8 +328,8 @@ class TrxRembug extends Controller
             $read->where('kop_trx_kas_petugas.status_trx', $status);
         }
 
-        if ($cabang != '00000') {
-            $read->where('kop_cabang.kode_cabang', $cabang);
+        if ($kode_kas_petugas != '') {
+            $read->where('kop_trx_kas_petugas.kode_kas_petugas', $kode_kas_petugas);
         }
 
         if ($search) {
@@ -352,7 +348,7 @@ class TrxRembug extends Controller
             $rd->used_count = $useCount;
         }
 
-        if ($search || $cabang || $status || ($from && $to)) {
+        if ($search || $kode_kas_petugas || $status || ($from && $to)) {
             $total = KopTrxKasPetugas::orderBy($sortBy, $sortDir)
                 ->join('kop_kas_petugas AS a', 'a.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_petugas')
                 ->join('kop_kas_petugas AS b', 'b.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_teller');
@@ -366,8 +362,8 @@ class TrxRembug extends Controller
                 $total->where('kop_trx_kas_petugas.status_trx', $status);
             }
 
-            if ($cabang != '00000') {
-                $total->where('kop_cabang.kode_cabang', $cabang);
+            if ($kode_kas_petugas != '') {
+                $total->where('kop_trx_kas_petugas.kode_kas_petugas', $kode_kas_petugas);
             }
 
             if ($from && $to) {

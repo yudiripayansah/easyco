@@ -23,6 +23,7 @@ use App\Http\Controllers\PrdPembiayaanController;
 use App\Http\Controllers\PrdTabunganController;
 use App\Http\Controllers\RegistrasiAkadController;
 use App\Http\Controllers\RembugController;
+use App\Http\Controllers\TabunganController;
 use App\Http\Controllers\TplController;
 use App\Http\Controllers\TrxGl;
 use App\Http\Controllers\TrxRembug;
@@ -196,6 +197,10 @@ Route::prefix('prdtabungan')->middleware('checkToken')->group(function () {
   Route::get('/detail', [PrdTabunganController::class, 'detail']);
   Route::post('/update', [PrdTabunganController::class, 'update']);
   Route::get('/delete', [PrdTabunganController::class, 'delete']);
+});
+
+Route::prefix('tabungan')->middleware('checkToken')->group(function () {
+  Route::post('/registrasi', [TabunganController::class, 'registrasi']);
 });
 
 Route::prefix('pengajuan')->middleware('checkToken')->group(function () {
