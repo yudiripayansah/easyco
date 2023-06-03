@@ -46,11 +46,41 @@ const anggotaCreate = (payload, token) => {
   }
   return Axios.post('/anggota/create', payload, config);
 }
+// Pembiayaan
+const pembiayaanCreate = (payload, token) => {
+  let config = {
+    headers: {
+      'token': token
+    }
+  }
+  return Axios.post('/pengajuan/create', payload, config);
+}
+// Produk Tabungan
+const produkTabungan = (payload, token) => {
+  let config = {
+    headers: {
+      'token': token
+    }
+  }
+  return Axios.post('/prdtabungan/read', payload, config);
+}
+// Produk Tabungan
+const registrasiTabungan = (payload, token) => {
+  let config = {
+    headers: {
+      'token': token
+    }
+  }
+  return Axios.post('/tabungan/registrasi', payload, config);
+}
 export default {
   authLogin,
   infoRembug,
   infoMember,
   transSetoranDeposit,
   transSetoranProses,
-  anggotaCreate
+  anggotaCreate,
+  pembiayaanCreate,
+  produkTabungan,
+  registrasiTabungan
 }
