@@ -61,6 +61,12 @@
             <template #cell(no)="item">
               {{ item.index + 1 }}
             </template>
+            <template #cell(debit)="item">
+              {{ item.item.debit_credit == "C" ? item.item.jumlah_trx : 0 }}
+            </template>
+            <template #cell(kredit)="item">
+              {{ item.item.debit_credit == "D" ? item.item.jumlah_trx : 0 }}
+            </template>
           </b-table>
         </b-col>
         <b-col cols="12" class="justify-content-end d-flex">
@@ -107,10 +113,10 @@
               :key="`report-${reportIndex}`"
             >
               <td>{{ reportIndex + 1 }}</td>
-              <td>{{ report.tanggal }}</td>
+              <td>{{ report.trx_date }}</td>
               <td>{{ report.keterangan }}</td>
-              <td>{{ report.debit }}</td>
-              <td>{{ report.kredit }}</td>
+              <td>{{ report.debit_credit == "C" ? report.jumlah_trx : 0 }}</td>
+              <td>{{ report.debit_credit == "D" ? report.jumlah_trx : 0 }}</td>
               <td>{{ report.saldo }}</td>
             </tr>
           </tbody>
@@ -172,7 +178,7 @@ export default {
             tdClass: "text-center",
           },
           {
-            key: "tanggal",
+            key: "trx_date",
             sortable: true,
             label: "Tanggal",
             thClass: "text-center",
@@ -267,7 +273,7 @@ export default {
         page: 1,
         perPage: 10,
         sortDesc: true,
-        sortBy: "kop_anggota.id",
+        sortBy: "voucher_date",
         search: "",
         status: "~",
         kode_kas_petugas: 0,
@@ -421,7 +427,6 @@ export default {
       this.report.loading = true;
       this.report.from = payload.from;
       this.report.to = payload.to;
-      this.report.cabang = this.getCabangName(payload.cabang);
       try {
         let req = await easycoApi.getTrxKasPetugas(payload, this.user.token);
         let { data, status, msg, total } = req.data;
