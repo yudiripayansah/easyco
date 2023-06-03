@@ -203,7 +203,8 @@ Route::prefix('tabungan')->middleware('checkToken')->group(function () {
   Route::post('/registrasi', [TabunganController::class, 'registrasi']);
   Route::post('/read', [TabunganController::class, 'read']);
   Route::post('/tutup', [TabunganController::class, 'tutup']);
-  Route::post('/verifikasi_tutup', [TabunganController::class, 'verifikasi_tutup']);
+  Route::post('/verifikasi_tutup', [TabunganController::class, 'approve_tutup']);
+  Route::post('/reject_tutup', [TabunganController::class, 'reject_tutup']);
 });
 
 Route::prefix('pengajuan')->middleware('checkToken')->group(function () {

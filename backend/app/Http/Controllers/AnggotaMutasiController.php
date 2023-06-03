@@ -14,9 +14,22 @@ class AnggotaMutasiController extends Controller
     {
         $data = KopAnggotaMutasi::get_saldo_keluar($request->no_anggota);
 
+        $saldo = array(
+            'saldo_pokok' => (int)$data['saldo_pokok'],
+            'saldo_margin' => (int)$data['saldo_margin'],
+            'saldo_catab' => (int)$data['saldo_catab'],
+            'saldo_minggon' => (int)$data['saldo_minggon'],
+            'simpok' => (int)$data['simpok'],
+            'simwa' => (int)$data['simwa'],
+            'simsuk' => (int)$data['simsuk'],
+            'saldo_tabungan' => (int)$data['saldo_tabungan'],
+            'saldo_deposito' => (int)$data['saldo_deposito'],
+            'bonus_bagihasil' => (int)$data['bonus_bagihasil']
+        );
+
         $res = array(
             'status' => TRUE,
-            'data' => $data,
+            'data' => $saldo,
             'msg' => 'Berhasil!'
         );
 
@@ -30,6 +43,11 @@ class AnggotaMutasiController extends Controller
         $data = $request->all();
 
         $data['keterangan_mutasi'] = strtoupper($request->keterangan_mutasi);
+        $data['tanggal_mutasi'] = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_mutasi)));
+        $data['saldo_simwa'] = $request->simwa;
+        $data['saldo_simpok'] = $request->simpok;
+        $data['saldo_sukarela'] = $request->simsuk;
+        $data['saldo_tab_berencaa=na'] = $request->tabungan;
 
         $validate = KopAnggotaMutasi::validateAdd($data);
 

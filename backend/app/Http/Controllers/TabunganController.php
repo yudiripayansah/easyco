@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\KopAnggota;
 use App\Models\KopTabungan;
 use App\Models\KopUser;
 use Illuminate\Http\Request;
@@ -79,7 +80,6 @@ class TabunganController extends Controller
         $search = NULL;
         $total = 0;
         $totalPage = 1;
-        $status = 1;
         $from = NULL;
         $to = NULL;
 
@@ -126,14 +126,11 @@ class TabunganController extends Controller
             ->join('kop_anggota', 'kop_anggota.no_anggota', 'kop_tabungan.no_anggota')
             ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang')
             ->join('kop_prd_tabungan', 'kop_prd_tabungan.kode_produk', 'kop_tabungan.kode_produk')
+            ->where('kop_tabungan.status_rekening', $request->status)
             ->orderBy($sortBy, $sortDir);
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
-        }
-
-        if ($status && $status != '~') {
-            $read->where('kop_tabungan.status_rekening', $status);
         }
 
         if ($cabang != '00000') {
@@ -156,19 +153,16 @@ class TabunganController extends Controller
             $rd->used_count = $useCount;
         }
 
-        if ($search || $cabang || $status || ($from && $to)) {
+        if ($search || $cabang || ($from && $to)) {
             $total = KopTabungan::orderBy($sortBy, $sortDir)
                 ->join('kop_anggota', 'kop_anggota.no_anggota', 'kop_tabungan.no_anggota')
                 ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang')
-                ->join('kop_prd_tabungan', 'kop_prd_tabungan.kode_produk', 'kop_tabungan.kode_produk');
+                ->join('kop_prd_tabungan', 'kop_prd_tabungan.kode_produk', 'kop_tabungan.kode_produk')
+                ->where('kop_tabungan.status_rekening', $request->status);
 
             if ($search) {
                 $total->where('kop_anggota.no_anggota', 'LIKE', '%' . $search . '%')
                     ->orWhere('kop_tabungan.no_rekening', 'LIKE', '%' . $search . '%');
-            }
-
-            if ($status && $status != '~') {
-                $total->where('kop_tabungan.status_rekening', $status);
             }
 
             if ($cabang != '00000') {
@@ -229,34 +223,38 @@ class TabunganController extends Controller
         return $response;
     }
 
-    public function verifikasi_tutup(Request $request)
+    public function approve_tutup(Request $request)
     {
         $get = KopTabungan::find($request->id);
-        $sukarela = KopTabungan::get_tabungan($get->no_anggota, '002');
 
-        if ($sukarela) {
-            $getSukarela = KopTabungan::find($sukarela->id);
-            $getSukarela->saldo = $getSukarela->saldo + $get->saldo;
+        $param = array('no_anggota' => $get->no_anggota);
+        $sukarela = KopAnggota::where($param)->first();
 
-            $get->status_rekening = 9;
-            $getSukarela->save();
-        } else {
-            $payload = array(
-                'no_anggota' => $get->no_anggota,
-                'kode_produk' => '002',
-                'biaya_administrasi' => 0,
-                'setoran' => 0,
-                'saldo' => $get->saldo,
-                'periode_setoran' => 1,
-                'jangka_waktu' => 0,
-                'jenis_tabungan' => 0,
-                'created_by' => 'SYSTEM'
-            );
+        $getSukarela = KopAnggota::find($sukarela->id);
+        $getSukarela->simsuk = $getSukarela->simsuk + $get->saldo;
 
-            $this->registrasi($request->merge($payload));
-        }
-
+        $get->status_rekening = 9;
         $get->saldo = 0;
+
+        $getSukarela->save();
+        $get->save();
+
+        $res = array(
+            'status' => TRUE,
+            'data' => NULL,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    public function reject_tutup(Request $request)
+    {
+        $get = KopTabungan::find($request->id);
+
+        $get->status_rekening = 1;
         $get->save();
 
         $res = array(
