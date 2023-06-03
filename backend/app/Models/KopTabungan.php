@@ -88,6 +88,17 @@ class KopTabungan extends Model
         return $show;
     }
 
+    function get_tabungan($no_anggota, $kode_produk)
+    {
+        $show = KopTabungan::select('*')
+            ->where('no_anggota', $no_anggota)
+            ->where('kode_produk', $kode_produk)
+            ->where('status_rekening', 1)
+            ->first();
+
+        return $show;
+    }
+
     function tpl_saving($no_anggota)
     {
         $show = KopTabungan::select('kpt.nama_produk', 'kpt.nama_singkat', 'kop_tabungan.no_rekening', 'kop_tabungan.setoran', 'kop_tabungan.jangka_waktu', 'kop_tabungan.counter_setoran', 'kop_tabungan.saldo')

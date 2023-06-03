@@ -209,26 +209,61 @@ class TabunganController extends Controller
     public function tutup(Request $request)
     {
         $get = KopTabungan::find($request->id);
-        $validate = KopTabungan::validateUpdate($request->all());
 
-        $get->status_rekening = 4;
-
-        if ($get->saldo > 0) {
-            $res = array(
-                'status' => FALSE,
-                'data' => $request->all(),
-                'msg' => 'Gagal! Tabungan ini masih memiliki saldo',
-                'error' => NULL
-            );
+        if ($get->saldo == 0) {
+            $get->status_rekening = 9;
         } else {
-            $get->save();
-
-            $res = array(
-                'status' => TRUE,
-                'data' => NULL,
-                'msg' => 'Berhasil!'
-            );
+            $get->status_rekening = 4;
         }
+
+        $get->save();
+
+        $res = array(
+            'status' => TRUE,
+            'data' => NULL,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    public function verifikasi_tutup(Request $request)
+    {
+        $get = KopTabungan::find($request->id);
+        $sukarela = KopTabungan::get_tabungan($get->no_anggota, '002');
+
+        if ($sukarela) {
+            $getSukarela = KopTabungan::find($sukarela->id);
+            $getSukarela->saldo = $getSukarela->saldo + $get->saldo;
+
+            $get->status_rekening = 9;
+            $getSukarela->save();
+        } else {
+            $payload = array(
+                'no_anggota' => $get->no_anggota,
+                'kode_produk' => '002',
+                'biaya_administrasi' => 0,
+                'setoran' => 0,
+                'saldo' => $get->saldo,
+                'periode_setoran' => 1,
+                'jangka_waktu' => 0,
+                'jenis_tabungan' => 0,
+                'created_by' => 'SYSTEM'
+            );
+
+            $this->registrasi($request->merge($payload));
+        }
+
+        $get->saldo = 0;
+        $get->save();
+
+        $res = array(
+            'status' => TRUE,
+            'data' => NULL,
+            'msg' => 'Berhasil!'
+        );
 
         $response = response()->json($res, 200);
 
