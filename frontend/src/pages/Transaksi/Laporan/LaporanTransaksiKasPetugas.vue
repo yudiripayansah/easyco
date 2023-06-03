@@ -8,7 +8,7 @@
             <b-col cols="12">
               <b-input-group prepend="Petugas" class="mb-3">
                 <b-form-select
-                  v-model="paging.petugas"
+                  v-model="paging.kode_kas_petugas"
                   :options="opt.petugas"
                 />
               </b-input-group>
@@ -228,30 +228,9 @@ export default {
             tdClass: "",
           },
           {
-            key: "no_trans",
-            sortable: false,
-            label: "No Trans",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
             key: "keterangan",
             sortable: false,
-            label: "keterangan",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "no_akun",
-            sortable: false,
-            label: "No Akun",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "no_telp",
-            sortable: false,
-            label: "No Telp",
+            label: "Keterangan",
             thClass: "text-center",
             tdClass: "",
           },
@@ -265,7 +244,14 @@ export default {
           {
             key: "kredit",
             sortable: false,
-            label: "kredit",
+            label: "Kredit",
+            thClass: "text-center",
+            tdClass: "",
+          },
+          {
+            key: "saldo",
+            sortable: false,
+            label: "Saldo",
             thClass: "text-center",
             tdClass: "",
           },
@@ -284,7 +270,7 @@ export default {
         sortBy: "kop_anggota.id",
         search: "",
         status: "~",
-        cabang: 0,
+        kode_kas_petugas: 0,
         from: null,
         to: null,
       },
@@ -362,7 +348,7 @@ export default {
       });
     },
     async exportXls() {
-      let payload = `kode_kas_petugas=${this.paging.petugas}&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let payload = `kode_kas_petugas=${this.paging.kode_kas_petugas}&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
       let req = await easycoApi.kasPetugasExcel(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
@@ -373,7 +359,7 @@ export default {
       link.click();
     },
     async exportCsv() {
-      let payload = `kode_kas_petugas=${this.paging.petugas}&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let payload = `kode_kas_petugas=${this.paging.kode_kas_petugas}&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
       let req = await easycoApi.kasPetugasCsv(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
@@ -413,7 +399,7 @@ export default {
       payload.perPage = 10;
       this.table.loading = true;
       try {
-        let req = await easycoApi.anggotaRead(payload, this.user.token);
+        let req = await easycoApi.getTrxKasPetugas(payload, this.user.token);
         let { data, status, msg, total } = req.data;
         if (status) {
           this.table.items = data;
@@ -437,7 +423,7 @@ export default {
       this.report.to = payload.to;
       this.report.cabang = this.getCabangName(payload.cabang);
       try {
-        let req = await easycoApi.anggotaRead(payload, this.user.token);
+        let req = await easycoApi.getTrxKasPetugas(payload, this.user.token);
         let { data, status, msg, total } = req.data;
         if (status) {
           this.report.items = data;

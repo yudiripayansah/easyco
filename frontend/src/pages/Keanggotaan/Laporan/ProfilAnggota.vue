@@ -7,14 +7,19 @@
           <div class="row">
             <b-col cols="12">
               <b-input-group prepend="Cabang" class="mb-3">
-                <b-form-select v-model="paging.cabang" :options="opt.cabang" />
+                <b-form-select
+                  v-model="paging.cabang"
+                  :options="opt.cabang"
+                  @change="doGetMajelis()"
+                />
               </b-input-group>
             </b-col>
             <b-col>
               <b-input-group prepend="Majelis">
                 <b-form-select
-                  v-model="paging.kode_rembug"
-                  :options="opt.kode_rembug"
+                  v-model="paging.majelis"
+                  :options="opt.majelis"
+                  @change="doGetAnggota()"
                 />
               </b-input-group>
             </b-col>
@@ -23,6 +28,7 @@
                 <b-form-select
                   v-model="paging.anggota"
                   :options="opt.anggota"
+                  @change="doGet()"
                 /> </b-input-group
               ><br />
             </b-col>
@@ -30,22 +36,22 @@
           <div class="row">
             <b-col cols="12">
               <b-input-group prepend="Nama Anggota" class="mb-3">
-                <b-form-input v-model="paging.nama_anggota" />
+                <b-form-input v-model="profil.nama_anggota" />
               </b-input-group>
             </b-col>
             <b-col cols="12">
               <b-input-group prepend="No KTP" class="mb-3">
-                <b-form-input v-model="paging.no_ktp" />
+                <b-form-input v-model="profil.no_ktp" />
               </b-input-group>
             </b-col>
             <b-col cols="12">
               <b-input-group prepend="Alamat" class="mb-3">
-                <b-form-textarea v-model="paging.alamat" />
+                <b-form-textarea v-model="profil.alamat" />
               </b-input-group>
             </b-col>
             <b-col cols="12">
               <b-input-group prepend="Rembug" class="mb-3">
-                <b-form-input v-model="paging.rembug" />
+                <b-form-input v-model="profil.rembug" />
               </b-input-group>
             </b-col>
           </div>
@@ -301,14 +307,14 @@ export default {
             tdClass: "",
           },
           {
-            key: "produk",
+            key: "nama_produk",
             sortable: true,
             label: "Produk",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "tgl_buka",
+            key: "tanggal_buka",
             sortable: true,
             label: "Tanggal Buka",
             thClass: "text-center",
@@ -336,19 +342,19 @@ export default {
             tdClass: "",
           },
           {
-            key: "status",
+            key: "status_rekening",
             sortable: true,
             label: "Status",
             thClass: "text-center",
             tdClass: "",
           },
-          {
-            key: "action",
-            sortable: true,
-            label: "Action",
-            thClass: "text-center",
-            tdClass: "",
-          },
+          // {
+          //   key: "action",
+          //   sortable: true,
+          //   label: "Action",
+          //   thClass: "text-center",
+          //   tdClass: "",
+          // },
         ],
         items: [],
         loading: false,
@@ -371,7 +377,7 @@ export default {
             tdClass: "",
           },
           {
-            key: "produk_pembiayaan",
+            key: "nama_produk",
             sortable: true,
             label: "Produk Pembiayaan",
             thClass: "text-center",
@@ -392,14 +398,14 @@ export default {
             tdClass: "",
           },
           {
-            key: "tgl_cair",
+            key: "tanggal_akad",
             sortable: true,
             label: "Tanggal Cair",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "jk_waktu",
+            key: "jangka_waktu",
             sortable: true,
             label: "Jangka Waktu",
             thClass: "text-center",
@@ -427,7 +433,7 @@ export default {
             tdClass: "",
           },
           {
-            key: "status",
+            key: "status_rekening",
             sortable: true,
             label: "Status",
             thClass: "text-center",
@@ -534,6 +540,7 @@ export default {
         search: "",
         status: "~",
         cabang: 0,
+        majelis: 0,
         from: null,
         to: null,
         anggota: null,
@@ -541,24 +548,22 @@ export default {
       opt: {
         cabang: [],
         anggota: [],
+        majelis: [],
+      },
+      profil: {
+        nama_anggota: null,
+        no_ktp: null,
+        alamat: null,
+        rembug: null,
       },
     };
   },
   computed: {
     ...mapGetters(["user"]),
   },
-  watch: {
-    paging: {
-      handler(val) {
-        this.doGet();
-      },
-      deep: true,
-    },
-  },
+  watch: {},
   mounted() {
-    this.doGet();
     this.doGetCabang();
-    this.doGetAnggota();
   },
   methods: {
     ...helper,
@@ -627,6 +632,7 @@ export default {
       }
     },
     async doGetCabang() {
+      this.opt.cabang = [];
       let payload = {
         perPage: "~",
         page: 1,
@@ -655,8 +661,48 @@ export default {
         console.error(error);
       }
     },
+    async doGetMajelis() {
+      this.opt.majelis = [];
+      let payload = {
+        perPage: "~",
+        page: 1,
+        sortBy: "kode_rembug",
+        sortDir: "ASC",
+        search: "",
+        kode_cabang: this.paging.cabang,
+      };
+      try {
+        let req = await easycoApi.rembugRead(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.majelis = [
+            {
+              value: 0,
+              text: "All",
+            },
+          ];
+          data.map((item) => {
+            this.opt.majelis.push({
+              value: item.kode_rembug,
+              text: item.nama_rembug,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
     async doGetAnggota() {
-      let payload = null;
+      this.opt.anggota = [];
+      let payload = {
+        perPage: "~",
+        page: 1,
+        sortBy: "kode_rembug",
+        sortDir: "ASC",
+        search: "",
+        cabang: this.paging.cabang,
+        rembug: this.paging.majelis,
+      };
       try {
         let req = await easycoApi.anggotaRead(payload, this.user.token);
         let { data, status, msg } = req.data;
@@ -676,65 +722,26 @@ export default {
         this.notify("danger", "Login Error", error);
       }
     },
-    //async doGettable1() {
-    //let payload = this.paging
-    //payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
-    //payload.perPage = 10
-    //this.table_1.loading = true
-    //try {
-    //let req = await easycoApi.anggotaRead(payload, this.user.token)
-    //let { data, status, msg, total } = req.data
-    //if (status) {
-    //this.table_1.items = data
-    //this.table_1.totalRows = total
-    //} else {
-    //this.notify('danger', 'Error', msg)
-    //}
-    //this.table_1.loading = false
-    //} catch (error) {
-    //this.table_1.loading = false
-    //console.error(error)
-    //this.notify('danger', 'Error', error)
-    //}
-    //},
-    //async doGettable2() {
-    //let payload = this.paging
-    //payload.sortDir = payload.sortDesc ? 'DESC' : 'ASC'
-    //payload.perPage = 10
-    //this.table_2.loading = true
-    //try {
-    //let req = await easycoApi.anggotaRead(payload, this.user.token)
-    //let { data, status, msg, total } = req.data
-    //if (status) {
-    //this.table_2.items = data
-    //this.table_2.totalRows = total
-    //} else {
-    //this.notify('danger', 'Error', msg)
-    //}
-    //this.table_2.loading = false
-    //} catch (error) {
-    //this.table_2.loading = false
-    //console.error(error)
-    //this.notify('danger', 'Error', error)
-    //}
-    //},
     async doGet() {
-      let payload = this.paging;
-      console.log(payload);
-      payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
-      this.table_1.loading = true;
+      this.setProfile();
+      let payload = {
+        no_anggota: this.paging.anggota,
+      };
       try {
-        let req = await easycoApi.anggotaRead(payload, this.user.token);
+        let req = await easycoApi.laporanProfilAnggota(
+          payload,
+          this.user.token
+        );
         let { data, status, msg, total } = req.data;
         if (status) {
-          this.table_1.items = data;
-          this.table_1.totalRows = total;
+          this.table_1.items = data.tabungan;
+          this.table_1.totalRows = data.tabungan.length;
+          this.table_2.items = data.pembiayaan;
+          this.table_2.totalRows = data.pembiayaan.length;
         } else {
           this.notify("danger", "Error", msg);
         }
-        this.table_1.loading = false;
       } catch (error) {
-        this.table_1.loading = false;
         console.error(error);
         this.notify("danger", "Error", error);
       }
@@ -762,6 +769,18 @@ export default {
         console.error(error);
         this.notify("danger", "Error", error);
       }
+    },
+    setProfile() {
+      let profil = this.opt.anggota.find(
+        (item) => item.data.no_anggota == this.paging.anggota
+      ).data;
+      this.profil = {
+        nama_anggota: profil.nama_anggota,
+        no_ktp: profil.no_ktp,
+        alamat: profil.alamat,
+        rembug: profil.nama_rembug,
+      };
+      console.log(profil);
     },
     async excel() {
       let payload = this.paging;

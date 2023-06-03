@@ -1220,5 +1220,25 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+  getTrxKasPetugas(payload, token) {
+    let url = "trx_rembug/read_trx_kas_petugas";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  
+  laporanProfilAnggota(payload, token) {
+    let url = "laporan/list/pdf/profil_anggota";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+
 };
 export default easycoApi;
