@@ -1239,6 +1239,45 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+  
+  registrasiTabungan(payload, token) {
+    let url = "tabungan/registrasi";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+
+  getVerifikasiPencairan(payload, token) {
+    let url = "tabungan/read";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+
+  approveVerifikasiPencairan(payload, token) {
+    let url = "tabungan/verifikasi_tutup";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  rejectVerifikasiPencairan(payload, token) {
+    let url = "tabungan/reject_tutup";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
 
 };
 export default easycoApi;

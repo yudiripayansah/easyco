@@ -11,10 +11,33 @@
       Registrasi Taber
     </h6>
     <div>
-      <Camera class="mt-5"/>
-      <v-select solo label="Rembug" class="mb-3 mt-3" hide-details :items="opt.rembug" v-model="form.data.kode_rembug" @change="getAnggota()"/>
-      <v-select solo label="Pilih Anggota" class="mb-3" hide-details :items="opt.anggota" v-model="form.data.no_anggota"/>
-      <v-select solo label="Produk Tabungan" class="mb-3" hide-details :items="opt.produk" v-model="form.data.kode_produk" @change="setTabungan()"/>
+      <Camera class="mt-5" />
+      <v-select
+        solo
+        label="Rembug"
+        class="mb-3 mt-3"
+        hide-details
+        :items="opt.rembug"
+        v-model="form.data.kode_rembug"
+        @change="getAnggota()"
+      />
+      <v-select
+        solo
+        label="Pilih Anggota"
+        class="mb-3"
+        hide-details
+        :items="opt.anggota"
+        v-model="form.data.no_anggota"
+      />
+      <v-select
+        solo
+        label="Produk Tabungan"
+        class="mb-3"
+        hide-details
+        :items="opt.produk"
+        v-model="form.data.kode_produk"
+        @change="setTabungan()"
+      />
     </div>
     <v-container class="pa-0">
       <div class="bt-page-steps d-flex pt-5 pb-3">
@@ -22,9 +45,9 @@
           <v-card class="white elevation-3 rounded-lg pa-3 mb-3">
             <v-row>
               <v-col cols="12">
-                <v-text-field 
+                <v-text-field
                   color="black"
-                  autocomplete="off" 
+                  autocomplete="off"
                   hide-details
                   outlined
                   v-model="form.data.biaya_administrasi"
@@ -34,9 +57,9 @@
                 />
               </v-col>
               <v-col cols="12">
-                <v-text-field 
+                <v-text-field
                   color="black"
-                  autocomplete="off" 
+                  autocomplete="off"
                   hide-details
                   outlined
                   v-model="form.data.setoran"
@@ -82,31 +105,24 @@
       <v-row>
         <v-col cols="6" class="pb-0">
           <router-link to="/pembiayaan">
-          <v-btn
-            block
-            class="indigo lighten-1 white--text"
-          >
-            Kembali
-          </v-btn>
+            <v-btn block class="indigo lighten-1 white--text"> Kembali </v-btn>
           </router-link>
         </v-col>
         <v-col cols="6" class="pb-0">
-          <v-btn
-            block
-            class="indigo lighten-1 white--text"
-            @click="doSave()"
-          >
+          <v-btn block class="indigo lighten-1 white--text" @click="doSave()">
             Simpan
           </v-btn>
         </v-col>
       </v-row>
     </v-container>
-    <v-snackbar v-model="alert.show" :timeout="5000">{{ alert.msg }}</v-snackbar>
+    <v-snackbar v-model="alert.show" :timeout="5000">{{
+      alert.msg
+    }}</v-snackbar>
   </div>
 </template>
 
 <script>
-import Camera from '@/components/Camera.vue'
+import Camera from "@/components/Camera.vue";
 import helper from "@/utils/helper";
 import { mapGetters, mapActions } from "vuex";
 import services from "@/services";
@@ -129,7 +145,7 @@ export default {
           rencana_awal_setoran: null,
           jenis_tabungan: null,
           created_by: null,
-        }
+        },
       },
       opt: {
         rembug: [],
@@ -138,23 +154,23 @@ export default {
         periode_setoran: [
           {
             value: 0,
-            text: 'Harian'
+            text: "Harian",
           },
           {
             value: 2,
-            text: 'Mingguan'
+            text: "Mingguan",
           },
           {
             value: 3,
-            text: 'Bulanan'
-          }
-        ]
+            text: "Bulanan",
+          },
+        ],
       },
       alert: {
         show: false,
-        msg: ''
+        msg: "",
       },
-      loading: false
+      loading: false,
     };
   },
   computed: {
@@ -199,83 +215,87 @@ export default {
       }
     },
     async getAnggota() {
-      let payload = new FormData()
-      payload.append('kode_rembug', this.form.data.kode_rembug)
-      this.opt.anggota = []
+      let payload = new FormData();
+      payload.append("kode_rembug", this.form.data.kode_rembug);
+      this.opt.anggota = [];
       try {
-        let req = await services.infoMember(payload, this.user.token)
-        if(req.status === 200) {
+        let req = await services.infoMember(payload, this.user.token);
+        if (req.status === 200) {
           req.data.data.map((item) => {
             this.opt.anggota.push({
               value: item.no_anggota,
               text: item.nama_anggota,
-              data: item
+              data: item,
             });
           });
         } else {
           this.alert = {
             show: true,
-            msg: data.message
-          }
+            msg: data.message,
+          };
         }
       } catch (error) {
         this.alert = {
           show: true,
-          msg: error
-        }
+          msg: error,
+        };
       }
     },
     async getProduk() {
       let payload = {
         page: 1,
-        perPage: '~',
-        sortDir: 'ASC',
-        sortBy: 'kode_produk',
-        search: ""
-      }
-      this.opt.produk = []
+        perPage: "~",
+        sortDir: "ASC",
+        sortBy: "kode_produk",
+        search: "",
+      };
+      this.opt.produk = [];
       try {
-        let req = await services.produkTabungan(payload, this.user.token)
-        if(req.status === 200) {
+        let req = await services.produkTabungan(payload, this.user.token);
+        if (req.status === 200) {
           req.data.data.map((item) => {
             this.opt.produk.push({
               value: item.kode_produk,
-              text: item.nama_singkat+'-'+item.nama_produk,
-              data: item
+              text: item.nama_singkat + "-" + item.nama_produk,
+              data: item,
             });
           });
         } else {
           this.alert = {
             show: true,
-            msg: data.message
-          }
+            msg: data.message,
+          };
         }
       } catch (error) {
         this.alert = {
           show: true,
-          msg: error
-        }
+          msg: error,
+        };
       }
     },
-    setTabungan(){
-      let produk = this.opt.produk.find((item) => item.value == this.form.data.kode_produk).data
-      this.form.data.biaya_administrasi = Number(produk.biaya_adm)
-      this.form.data.jenis_tabungan = produk.jenis_tabungan
-      this.form.data.created_by = this.user.kode_petugas
+    setTabungan() {
+      let produk = this.opt.produk.find(
+        (item) => item.value == this.form.data.kode_produk
+      ).data;
+      this.form.data.biaya_administrasi = Number(produk.biaya_adm);
+      this.form.data.jenis_tabungan = produk.jenis_tabungan;
+      this.form.data.created_by = this.user.kode_petugas;
     },
     async doSave() {
       let payload = new FormData();
-      let payloadData = {...this.form.data};
-      delete payloadData.kode_rembug
-      payloadData.rencana_awal_setoran = this.formatDate(payloadData.rencana_awal_setoran)
-      if(payloadData.no_anggota && payloadData.setoran){
+      let payloadData = { ...this.form.data };
+      delete payloadData.kode_rembug;
+      payloadData.rencana_awal_setoran = this.formatDate(
+        payloadData.rencana_awal_setoran
+      );
+      if (payloadData.no_anggota && payloadData.setoran) {
         for (let key in payloadData) {
           payload.append(key, payloadData[key]);
         }
         try {
           let req = await services.registrasiTabungan(payload, this.user.token);
           if (req.status === 200) {
-            if(req.data.status){
+            if (req.data.status) {
               this.alert = {
                 show: true,
                 msg: "Registrasi Tabungan Berhasil",
@@ -304,7 +324,7 @@ export default {
       } else {
         this.alert = {
           show: true,
-          msg: 'Silahkan pilih Rembug dan Anggota lalu pilih Produk dan isi Jumlah Setoran',
+          msg: "Silahkan pilih Rembug dan Anggota lalu pilih Produk dan isi Jumlah Setoran",
         };
       }
     },

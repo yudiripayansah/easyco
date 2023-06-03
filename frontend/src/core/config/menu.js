@@ -79,6 +79,11 @@ const menu = [
         component: import('@/pages/Dummy.vue'),
       },
       {
+        target: 'verifikasi-pencairan-tabungan',
+        label: 'Verifikasi Pencairan Tabungan',
+        component: import('@/pages/Tabungan/VerifikasiPencairanTabungan.vue'),
+      },
+      {
         target: 'laporan',
         label: 'Laporan Tabungan',
         component: import('@/pages/Tabungan'),
