@@ -332,6 +332,6 @@ export default {
   mounted() {
     this.getRembug();
     this.getProduk();
-  },
+  }
 };
 </script>

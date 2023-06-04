@@ -22,7 +22,7 @@
             <b-col cols="6" class="d-flex justify-content-end">
               <div class="w-100 max-300">
                 <b-input-group size="sm">
-                  <b-form-input />
+                  <b-form-input v-model="paging.search"/>
                   <b-input-group-append>
                     <b-button size="sm" text="Button" variant="primary">
                       <b-icon icon="search" />
@@ -40,12 +40,18 @@
             <template #cell(no)="item">
               {{item.index + 1}}
             </template>
+            <template #cell(kode_cabang)="item">
+              {{ getCabang(item.item.kode_cabang) }}
+            </template>
+            <template #cell(role_user)="item">
+              {{ getRole(item.item.role_user) }}
+            </template>
             <template #cell(action)="item">
-              <b-button variant="danger" size="xs" class="mx-1" @click="doDelete(item,true)" v-b-tooltip.hover
+              <b-button variant="danger" size="xs" class="mx-1" @click="doDelete(item.item,true)" v-b-tooltip.hover
                 title="Hapus">
                 <b-icon icon="trash" />
               </b-button>
-              <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item)" v-b-tooltip.hover title="Ubah">
+              <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item.item)" v-b-tooltip.hover title="Ubah">
                 <b-icon icon="pencil" />
               </b-button>
             </template>
@@ -61,42 +67,28 @@
       <b-form @submit="doSave">
         <b-row>
           <b-col cols="6">
-            <b-form-group label="Kode User" label-for="kode">
-              <b-form-input id="kode" v-model="form.data.kode" disabled />
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group label="Nama" label-for="nama">
-              <b-form-input id="nama" v-model="$v.form.data.nama.$model" :state="validateState('nama')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group label="Email" label-for="email">
-              <b-form-input id="email" v-model="$v.form.data.email.$model" :state="validateState('email')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group label="Password" label-for="password">
-              <b-form-input id="password" v-model="$v.form.data.password.$model" type="password"
-                :state="validateState('password')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group label="Role" label-for="role">
-              <b-form-select id="role" v-model="$v.form.data.role.$model" :options="opt.role"
-                :state="validateState('role')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group label="Status" label-for="status">
-              <b-form-select id="status" v-model="$v.form.data.status.$model" :options="opt.status"
-                :state="validateState('status')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
             <b-form-group label="Cabang" label-for="cabang">
-              <b-form-select id="cabang" v-model="$v.form.data.cabang.$model" :options="opt.cabang"
-                :state="validateState('cabang')" />
+              <b-form-select id="cabang" v-model="$v.form.data.kode_cabang.$model" :options="opt.cabang" :state="validateState('kode_cabang')" />
+            </b-form-group>
+          </b-col>
+          <b-col cols="6">
+            <b-form-group label="Kode Pegawai" label-for="kode_pgw">
+              <b-form-input id="kode_pgw" v-model="form.data.kode_pgw" />
+            </b-form-group>
+          </b-col>
+          <b-col cols="4">
+            <b-form-group label="Nama User" label-for="nama_user">
+              <b-form-input id="nama_user" v-model="$v.form.data.nama_user.$model" :state="validateState('nama_user')" />
+            </b-form-group>
+          </b-col>
+          <b-col cols="4">
+            <b-form-group label="Password" label-for="password">
+              <b-form-input id="password" v-model="form.data.password" type="password"/>
+            </b-form-group>
+          </b-col>
+          <b-col cols="4">
+            <b-form-group label="Role User" label-for="role_user">
+              <b-form-select id="role_user" v-model="$v.form.data.role_user.$model" :options="opt.role_user" :state="validateState('role_user')" />
             </b-form-group>
           </b-col>
           <b-col cols="12" class="d-flex justify-content-end border-top pt-5">
@@ -137,13 +129,14 @@ export default {
       form: {
         data: {
           id: null,
-          kode: 'Auto Generated',
-          nama: null,
-          email: null,
+          kode_cabang: null,
+          kode_pgw: null,
+          nama_user: null,
+          role_user: null,
+          akses_user: 1,
+          photo: null,
           password: null,
-          role: null,
-          status: null,
-          cabang: null,
+          created_by: null
         },
         loading: false,
       },
@@ -157,51 +150,30 @@ export default {
             tdClass: 'text-center'
           },
           {
-            key: 'kode',
-            sortable: true,
-            label: 'Kode User',
-            thClass: 'text-center',
-            tdClass: ''
-          },
-          {
-            key: 'nama',
-            sortable: true,
-            label: 'Nama',
-            thClass: 'text-center',
-            tdClass: ''
-          },
-          {
-            key: 'email',
-            sortable: true,
-            label: 'Email',
-            thClass: 'text-center',
-            tdClass: ''
-          },
-          {
-            key: 'role',
-            sortable: true,
-            label: 'Role',
-            thClass: 'text-center',
-            tdClass: ''
-          },
-          {
-            key: 'status',
-            sortable: true,
-            label: 'Status',
-            thClass: 'text-center',
-            tdClass: ''
-          },
-          {
-            key: 'cabang',
+            key: 'kode_cabang',
             sortable: true,
             label: 'Cabang',
             thClass: 'text-center',
             tdClass: ''
           },
           {
-            key: 'created_at',
+            key: 'kode_pgw',
             sortable: true,
-            label: 'Dibuat Tanggal',
+            label: 'Kode Pegawai',
+            thClass: 'text-center',
+            tdClass: ''
+          },
+          {
+            key: 'nama_user',
+            sortable: true,
+            label: 'Nama',
+            thClass: 'text-center',
+            tdClass: ''
+          },
+          {
+            key: 'role_user',
+            sortable: true,
+            label: 'Role',
             thClass: 'text-center',
             tdClass: ''
           },
@@ -218,16 +190,32 @@ export default {
       },
       paging: {
         page: 1,
-        perPage: 10
+        perPage: 10,
+        sortDesc: true,
+        sortBy: "id",
+        search: "",
       },
       remove: {
-        data: {
-
-        },
+        data: Object,
         loading: false
       },
       opt: {
-        perPage: [10,25,50,100]
+        perPage: [10,25,50,100],
+        cabang: [],
+        role_user: [
+          {
+            value: 99,
+            text: 'Sysadmin'
+          },
+          {
+            value: 0,
+            text: 'Anggota'
+          },
+          {
+            value: 1,
+            text: 'Karyawan'
+          }
+        ]
       }
     }
   },
@@ -235,31 +223,32 @@ export default {
   validations: {
     form: {
       data: {
-        nama: {
+        kode_cabang: {
           required
         },
-        email: {
-          required,
-          email
-        },
-        password: {
-          required,
-          minLength: minLength(6)
-        },
-        role: {
+        nama_user: {
           required
         },
-        status: {
+        role_user: {
           required
-        },
-        cabang: {
-          required
-        },
+        }
       }
     }
   },
   mounted() {
     this.doGet()
+    this.doGetCabang()
+  },
+  computed: {
+    ...mapGetters(["user"]),
+  },
+  watch: {
+    paging: {
+      handler(val) {
+        this.doGet();
+      },
+      deep: true,
+    },
   },
   methods: {
     validateState(name) {
@@ -274,14 +263,14 @@ export default {
         let req = await easycoApi.cabangRead(payload, this.user.token);
         let { data, status, msg, total } = req.data;
         if (status) {
-          this.opt.induk_cabang = [
+          this.opt.cabang = [
             {
               value: 0,
               text: "Induk",
             },
           ];
           data.map((item) => {
-            this.opt.induk_cabang.push({
+            this.opt.cabang.push({
               value: item.kode_cabang,
               text: item.nama_cabang,
             });
@@ -296,7 +285,7 @@ export default {
       payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
       this.table.loading = true;
       try {
-        let req = await easycoApi.cabangRead(payload, this.user.token);
+        let req = await easycoApi.userRead(payload, this.user.token);
         let { data, status, msg, total } = req.data;
         if (status) {
           this.table.items = data;
@@ -317,18 +306,24 @@ export default {
           payload.created_by = this.user.id;
           let req = false;
           if (payload.id) {
-            req = await easycoApi.cabangUpdate(payload, this.user.token);
+            req = await easycoApi.userUpdate(payload, this.user.token);
           } else {
-            req = await easycoApi.cabangCreate(payload, this.user.token);
+            if(payload.password){
+              req = await easycoApi.userCreate(payload, this.user.token);
+            } else {
+              this.notify("danger", "Error", "Password harus diisi");
+            }
           }
-          let { status } = req.data;
-          if (status) {
-            this.notify("success", "Success", "Data berhasil disimpan");
-            this.doGet();
-            this.doGetCabang();
-            this.$bvModal.hide("modal-form");
-          } else {
-            this.notify("danger", "Error", "Data gagal disimpan");
+          if(req){
+            let { status } = req.data;
+            if (status) {
+              this.notify("success", "Success", "Data berhasil disimpan");
+              this.doGet();
+              this.doGetCabang();
+              this.$bvModal.hide("modal-form");
+            } else {
+              this.notify("danger", "Error", "Data gagal disimpan");
+            }
           }
           this.form.loading = false;
         } catch (error) {
@@ -341,13 +336,14 @@ export default {
     },
     async doUpdate(item) {
       try {
-        let req = await easycoApi.cabangDetail(
+        let req = await easycoApi.userDetail(
           `id=${item.id}`,
           this.user.token
         );
         let { data, status, msg } = req.data;
         if (status) {
-          this.form.data = data;
+          this.form.data = {...data};
+          this.form.data.password = null
           this.$bvModal.show("modal-form");
         }
       } catch (error) {
@@ -362,7 +358,7 @@ export default {
       } else {
         this.remove.loading = true;
         try {
-          let req = await easycoApi.cabangDelete(
+          let req = await easycoApi.userDelete(
             `id=${this.remove.data.id}`,
             this.user.token
           );
@@ -381,15 +377,15 @@ export default {
         }
       }
     },
-    getJenisCabang(val) {
-      let res = this.opt.jenis_cabang.find((i) => i.value == val);
+    getCabang(val) {
+      let res = this.opt.cabang.find((i) => i.value == val);
       if (res) {
         return res.text;
       }
       return "-";
     },
-    getIndukCabang(val) {
-      let res = this.opt.induk_cabang.find((i) => i.value == val);
+    getRole(val) {
+      let res = this.opt.role_user.find((i) => i.value == val);
       if (res) {
         return res.text;
       }
@@ -399,11 +395,13 @@ export default {
       this.form.data = {
         id: null,
         kode_cabang: null,
-        nama_cabang: null,
-        induk_cabang: 0,
-        jenis_cabang: null,
-        pimpinan_cabang: null,
-        created_by: null,
+        kode_pgw: null,
+        nama_user: null,
+        role_user: null,
+        akses_user: 1,
+        photo: null,
+        password: null,
+        created_by: null
       };
       this.$v.form.$reset();
     },
