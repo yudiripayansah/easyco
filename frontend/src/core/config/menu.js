@@ -71,12 +71,17 @@ const menu = [
       {
         target: 'pembukaan-rekening-tabungan',
         label: 'Pembukaan Rekening Tabungan',
-        component: import('@/pages/Dummy.vue'),
+        component: import('@/pages/Tabungan/PembukaanRekeningTabungan.vue'),
       },
       {
         target: 'penutupan-rekening-tabungan',
         label: 'Penutupan Rekening Tabungan',
         component: import('@/pages/Dummy.vue'),
+      },
+      {
+        target: 'verifikasi-pencairan-tabungan',
+        label: 'Verifikasi Pencairan Tabungan',
+        component: import('@/pages/Tabungan/VerifikasiPencairanTabungan.vue'),
       },
       {
         target: 'laporan',
