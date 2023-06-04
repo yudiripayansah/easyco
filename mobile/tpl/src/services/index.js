@@ -73,6 +73,38 @@ const registrasiTabungan = (payload, token) => {
   }
   return Axios.post('/tabungan/registrasi', payload, config);
 }
+const anggotaKeluar = (payload, token) => {
+  let config = {
+    headers: {
+      'token': token
+    }
+  }
+  return Axios.post('/anggotamutasi/create', payload, config);
+}
+const rekeningTabunganAnggota = (payload, token) => {
+  let config = {
+    headers: {
+      'token': token
+    }
+  }
+  return Axios.post('/tabungan/read', payload, config);
+}
+const tutupTabunganAnggota = (payload, token) => {
+  let config = {
+    headers: {
+      'token': token
+    }
+  }
+  return Axios.post('/tabungan/tutup', payload, config);
+}
+const saldoAnggota = (payload, token) => {
+  let config = {
+    headers: {
+      'token': token
+    }
+  }
+  return Axios.get('/anggotamutasi/saldo_anggota?'+payload, config);
+}
 export default {
   authLogin,
   infoRembug,
@@ -82,5 +114,9 @@ export default {
   anggotaCreate,
   pembiayaanCreate,
   produkTabungan,
-  registrasiTabungan
+  registrasiTabungan,
+  saldoAnggota,
+  anggotaKeluar,
+  rekeningTabunganAnggota,
+  tutupTabunganAnggota
 }
