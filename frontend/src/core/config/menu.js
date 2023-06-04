@@ -23,14 +23,9 @@ const menu = [
         component: import('@/pages/Keanggotaan/RegistrasiAnggotaRembug.vue'),
       },
       {
-        target: 'registrasi-anggota-keluar',
-        label: 'Registrasi Anggota Keluar',
-        component: import('@/pages/Dummy.vue'),
-      },
-      {
         target: 'approval-registrasi-keluar',
         label: 'Approval Registrasi Anggota Keluar',
-        component: import('@/pages/Dummy.vue'),
+        component: import('@/pages/Keanggotaan/ApprovalRegistrasiAnggotaKeluar.vue'),
       },
       {
         target: 'laporan',
