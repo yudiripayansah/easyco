@@ -149,6 +149,8 @@ Route::prefix('anggotamutasi')->middleware('checkToken')->group(function () {
   Route::get('/detail', [AnggotaMutasiController::class, 'detail']);
   Route::post('/update', [AnggotaMutasiController::class, 'update']);
   Route::get('/delete', [AnggotaMutasiController::class, 'delete']);
+  Route::get('/approve', [AnggotaMutasiController::class, 'approve']);
+  Route::get('/reject', [AnggotaMutasiController::class, 'reject']);
 });
 
 Route::prefix('katgoripar')->middleware('checkToken')->group(function () {

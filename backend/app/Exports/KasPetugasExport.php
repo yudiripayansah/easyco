@@ -25,6 +25,7 @@ class KasPetugasExport implements FromView
     {
         $format = $this->format;
 
+        $saldo = KopTrxKasPetugas::get_saldo_awal($this->kode_kas_petugas, $this->from_date);
         $show = KopTrxKasPetugas::get_history_cash($this->kode_kas_petugas, $this->from_date, $this->thru_date);
         $detail = KopTrxKasPetugas::get_detail_cash($this->kode_kas_petugas);
 
@@ -33,6 +34,7 @@ class KasPetugasExport implements FromView
 
         return view('kaspetugas', [
             'format' => $format,
+            'saldo' => $saldo,
             'kaspetugas' => $show,
             'detail' => $detail
         ]);

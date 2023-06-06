@@ -185,7 +185,7 @@ class TrxRembug extends Controller
             // SETORAN ANGSURAN POKOK
             if ($trx_type == 32) {
                 if ($amount > 0) {
-                    $freq = $amount / $pembiayaan['angsuran_pokok'];
+                    $freq = round($amount / $pembiayaan['angsuran_pokok']);
                     $get = KopPembiayaan::find($pembiayaan['id']);
                     $get->jtempo_angsuran_last = $pembiayaan['jtempo_angsuran_next'];
                     $get->counter_angsuran = $pembiayaan['counter_angsuran'] + $freq;
@@ -315,10 +315,12 @@ class TrxRembug extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopTrxKasPetugas::select('kop_trx_kas_petugas.*', 'a.nama_kas_petugas', 'b.nama_kas_petugas')
-            ->orderBy($sortBy, $sortDir)
+        $read = KopTrxKasPetugas::select('kop_trx_kas_petugas.*', 'a.nama_kas_petugas', 'b.nama_kas_petugas', DB::raw("fn_get_saldoawal_kaspetugas('" . $kode_kas_petugas . "','" . $from . "') AS saldo_awal"))
             ->join('kop_kas_petugas AS a', 'a.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_petugas')
-            ->join('kop_kas_petugas AS b', 'b.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_teller');
+            ->join('kop_kas_petugas AS b', 'b.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_teller')
+            ->orderBy('kop_trx_kas_petugas.trx_date')
+            ->orderBy('kop_trx_kas_petugas.jenis_trx')
+            ->orderBy('kop_trx_kas_petugas.created_at');
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
@@ -343,9 +345,21 @@ class TrxRembug extends Controller
 
         $read = $read->get();
 
+        foreach ($read as $baca) {
+            $saldo = $baca->saldo_awal;
+        }
+
         foreach ($read as $rd) {
             $useCount = 'used count diubah datanya disini';
             $rd->used_count = $useCount;
+
+            if ($rd->debit_credit == 'D') {
+                $saldo += $rd->jumlah_trx;
+            } else {
+                $saldo -= $rd->jumlah_trx;
+            }
+
+            $rd->saldo = $saldo;
         }
 
         if ($search || $kode_kas_petugas || $status || ($from && $to)) {
@@ -377,10 +391,6 @@ class TrxRembug extends Controller
 
         if ($perPage != '~') {
             $totalPage = ceil($total / $perPage);
-        }
-
-        foreach ($read as $row) {
-            $row->tgl_gabung = date('d-F-Y', strtotime($row->tgl_gabung));
         }
 
         $res = array(

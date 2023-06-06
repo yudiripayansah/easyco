@@ -206,8 +206,8 @@ class PengajuanController extends Controller
         $data['ttd_suami'] = $ttd_suami;
         $data['ttd_ketua_majelis'] = $ttd_ketua_majelis;
         $data['ttd_tpl'] = $ttd_tpl;
-        $data['tanggal_pengajuan'] = date('Y-m-d', strtotime($request->tanggal_pengajuan));
-        $data['rencana_droping'] = date('Y-m-d', strtotime($request->rencana_droping));
+        $data['tanggal_pengajuan'] = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_pengajuan)));
+        $data['rencana_droping'] = date('Y-m-d', strtotime(str_replace('/', '-', $request->rencana_droping)));
 
         $data['keterangan_peruntukan'] = strtoupper($request->keterangan_peruntukan);
 

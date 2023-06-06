@@ -90,7 +90,7 @@ class KopTabungan extends Model
 
     function tpl_saving($no_anggota)
     {
-        $show = KopTabungan::select('kpt.nama_produk', 'kpt.nama_singkat', 'kop_tabungan.no_rekening', 'kop_tabungan.setoran', 'kop_tabungan.jangka_waktu', 'kop_tabungan.counter_setoran', 'kop_tabungan.saldo')
+        $show = KopTabungan::select('kpt.nama_produk', 'kpt.nama_singkat', 'kop_tabungan.no_rekening', 'kop_tabungan.setoran', 'kop_tabungan.jangka_waktu', 'kop_tabungan.counter_setoran', 'kop_tabungan.saldo', 'kop_tabungan.kode_produk')
             ->join('kop_prd_tabungan AS kpt', 'kpt.kode_produk', '=', 'kop_tabungan.kode_produk')
             ->where('kop_tabungan.status_rekening', 1)
             ->where('kpt.jenis_tabungan', 1)

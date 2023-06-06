@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\KopAnggota;
 use App\Models\KopAnggotaMutasi;
+use App\Models\KopUser;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -100,12 +101,17 @@ class AnggotaMutasiController extends Controller
         $page = 1;
         $perPage = '~';
         $sortDir = 'ASC';
-        $sortBy = 'no_anggota';
+        $sortBy = 'ka.no_anggota';
         $search = NULL;
         $total = 0;
         $totalPage = 1;
         $type = NULL;
-        $id_cabang = NULL;
+        $rembug = '~';
+
+        $token = $request->header('token');
+        $param = array('token' => $token);
+        $get = KopUser::where($param)->first();
+        $cabang = $get->kode_cabang;
 
         if ($request->page) {
             $page = $request->page;
@@ -123,6 +129,14 @@ class AnggotaMutasiController extends Controller
             $sortBy = $request->sortBy;
         }
 
+        if ($request->cabang) {
+            $cabang = $request->cabang;
+        }
+
+        if ($request->rembug) {
+            $rembug = $request->rembug;
+        }
+
         if ($request->search) {
             $search = strtoupper($request->search);
         }
@@ -131,14 +145,27 @@ class AnggotaMutasiController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopAnggotaMutasi::select('*')->orderBy($sortBy, $sortDir);
+        $read = KopAnggotaMutasi::select('kop_anggota_mutasi.*', 'ka.nama_anggota', 'kr.nama_rembug')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kop_anggota_mutasi.no_anggota')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'ka.kode_cabang')
+            ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+            ->where('status_mutasi', $request->status)
+            ->orderBy($sortBy, $sortDir);
+
+        if ($cabang != '00000') {
+            $read->where('ka.kode_cabang', $cabang);
+        }
+
+        if ($rembug != '~') {
+            $read->where('ka.kode_rembug', $rembug);
+        }
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
         }
 
         if ($search != NULL) {
-            $read->whereRaw("(no_anggota LIKE '%" . $search . "%')");
+            $read->whereRaw("(ka.no_anggota LIKE '%" . $search . "%')");
         }
 
         $read = $read->get();
@@ -148,11 +175,23 @@ class AnggotaMutasiController extends Controller
             $rd->used_count = $useCount;
         }
 
-        if ($search || $id_cabang || $type) {
-            $total = KopAnggotaMutasi::orderBy($sortBy, $sortDir);
+        if ($search || $rembug || $type) {
+            $total = KopAnggotaMutasi::where('status_mutasi', $request->status)
+                ->join('kop_anggota AS ka', 'ka.no_anggota', 'kop_anggota_mutasi.no_anggota')
+                ->join('kop_cabang AS kc', 'kc.kode_cabang', 'ka.kode_cabang')
+                ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+                ->orderBy($sortBy, $sortDir);
+
+            if ($cabang != '00000') {
+                $total->where('ka.kode_cabang', $cabang);
+            }
+
+            if ($rembug != '~') {
+                $total->where('ka.kode_rembug', $rembug);
+            }
 
             if ($search) {
-                $total->whereRaw("(no_anggota LIKE '%" . $search . "%')");
+                $total->whereRaw("(ka.no_anggota LIKE '%" . $search . "%')");
             }
 
             $total = $total->count();
@@ -311,6 +350,47 @@ class AnggotaMutasiController extends Controller
                 'msg' => 'Maaf! Anggota Mutasi tidak ditemukan'
             );
         }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    public function approve(Request $request)
+    {
+        $get = KopAnggotaMutasi::find($request->id);
+
+        $get->status_mutasi = 1;
+
+        $get->save();
+
+        $res = array(
+            'status' => TRUE,
+            'data' => NULL,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    public function reject(Request $request)
+    {
+        $get = KopAnggotaMutasi::find($request->id);
+
+        $anggota = KopAnggota::where('no_anggota', $get->no_anggota)->first();
+        $getAnggota = KopAnggota::find($anggota->id);
+        $getAnggota->status = 1;
+
+        $get->delete();
+        $getAnggota->save();
+
+        $res = array(
+            'status' => TRUE,
+            'data' => NULL,
+            'msg' => 'Berhasil!'
+        );
 
         $response = response()->json($res, 200);
 

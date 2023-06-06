@@ -80,6 +80,7 @@ class TabunganController extends Controller
         $search = NULL;
         $total = 0;
         $totalPage = 1;
+        $rembug = '~';
         $from = NULL;
         $to = NULL;
 
@@ -137,6 +138,10 @@ class TabunganController extends Controller
             $read->where('kop_cabang.kode_cabang', $cabang);
         }
 
+        if ($rembug != '~') {
+            $read->where('kop_anggota.kode_rembug', $rembug);
+        }
+
         if ($search) {
             $read->where('kop_anggota.no_anggota', 'LIKE', '%' . $search . '%')
                 ->orWhere('kop_tabungan.no_rekening', 'LIKE', '%' . $search . '%');
@@ -167,6 +172,10 @@ class TabunganController extends Controller
 
             if ($cabang != '00000') {
                 $total->where('kop_cabang.kode_cabang', $cabang);
+            }
+
+            if ($rembug != '~') {
+                $total->where('kop_anggota.kode_rembug', $rembug);
             }
 
             if ($from && $to) {
