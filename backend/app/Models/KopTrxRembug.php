@@ -130,7 +130,7 @@ class KopTrxRembug extends Model
         $statement = "SELECT
         ka.no_anggota,
         ka.nama_anggota,
-        COALESCE(a.frek,0) AS frek,
+        COALESCE(ROUND(a.frek),0) AS frek,
         COALESCE(b.angsuran,0) AS angsuran,
         COALESCE(c.setoran_sukarela,0) AS setoran_sukarela,
         COALESCE(d.setoran_simpok,0) AS setoran_simpok,
@@ -175,7 +175,7 @@ class KopTrxRembug extends Model
             SUM(kta.amount) AS setoran_simpok
             FROM kop_trx_anggota AS kta
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
-            WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '11'
+            WHERE ktr.id_trx_rembug = ? AND kta.trx_type IN('11','12')
             GROUP BY 1
         ) AS d ON d.no_anggota = ka.no_anggota
         LEFT JOIN (

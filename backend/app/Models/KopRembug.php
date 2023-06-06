@@ -87,7 +87,8 @@ class KopRembug extends Model
 
     function read($search, $sortBy, $sortDir, $offset, $perPage, $kode_cabang)
     {
-        $show = KopRembug::join('kop_cabang AS kc', 'kc.kode_cabang', 'kop_rembug.kode_cabang');
+        $show = KopRembug::select('kop_rembug.*', 'kc.kode_cabang')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'kop_rembug.kode_cabang');
 
         if ($kode_cabang != '00000') {
             $show->where('kc.kode_cabang', $kode_cabang);

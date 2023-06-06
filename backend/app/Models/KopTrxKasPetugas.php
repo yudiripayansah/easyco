@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class KopTrxKasPetugas extends Model
@@ -46,12 +47,19 @@ class KopTrxKasPetugas extends Model
         return $res;
     }
 
+    function get_saldo_awal($kode_kas_petugas, $from_date)
+    {
+        $show = DB::select("SELECT fn_get_saldoawal_kaspetugas('" . $kode_kas_petugas . "','" . $from_date . "') AS saldo_awal");
+
+        return $show;
+    }
+
     function get_history_cash($kode_kas_petugas, $from_date, $thru_date)
     {
         $show = KopTrxKasPetugas::select('*')
             ->where('kode_kas_petugas', $kode_kas_petugas)
             ->whereBetween('voucher_date', [$from_date, $thru_date])
-            ->orderBy('voucher_date')
+            ->orderBy('trx_date')
             ->orderBy('jenis_trx')
             ->orderBy('created_at')
             ->get();

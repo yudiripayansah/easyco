@@ -185,7 +185,7 @@ class TrxRembug extends Controller
             // SETORAN ANGSURAN POKOK
             if ($trx_type == 32) {
                 if ($amount > 0) {
-                    $freq = $amount / $pembiayaan['angsuran_pokok'];
+                    $freq = round($amount / $pembiayaan['angsuran_pokok']);
                     $get = KopPembiayaan::find($pembiayaan['id']);
                     $get->jtempo_angsuran_last = $pembiayaan['jtempo_angsuran_next'];
                     $get->counter_angsuran = $pembiayaan['counter_angsuran'] + $freq;
@@ -258,7 +258,7 @@ class TrxRembug extends Controller
         return $response;
     }
 
-    public function read_trx_kas_petugas(Request $request)
+    function read_trx_kas_petugas(Request $request)
     {
         $offset = 0;
         $page = 1;
@@ -269,13 +269,9 @@ class TrxRembug extends Controller
         $total = 0;
         $totalPage = 1;
         $status = '~';
+        $kode_kas_petugas = '';
         $from = NULL;
         $to = NULL;
-
-        $token = $request->header('token');
-        $param = array('token' => $token);
-        $get = KopUser::where($param)->first();
-        $cabang = $get->kode_cabang;
 
         if ($request->page) {
             $page = $request->page;
@@ -297,8 +293,8 @@ class TrxRembug extends Controller
             $search = strtoupper($request->search);
         }
 
-        if ($request->cabang) {
-            $cabang = $request->cabang;
+        if ($request->kode_kas_petugas) {
+            $kode_kas_petugas = $request->kode_kas_petugas;
         }
 
         if ($request->status) {
@@ -319,10 +315,12 @@ class TrxRembug extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopTrxKasPetugas::select('kop_trx_kas_petugas.*', 'a.nama_kas_petugas', 'b.nama_kas_petugas')
-            ->orderBy($sortBy, $sortDir)
+        $read = KopTrxKasPetugas::select('kop_trx_kas_petugas.*', 'a.nama_kas_petugas', 'b.nama_kas_petugas', DB::raw("fn_get_saldoawal_kaspetugas('" . $kode_kas_petugas . "','" . $from . "') AS saldo_awal"))
             ->join('kop_kas_petugas AS a', 'a.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_petugas')
-            ->join('kop_kas_petugas AS b', 'b.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_teller');
+            ->join('kop_kas_petugas AS b', 'b.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_teller')
+            ->orderBy('kop_trx_kas_petugas.trx_date')
+            ->orderBy('kop_trx_kas_petugas.jenis_trx')
+            ->orderBy('kop_trx_kas_petugas.created_at');
 
         if ($perPage != '~') {
             $read->skip($offset)->take($perPage);
@@ -332,8 +330,8 @@ class TrxRembug extends Controller
             $read->where('kop_trx_kas_petugas.status_trx', $status);
         }
 
-        if ($cabang != '00000') {
-            $read->where('kop_cabang.kode_cabang', $cabang);
+        if ($kode_kas_petugas != '') {
+            $read->where('kop_trx_kas_petugas.kode_kas_petugas', $kode_kas_petugas);
         }
 
         if ($search) {
@@ -347,12 +345,24 @@ class TrxRembug extends Controller
 
         $read = $read->get();
 
+        foreach ($read as $baca) {
+            $saldo = $baca->saldo_awal;
+        }
+
         foreach ($read as $rd) {
             $useCount = 'used count diubah datanya disini';
             $rd->used_count = $useCount;
+
+            if ($rd->debit_credit == 'D') {
+                $saldo += $rd->jumlah_trx;
+            } else {
+                $saldo -= $rd->jumlah_trx;
+            }
+
+            $rd->saldo = $saldo;
         }
 
-        if ($search || $cabang || $status || ($from && $to)) {
+        if ($search || $kode_kas_petugas || $status || ($from && $to)) {
             $total = KopTrxKasPetugas::orderBy($sortBy, $sortDir)
                 ->join('kop_kas_petugas AS a', 'a.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_petugas')
                 ->join('kop_kas_petugas AS b', 'b.kode_kas_petugas', 'kop_trx_kas_petugas.kode_kas_teller');
@@ -366,8 +376,8 @@ class TrxRembug extends Controller
                 $total->where('kop_trx_kas_petugas.status_trx', $status);
             }
 
-            if ($cabang != '00000') {
-                $total->where('kop_cabang.kode_cabang', $cabang);
+            if ($kode_kas_petugas != '') {
+                $total->where('kop_trx_kas_petugas.kode_kas_petugas', $kode_kas_petugas);
             }
 
             if ($from && $to) {
@@ -381,10 +391,6 @@ class TrxRembug extends Controller
 
         if ($perPage != '~') {
             $totalPage = ceil($total / $perPage);
-        }
-
-        foreach ($read as $row) {
-            $row->tgl_gabung = date('d-F-Y', strtotime($row->tgl_gabung));
         }
 
         $res = array(

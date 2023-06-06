@@ -208,7 +208,7 @@ class TplController extends Controller
                     'nama_produk' => $sh['nama_singkat'],
                     'counter_angsuran' => $sh['counter_angsuran'],
                     'jangka_waktu' => $sh['jangka_waktu'],
-                    'pokok' => str_replace('.', '', number_format($sh['pokok'], 0, ',', '.'))
+                    'pokok' => str_replace('.', '', number_format($sh['saldo_pokok'], 0, ',', '.'))
                 );
             }
         } else {
@@ -229,13 +229,21 @@ class TplController extends Controller
 
         if ($count > 0) {
             foreach ($read as $rd) {
+                if ($rd->kode_produk == '099') {
+                    $freq_saving = 0;
+                } else {
+                    $freq_saving = (isset($rd['setoran']) ? 1 : 0);
+                }
+
                 $saving[] = array(
                     'nama_produk' => $rd['nama_singkat'],
                     'no_rekening' => $rd['no_rekening'],
                     'setoran' => str_replace('.', '', number_format($rd['setoran'], 0, ',', '.')),
-                    'freq_saving' => (isset($rd['setoran']) ? 1 : 0),
+                    'saldo' => str_replace('.', '', number_format($rd['saldo'], 0, ',', '.')),
+                    'freq_saving' => $freq_saving,
                     'counter_angsuran' => $rd['counter_angsuran'],
-                    'jangka_waktu' => $rd['jangka_waktu']
+                    'jangka_waktu' => $rd['jangka_waktu'],
+                    'kode_produk' => $rd['kode_produk']
                 );
             }
         } else {
@@ -310,6 +318,7 @@ class TplController extends Controller
         $setoran_sukarela = $request->setoran_sukarela;
         $setoran_simpanan_wajib = $request->setoran_simpanan_wajib;
         $penarikan_sukarela = $request->penarikan_sukarela;
+        $tabungan_persen = $request->tabungan_persen;
 
         $no_rekening_tabungan = $request->no_rekening_tabungan;
         $amount_tabungan = $request->amount_tabungan;
@@ -468,6 +477,21 @@ class TplController extends Controller
                 'description' => 'Bayar By Asuransi Pembiayaan',
                 'created_by' => $kode_petugas
             );
+
+            if ($tabungan_persen > 0) {
+                $data_trx_anggota[] = array(
+                    'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                    'id_trx_rembug' => $uuid,
+                    'no_anggota' => $no_anggota,
+                    'no_rekening' => null,
+                    'trx_date' => $trx_date,
+                    'amount' => $tabungan_persen,
+                    'flag_debet_credit' => 'C',
+                    'trx_type' => '21',
+                    'description' => 'Setoran Tabungan',
+                    'created_by' => $kode_petugas
+                );
+            }
         }
 
         $validate = KopTrxRembug::validateAdd($data_trx_rembug);

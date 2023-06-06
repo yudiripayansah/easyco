@@ -63,7 +63,11 @@
     </thead>
     <tbody>
         @php $no = 1 @endphp
-        @php $saldo = 0 @endphp
+
+        @foreach($saldo as $sld)
+        {{$saldo = $sld->saldo_awal}}
+        @endforeach
+
         @foreach($kaspetugas as $kas)
 
         @if($kas->debit_credit == 'D')
