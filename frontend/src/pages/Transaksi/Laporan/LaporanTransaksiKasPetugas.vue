@@ -62,10 +62,10 @@
               {{ item.index + 1 }}
             </template>
             <template #cell(debit)="item">
-              {{ item.item.debit_credit == "C" ? item.item.jumlah_trx : 0 }}
+              {{ item.item.debit_credit == "D" ? item.item.jumlah_trx : 0 }}
             </template>
             <template #cell(kredit)="item">
-              {{ item.item.debit_credit == "D" ? item.item.jumlah_trx : 0 }}
+              {{ item.item.debit_credit == "C" ? item.item.jumlah_trx : 0 }}
             </template>
           </b-table>
         </b-col>
@@ -113,10 +113,10 @@
               :key="`report-${reportIndex}`"
             >
               <td>{{ reportIndex + 1 }}</td>
-              <td>{{ report.trx_date }}</td>
+              <td>{{ report.voucher_date }}</td>
               <td>{{ report.keterangan }}</td>
-              <td>{{ report.debit_credit == "C" ? report.jumlah_trx : 0 }}</td>
               <td>{{ report.debit_credit == "D" ? report.jumlah_trx : 0 }}</td>
+              <td>{{ report.debit_credit == "C" ? report.jumlah_trx : 0 }}</td>
               <td>{{ report.saldo }}</td>
             </tr>
           </tbody>
@@ -178,7 +178,7 @@ export default {
             tdClass: "text-center",
           },
           {
-            key: "trx_date",
+            key: "voucher_date",
             sortable: false,
             label: "Tanggal",
             thClass: "text-center",

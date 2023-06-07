@@ -1288,5 +1288,36 @@ const easycoApi = {
     return axios.post(url, payload, config);
   },
 
+  approvalAnggotaKeluar(payload, token) {
+    let url = "anggotamutasi/read";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+
+  approveAnggotaKeluar(payload, token) {
+    let url =
+      "anggotamutasi/approve?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.get(url, config);
+  },
+
+  rejectAnggotaKeluar(payload, token) {
+    let url =
+      "anggotamutasi/reject?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.get(url, config);
+  },
 };
 export default easycoApi;
