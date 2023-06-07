@@ -135,7 +135,6 @@
                   v-model="form.data.tanggal_pengajuan"
                   type="date"
                   label="Tanggal Pengajuan"
-                  disabled
                 />
               </v-col>
               <v-col cols="12">

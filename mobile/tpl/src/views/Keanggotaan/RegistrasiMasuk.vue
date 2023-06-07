@@ -10,7 +10,6 @@
       </div>
       Registrasi Calon Anggota
     </h6>
-    <v-select solo label="Rembug" class="mb-3 mt-4" hide-details :items="opt.rembug" v-model="form.data.kode_rembug"/>
     <v-container class="pa-0">
       <div class="bt-page-indicator d-flex justify-space-between pt-3">
         <span
@@ -661,7 +660,6 @@ export default {
       form: {
         data: {
           kode_cabang: null,
-          kode_rembug: null,
           nama_anggota: "AMINAH",
           jenis_kelamin: "W",
           ibu_kandung: "IBU AMINAH",
@@ -830,7 +828,6 @@ export default {
       this.form.data.kode_cabang = this.user.kode_cabang
       this.form.data.tgl_gabung = this.today()
       console.log(this.form.data.tgl_gabung)
-      this.getRembug()
     },
     move(step) {
       if (step > 5) {
@@ -873,7 +870,7 @@ export default {
     async doRegisterAnggota() {
       let payload = new FormData();
       let payloadData = this.form.data;
-      if(this.form.data.kode_cabang && this.form.data.kode_rembug){
+      if(this.form.data.kode_cabang){
         for (let key in payloadData) {
           payload.append(key, payloadData[key]);
         }

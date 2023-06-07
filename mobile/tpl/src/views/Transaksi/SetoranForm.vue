@@ -24,7 +24,7 @@
                 <v-row no-gutters>
                   <v-col cols="4">{{(tbr.nama_produk) ? tbr.nama_produk : 'Taber'}}</v-col>
                   <v-col cols="4">{{(tbr.counter_angsuran) ? tbr.counter_angsuran : 0}}/{{tbr.jangka_waktu}}</v-col>
-                  <v-col cols="4" class="text-right"><b>Rp {{thousand(tbr.setoran)}}</b></v-col>
+                  <v-col cols="4" class="text-right"><b>Rp {{thousand(tbr.saldo)}}</b></v-col>
                 </v-row>
               </v-col>
               <v-col cols="12">
@@ -119,19 +119,19 @@
             />
           </v-col> -->
         </v-row>
-        <v-row>
+        <v-row v-if="form.data.taber.length">
           <v-col cols="12">
             <label class="black--text">Tabungan Berencana</label>
           </v-col>
         </v-row>
         <v-row v-for="(taber,taberIndex) in form.data.taber" :key="taberIndex">
-          <v-col cols="3" class="pb-0">
+          <v-col cols="3" class="pb-0" v-if="taber.kode_produk != '099'">
             <label class="black--text">{{ (taber.nama_produk) ? taber.nama_produk : 'Taber' }}</label>
           </v-col>
           <!-- <v-col cols="4" class="pb-0 d-flex justify-end">
             Tidak <v-switch hide-details class="pa-0 ma-0" v-model="taber.state"/> Bayar
           </v-col> -->
-          <v-col cols="4">
+          <v-col cols="4" v-if="taber.kode_produk != '099'">
             <v-text-field 
               color="black"
               autocomplete="off" 
@@ -142,7 +142,7 @@
               :disabled="!taber.state"
             />
           </v-col>
-          <v-col cols="5">
+          <v-col cols="5" v-if="taber.kode_produk != '099'">
             <v-text-field 
               color="black"
               autocomplete="off" 
@@ -351,7 +351,8 @@ export default {
           pembiayaan: [],
           berencana: [],
           total_setoran: 0,
-          taber: []
+          taber: [],
+          simsuk: 0
         }
       },
       alert: {
@@ -415,7 +416,8 @@ export default {
               tabungan_persen: dataDeposit.tabungan_persen,
               dana_kebajikan: dataDeposit.dana_kebajikan,
               pembiayaan: dataDeposit.pembiayaan,
-              total_setoran: 0
+              total_setoran: 0,
+              simsuk: dataDeposit.simsuk,
             }
             dataDeposit.berencana.forEach((taber, index) => {
               let dataTaber = {...taber}
