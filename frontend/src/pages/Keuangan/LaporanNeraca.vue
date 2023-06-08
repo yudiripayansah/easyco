@@ -98,31 +98,6 @@ export default {
   },
   methods: {
     ...helper,
-    async doGet() {
-      let payload = {
-        kose_cabang: this.paging.cabang,
-        from_date: this.paging.from,
-        thru_date: this.paging.to,
-      };
-      try {
-        let req = await easycoApi.laporanJurnalTransaksi(
-          payload,
-          this.user.token
-        );
-        let { data, status, msg, total } = req.data;
-        if (status) {
-          this.table.items = data;
-          this.table.totalRows = total;
-        } else {
-          this.notify("danger", "Error", msg);
-        }
-        this.table.loading = false;
-      } catch (error) {
-        this.table.loading = false;
-        console.error(error);
-        this.notify("danger", "Login Error", error);
-      }
-    },
     async exportPdf() {
       let url = `https://easycop.kopikoding.com/report/print_balance_sheet_current_pdf/${this.paging.cabang}/${this.paging.jenis}/${this.paging.tanggal}`;
       let req = axios.get(url);
