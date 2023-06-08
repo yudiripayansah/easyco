@@ -27,7 +27,10 @@
             <b-button
               text="Button"
               variant="danger"
-              @click="$bvModal.show('modal-pdf')"
+              @click="
+                $bvModal.show('modal-pdf');
+                doGetReport();
+              "
             >
               PDF
             </b-button>
@@ -36,58 +39,8 @@
             </b-button>
           </b-button-group>
         </b-col>
-        <b-col cols="12">
-          <b-table
-            responsive
-            bordered
-            outlined
-            small
-            striped
-            hover
-            :fields="table.fields"
-            :items="table.items"
-            show-empty
-            :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'"
-          >
-            <template #cell(no)="item">
-              {{ item.index + 1 }}
-            </template>
-          </b-table>
-        </b-col>
-        <b-col cols="12" class="justify-content-end d-flex">
-          <b-pagination
-            v-model="paging.page"
-            :total-rows="table.totalRows"
-            :per-page="paging.perPage"
-          >
-          </b-pagination>
-        </b-col>
       </b-row>
     </b-card>
-    <!-- <b-modal title="PREVIEW LAPORAN REGISTRASI ANGGOTA" id="modal-pdf" hide-footer size="xl" centered>
-      <div id="table-print" class="p-5">
-        <h5 class="text-center">KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )</h5>
-        <h5 class="text-center">LAPORAN REGISTRASI ANGGOTA</h5>
-        <h5 class="text-center" v-show="report.cabang">{{ report.cabang }}</h5>
-        <h6 class="text-center mb-5 pb-5" v-show="report.from && report.to">Tanggal {{ dateFormatId(report.from) }} s.d
-          {{ dateFormatId(report.to) }}</h6>
-        <b-table responsive bordered outlined small striped hover :fields="report.fields" :items="report.items"
-          show-empty :emptyText="report.loading ? 'Memuat data...' : 'Tidak ada data'" class="mt-5 pt-5 d-block">
-          <template #cell(no)="item">
-            {{ item.index + 1 }}
-          </template>
-        </b-table>
-      </div>
-      <b-row>
-        <b-col cols="12" sm="12" class="d-flex justify-content-end border-top pt-5">
-          <b-button variant="secondary" @click="$bvModal.hide('modal-pdf')">Cancel
-          </b-button>
-          <b-button variant="danger" type="button" class="ml-3" @click="doPrintPdf()">
-            Simpan PDF
-          </b-button>
-        </b-col>
-      </b-row>
-    </b-modal> -->
     <b-modal
       title="PREVIEW LAPORAN TRANSAKSI JURNAL"
       id="modal-pdf"
@@ -99,7 +52,7 @@
         <h5 class="text-center">
           KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
         </h5>
-        <h5 class="text-center">LAPORAN TRANSAKSI JURNAL</h5>
+        <h5 class="text-center">LAPORAN JURNAL TRANSAKSI</h5>
         <h5 class="text-center" v-show="report.cabang">{{ report.cabang }}</h5>
         <h6 class="text-center mb-5 pb-5" v-show="report.from && report.to">
           Tanggal {{ dateFormatId(report.from) }} s.d
@@ -110,7 +63,7 @@
             <tr class="text-center">
               <th>No</th>
               <th>Tanggal</th>
-              <th>No Transaksi</th>
+              <th>Tgl. Voucher</th>
               <th>Keterangan</th>
               <th>No Akun</th>
               <th>Debit</th>
@@ -123,12 +76,39 @@
               :key="`report-${reportIndex}`"
             >
               <td>{{ reportIndex + 1 }}</td>
-              <td>{{ report.tanggal }}</td>
-              <td>{{ report.no_trans }}</td>
-              <td>{{ report.keterangan }}</td>
-              <td>{{ report.no_akun }}</td>
-              <td>{{ report.debit }}</td>
-              <td>{{ report.kredit }}</td>
+              <td>{{ report.trx_date }}</td>
+              <td>{{ report.voucher_date }}</td>
+              <td>{{ report.description }}</td>
+              <td>
+                <div
+                  v-for="(dtl, dtlIndex) in report.detail"
+                  :key="`dtl-${dtlIndex}`"
+                >
+                  <td style="border: 0">
+                    {{ dtl.kode_gl }} - {{ dtl.nama_gl }}
+                  </td>
+                </div>
+              </td>
+              <td>
+                <div
+                  v-for="(dtl, dtlIndex) in report.detail"
+                  :key="`dtl-${dtlIndex}`"
+                >
+                  <td style="border: 0">
+                    {{ dtl.flag_dc == "D" ? dtl.amount : 0 }}
+                  </td>
+                </div>
+              </td>
+              <td>
+                <div
+                  v-for="(dtl, dtlIndex) in report.detail"
+                  :key="`dtl-${dtlIndex}`"
+                >
+                  <td style="border: 0">
+                    {{ dtl.flag_dc == "C" ? dtl.amount : 0 }}
+                  </td>
+                </div>
+              </td>
             </tr>
           </tbody>
           <tbody v-else>
@@ -175,125 +155,15 @@ import html2pdf from "html2pdf.js";
 import { mapGetters } from "vuex";
 import easycoApi from "@/core/services/easyco.service";
 export default {
-  name: "LaporanSaldoAnggota",
+  name: "LaporanTransaksiJurnal",
   components: {},
   data() {
     return {
       table: {
-        fields: [
-          {
-            key: "no",
-            sortable: false,
-            label: "No",
-            thClass: "text-center w-5p",
-            tdClass: "text-center",
-          },
-          {
-            key: "tanggal",
-            sortable: true,
-            label: "Tanggal",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "no_trans",
-            sortable: true,
-            label: "No Transaksi",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "keterangan",
-            sortable: true,
-            label: "Keterangan",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "no_akun",
-            sortable: true,
-            label: "No Akun",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "debit",
-            sortable: true,
-            label: "Debit",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "kredit",
-            sortable: true,
-            label: "kredit",
-            thClass: "text-center",
-            tdClass: "",
-          },
-        ],
         items: [],
         loading: false,
-        totalRows: 0,
       },
       report: {
-        fields: [
-          {
-            key: "no",
-            sortable: false,
-            label: "No",
-            thClass: "text-center w-5p",
-            tdClass: "text-center",
-          },
-          {
-            key: "tanggal",
-            sortable: false,
-            label: "Tanggal",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "no_trans",
-            sortable: false,
-            label: "No Trans",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "keterangan",
-            sortable: false,
-            label: "keterangan",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "no_akun",
-            sortable: false,
-            label: "No Akun",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "no_telp",
-            sortable: false,
-            label: "No Telp",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "debit",
-            sortable: false,
-            label: "Debit",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "kredit",
-            sortable: false,
-            label: "kredit",
-            thClass: "text-center",
-            tdClass: "",
-          },
-        ],
         items: [],
         loading: false,
         totalRows: 0,
@@ -322,20 +192,17 @@ export default {
   },
   watch: {
     paging: {
-      handler(val) {
-        this.doGet();
-      },
+      handler(val) {},
       deep: true,
     },
   },
   mounted() {
-    // this.doGet()
     this.doGetCabang();
   },
   methods: {
     ...helper,
     doPrintPdf() {
-      let filename = "LAPORAN TRANSAKSI JURNAL";
+      let filename = "LAPORAN JURNAL TRANSAKSI";
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
       }
@@ -365,7 +232,7 @@ export default {
         });
     },
     doSavePdf() {
-      let filename = "LAPORAN TRANSAKSI JURNAL";
+      let filename = "LAPORAN JURNAL TRANSAKSI";
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
       }
@@ -438,37 +305,21 @@ export default {
         console.error(error);
       }
     },
-    async doGet() {
-      let payload = this.paging;
-      payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
-      payload.perPage = 10;
-      this.table.loading = true;
-      try {
-        let req = await easycoApi.anggotaRead(payload, this.user.token);
-        let { data, status, msg, total } = req.data;
-        if (status) {
-          this.table.items = data;
-          this.table.totalRows = total;
-        } else {
-          this.notify("danger", "Error", msg);
-        }
-        this.table.loading = false;
-      } catch (error) {
-        this.table.loading = false;
-        console.error(error);
-        this.notify("danger", "Error", error);
-      }
-    },
     async doGetReport() {
-      let payload = this.paging;
-      payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
-      payload.perPage = "~";
+      let payload = {
+        kode_cabang: this.paging.cabang,
+        from_date: this.paging.from,
+        thru_date: this.paging.to,
+      };
       this.report.loading = true;
-      this.report.from = payload.from;
-      this.report.to = payload.to;
-      this.report.cabang = this.getCabangName(payload.cabang);
+      this.report.from = payload.from_date;
+      this.report.to = payload.thru_date;
+      this.report.cabang = this.getCabangName(payload.kode_cabang);
       try {
-        let req = await easycoApi.anggotaRead(payload, this.user.token);
+        let req = await easycoApi.laporanJurnalTransaksi(
+          payload,
+          this.user.token
+        );
         let { data, status, msg, total } = req.data;
         if (status) {
           this.report.items = data;
@@ -480,7 +331,7 @@ export default {
       } catch (error) {
         this.report.loading = false;
         console.error(error);
-        this.notify("danger", "Error", error);
+        this.notify("danger", "Login Error", error);
       }
     },
     doInfo(msg, title, variant) {
