@@ -10,7 +10,7 @@
         </b-col>
         <b-col cols="12" class="mb-5">
           <b-row no-gutters>
-            <b-col cols="8" class="mb-5">
+            <b-col cols="10" class="mb-5 justify-content-between d-flex">
               <div class="row">
                 <b-col cols="4">
                   <b-input-group prepend="Cabang" class="mb-3">
@@ -20,7 +20,7 @@
                     />
                   </b-input-group>
                 </b-col>
-                <b-col cols="4">
+                <b-col cols="3">
                   <b-input-group prepend="Petugas" class="mb-3">
                     <b-form-select
                       v-model="paging.jenis"
@@ -28,15 +28,15 @@
                     />
                   </b-input-group>
                 </b-col>
-                <b-col cols="4">
-                  <b-input-group prepend="Tanggal">
+                <b-col cols="5">
+                  <b-input-group prepend="Tanggal" class="mb-3">
                     <b-form-datepicker v-model="paging.tanggal" />
                   </b-input-group>
                 </b-col>
               </div>
             </b-col>
             <b-col
-              cols="4"
+              cols="2"
               class="d-flex justify-content-end align-items-start"
             >
               <b-button-group>
