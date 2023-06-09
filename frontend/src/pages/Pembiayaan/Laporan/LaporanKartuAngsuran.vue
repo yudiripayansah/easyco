@@ -159,30 +159,6 @@
         </b-col>
       </b-row>
     </b-card>
-    <!-- <b-modal title="PREVIEW LAPORAN REGISTRASI ANGGOTA" id="modal-pdf" hide-footer size="xl" centered>
-      <div id="table-print" class="p-5">
-        <h5 class="text-center">KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )</h5>
-        <h5 class="text-center">LAPORAN REGISTRASI ANGGOTA</h5>
-        <h5 class="text-center" v-show="report.cabang">{{ report.cabang }}</h5>
-        <h6 class="text-center mb-5 pb-5" v-show="report.from && report.to">Tanggal {{ dateFormatId(report.from) }} s.d
-          {{ dateFormatId(report.to) }}</h6>
-        <b-table responsive bordered outlined small striped hover :fields="report.fields" :items="report.items"
-          show-empty :emptyText="report.loading ? 'Memuat data...' : 'Tidak ada data'" class="mt-5 pt-5 d-block">
-          <template #cell(no)="item">
-            {{ item.index + 1 }}
-          </template>
-        </b-table>
-      </div>
-      <b-row>
-        <b-col cols="12" sm="12" class="d-flex justify-content-end border-top pt-5">
-          <b-button variant="secondary" @click="$bvModal.hide('modal-pdf')">Cancel
-          </b-button>
-          <b-button variant="danger" type="button" class="ml-3" @click="doPrintPdf()">
-            Simpan PDF
-          </b-button>
-        </b-col>
-      </b-row>
-    </b-modal> -->
     <b-modal
       title="PREVIEW LAPORAN KARTU ANGSURAN"
       id="modal-pdf"

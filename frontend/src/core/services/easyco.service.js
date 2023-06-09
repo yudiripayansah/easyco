@@ -71,6 +71,25 @@ const easycoApi = {
   },
 
   // laporan excel
+  listTransaksiMajelis(payload, token) {
+    let url = "laporan/list/transaksi_majelis";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  listTransaksiMajelisPdf(payload, token) {
+    let url = "laporan/list/pdf/detail_transaksi_majelis";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  
   anggotaExcel(payload, token) {
     let url =
       "laporan/list/excel/anggota_masuk?"+payload;
@@ -139,6 +158,16 @@ const easycoApi = {
   },
   kasPetugasExcel(payload, token){
     let url = "laporan/list/excel/kas_petugas?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  listTransaksiMajelisExcel(payload, token){
+    let url = "laporan/list/excel/detail_transaksi_majelis?"+payload;
     let config = {
       headers: {
         token: token,
@@ -1241,6 +1270,15 @@ const easycoApi = {
   
   laporanProfilAnggota(payload, token) {
     let url = "laporan/list/pdf/profil_anggota";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  laporanJurnalTransaksi(payload, token) {
+    let url = "laporan/list/pdf/jurnal_transaksi";
     let config = {
       headers: {
         token: token,

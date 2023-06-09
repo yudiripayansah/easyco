@@ -248,6 +248,11 @@ const menu = [
         component: import('@/pages/Transaksi'),
         children: [
           {
+            target: 'list-transaksi-rembug',
+            label: 'Laporan List Transaksi Majelis',
+            component: import('@/pages/Transaksi/Laporan/LaporanListTransaksiMajelis'),
+          },
+          {
             target: 'transaksi-rembug',
             label: 'Laporan Transaksi Majelis',
             component: import('@/pages/Transaksi/Laporan/LaporanTransaksiMajelis'),
@@ -294,9 +299,9 @@ const menu = [
         component: import('@/pages/Dummy.vue'),
       },
       {
-        target: 'laporan-nreaca',
+        target: 'laporan-neraca',
         label: 'Laporan Neraca',
-        component: import('@/pages/Dummy.vue'),
+        component: import('@/pages/Keuangan/LaporanNeraca.vue'),
       },
       {
         target: 'laporan-labarugi',
