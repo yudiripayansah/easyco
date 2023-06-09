@@ -3,50 +3,6 @@
     <h1 class="mb-5">{{ $route.name }}</h1>
     <b-card>
       <b-row no-gutters>
-<<<<<<< HEAD
-        <b-col
-          cols="12"
-          class="d-flex justify-content-between mb-5 pb-5 border-bottom"
-        >
-          <b-form-group label="Cabang" class="mr-5 p-0 mb-0">
-            <b-form-select
-              v-model="paging.branch_code"
-              :options="opt.cabang"
-              @change="doGet()"
-            />
-          </b-form-group>
-          <b-form-group label="Petugas" class="mr-5 col-3 p-0 mb-0">
-            <b-form-select
-              v-model="paging.petugas"
-              :options="opt.petugas"
-              @change="doGet()"
-            />
-          </b-form-group>
-          <b-form-group label="Dari Tanggal" class="mr-5 col-3 p-0 mb-0">
-            <b-form-datepicker
-              v-model="paging.from_date"
-              @change="doGet()"
-              :date-format-options="{
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-              }"
-              locale="id"
-            />
-          </b-form-group>
-          <b-form-group label="Sampai Tanggal" class="col-3 p-0 mb-0">
-            <b-form-datepicker
-              v-model="paging.thru_date"
-              @change="doGet()"
-              :date-format-options="{
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-              }"
-              locale="id"
-            />
-          </b-form-group>
-=======
         <b-col cols="12" class="d-flex mb-5 pb-5 border-bottom">
           <b-row class="w-100 no-gutters">
             <b-form-group label="Cabang" class="pr-5 col-3 p-0 mb-0">
@@ -80,7 +36,6 @@
               /> 
             </b-form-group>
           </b-row>
->>>>>>> b99fd7738d4fe0106d90e31b896f9b9ca5ef0f1e
         </b-col>
         <!-- <b-col cols="12" class="mb-5">
           <b-row no-gutters>
@@ -588,8 +543,6 @@ export default {
       opt: {
         perPage: [10, 25, 50, 100],
         cabang: [],
-<<<<<<< HEAD
-=======
         petugas: []
       }
     }
@@ -613,9 +566,8 @@ export default {
         pimpinan_cabang: {
           required,
         },
->>>>>>> b99fd7738d4fe0106d90e31b896f9b9ca5ef0f1e
       },
-    };
+    }
   },
   computed: {
     ...mapGetters(["user"]),
@@ -659,23 +611,6 @@ export default {
       }
     },
     async doGetPetugas() {
-<<<<<<< HEAD
-      let payload = null;
-      try {
-        let req = await easycoApi.petugasRead(payload, this.user.token);
-        let { data, status, msg } = req.data;
-        if (status) {
-          this.opt.petugas = [
-            {
-              value: null,
-              text: "All",
-            },
-          ];
-          data.map((item) => {
-            this.opt.petugas.push({
-              value: Number(item.kode_petugas),
-              text: item.nama_kas_petugas,
-=======
       let payload = {
         page: 1,
         perPage: '~',
@@ -693,7 +628,6 @@ export default {
             this.opt.petugas.push({
               value: item.kode_pgw,
               text: item.nama_pgw,
->>>>>>> b99fd7738d4fe0106d90e31b896f9b9ca5ef0f1e
             });
           });
         }
@@ -842,14 +776,6 @@ export default {
 };
 </script>
 <style>
-<<<<<<< HEAD
-.modal-xxl {
-  max-width: 99%;
-}
-.align-center {
-  vertical-align: middle !important;
-}
-=======
   .modal-xxl {
     max-width: 99%;
   }
@@ -860,5 +786,4 @@ export default {
     font-size: 10px;
     padding: .5rem;
   }
->>>>>>> b99fd7738d4fe0106d90e31b896f9b9ca5ef0f1e
 </style>
