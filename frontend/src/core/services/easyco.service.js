@@ -452,6 +452,15 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+  updateKomite(payload, token) {
+    let url = "pengajuan/update_komite";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
   // Keanggotaan
   keanggotaanGetSimpananAnggota(payload, token) {
     let url = "anggota/simpanan_anggota";

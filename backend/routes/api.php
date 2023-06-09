@@ -23,6 +23,7 @@ use App\Http\Controllers\PrdPembiayaanController;
 use App\Http\Controllers\PrdTabunganController;
 use App\Http\Controllers\RegistrasiAkadController;
 use App\Http\Controllers\RembugController;
+use App\Http\Controllers\TabunganController;
 use App\Http\Controllers\TplController;
 use App\Http\Controllers\TrxGl;
 use App\Http\Controllers\TrxRembug;
@@ -148,6 +149,8 @@ Route::prefix('anggotamutasi')->middleware('checkToken')->group(function () {
   Route::get('/detail', [AnggotaMutasiController::class, 'detail']);
   Route::post('/update', [AnggotaMutasiController::class, 'update']);
   Route::get('/delete', [AnggotaMutasiController::class, 'delete']);
+  Route::get('/approve', [AnggotaMutasiController::class, 'approve']);
+  Route::get('/reject', [AnggotaMutasiController::class, 'reject']);
 });
 
 Route::prefix('katgoripar')->middleware('checkToken')->group(function () {
@@ -196,6 +199,14 @@ Route::prefix('prdtabungan')->middleware('checkToken')->group(function () {
   Route::get('/detail', [PrdTabunganController::class, 'detail']);
   Route::post('/update', [PrdTabunganController::class, 'update']);
   Route::get('/delete', [PrdTabunganController::class, 'delete']);
+});
+
+Route::prefix('tabungan')->middleware('checkToken')->group(function () {
+  Route::post('/registrasi', [TabunganController::class, 'registrasi']);
+  Route::post('/read', [TabunganController::class, 'read']);
+  Route::post('/tutup', [TabunganController::class, 'tutup']);
+  Route::post('/verifikasi_tutup', [TabunganController::class, 'approve_tutup']);
+  Route::post('/reject_tutup', [TabunganController::class, 'reject_tutup']);
 });
 
 Route::prefix('pengajuan')->middleware('checkToken')->group(function () {

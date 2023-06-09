@@ -13,7 +13,7 @@
     </h6>
     <div>
       <Camera class="mt-5"/>
-      <v-select solo label="Rembug" class="mb-3 mt-3" hide-details :items="opt.rembug" v-model="form.rembug" @change="getAnggota()"/>
+      <v-select solo label="Majelis" class="mb-3 mt-3" hide-details :items="opt.rembug" v-model="form.rembug" @change="getAnggota()"/>
       <v-select solo label="Pilih Anggota" class="mb-3" hide-details :items="opt.anggota" v-model="form.anggota" @change="setAnggota()"/>
       <v-container class="pa-0 mb-3" v-show="aAnggota.nama_anggota != null">
         <v-card class="white elevation-3 rounded-lg pa-3 align-items-end mb-3">
@@ -135,7 +135,6 @@
                   v-model="form.data.tanggal_pengajuan"
                   type="date"
                   label="Tanggal Pengajuan"
-                  disabled
                 />
               </v-col>
               <v-col cols="12">
@@ -457,7 +456,7 @@ export default {
       } else {
         this.alert = {
           show: true,
-          msg: 'Silahkan pilih Rembug lalu pilih Anggota dan isi Jumlah Pengajuan',
+          msg: 'Silahkan pilih Majelis lalu pilih Anggota dan isi Jumlah Pengajuan',
         };
       }
     },

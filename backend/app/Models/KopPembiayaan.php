@@ -160,7 +160,7 @@ class KopPembiayaan extends Model
             ->join('kop_cabang AS kc', 'kc.kode_cabang', '=', 'ka.kode_cabang')
             ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'ka.kode_rembug')
             ->where('kr.kode_rembug', $kode_rembug)
-            ->where('kop_pengajuan.status_pengajuan', 0)
+            ->where('kop_pengajuan.status_pengajuan', 4)
             ->get();
 
         return $show;
@@ -220,7 +220,7 @@ class KopPembiayaan extends Model
 
     function tpl_financing($no_anggota)
     {
-        $show = KopPembiayaan::select('kpp.nama_singkat', 'kop_pembiayaan.counter_angsuran', 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.pokok')
+        $show = KopPembiayaan::select('kpp.nama_singkat', 'kop_pembiayaan.counter_angsuran', 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.pokok', 'kop_pembiayaan.saldo_pokok')
             ->join('kop_pengajuan AS kp', 'kp.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')
             ->join('kop_prd_pembiayaan AS kpp', 'kpp.kode_produk', '=', 'kop_pembiayaan.kode_produk')
             ->where('kop_pembiayaan.status_rekening', 1)

@@ -14,7 +14,7 @@
       <Camera class="mt-5" />
       <v-select
         solo
-        label="Rembug"
+        label="Majelis"
         class="mb-3 mt-3"
         hide-details
         :items="opt.rembug"
@@ -324,7 +324,7 @@ export default {
       } else {
         this.alert = {
           show: true,
-          msg: "Silahkan pilih Rembug dan Anggota lalu pilih Produk dan isi Jumlah Setoran",
+          msg: "Silahkan pilih Majelis dan Anggota lalu pilih Produk dan isi Jumlah Setoran",
         };
       }
     },

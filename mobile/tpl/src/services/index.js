@@ -97,6 +97,22 @@ const tutupTabunganAnggota = (payload, token) => {
   }
   return Axios.post('/tabungan/tutup', payload, config);
 }
+const readRekeningPembiayaan = (payload, token) => {
+  let config = {
+    headers: {
+      'token': token
+    }
+  }
+  return Axios.post('/registrasiakad/read', payload, config);
+}
+const prosesPenciran = (payload, token) => {
+  let config = {
+    headers: {
+      'token': token
+    }
+  }
+  return Axios.post('/registrasiakad/approve', payload, config);
+}
 const saldoAnggota = (payload, token) => {
   let config = {
     headers: {
@@ -118,5 +134,7 @@ export default {
   saldoAnggota,
   anggotaKeluar,
   rekeningTabunganAnggota,
-  tutupTabunganAnggota
+  tutupTabunganAnggota,
+  readRekeningPembiayaan,
+  prosesPenciran
 }

@@ -148,148 +148,42 @@
 
         <div v-if="report.items.length > 0" style="font-size: 12px !important">
           <div v-for="(dt, dtIndex) in report.items" :key="`dt-${dtIndex}`">
-            <div class="justify-content-between d-flex">
-              <div style="width: 70%">
-                <b-row>
-                  <div
-                    class="d-flex justify-content-between"
-                    style="width: 100%"
-                  >
-                    <b-input-group>
-                      <template #prepend>
-                        <b-input-group-text
-                          class="f-12 bold"
-                          style="
-                            background-color: white !important;
-                            border: none;
-                          "
-                          >Majelis
-                        </b-input-group-text>
-                      </template>
-                      <b-form-input
-                        class="f-12"
-                        type="text"
-                        style="border: none; color: black"
-                        readonly
-                        :value="':' + ' ' + dt.nama_rembug"
-                      >
-                      </b-form-input>
-                    </b-input-group>
-                    <b-input-group>
-                      <template #prepend>
-                        <b-input-group-text
-                          class="f-12 bold"
-                          style="
-                            background-color: white !important;
-                            border: none;
-                            font-weight: bold;
-                            margin-right: 25px;
-                          "
-                          >Tanggal Bayar
-                        </b-input-group-text>
-                      </template>
-                      <b-form-input
-                        class="f-12"
-                        type="text"
-                        style="border: none; color: black"
-                        readonly
-                        :value="':' + ' ' + dt.tanggal_bayar"
-                      >
-                      </b-form-input>
-                    </b-input-group>
-                    <b-input-group>
-                      <template #prepend>
-                        <b-input-group-text
-                          class="f-12 bold"
-                          style="
-                            background-color: white !important;
-                            border: none;
-                            font-weight: bold;
-                            width: 120px;
-                          "
-                          >Status Verifikasi
-                        </b-input-group-text>
-                      </template>
-                      <b-form-input
-                        class="f-12"
-                        type="text"
-                        style="border: none; color: black"
-                        readonly
-                        :value="':' + ' ' + dt.status_verifikasi"
-                      >
-                      </b-form-input>
-                    </b-input-group>
-                  </div>
+            <b-row>
+              <b-col cols="9">
+                <b-row class="w-100 no-gutters">
+                  <b-col cols="3" class="bold">
+                    Majelis
+                  </b-col>
+                  <b-col cols="3">
+                    : {{ dt.nama_rembug }}
+                  </b-col>
+                  <b-col cols="3" class="bold">
+                    Petugas
+                  </b-col>
+                  <b-col cols="3">
+                    : {{ dt.nama_petugas }}
+                  </b-col>
+                  <b-col cols="3" class="bold">
+                    Tanggal Bayar
+                  </b-col>
+                  <b-col cols="3">
+                    : {{ dt.tanggal_bayar }}
+                  </b-col>
+                  <b-col cols="3" class="bold">
+                    Tanggal Transaksi
+                  </b-col>
+                  <b-col cols="3">
+                    : {{ dt.tanggal }}
+                  </b-col>
+                  <b-col cols="3" class="bold">
+                    Status Verifikasi
+                  </b-col>
+                  <b-col cols="3">
+                    : {{ dt.status_verifikasi }}
+                  </b-col>
                 </b-row>
-                <b-row>
-                  <div class="d-flex" style="width: 100%">
-                    <b-input-group>
-                      <template #prepend>
-                        <b-input-group-text
-                          class="f-12 bold"
-                          style="
-                            background-color: white !important;
-                            border: none;
-                            font-weight: bold;
-                          "
-                          >Petugas
-                        </b-input-group-text>
-                      </template>
-                      <b-form-input
-                        class="f-12"
-                        type="text"
-                        style="border: none; color: black; margin-left: -6px"
-                        readonly
-                        :value="':' + ' ' + dt.nama_petugas"
-                      >
-                      </b-form-input>
-                    </b-input-group>
-                    <b-input-group>
-                      <template #prepend>
-                        <b-input-group-text
-                          class="f-12 bold"
-                          style="
-                            background-color: white !important;
-                            border: none;
-                            font-weight: bold;
-                          "
-                          >Tanggal Transaksi
-                        </b-input-group-text>
-                      </template>
-                      <b-form-input
-                        class="f-12"
-                        type="text"
-                        style="border: none; color: black"
-                        readonly
-                        :value="':' + ' ' + dt.tanggal"
-                      >
-                      </b-form-input>
-                    </b-input-group>
-                    <b-input-group>
-                      <template #prepend>
-                        <b-input-group-text
-                          class="f-12 bold"
-                          style="
-                            background-color: white !important;
-                            border: none;
-                            font-weight: bold;
-                          "
-                        >
-                        </b-input-group-text>
-                      </template>
-                      <b-form-input
-                        class="f-12"
-                        type="text"
-                        style="border: none; color: black"
-                        readonly
-                      >
-                      </b-form-input>
-                    </b-input-group>
-                  </div>
-                </b-row>
-              </div>
-
-              <div style="width: 25%">
+              </b-col>
+              <b-col cols="3">
                 <table class="table table-bordered">
                   <thead>
                     <tr>
@@ -331,8 +225,8 @@
                     <td>Rp {{ thousand(dt.total_penarikan) }}</td>
                   </tbody>
                 </table>
-              </div>
-            </div>
+              </b-col>
+            </b-row>
             <table
               role="table"
               aria-busy="false"

@@ -24,7 +24,7 @@
                 <v-row no-gutters>
                   <v-col cols="4">{{(tbr.nama_produk) ? tbr.nama_produk : 'Taber'}}</v-col>
                   <v-col cols="4">{{(tbr.counter_angsuran) ? tbr.counter_angsuran : 0}}/{{tbr.jangka_waktu}}</v-col>
-                  <v-col cols="4" class="text-right"><b>Rp {{thousand(tbr.setoran)}}</b></v-col>
+                  <v-col cols="4" class="text-right"><b>Rp {{thousand(tbr.saldo)}}</b></v-col>
                 </v-row>
               </v-col>
               <v-col cols="12">
@@ -35,6 +35,24 @@
                   <v-col cols="4">{{(pmb.nama_produk) ? pmb.nama_produk : 'Pmby'}}</v-col>
                   <v-col cols="4">{{pmb.counter_angsuran}}/{{pmb.jangka_waktu}}</v-col>
                   <v-col cols="4" class="text-right"><b>Rp {{thousand(pmb.pokok)}}</b></v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12">
+                <hr>
+              </v-col>
+              <v-col cols="12" class="text-left pt-1 pb-0 mb-0 d-flex justify-space-between">
+                <v-row no-gutters>
+                  <v-col cols="6">Simpok</v-col>
+                  <v-col cols="6" class="text-right"><b>Rp {{thousand(form.data.simpok)}}</b></v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12">
+                <hr>
+              </v-col>
+              <v-col cols="12" class="text-left pt-1 pb-0 mb-0 d-flex justify-space-between">
+                <v-row no-gutters>
+                  <v-col cols="6">Simwa - Minggon</v-col>
+                  <v-col cols="6" class="text-right"><b>Rp {{thousand(form.data.simwa)}}</b></v-col>
                 </v-row>
               </v-col>
               <v-col cols="12">
@@ -84,14 +102,14 @@
             />
           </v-col>
         </v-row>
-        <v-row>
-          <v-col cols="7" class="pb-0">
+        <!-- <v-row> -->
+          <!-- <v-col cols="7" class="pb-0">
             <label class="black--text">Simwa</label>
-          </v-col>
+          </v-col> -->
           <!-- <v-col cols="4" class="pb-0 d-flex justify-end">
             Tidak <v-switch hide-details class="pa-0 ma-0" v-model="form.data.simwaState"/> Bayar
           </v-col> -->
-          <v-col cols="5">
+          <!-- <v-col cols="5">
             <v-text-field 
               color="black"
               autocomplete="off" 
@@ -102,7 +120,7 @@
               @change="countTotalSetoran()"
               class="justify-end text-right"
             />
-          </v-col>
+          </v-col> -->
           <!-- <v-col cols="4">
             <v-text-field 
               color="black"
@@ -118,20 +136,20 @@
               @click:prepend="(form.simwaFreq > 1) ? form.simwaFreq -= 1 : 1"
             />
           </v-col> -->
-        </v-row>
-        <v-row>
+        <!-- </v-row> -->
+        <v-row v-if="form.data.taber.length">
           <v-col cols="12">
             <label class="black--text">Tabungan Berencana</label>
           </v-col>
         </v-row>
         <v-row v-for="(taber,taberIndex) in form.data.taber" :key="taberIndex">
-          <v-col cols="3" class="pb-0">
+          <v-col cols="3" class="pb-0" v-if="taber.kode_produk != '099'">
             <label class="black--text">{{ (taber.nama_produk) ? taber.nama_produk : 'Taber' }}</label>
           </v-col>
           <!-- <v-col cols="4" class="pb-0 d-flex justify-end">
             Tidak <v-switch hide-details class="pa-0 ma-0" v-model="taber.state"/> Bayar
           </v-col> -->
-          <v-col cols="4">
+          <v-col cols="4" v-if="taber.kode_produk != '099'">
             <v-text-field 
               color="black"
               autocomplete="off" 
@@ -142,7 +160,7 @@
               :disabled="!taber.state"
             />
           </v-col>
-          <v-col cols="5">
+          <v-col cols="5" v-if="taber.kode_produk != '099'">
             <v-text-field 
               color="black"
               autocomplete="off" 
@@ -351,7 +369,10 @@ export default {
           pembiayaan: [],
           berencana: [],
           total_setoran: 0,
-          taber: []
+          taber: [],
+          simsuk: 0,
+          simwa: 0,
+          simpok: 0
         }
       },
       alert: {
@@ -404,7 +425,7 @@ export default {
               angsuran: dataDeposit.angsuran,
               frekuensi: 1,
               setoran_sukarela: 0,
-              setoran_simpanan_wajib: dataDeposit.simwa,
+              setoran_simpanan_wajib: 0,
               penarikan_sukarela: 0,
               simwaState: true,
               angsuranState: true,
@@ -415,7 +436,10 @@ export default {
               tabungan_persen: dataDeposit.tabungan_persen,
               dana_kebajikan: dataDeposit.dana_kebajikan,
               pembiayaan: dataDeposit.pembiayaan,
-              total_setoran: 0
+              total_setoran: 0,
+              simsuk: dataDeposit.simsuk,
+              simwa: dataDeposit.simwa,
+              simpok: dataDeposit.simpok,
             }
             dataDeposit.berencana.forEach((taber, index) => {
               let dataTaber = {...taber}
