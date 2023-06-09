@@ -6,14 +6,22 @@
         <b-col cols="12" class="d-flex mb-5 pb-5 border-bottom">
           <b-row class="w-100 no-gutters">
             <b-form-group label="Cabang" class="pr-5 col-3 p-0 mb-0">
-              <b-form-select v-model="paging.branch_code" :options="opt.cabang" @change="doGetPetugas()"/>
+              <b-form-select
+                v-model="paging.branch_code"
+                :options="opt.cabang"
+                @change="doGetPetugas()"
+              />
             </b-form-group>
             <b-form-group label="Petugas" class="pr-5 col-3 p-0 mb-0">
-              <b-form-select v-model="paging.fa_code" :options="opt.petugas" @change="doGet()"/>
+              <b-form-select
+                v-model="paging.fa_code"
+                :options="opt.petugas"
+                @change="doGet()"
+              />
             </b-form-group>
             <b-form-group label="Dari Tanggal" class="pr-5 col-3 p-0 mb-0">
               <b-form-datepicker
-                v-model="paging.from_date" 
+                v-model="paging.from_date"
                 @change="doGet()"
                 :date-format-options="{
                   year: 'numeric',
@@ -21,11 +29,11 @@
                   day: 'numeric',
                 }"
                 locale="id"
-              /> 
+              />
             </b-form-group>
             <b-form-group label="Sampai Tanggal" class="col-3 p-0 mb-0">
               <b-form-datepicker
-                v-model="paging.thru_date" 
+                v-model="paging.thru_date"
                 @change="doGet()"
                 :date-format-options="{
                   year: 'numeric',
@@ -33,7 +41,7 @@
                   day: 'numeric',
                 }"
                 locale="id"
-              /> 
+              />
             </b-form-group>
           </b-row>
         </b-col>
@@ -101,14 +109,14 @@
             </template>
           </b-table>
         </b-col>
-        <b-col cols="12" class="justify-content-end d-flex">
+        <!-- <b-col cols="12" class="justify-content-end d-flex">
           <b-pagination
             v-model="paging.page"
             :total-rows="table.totalRows"
             :per-page="paging.perPage"
           >
           </b-pagination>
-        </b-col>
+        </b-col> -->
       </b-row>
     </b-card>
     <b-modal
@@ -485,7 +493,7 @@ export default {
           // {
           //   key: "kas_awal",
           //   sortable: true,
-          //   label: "Kas Awal",`
+          //   label: "Kas Awal",
           //   thClass: "text-center",
           //   tdClass: "text-right",
           // },
@@ -531,10 +539,9 @@ export default {
       },
       paging: {
         branch_code: null,
-        fa_code: null,
         from_date: null,
         thru_date: null,
-        fa_code: null
+        fa_code: null,
       },
       remove: {
         data: Object,
@@ -543,8 +550,8 @@ export default {
       opt: {
         perPage: [10, 25, 50, 100],
         cabang: [],
-        petugas: []
-      }
+        petugas: [],
+      },
     }
   },
   mixins: [validationMixin],
@@ -613,17 +620,17 @@ export default {
     async doGetPetugas() {
       let payload = {
         page: 1,
-        perPage: '~',
+        perPage: "~",
         sortBy: "id",
         search: "",
-        sortyDir: 'ASC',
-        kode_cabang: this.paging.branch_code
+        sortyDir: "ASC",
+        kode_cabang: this.paging.branch_code,
       };
       try {
         let req = await easycoApi.pegawaiRead(payload, this.user.token);
         let { data, status, msg, total } = req.data;
         if (status) {
-          this.opt.petugas = []
+          this.opt.petugas = [];
           data.map((item) => {
             this.opt.petugas.push({
               value: item.kode_pgw,
@@ -771,19 +778,18 @@ export default {
   },
   mounted() {
     this.doGetCabang();
-    this.doGetPetugas();
   },
 };
 </script>
 <style>
-  .modal-xxl {
-    max-width: 99%;
-  }
-  .align-center {
-    vertical-align: middle !important;
-  }
-  .table input.form-control {
-    font-size: 10px;
-    padding: .5rem;
-  }
+.modal-xxl {
+  max-width: 99%;
+}
+.align-center {
+  vertical-align: middle !important;
+}
+.table input.form-control {
+  font-size: 10px;
+  padding: 0.5rem;
+}
 </style>
