@@ -4,33 +4,38 @@
     <b-card>
       <b-row no-gutters>
         <b-col cols="12" class="d-flex mb-5 pb-5 border-bottom">
-          <b-form-group label="Cabang" class="mr-5 col-3 p-0 mb-0">
-            <b-form-select v-model="paging.branch_code" :options="opt.cabang" @change="doGet()"/>
-          </b-form-group>
-          <b-form-group label="Dari Tanggal" class="mr-5 col-3 p-0 mb-0">
-            <b-form-datepicker
-              v-model="paging.from_date" 
-              @change="doGet()"
-              :date-format-options="{
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-              }"
-              locale="id"
-            /> 
-          </b-form-group>
-          <b-form-group label="Sampai Tanggal" class="col-3 p-0 mb-0">
-            <b-form-datepicker
-              v-model="paging.thru_date" 
-              @change="doGet()"
-              :date-format-options="{
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-              }"
-              locale="id"
-            /> 
-          </b-form-group>
+          <b-row class="w-100 no-gutters">
+            <b-form-group label="Cabang" class="pr-5 col-3 p-0 mb-0">
+              <b-form-select v-model="paging.branch_code" :options="opt.cabang" @change="doGetPetugas()"/>
+            </b-form-group>
+            <b-form-group label="Petugas" class="pr-5 col-3 p-0 mb-0">
+              <b-form-select v-model="paging.fa_code" :options="opt.petugas" @change="doGet()"/>
+            </b-form-group>
+            <b-form-group label="Dari Tanggal" class="pr-5 col-3 p-0 mb-0">
+              <b-form-datepicker
+                v-model="paging.from_date" 
+                @change="doGet()"
+                :date-format-options="{
+                  year: 'numeric',
+                  month: 'numeric',
+                  day: 'numeric',
+                }"
+                locale="id"
+              /> 
+            </b-form-group>
+            <b-form-group label="Sampai Tanggal" class="col-3 p-0 mb-0">
+              <b-form-datepicker
+                v-model="paging.thru_date" 
+                @change="doGet()"
+                :date-format-options="{
+                  year: 'numeric',
+                  month: 'numeric',
+                  day: 'numeric',
+                }"
+                locale="id"
+              /> 
+            </b-form-group>
+          </b-row>
         </b-col>
         <!-- <b-col cols="12" class="mb-5">
           <b-row no-gutters>
@@ -398,6 +403,7 @@ export default {
         branch_code: null,
         from_date: null,
         thru_date: null,
+        fa_code: null
       },
       remove: {
         data: Object,
@@ -406,6 +412,7 @@ export default {
       opt: {
         perPage: [10, 25, 50, 100],
         cabang: [],
+        petugas: []
       }
     }
   },
@@ -465,6 +472,31 @@ export default {
             this.opt.cabang.push({
               value: item.kode_cabang,
               text: item.nama_cabang,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doGetPetugas() {
+      let payload = {
+        page: 1,
+        perPage: '~',
+        sortBy: "id",
+        search: "",
+        sortyDir: 'ASC',
+        kode_cabang: this.paging.branch_code
+      };
+      try {
+        let req = await easycoApi.pegawaiRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
+        if (status) {
+          this.opt.petugas = []
+          data.map((item) => {
+            this.opt.petugas.push({
+              value: item.kode_pgw,
+              text: item.nama_pgw,
             });
           });
         }
