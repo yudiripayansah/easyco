@@ -3,13 +3,27 @@
     <h1 class="mb-5">{{ $route.name }}</h1>
     <b-card>
       <b-row no-gutters>
-        <b-col cols="12" class="d-flex mb-5 pb-5 border-bottom">
-          <b-form-group label="Cabang" class="mr-5 col-3 p-0 mb-0">
-            <b-form-select v-model="paging.branch_code" :options="opt.cabang" @change="doGet()"/>
+        <b-col
+          cols="12"
+          class="d-flex justify-content-between mb-5 pb-5 border-bottom"
+        >
+          <b-form-group label="Cabang" class="mr-5 p-0 mb-0">
+            <b-form-select
+              v-model="paging.branch_code"
+              :options="opt.cabang"
+              @change="doGet()"
+            />
+          </b-form-group>
+          <b-form-group label="Petugas" class="mr-5 col-3 p-0 mb-0">
+            <b-form-select
+              v-model="paging.petugas"
+              :options="opt.petugas"
+              @change="doGet()"
+            />
           </b-form-group>
           <b-form-group label="Dari Tanggal" class="mr-5 col-3 p-0 mb-0">
             <b-form-datepicker
-              v-model="paging.from_date" 
+              v-model="paging.from_date"
               @change="doGet()"
               :date-format-options="{
                 year: 'numeric',
@@ -17,11 +31,11 @@
                 day: 'numeric',
               }"
               locale="id"
-            /> 
+            />
           </b-form-group>
           <b-form-group label="Sampai Tanggal" class="col-3 p-0 mb-0">
             <b-form-datepicker
-              v-model="paging.thru_date" 
+              v-model="paging.thru_date"
               @change="doGet()"
               :date-format-options="{
                 year: 'numeric',
@@ -29,7 +43,7 @@
                 day: 'numeric',
               }"
               locale="id"
-            /> 
+            />
           </b-form-group>
         </b-col>
         <!-- <b-col cols="12" class="mb-5">
@@ -96,17 +110,23 @@
             </template>
           </b-table>
         </b-col>
-        <!-- <b-col cols="12" class="justify-content-end d-flex">
+        <b-col cols="12" class="justify-content-end d-flex">
           <b-pagination
             v-model="paging.page"
             :total-rows="table.totalRows"
             :per-page="paging.perPage"
           >
           </b-pagination>
-        </b-col> -->
+        </b-col>
       </b-row>
     </b-card>
-    <b-modal title="Form Verifikasi Transaksi Rembug" id="modal-form" hide-footer size="xxl" centered>
+    <b-modal
+      title="Form Verifikasi Transaksi Rembug"
+      id="modal-form"
+      hide-footer
+      size="xxl"
+      centered
+    >
       <b-form @submit="doSave">
         <b-row>
           <b-col cols="3">
@@ -120,11 +140,7 @@
           </b-col>
           <b-col cols="3">
             <b-form-group label="Tanggal" label-for="tanggal">
-              <b-form-input
-                id="tanggal"
-                disabled
-                :value="form.data.trx_date"
-              />
+              <b-form-input id="tanggal" disabled :value="form.data.trx_date" />
             </b-form-group>
           </b-col>
           <b-col cols="3">
@@ -151,22 +167,46 @@
                 <thead class="bg-dark text-white">
                   <tr>
                     <td class="text-center align-center" rowspan="3">Id</td>
-                    <td class="text-center align-center" rowspan="3" width="10%">Nama</td>
-                    <td class="text-center align-center" rowspan="3" width="5%">Absen</td>
-                    <td class="text-center align-center" colspan="5">Setoran</td>
+                    <td
+                      class="text-center align-center"
+                      rowspan="3"
+                      width="10%"
+                    >
+                      Nama
+                    </td>
+                    <td class="text-center align-center" rowspan="3" width="5%">
+                      Absen
+                    </td>
+                    <td class="text-center align-center" colspan="5">
+                      Setoran
+                    </td>
                     <td class="text-center align-center">Penarikan</td>
-                    <td class="text-center align-center" colspan="3">Realisasi Pembiayaan</td>
+                    <td class="text-center align-center" colspan="3">
+                      Realisasi Pembiayaan
+                    </td>
                     <td class="text-center align-center" rowspan="3">Ket.</td>
                   </tr>
                   <tr>
-                    <td class="text-center align-center" colspan="2">Angsuran</td>
-                    <td class="text-center align-center" rowspan="2">Tab. Sukarela</td>
-                    <td class="text-center align-center" rowspan="2">Tab. Simwa/ Simpok</td>
-                    <td class="text-center align-center" rowspan="2">Tab. Berencana</td>
-                    <td class="text-center align-center" rowspan="2">Tab. Sukarela</td>
+                    <td class="text-center align-center" colspan="2">
+                      Angsuran
+                    </td>
+                    <td class="text-center align-center" rowspan="2">
+                      Tab. Sukarela
+                    </td>
+                    <td class="text-center align-center" rowspan="2">
+                      Tab. Simwa/ Simpok
+                    </td>
+                    <td class="text-center align-center" rowspan="2">
+                      Tab. Berencana
+                    </td>
+                    <td class="text-center align-center" rowspan="2">
+                      Tab. Sukarela
+                    </td>
                     <td class="text-center align-center" rowspan="2">Plafon</td>
                     <td class="text-center align-center" rowspan="2">Adm</td>
-                    <td class="text-center align-center" rowspan="2">Asuransi</td>
+                    <td class="text-center align-center" rowspan="2">
+                      Asuransi
+                    </td>
                   </tr>
                   <tr>
                     <td class="text-center align-center" width="5%">Frek</td>
@@ -174,31 +214,116 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item,idx) in form.detail" :key="idx">
-                    <td>{{item.no_anggota}}</td>
-                    <td>{{item.nama_anggota}}</td>
-                    <td><b-form-select value="H"/></td>
-                    <td><b-form-input :value="thousand(item.frek)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(item.angsuran)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(item.setoran_sukarela)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(item.setoran_simpok)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(item.setoran_taber)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(item.penarikan_sukarela)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(item.pokok)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(item.biaya_administrasi)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(item.biaya_asuransi_jiwa)" class="text-right"/></td>
+                  <tr v-for="(item, idx) in form.detail" :key="idx">
+                    <td>{{ item.no_anggota }}</td>
+                    <td>{{ item.nama_anggota }}</td>
+                    <td><b-form-select value="H" /></td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(item.frek)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(item.angsuran)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(item.setoran_sukarela)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(item.setoran_simpok)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(item.setoran_taber)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(item.penarikan_sukarela)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(item.pokok)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(item.biaya_administrasi)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(item.biaya_asuransi_jiwa)"
+                        class="text-right"
+                      />
+                    </td>
                     <td><b-button variant="info">...</b-button></td>
                   </tr>
                   <tr>
                     <td colspan="4" class="text-right align-center">Total</td>
-                    <td><b-form-input :value="thousand(form.total.angsuran)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(form.total.setoran_sukarela)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(form.total.setoran_simpok)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(form.total.setoran_taber)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(form.total.penarikan_sukarela)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(form.total.pokok)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(form.total.biaya_administrasi)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(form.total.biaya_asuransi_jiwa)" class="text-right"/></td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(form.total.angsuran)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(form.total.setoran_sukarela)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(form.total.setoran_simpok)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(form.total.setoran_taber)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(form.total.penarikan_sukarela)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(form.total.pokok)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(form.total.biaya_administrasi)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(form.total.biaya_asuransi_jiwa)"
+                        class="text-right"
+                      />
+                    </td>
                     <td><b-button variant="info">...</b-button></td>
                   </tr>
                   <tr>
@@ -219,18 +344,37 @@
                 <tbody>
                   <tr>
                     <td colspan="4"></td>
-                    <td><b-form-input :value="thousand(0)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(0)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(form.data.penerimaan)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(form.data.penarikan)" class="text-right"/></td>
-                    <td><b-form-input :value="thousand(0)" class="text-right"/></td>
+                    <td>
+                      <b-form-input :value="thousand(0)" class="text-right" />
+                    </td>
+                    <td>
+                      <b-form-input :value="thousand(0)" class="text-right" />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(form.data.penerimaan)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(form.data.penarikan)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input :value="thousand(0)" class="text-right" />
+                    </td>
                     <td colspan="4"></td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </b-col>
-          <b-col cols="12" class="d-flex justify-content-center border-top pt-5">
+          <b-col
+            cols="12"
+            class="d-flex justify-content-center border-top pt-5"
+          >
             <b-button
               variant="secondary"
               @click="$bvModal.hide('modal-form')"
@@ -297,7 +441,7 @@ import { mapGetters } from "vuex";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import easycoApi from "@/core/services/easyco.service";
-import helper from '@/core/helper'
+import helper from "@/core/helper";
 export default {
   name: "Cabang",
   components: {},
@@ -350,7 +494,7 @@ export default {
           // {
           //   key: "kas_awal",
           //   sortable: true,
-          //   label: "Kas Awal",
+          //   label: "Kas Awal",`
           //   thClass: "text-center",
           //   tdClass: "text-right",
           // },
@@ -396,6 +540,7 @@ export default {
       },
       paging: {
         branch_code: null,
+        fa_code: null,
         from_date: null,
         thru_date: null,
       },
@@ -406,30 +551,8 @@ export default {
       opt: {
         perPage: [10, 25, 50, 100],
         cabang: [],
-      }
-    }
-  },
-  mixins: [validationMixin],
-  validations: {
-    form: {
-      data: {
-        kode_cabang: {
-          required,
-        },
-        nama_cabang: {
-          required,
-        },
-        induk_cabang: {
-          required,
-        },
-        jenis_cabang: {
-          required,
-        },
-        pimpinan_cabang: {
-          required,
-        },
       },
-    },
+    };
   },
   computed: {
     ...mapGetters(["user"]),
@@ -451,16 +574,16 @@ export default {
     async doGetCabang() {
       let payload = {
         page: 1,
-        perPage: '~',
+        perPage: "~",
         sortBy: "nama_cabang",
         search: "",
-        sortyDir: 'ASC'
+        sortyDir: "ASC",
       };
       try {
         let req = await easycoApi.cabangRead(payload, this.user.token);
         let { data, status, msg, total } = req.data;
         if (status) {
-          this.opt.cabang = []
+          this.opt.cabang = [];
           data.map((item) => {
             this.opt.cabang.push({
               value: item.kode_cabang,
@@ -472,14 +595,40 @@ export default {
         console.error(error);
       }
     },
+    async doGetPetugas() {
+      let payload = null;
+      try {
+        let req = await easycoApi.petugasRead(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.petugas = [
+            {
+              value: null,
+              text: "All",
+            },
+          ];
+          data.map((item) => {
+            this.opt.petugas.push({
+              value: Number(item.kode_petugas),
+              text: item.nama_kas_petugas,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
     async doGet() {
-      let payload = {...this.paging};
-      payload.from_date = this.dateFormatId(payload.from_date,'/')
-      payload.thru_date = this.dateFormatId(payload.thru_date,'/')
-      if(payload.from_date && payload.branch_code && payload.thru_date){
+      let payload = { ...this.paging };
+      payload.from_date = this.dateFormatId(payload.from_date, "/");
+      payload.thru_date = this.dateFormatId(payload.thru_date, "/");
+      if (payload.from_date && payload.branch_code && payload.thru_date) {
         this.table.loading = true;
         try {
-          let req = await easycoApi.transaksiRembugRead(payload, this.user.token);
+          let req = await easycoApi.transaksiRembugRead(
+            payload,
+            this.user.token
+          );
           let { data, status, msg, total } = req.data;
           if (status) {
             this.table.items = data;
@@ -493,66 +642,78 @@ export default {
       }
     },
     async doSave(e) {
-        this.form.loading = true;
-        try {
-          let payload = {
-            id_trx_rembug: this.form.id_trx_rembug
-          }
-          let req = await easycoApi.transaksiRembugProses(payload, this.user.token);
-          let { status } = req.data;
-          if (status) {
-            this.notify("success", "Success", "Data berhasil disimpan");
-            this.doGet();
-            this.$bvModal.hide("modal-form");
-          } else {
-            this.notify("danger", "Error", "Data gagal disimpan");
-          }
-          this.form.loading = false;
-        } catch (error) {
-          this.notify("danger", "Error", error);
-          this.form.loading = false;
+      this.form.loading = true;
+      try {
+        let payload = {
+          id_trx_rembug: this.form.id_trx_rembug,
+        };
+        let req = await easycoApi.transaksiRembugProses(
+          payload,
+          this.user.token
+        );
+        let { status } = req.data;
+        if (status) {
+          this.notify("success", "Success", "Data berhasil disimpan");
+          this.doGet();
+          this.$bvModal.hide("modal-form");
+        } else {
+          this.notify("danger", "Error", "Data gagal disimpan");
         }
+        this.form.loading = false;
+      } catch (error) {
+        this.notify("danger", "Error", error);
+        this.form.loading = false;
+      }
     },
     async doGetDetil(item) {
       try {
         let payload = {
-          id_trx_rembug: item.id_trx_rembug
-        }
-        this.form.id_trx_rembug = item.id_trx_rembug
-        let req = await easycoApi.transaksiRembugDetail(payload, this.user.token);
+          id_trx_rembug: item.id_trx_rembug,
+        };
+        this.form.id_trx_rembug = item.id_trx_rembug;
+        let req = await easycoApi.transaksiRembugDetail(
+          payload,
+          this.user.token
+        );
         let { data, status, msg, detail } = req.data;
         if (status) {
-          console.log(detail)
+          console.log(detail);
           this.form.data = data;
           this.form.detail = detail;
 
-          this.form.total.frek = 0
-          this.form.total.angsuran = 0
-          this.form.total.setoran_sukarela = 0
-          this.form.total.setoran_simpok = 0
-          this.form.total.setoran_taber = 0
-          this.form.total.penarikan_sukarela = 0
-          this.form.total.pokok = 0
-          this.form.total.biaya_administrasi = 0
-          this.form.total.biaya_asuransi_jiwa = 0
+          this.form.total.frek = 0;
+          this.form.total.angsuran = 0;
+          this.form.total.setoran_sukarela = 0;
+          this.form.total.setoran_simpok = 0;
+          this.form.total.setoran_taber = 0;
+          this.form.total.penarikan_sukarela = 0;
+          this.form.total.pokok = 0;
+          this.form.total.biaya_administrasi = 0;
+          this.form.total.biaya_asuransi_jiwa = 0;
           detail.map((item) => {
-            this.form.total.frek += Number(item.frek)
-            this.form.total.angsuran += Number(item.angsuran)
-            this.form.total.setoran_sukarela += Number(item.setoran_sukarela)
-            this.form.total.setoran_simpok += Number(item.setoran_simpok)
-            this.form.total.setoran_taber += Number(item.setoran_taber)
-            this.form.total.penarikan_sukarela += Number(item.penarikan_sukarela)
-            this.form.total.pokok += Number(item.pokok)
-            this.form.total.biaya_administrasi += Number(item.biaya_administrasi)
-            this.form.total.biaya_asuransi_jiwa += Number(item.biaya_asuransi_jiwa)
-          })
+            this.form.total.frek += Number(item.frek);
+            this.form.total.angsuran += Number(item.angsuran);
+            this.form.total.setoran_sukarela += Number(item.setoran_sukarela);
+            this.form.total.setoran_simpok += Number(item.setoran_simpok);
+            this.form.total.setoran_taber += Number(item.setoran_taber);
+            this.form.total.penarikan_sukarela += Number(
+              item.penarikan_sukarela
+            );
+            this.form.total.pokok += Number(item.pokok);
+            this.form.total.biaya_administrasi += Number(
+              item.biaya_administrasi
+            );
+            this.form.total.biaya_asuransi_jiwa += Number(
+              item.biaya_asuransi_jiwa
+            );
+          });
           this.$bvModal.show("modal-form");
         }
       } catch (error) {
         console.log(error);
         this.notify("danger", "Error", "Gagal mengambil data");
       }
-      
+
       // this.$bvModal.show("modal-form");
     },
     getJenisCabang(val) {
@@ -593,14 +754,15 @@ export default {
   },
   mounted() {
     this.doGetCabang();
+    this.doGetPetugas();
   },
 };
 </script>
 <style>
-  .modal-xxl {
-    max-width: 99%;
-  }
-  .align-center {
-    vertical-align: middle !important;
-  }
+.modal-xxl {
+  max-width: 99%;
+}
+.align-center {
+  vertical-align: middle !important;
+}
 </style>

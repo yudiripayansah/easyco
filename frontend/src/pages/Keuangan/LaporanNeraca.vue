@@ -99,7 +99,7 @@ export default {
   methods: {
     ...helper,
     async exportPdf() {
-      let url = `https://easycop.kopikoding.com/report/print_balance_sheet_current_pdf/${this.paging.cabang}/${this.paging.jenis}/${this.paging.tanggal}`;
+      let url = `https://easycop.kopsyahmsi.com/report/print_balance_sheet_pdf/${this.paging.cabang}/${this.paging.jenis}/${this.paging.tanggal}`;
       let req = axios.get(url);
       var fileURL = window.URL.createObjectURL(
         new Blob([req.data], { type: "application/pdf" })
@@ -109,27 +109,6 @@ export default {
       fileLink.setAttribute("download", "file.pdf");
       document.body.appendChild(fileLink);
       fileLink.click();
-    },
-    doSavePdf() {
-      let filename = "LAPORAN TRANSAKSI REMBUG";
-      if (this.report.cabang) {
-        filename += ` - Cabang ${this.report.cabang}`;
-      }
-      if (this.report.from && this.report.to) {
-        filename += ` - Dari ${this.dateFormatId(
-          this.report.from
-        )} Sampai ${this.dateFormatId(this.report.to)}`;
-      }
-
-      html2pdf(document.getElementById("table-print"), {
-        margin: 0,
-        filename: `${filename}.pdf`,
-        jsPDF: {
-          unit: "in",
-          format: "a4",
-          orientation: "landscape",
-        },
-      });
     },
     getCabangName(id) {
       if (id > 0) {
