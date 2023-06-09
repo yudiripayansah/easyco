@@ -603,4 +603,8 @@ export default {
   .align-center {
     vertical-align: middle !important;
   }
+  .table input.form-control {
+    font-size: 10px;
+    padding: .5rem;
+  }
 </style>

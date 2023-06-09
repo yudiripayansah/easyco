@@ -899,7 +899,7 @@ export default {
       } else {
         this.alert = {
           show: true,
-          msg: 'Silahkan pilih Rembug',
+          msg: 'Silahkan pilih Majelis',
         };
       }
     },

@@ -12,21 +12,21 @@ const menu = [
     icon: 'menu-icon far fa-user',
     component: import('@/pages/Keanggotaan'),
     children: [
-      {
-        target: 'registrasi-anggota',
-        label: 'Registrasi Anggota',
-        component: import('@/pages/Keanggotaan/RegistrasiAnggota'),
-      },
+      // {
+      //   target: 'registrasi-anggota',
+      //   label: 'Registrasi Anggota',
+      //   component: import('@/pages/Keanggotaan/RegistrasiAnggota'),
+      // },
       {
         target: 'registrasi-anggota-rembug',
         label: 'Registrasi Anggota Majelis',
         component: import('@/pages/Keanggotaan/RegistrasiAnggotaRembug.vue'),
       },
-      {
-        target: 'approval-registrasi-keluar',
-        label: 'Approval Registrasi Anggota Keluar',
-        component: import('@/pages/Keanggotaan/ApprovalRegistrasiAnggotaKeluar.vue'),
-      },
+      // {
+      //   target: 'approval-registrasi-keluar',
+      //   label: 'Approval Registrasi Anggota Keluar',
+      //   component: import('@/pages/Keanggotaan/ApprovalRegistrasiAnggotaKeluar.vue'),
+      // },
       {
         target: 'laporan',
         label: 'Laporan Keanggotaan',
@@ -63,16 +63,16 @@ const menu = [
     icon: 'menu-icon fas fa-money-check-alt',
     component: import('@/pages/Tabungan'),
     children: [
-      {
-        target: 'pembukaan-rekening-tabungan',
-        label: 'Pembukaan Rekening Tabungan',
-        component: import('@/pages/Tabungan/PembukaanRekeningTabungan.vue'),
-      },
-      {
-        target: 'penutupan-rekening-tabungan',
-        label: 'Penutupan Rekening Tabungan',
-        component: import('@/pages/Dummy.vue'),
-      },
+      // {
+      //   target: 'pembukaan-rekening-tabungan',
+      //   label: 'Pembukaan Rekening Tabungan',
+      //   component: import('@/pages/Tabungan/PembukaanRekeningTabungan.vue'),
+      // },
+      // {
+      //   target: 'penutupan-rekening-tabungan',
+      //   label: 'Penutupan Rekening Tabungan',
+      //   component: import('@/pages/Dummy.vue'),
+      // },
       {
         target: 'verifikasi-pencairan-tabungan',
         label: 'Verifikasi Pencairan Tabungan',
@@ -119,11 +119,11 @@ const menu = [
       //   label: 'Pengajuan Pembiayaan Old',
       //   component: import('@/pages/Pembiayaan/PengajuanPembiayaan/index.vue'),
       // },
-      {
-        target: 'pengajuan-pembiayaan',
-        label: 'Pengajuan Pembiayaan',
-        component: import('@/pages/Pembiayaan/PengajuanPembiayaan.vue'),
-      },
+      // {
+      //   target: 'pengajuan-pembiayaan',
+      //   label: 'Pengajuan Pembiayaan',
+      //   component: import('@/pages/Pembiayaan/PengajuanPembiayaan.vue'),
+      // },
       {
         target: 'update-status-komite',
         label: 'Update Status Komite',
@@ -139,11 +139,11 @@ const menu = [
         label: 'Registrasi Akad',
         component: import('@/pages/Pembiayaan/RegistrasiAkad.vue'),
       },
-      {
-        target: 'verifikasi-akad',
-        label: 'Pencairan',
-        component: import('@/pages/Pembiayaan/VerifikasiAkad.vue'),
-      },
+      // {
+      //   target: 'verifikasi-akad',
+      //   label: 'Pencairan',
+      //   component: import('@/pages/Pembiayaan/VerifikasiAkad.vue'),
+      // },
       {
         target: 'cetak-akad',
         label: 'Cetak Akad',
@@ -212,11 +212,11 @@ const menu = [
     icon: 'menu-icon fas fa-random',
     component: import('@/pages/Transaksi'),
     children: [
-      {
-        target: 'transaksi-rembug',
-        label: 'Transaksi Majelis',
-        component: import('@/pages/Dummy.vue'),
-      },
+      // {
+      //   target: 'transaksi-rembug',
+      //   label: 'Transaksi Majelis',
+      //   component: import('@/pages/Dummy.vue'),
+      // },
       {
         target: 'verifikasi-transaksi-rembug',
         label: 'Verifikasi Transaksi Majelis',

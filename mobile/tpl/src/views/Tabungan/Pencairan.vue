@@ -12,7 +12,7 @@
     </h6>
     <div>
       <Camera class="mt-5"/>
-      <v-select solo label="Rembug" class="mb-3 mt-3" hide-details :items="opt.rembug" v-model="form.data.kode_rembug" @change="getAnggota()"/>
+      <v-select solo label="Majelis" class="mb-3 mt-3" hide-details :items="opt.rembug" v-model="form.data.kode_rembug" @change="getAnggota()"/>
       <v-select solo label="Pilih Anggota" class="mb-3" hide-details :items="opt.anggota" v-model="form.data.no_anggota" @change="getProduk()"/>
       <v-select solo label="Produk Tabungan" class="mb-3" hide-details :items="opt.produk" v-model="form.data.id" @change="setTabungan()"/>
     </div>

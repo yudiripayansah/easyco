@@ -78,14 +78,14 @@
       <div class="rounded-pill indigo lighten-1 me-2 px-2 d-flex align-center justify-center py-2 elevation-3">
         <v-icon small color="white">mdi-account-group</v-icon>
       </div>
-      Rembug
+      Mejalis
     </h6>
     <div class="py-3 px-5 bth-rembug-box">
       <v-btn block class="blue lighten-3 white--text rounded-lg mb-5" type="submit">
         Ambil Data
       </v-btn>
       <v-card v-for="(rbg,rbgIndex) in rembug" :key="rbgIndex" class="pa-5 mb-3">
-        <h6 class="text-h6 mb-1 font-weight-bold text-center">Rembug {{rbg.nama_rembug}}</h6>
+        <h6 class="text-h6 mb-1 font-weight-bold text-center">Majelis {{rbg.nama_rembug}}</h6>
         <h1 class="text-h4 font-weight-black indigo--text text--lighten-1 d-flex justify-space-between align-center">
           <span class="text-body-2 font-weight-black grey--text">Jumlah Anggota</span>
           {{rbg.jumlah}}
@@ -102,7 +102,7 @@
           <v-col cols="12">
             <router-link :to="`/anggota/${rbg.kode_rembug}`">
               <v-btn block class="indigo lighten-1 white--text rounded-lg" type="button">
-                Lihat Rembug
+                Lihat Majelis
               </v-btn>
             </router-link>
           </v-col>
