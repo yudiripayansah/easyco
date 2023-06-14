@@ -5,7 +5,7 @@
             <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="6">KSPPS MITRA SEJAHTERA RAYA INDONESIA</th>
         </tr>
         <tr>
-            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="6">LAPORAN LIST SALDO OUTSTANDING</th>
+            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="6">LAPORAN KARTU ANGSURAN</th>
         </tr>
         <tr>
             <th>&nbsp;</th>

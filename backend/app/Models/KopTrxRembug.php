@@ -53,6 +53,7 @@ class KopTrxRembug extends Model
             ->where('kode_rembug', $kode_rembug)
             ->where('kode_petugas', $kode_petugas)
             ->where('trx_date', $trx_date)
+            ->where('verified_by', null)
             ->first();
 
         return $show;
@@ -64,21 +65,34 @@ class KopTrxRembug extends Model
             ->where('kode_rembug', $kode_rembug)
             ->where('kode_petugas', $kode_petugas)
             ->where('trx_date', $trx_date)
+            ->where('verified_by', null)
             ->first();
 
         return $show;
     }
 
-    function get_all_transaction($branch_code, $from_date, $thru_date)
+    function get_all_transaction($branch_code, $fa_code, $cm_code, $from_date, $thru_date, $flag)
     {
-        $show = KopTrxRembug::select('kop_trx_rembug.id_trx_rembug', 'kr.kode_rembug', 'kr.nama_rembug', 'kc.nama_cabang', 'kop_trx_rembug.trx_date', 'kkp.nama_kas_petugas', 'kop_trx_rembug.infaq')
+        $show = KopTrxRembug::select('kop_trx_rembug.id_trx_rembug', 'kr.kode_rembug', 'kr.nama_rembug', 'kc.nama_cabang', 'kop_trx_rembug.trx_date', 'kkp.nama_kas_petugas', 'kp.nama_pgw', DB::raw('kop_trx_rembug.infaq::INTEGER AS infaq'), 'kop_trx_rembug.verified_by', 'kop_trx_rembug.created_at')
             ->join('kop_rembug AS kr', 'kr.kode_rembug', 'kop_trx_rembug.kode_rembug')
             ->join('kop_cabang AS kc', 'kc.kode_cabang', 'kr.kode_cabang')
             ->join('kop_kas_petugas AS kkp', 'kkp.kode_petugas', 'kop_trx_rembug.kode_petugas')
-            ->where('kop_trx_rembug.verified_by', NULL);
+            ->join('kop_pegawai AS kp', 'kp.kode_pgw', 'kkp.kode_petugas');
+
+        if ($flag == 1) {
+            $show->where('kop_trx_rembug.verified_by', NULL);
+        }
 
         if ($branch_code <> '00000') {
             $show->where('kc.kode_cabang', $branch_code);
+        }
+
+        if ($fa_code <> '') {
+            $show->where('kp.kode_pgw', $fa_code);
+        }
+
+        if ($cm_code <> '') {
+            $show->where('kr.kode_rembug', $cm_code);
         }
 
         $show->whereBetween('kop_trx_rembug.trx_date', [$from_date, $thru_date])
@@ -92,11 +106,12 @@ class KopTrxRembug extends Model
 
     function total_cashflow($kode_rembug, $trx_date, $flag)
     {
-        $show = KopTrxRembug::select(DB::raw('COALESCE(SUM(amount),0) AS amount'))
+        $show = KopTrxRembug::select(DB::raw('COALESCE(SUM(amount::INTEGER),0) AS amount'))
             ->join('kop_trx_anggota AS kta', 'kta.id_trx_rembug', 'kop_trx_rembug.id_trx_rembug')
             ->where('kop_trx_rembug.kode_rembug', $kode_rembug)
             ->where('kop_trx_rembug.trx_date', $trx_date)
             ->where('kta.flag_debet_credit', $flag)
+            ->where('kop_trx_rembug.verified_by', null)
             ->first();
 
         return $show;
@@ -128,17 +143,21 @@ class KopTrxRembug extends Model
     function get_detail($id_trx_rembug)
     {
         $statement = "SELECT
+        h.id_trx_rembug,
         ka.no_anggota,
         ka.nama_anggota,
-        COALESCE(ROUND(a.frek),0) AS frek,
-        COALESCE(b.angsuran,0) AS angsuran,
-        COALESCE(c.setoran_sukarela,0) AS setoran_sukarela,
-        COALESCE(d.setoran_simpok,0) AS setoran_simpok,
-        COALESCE(e.setoran_taber,0) AS setoran_taber,
-        COALESCE(f.penarikan_sukarela,0) AS penarikan_sukarela,
-        COALESCE(g.pokok,0) AS pokok,
-        COALESCE(g.biaya_administrasi,0) AS biaya_administrasi,
-        COALESCE(g.biaya_asuransi_jiwa,0) AS biaya_asuransi_jiwa
+        COALESCE(CAST(ROUND(a.frek) AS INTEGER),0) AS frek,
+        COALESCE(b.angsuran::INTEGER,0) AS angsuran,
+        COALESCE(c.setoran_sukarela::INTEGER,0) AS setoran_sukarela,
+        COALESCE(d.setoran_simpok::INTEGER,0) AS setoran_simpok,
+        COALESCE(e.setoran_taber::INTEGER,0) AS setoran_taber,
+        COALESCE(f.penarikan_sukarela::INTEGER,0) AS penarikan_sukarela,
+        COALESCE(g.pokok::INTEGER,0) AS pokok,
+        COALESCE(g.biaya_administrasi::INTEGER,0) AS biaya_administrasi,
+        COALESCE(g.biaya_asuransi_jiwa::INTEGER,0) AS biaya_asuransi_jiwa,
+        COALESCE(i.angsuran_pokok::INTEGER,0) AS angsuran_pokok,
+        COALESCE(j.angsuran_margin::INTEGER,0) AS angsuran_margin,
+        COALESCE(k.angsuran_catab::INTEGER,0) AS angsuran_catab
         FROM kop_anggota AS ka
         JOIN kop_trx_rembug AS h ON h.kode_rembug = ka.kode_rembug
         LEFT JOIN (
@@ -209,9 +228,36 @@ class KopTrxRembug extends Model
             WHERE ktr.id_trx_rembug = ? AND kp.status_rekening = '1' AND kp.status_droping = '0'
             GROUP BY 1,2,3,4
         ) AS g ON g.no_anggota = ka.no_anggota
+        LEFT JOIN (
+            SELECT
+            kta.no_anggota,
+            SUM(kta.amount) AS angsuran_pokok
+            FROM kop_trx_anggota AS kta
+            JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
+            WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '32'
+            GROUP BY 1
+        ) AS i ON i.no_anggota = ka.no_anggota
+        LEFT JOIN (
+            SELECT
+            kta.no_anggota,
+            SUM(kta.amount) AS angsuran_margin
+            FROM kop_trx_anggota AS kta
+            JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
+            WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '33'
+            GROUP BY 1
+        ) AS j ON j.no_anggota = ka.no_anggota
+        LEFT JOIN (
+            SELECT
+            kta.no_anggota,
+            SUM(kta.amount) AS angsuran_catab
+            FROM kop_trx_anggota AS kta
+            JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
+            WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '34'
+            GROUP BY 1
+        ) AS k ON k.no_anggota = ka.no_anggota
         WHERE h.id_trx_rembug = ? AND ka.status <> 2";
 
-        $show = DB::select($statement, [$id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug]);
+        $show = DB::select($statement, [$id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug]);
 
         return $show;
     }
