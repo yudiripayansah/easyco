@@ -54,6 +54,7 @@ class KopTrxAnggota extends Model
             ->where('no_anggota', $no_anggota)
             ->where('trx_date', $trx_date)
             ->where('flag_debet_credit', 'C')
+            ->where('verified_by', null)
             ->get();
 
         return $show;
@@ -65,6 +66,7 @@ class KopTrxAnggota extends Model
             ->where('no_anggota', $no_anggota)
             ->where('trx_date', $trx_date)
             ->where('flag_debet_credit', 'D')
+            ->where('verified_by', null)
             ->get();
 
         return $show;
@@ -112,11 +114,12 @@ class KopTrxAnggota extends Model
         return $show;
     }
 
-    function get_exist($no_anggota, $trx_date)
+    function get_exist($no_anggota, $trx_date, $id_trx_rembug)
     {
         $show = KopTrxAnggota::select(DB::raw('COUNT(*) AS jumlah'))
             ->where('no_anggota', $no_anggota)
             ->where('trx_date', $trx_date)
+            ->where('id_trx_rembug', $id_trx_rembug)
             ->first();
 
         return $show;
@@ -124,7 +127,7 @@ class KopTrxAnggota extends Model
 
     function total_droping($id_trx_rembug)
     {
-        $show = KopTrxAnggota::select(DB::raw('SUM(amount) AS kas_awal'))
+        $show = KopTrxAnggota::select(DB::raw('SUM(amount::INTEGER) AS kas_awal'))
             ->where('id_trx_rembug', $id_trx_rembug)
             ->where('trx_type', 31)
             ->first();

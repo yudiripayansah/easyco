@@ -10,7 +10,6 @@ use App\Models\KopTabungan;
 use App\Models\KopTrxAnggota;
 use App\Models\KopTrxKasPetugas;
 use App\Models\KopTrxRembug;
-use App\Models\KopUser;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +23,8 @@ class TrxRembug extends Controller
 
     function read(Request $request)
     {
-        $branch_code = $request->branch_code;
+        $kode_cabang = $request->branch_code;
+        $kode_petugas = $request->fa_code;
 
         if ($request->from_date) {
             $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
@@ -40,12 +40,18 @@ class TrxRembug extends Controller
 
         $data = array();
 
-        $show = KopTrxRembug::get_all_transaction($branch_code, $from_date, $thru_date);
+        $show = KopTrxRembug::get_all_transaction($kode_cabang, $kode_petugas, '', $from_date, $thru_date, 1);
+
+        $grand_total_penerimaan = 0;
+        $grand_total_penarikan = 0;
 
         foreach ($show as $sh) {
             $kas_awal = KopTrxAnggota::total_droping($sh['id_trx_rembug']);
             $penerimaan = KopTrxRembug::total_cashflow($sh['kode_rembug'], $sh['trx_date'], 'C');
             $penarikan = KopTrxRembug::total_cashflow($sh['kode_rembug'], $sh['trx_date'], 'D');
+
+            $grand_total_penerimaan += $penerimaan['amount'];
+            $grand_total_penarikan += $penarikan['amount'];
 
             $data[] = array(
                 'id_trx_rembug' => $sh['id_trx_rembug'],
@@ -60,9 +66,15 @@ class TrxRembug extends Controller
             );
         }
 
+        $grand = array(
+            'total_penerimaan' => $grand_total_penerimaan,
+            'total_penarikan' => $grand_total_penarikan
+        );
+
         $res = array(
             'status' => true,
-            'data' => $data
+            'data' => $data,
+            'grand_total' => $grand
         );
 
         $response = response()->json($res, 200);
@@ -104,12 +116,10 @@ class TrxRembug extends Controller
 
         foreach ($show as $sh) {
             $id = $sh['id'];
-            $id_trx_anggota = $sh['id_trx_anggota'];
             $no_anggota = $sh['no_anggota'];
             $no_rekening = $sh['no_rekening'];
             $trx_date = $sh['trx_date'];
             $amount = $sh['amount'];
-            $flag_debet_credit = $sh['flag_debet_credit'];
             $trx_type = $sh['trx_type'];
 
             $param_anggota = array('no_anggota' => $no_anggota);
@@ -252,6 +262,100 @@ class TrxRembug extends Controller
                 'msg' => $e->getMessage()
             );
         }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function reject(Request $request)
+    {
+        $id = $request->id_trx_rembug;
+
+        if ($id) {
+            $trx_rembug = KopTrxRembug::where('id_trx_rembug', $id);
+            $trx_anggota = KopTrxAnggota::where('id_trx_rembug', $id);
+
+            DB::beginTransaction();
+
+            try {
+                $trx_anggota->delete();
+                $trx_rembug->delete();
+
+                $res = array(
+                    'status' => TRUE,
+                    'data' => NULL,
+                    'msg' => 'Berhasil!'
+                );
+
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+
+                $res = array(
+                    'status' => FALSE,
+                    'data' => $request->all(),
+                    'msg' => $e->getMessage()
+                );
+            }
+        } else {
+            $res = array(
+                'status' => FALSE,
+                'msg' => 'Maaf! Kecamatan tidak ditemukan'
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function transaksi_majelis(Request $request)
+    {
+        $kode_cabang = $request->branch_code;
+        $kode_petugas = $request->fa_code;
+        $kode_rembug = $request->cm_code;
+
+        if ($request->from_date) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
+
+        if ($request->thru_date) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
+
+        $data = array();
+
+        $show = KopTrxRembug::get_all_transaction($kode_cabang, $kode_petugas, $kode_rembug, $from_date, $thru_date, 0);
+
+        foreach ($show as $sh) {
+            $penerimaan = KopTrxRembug::total_cashflow($sh['kode_rembug'], $sh['trx_date'], 'C');
+            $penarikan = KopTrxRembug::total_cashflow($sh['kode_rembug'], $sh['trx_date'], 'D');
+
+            if ($sh['verified_by'] <> null) {
+                $status = 'Tidak';
+            } else {
+                $status = 'Ya';
+            }
+
+            $data[] = array(
+                'trx_date' => $sh['trx_date'],
+                'nama_rembug' => $sh['nama_rembug'],
+                'nama_petugas' => $sh['nama_pgw'],
+                'total_penerimaan' => $penerimaan['amount'] + $sh['infaq'],
+                'total_penarikan' => $penarikan['amount'],
+                'status_verifikasi' => $status
+            );
+        }
+
+        $res = array(
+            'status' => true,
+            'data' => $data
+        );
 
         $response = response()->json($res, 200);
 

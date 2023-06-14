@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KopAnggota;
 use App\Models\KopPembiayaan;
 use App\Models\KopPengajuan;
+use App\Models\KopTabungan;
 use App\Models\KopUser;
 use Exception;
 use Illuminate\Http\Request;
@@ -415,7 +417,9 @@ class RegistrasiAkadController extends Controller
             $read->where('kop_pembiayaan.kode_produk', $produk);
         }
 
-        $read->where('kop_pembiayaan.ttd_pencairan', null);
+        if ($status_droping == 0) {
+            $read->where('kop_pembiayaan.ttd_pencairan', null);
+        }
 
         if ($status_rekening && $status_rekening != '~') {
             $read->whereIn('kop_pembiayaan.status_rekening', $status_rekening);
@@ -708,6 +712,24 @@ class RegistrasiAkadController extends Controller
         $fileTtdPencairan = $request->ttd_pencairan;
 
         $data = KopPembiayaan::find($id);
+        $getPengajuan = KopPengajuan::where('no_pengajuan', $data->no_pengajuan)->first();
+        $getAnggota = KopAnggota::where('no_anggota', $getPengajuan->no_anggota)->first();
+        $sequence = KopTabungan::get_seq_rekening($getAnggota->no_anggota, '099');
+
+        if ($sequence['jumlah'] == 0) {
+            $no_rekening = $getAnggota->no_anggota . '09901';
+            $createSaving = array(
+                'no_anggota' => $getAnggota->no_anggota,
+                'kode_produk' => '099',
+                'setoran' => 0,
+                'periode_setoran' => 0,
+                'jangka_waktu' => 0,
+                'no_rekening' => $no_rekening,
+                'flag_taber' => 0,
+                'tanggal_buka' => date('Y-m-d'),
+                'created_by' => 'SYSTEM'
+            );
+        }
 
         if (empty($filePencairan)) {
             $doc_pencairan = NULL;
@@ -739,6 +761,10 @@ class RegistrasiAkadController extends Controller
 
             try {
                 $data->save();
+                if ($sequence['jumlah'] == 0) {
+                    KopTabungan::create($createSaving);
+                }
+
                 KopPembiayaan::buat_karwas($data->no_rekening);
 
                 $res = array(
