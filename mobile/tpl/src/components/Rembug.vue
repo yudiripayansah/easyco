@@ -93,7 +93,7 @@
         <v-container class="pa-0 d-flex justify-space-between">
           <v-row class="justify-end">
             <v-col cols="4">
-              <router-link :to="`/transaksi/setoran-form/${list.rembug}/${agt.no_anggota}`">
+              <router-link :to="`/transaksi/setoran-form/${list.rembug}/${agt.no_anggota}/${list.date}`">
                 <v-btn small block class="indigo lighten-1 white--text rounded-lg" type="submit">
                   Transaksi
                 </v-btn>

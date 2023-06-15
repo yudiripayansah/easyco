@@ -383,7 +383,7 @@
             </b-button>
             <b-button
               variant="danger"
-              type="submit"
+              type="button"
               :disabled="form.loading"
               class="mx-1"
               @click="$bvModal.hide('modal-form')"

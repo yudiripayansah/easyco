@@ -1335,6 +1335,16 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+  
+  kartuAngsuran(payload, token) {
+    let url = "trx_member/kartu_angsuran";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
 
   approveAnggotaKeluar(payload, token) {
     let url =
