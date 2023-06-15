@@ -264,6 +264,7 @@ Route::prefix('laporan')->group(function () {
       Route::get('/kas_petugas', [LaporanController::class, 'list_excel_kas_petugas']);
       Route::get('/detail_transaksi_majelis', [LaporanController::class, 'list_excel_detail_transaksi_majelis']);
       Route::get('/jurnal_transaksi', [LaporanController::class, 'list_excel_jurnal_transaksi']);
+      Route::get('/gl_inquiry', [LaporanController::class, 'list_excel_gl_inquiry']);
     });
 
     Route::prefix('csv')->group(function () {
@@ -275,6 +276,7 @@ Route::prefix('laporan')->group(function () {
       Route::get('/saldo_outstanding', [LaporanController::class, 'list_csv_saldo_outstanding']);
       Route::get('/kartu_angsuran', [LaporanController::class, 'list_csv_kartu_angsuran']);
       Route::get('/kas_petugas', [LaporanController::class, 'list_csv_kas_petugas']);
+      Route::get('/gl_inquiry', [LaporanController::class, 'list_csv_gl_inquiry']);
     });
 
     Route::prefix('pdf')->group(function () {
@@ -283,6 +285,7 @@ Route::prefix('laporan')->group(function () {
       Route::post('/detail_transaksi_majelis', [LaporanController::class, 'list_pdf_detail_transaksi_majelis']);
       Route::post('/jurnal_transaksi', [LaporanController::class, 'list_pdf_jurnal_transaksi']);
       Route::post('/neraca_berjalan', [LaporanController::class, 'list_pdf_neraca_berjalan']);
+      Route::post('/gl_inquiry', [LaporanController::class, 'list_pdf_gl_inquiry']);
     });
   });
 
