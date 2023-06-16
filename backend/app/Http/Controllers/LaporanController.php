@@ -11,11 +11,15 @@ use App\Exports\ListRegisAkadExport;
 use App\Exports\ListPencairanExport;
 use App\Exports\ListSaldoAnggotaExport;
 use App\Exports\ListSaldoOutstandingExport;
+use App\Exports\TransaksiMajelisExport;
 use App\Models\KopAnggota;
 use App\Models\KopCabang;
 use App\Models\KopPembiayaan;
 use App\Models\KopRembug;
 use App\Models\KopTabungan;
+use App\Models\KopTrxGl;
+use App\Models\KopTrxGlDetail;
+use App\Models\KopTrxRembug;
 use Illuminate\Http\Request;
 
 class LaporanController extends Controller
@@ -298,6 +302,55 @@ class LaporanController extends Controller
         $list = new KasPetugasExport($request->kode_kas_petugas, $request->from_date, $request->thru_date, 'csv');
 
         return $list->download('LAPORAN_KAS_PETUGAS_' . $request->kode_kas_petugas . '_' . $request->from_date . '_' . $request->thru_date . '.csv');
+    }
+
+    function list_pdf_jurnal_transaksi(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+
+        if ($request->from_date) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
+
+        if ($request->thru_date) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
+
+        $show = KopTrxGl::get_ledger($kode_cabang, $from_date, $thru_date);
+
+        if ($kode_cabang <> '~') {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+
+            if ($branch <> '00000') {
+                $cabang = $branch->nama_cabang;
+            } else {
+                $cabang = 'SEMUA CABANG';
+            }
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        foreach ($show as $sh) {
+            $detail = KopTrxGlDetail::get_ledger_detail($sh->id_trx_gl);
+
+            $sh->detail = $detail;
+        }
+
+        $res = array(
+            'status' => true,
+            'nama_cabang' => $cabang,
+            'from_date' => $from_date,
+            'thru_date' => $thru_date,
+            'data' => $show
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
     }
 
     function list_excel_jurnal_transaksi(Request $request)
@@ -649,5 +702,111 @@ class LaporanController extends Controller
         $response = response()->json($res, 200);
 
         return $response;
+    }
+
+    function list_pdf_detail_transaksi_majelis(Request $request)
+    {
+        $kode_cabang = $request->branch_code;
+        $kode_petugas = $request->fa_code;
+        $kode_rembug = $request->cm_code;
+
+        if ($request->from_date) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
+
+        if ($request->thru_date) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
+
+        $data = array();
+
+        $show = KopTrxRembug::get_all_transaction($kode_cabang, $kode_petugas, $kode_rembug, $from_date, $thru_date, 0);
+
+        foreach ($show as $sh) {
+            $penerimaan = KopTrxRembug::total_cashflow($sh['kode_rembug'], $sh['trx_date'], 'C');
+            $penarikan = KopTrxRembug::total_cashflow($sh['kode_rembug'], $sh['trx_date'], 'D');
+            $detail = KopTrxRembug::get_detail($sh['id_trx_rembug']);
+
+            if ($sh['verified_by'] <> null) {
+                $status = 'Tidak';
+            } else {
+                $status = 'Ya';
+            }
+
+            $data[] = array(
+                'nama_rembug' => $sh['nama_rembug'],
+                'tanggal_bayar' => $sh['trx_date'],
+                'tanggal' => date('Y-m-d', strtotime($sh['created_at'])),
+                'nama_petugas' => $sh['nama_pgw'],
+                'infaq' => $sh['infaq'],
+                'total_penerimaan' => $penerimaan['amount'],
+                'total_penarikan' => $penarikan['amount'],
+                'status_verifikasi' => $status,
+                'detail' => $detail
+            );
+        }
+
+        $res = array(
+            'status' => true,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function list_excel_detail_transaksi_majelis(Request $request)
+    {
+        $list = new TransaksiMajelisExport($request->branch_code, $request->fa_code, $request->cm_code, $request->from_date, $request->thru_date, 'excel');
+
+        return $list->download('LAPORAN_TRANSAKSI_MAJELIS_' . $request->branch_code . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+    }
+
+    function list_pdf_neraca_berjalan(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $report_code = $request->report_code;
+        $voucher_date = $request->voucher_date;
+        $kode_petugas = $request->kode_petugas;
+
+        if ($kode_cabang <> '00000') {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+
+            if ($branch <> '00000') {
+                $cabang = $branch->nama_cabang;
+            } else {
+                $cabang = 'SEMUA CABANG';
+            }
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($voucher_date) {
+            $voucher_date = date('Y-m-d', strtotime(str_replace('/', '-', $voucher_date)));
+        } else {
+            $voucher_date = date('Y-m-d');
+        }
+
+        $bulan = substr($voucher_date, 5, 2);
+
+        $startGetClosing = substr($voucher_date, 0, 7) . '-01';
+        $startClosing = date('Y-m-d', strtotime($startGetClosing . ' - 1 MONTH'));
+
+        $fromlm = $startClosing;
+        $from = $startGetClosing;
+        $thru = $voucher_date;
+
+        if ($bulan == '01') {
+            $flag_akhir_tahun = 'Y';
+        } else {
+            $flag_akhir_tahun = 'T';
+        }
+
+        $insert_temp = $this->model_laporan_to_pdf->insert_temp_2($kode_cabang, $report_code, $fromlm, $from, $thru, $kode_petugas, $flag_akhir_tahun);
     }
 }

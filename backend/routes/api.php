@@ -251,6 +251,8 @@ Route::prefix('general_ledger')->middleware('checkToken')->group(function () {
 
 Route::prefix('laporan')->group(function () {
   Route::prefix('list')->group(function () {
+    Route::post('/transaksi_majelis', [TrxRembug::class, 'transaksi_majelis']);
+
     Route::prefix('excel')->group(function () {
       Route::get('/anggota_masuk', [LaporanController::class, 'list_excel_anggota_masuk']);
       Route::get('/pengajuan', [LaporanController::class, 'list_excel_pengajuan']);
@@ -260,6 +262,7 @@ Route::prefix('laporan')->group(function () {
       Route::get('/saldo_outstanding', [LaporanController::class, 'list_excel_saldo_outstanding']);
       Route::get('/kartu_angsuran', [LaporanController::class, 'list_excel_kartu_angsuran']);
       Route::get('/kas_petugas', [LaporanController::class, 'list_excel_kas_petugas']);
+      Route::get('/detail_transaksi_majelis', [LaporanController::class, 'list_excel_detail_transaksi_majelis']);
       Route::get('/jurnal_transaksi', [LaporanController::class, 'list_excel_jurnal_transaksi']);
     });
 
@@ -277,6 +280,9 @@ Route::prefix('laporan')->group(function () {
     Route::prefix('pdf')->group(function () {
       Route::post('/profil_anggota', [LaporanController::class, 'list_pdf_profil_anggota']);
       Route::post('/detail_profil_anggota', [LaporanController::class, 'list_pdf_detail_profil_anggota']);
+      Route::post('/detail_transaksi_majelis', [LaporanController::class, 'list_pdf_detail_transaksi_majelis']);
+      Route::post('/jurnal_transaksi', [LaporanController::class, 'list_pdf_jurnal_transaksi']);
+      Route::post('/neraca_berjalan', [LaporanController::class, 'list_pdf_neraca_berjalan']);
     });
   });
 
@@ -295,6 +301,7 @@ Route::prefix('trx_rembug')->middleware('checkToken')->group(function () {
   Route::post('/read', [TrxRembug::class, 'read']);
   Route::post('/verifikasi', [TrxRembug::class, 'verifikasi']);
   Route::post('/proses_verifikasi', [TrxRembug::class, 'proses_verifikasi']);
+  Route::post('/reject', [TrxRembug::class, 'reject']);
   Route::post('/read_trx_kas_petugas', [TrxRembug::class, 'read_trx_kas_petugas']);
   Route::post('/proses_kas_petugas', [TrxRembug::class, 'proses_kas_petugas']);
 });

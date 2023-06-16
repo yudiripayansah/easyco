@@ -2,13 +2,13 @@
     <thead>
         @if($format == 'excel')
         <tr>
-            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="6">KSPPS MITRA SEJAHTERA RAYA INDONESIA</th>
+            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="7">KSPPS MITRA SEJAHTERA RAYA INDONESIA</th>
         </tr>
         <tr>
-            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="6">{{ $head->nama_cabang }}</th>
+            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="7">{{ $head->nama_cabang }}</th>
         </tr>
         <tr>
-            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="6">LAPORAN JURNAL TRANSAKSI</th>
+            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="7">LAPORAN JURNAL TRANSAKSI</th>
         </tr>
         <tr>
             <th>&nbsp;</th>
@@ -19,12 +19,12 @@
             <th>&nbsp;</th>
         </tr>
         <tr>
-            <th style="background-color:lightgray; font-size: 11px;">Tanggal</th>
-            <th style="background-color:lightgray; font-size: 11px;">: {{ $head->from_date }} s.d {{ $head->thru_date }}</th>
-            <th style="background-color:lightgray; font-size: 11px;">&nbsp;</th>
-            <th style="background-color:lightgray; font-size: 11px;">&nbsp;</th>
-            <th style="background-color:lightgray; font-size: 11px;">&nbsp;</th>
-            <th style="background-color:lightgray; font-size: 11px;">&nbsp;</th>
+            <th style="font-size: 11px;">Tanggal</th>
+            <th style="font-size: 11px;">: {{ $head->from_date }} s.d {{ $head->thru_date }}</th>
+            <th style="font-size: 11px;">&nbsp;</th>
+            <th style="font-size: 11px;">&nbsp;</th>
+            <th style="font-size: 11px;">&nbsp;</th>
+            <th style="font-size: 11px;">&nbsp;</th>
         </tr>
         <tr>
             <th>&nbsp;</th>
@@ -65,7 +65,7 @@
             <td style="border: 1px solid #000; vertical-align: middle;" colspan="4">{{ $jurnal->description }}</td>
         </tr>
         @foreach($detail as $dtl)
-
+        @if($dtl->id_trx_gl == $jurnal->id_trx_gl)
         @if($dtl->flag_dc == 'D')
         {{ $debet = $dtl->amount }}
         {{ $credit = 0 }}
@@ -79,6 +79,7 @@
             <td style="border: 1px solid #000;">{{ $debet }}</td>
             <td style="border: 1px solid #000;">{{ $credit }}</td>
         </tr>
+        @endif
         @endforeach
         @endforeach
     </tbody>

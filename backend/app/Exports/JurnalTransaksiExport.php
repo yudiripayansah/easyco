@@ -41,8 +41,14 @@ class JurnalTransaksiExport implements FromView
             $cabang = 'SEMUA CABANG';
         }
 
+        $data = array();
+
         foreach ($show as $head) {
             $detail = KopTrxGlDetail::get_ledger_detail($head->id_trx_gl);
+
+            foreach ($detail as $dt) {
+                $data[] = $dt;
+            }
 
             $head->nama_cabang = $cabang;
             $head->from_date = $this->from_date;
@@ -54,7 +60,7 @@ class JurnalTransaksiExport implements FromView
             'format' => $format,
             'jurnaltransaksi' => $show,
             'head' => $head,
-            'detail' => $detail
+            'detail' => $data
         ]);
     }
 }

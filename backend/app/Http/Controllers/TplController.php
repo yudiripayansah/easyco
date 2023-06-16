@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\KopAnggota;
 use App\Models\KopKartuAngsuran;
+use App\Models\KopLembaga;
 use App\Models\KopPembiayaan;
 use App\Models\KopRembug;
 use App\Models\KopTabungan;
@@ -189,11 +190,21 @@ class TplController extends Controller
             $no_rekening = $rekening_angsuran;
         }
 
-        // SIMPANAN WAJIB
+        // SIMPOK, SIMWA, SIMSUK
         $param = array('no_anggota' => $no_anggota);
         $getMember = KopAnggota::where($param)->first();
+        $simpok = $getMember->simpok;
         $simwa = $getMember->simwa;
         $simsuk = $getMember->simsuk;
+
+        // SIMPOK LEMBAGA
+        $getLembaga = KopLembaga::first();
+
+        if ($simpok == 0) {
+            $setoran_simpanan_pokok = $getLembaga->simpok;
+        } else {
+            $setoran_simpanan_pokok = 0;
+        }
 
         // PEMBIAYAAN
         $show = KopPembiayaan::tpl_financing($no_anggota);
@@ -280,6 +291,8 @@ class TplController extends Controller
                 ]
             ],
             'frekuensi' => $freq,
+            'setoran_simpanan_pokok' => str_replace('.', '', number_format($setoran_simpanan_pokok, 0, ',', '.')),
+            'simpok' => str_replace('.', '', number_format($simpok, 0, ',', '.')),
             'simwa' => str_replace('.', '', number_format($simwa, 0, ',', '.')),
             'simsuk' => str_replace('.', '', number_format($simsuk, 0, ',', '.')),
             'pembiayaan' => $financing,
@@ -306,10 +319,8 @@ class TplController extends Controller
 
     function process_deposit(Request $request)
     {
-        $kode_cabang = $request->kode_cabang;
         $kode_rembug = $request->kode_rembug;
         $kode_petugas = $request->kode_petugas;
-        $kode_kas_petugas = $request->kode_kas_petugas;
         $trx_date = str_replace('/', '-', $request->trx_date);
         $trx_date = date('Y-m-d', strtotime($trx_date));
         $no_anggota = $request->no_anggota;
@@ -317,6 +328,7 @@ class TplController extends Controller
         $angsuran = $request->angsuran;
         $setoran_sukarela = $request->setoran_sukarela;
         $setoran_simpanan_wajib = $request->setoran_simpanan_wajib;
+        $setoran_simpanan_pokok = $request->setoran_simpanan_pokok;
         $penarikan_sukarela = $request->penarikan_sukarela;
         $tabungan_persen = $request->tabungan_persen;
 
@@ -331,7 +343,6 @@ class TplController extends Controller
 
         $check = KopTrxRembug::get_exist($kode_rembug, $kode_petugas, $trx_date);
         $counts = KopTrxRembug::get_count($kode_rembug, $kode_petugas, $trx_date);
-        $check2 = KopTrxAnggota::get_exist($no_anggota, $trx_date);
         $param2 = array(
             'no_anggota' => $no_anggota,
             'trx_date' => $trx_date
@@ -342,6 +353,8 @@ class TplController extends Controller
         } else {
             $uuid = collect(DB::select('SELECT uuid() AS id_trx_rembug'))->first()->id_trx_rembug;
         }
+
+        $check2 = KopTrxAnggota::get_exist($no_anggota, $trx_date, $uuid);
 
         $data_trx_rembug = array(
             'id_trx_rembug' => $uuid,
@@ -383,6 +396,22 @@ class TplController extends Controller
                 'flag_debet_credit' => 'C',
                 'trx_type' => '13',
                 'description' => 'Bayar Simsuk',
+                'created_by' => $kode_petugas
+            );
+        }
+
+        // SETORAN SIMPANAN POKOK
+        if ($setoran_simpanan_pokok > 0) {
+            $data_trx_anggota[] = array(
+                'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                'id_trx_rembug' => $uuid,
+                'no_anggota' => $no_anggota,
+                'no_rekening' => NULL,
+                'trx_date' => $trx_date,
+                'amount' => $setoran_simpanan_pokok,
+                'flag_debet_credit' => 'C',
+                'trx_type' => '11',
+                'description' => 'Bayar Simpok',
                 'created_by' => $kode_petugas
             );
         }
@@ -479,11 +508,12 @@ class TplController extends Controller
             );
 
             if ($tabungan_persen > 0) {
+                $getRekeningTabungan = KopTabungan::get_rekening_tabungan($no_anggota, '099');
                 $data_trx_anggota[] = array(
                     'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
                     'id_trx_rembug' => $uuid,
                     'no_anggota' => $no_anggota,
-                    'no_rekening' => null,
+                    'no_rekening' => $getRekeningTabungan->no_rekening,
                     'trx_date' => $trx_date,
                     'amount' => $tabungan_persen,
                     'flag_debet_credit' => 'C',
