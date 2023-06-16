@@ -28,6 +28,7 @@ import "@mdi/font/css/materialdesignicons.css";
 import "@/core/plugins/formvalidation";
 import VueNumeric from 'vue-numeric'
 import excel from 'vue-excel-export'
+import "vue-multiselect/dist/vue-multiselect.min.css"
 Vue.use(excel)
 Vue.use(VueNumeric)
 
