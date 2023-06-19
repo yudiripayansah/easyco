@@ -98,7 +98,6 @@ export default {
   methods: {
     ...helper,
     async exportPdf() {
-      console.log(this.paging.jenis);
       const url = `https://easycop.kopsyahmsi.com/report/print_balance_sheet_pdf/${this.paging.cabang}/${this.paging.jenis}/${this.paging.tanggal}`;
       window.open(url, "_blank");
     },
