@@ -581,6 +581,7 @@ export default {
       payload.append('biaya_asuransi_jiwa',Number(formData.biaya_asuransi_jiwa))
       payload.append('tabungan_persen',Number(formData.tabungan_persen))
       payload.append('dana_kebajikan',Number(formData.dana_kebajikan))
+      
       try {
         let req = await services.transSetoranProses(payload, this.user.token)
         if(req.status === 200) {
