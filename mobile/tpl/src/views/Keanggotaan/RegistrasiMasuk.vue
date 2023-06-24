@@ -295,6 +295,7 @@
                   outlined
                   v-model="form.data.p_pendapatan"
                   label="Pendapatan"
+                  v-mask="thousandMask"
                 />
               </v-col>
             </v-row>
@@ -546,6 +547,7 @@
                   outlined
                   v-model="form.data.ush_omset"
                   label="Omset"
+                  v-mask="thousandMask"
                 />
               </v-col>
             </v-row>
@@ -559,6 +561,7 @@
                   outlined
                   v-model="form.data.by_beras"
                   label="Beras"
+                  v-mask="thousandMask"
                 />
               </v-col>
               <v-col cols="12">
@@ -569,6 +572,7 @@
                   outlined
                   v-model="form.data.by_dapur"
                   label="Dapur"
+                  v-mask="thousandMask"
                 />
               </v-col>
               <v-col cols="12">
@@ -579,6 +583,7 @@
                   outlined
                   v-model="form.data.by_listrik"
                   label="Listrik"
+                  v-mask="thousandMask"
                 />
               </v-col>
               <v-col cols="12">
@@ -589,6 +594,7 @@
                   outlined
                   v-model="form.data.by_telpon"
                   label="Telpon"
+                  v-mask="thousandMask"
                 />
               </v-col>
               <v-col cols="12">
@@ -599,6 +605,7 @@
                   outlined
                   v-model="form.data.by_sekolah"
                   label="Pendidikan"
+                  v-mask="thousandMask"
                 />
               </v-col>
               <v-col cols="12">
@@ -636,10 +643,7 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-snackbar
-      v-model="alert.show"
-      timeout="3000"
-    >
+    <v-snackbar v-model="alert.show" timeout="3000">
       {{ alert.msg }}
     </v-snackbar>
   </div>
@@ -653,7 +657,7 @@ import services from "@/services";
 export default {
   name: "Keangotaan",
   components: {
-    Toast
+    Toast,
   },
   data() {
     return {
@@ -809,12 +813,12 @@ export default {
           { value: 6, text: "Perikanan" },
           { value: 99, text: "Lainnya" },
         ],
-        rembug: []
+        rembug: [],
       },
       step: 1,
       alert: {
         show: false,
-        msg: ''
+        msg: "",
       },
     };
   },
@@ -823,11 +827,11 @@ export default {
   },
   methods: {
     ...helper,
-    setForm(){
-      this.form.data.created_by = this.user.id
-      this.form.data.kode_cabang = this.user.kode_cabang
-      this.form.data.tgl_gabung = this.today()
-      console.log(this.form.data.tgl_gabung)
+    setForm() {
+      this.form.data.created_by = this.user.id;
+      this.form.data.kode_cabang = this.user.kode_cabang;
+      this.form.data.tgl_gabung = this.today();
+      console.log(this.form.data.tgl_gabung);
     },
     move(step) {
       if (step > 5) {
@@ -870,7 +874,7 @@ export default {
     async doRegisterAnggota() {
       let payload = new FormData();
       let payloadData = this.form.data;
-      if(this.form.data.kode_cabang){
+      if (this.form.data.kode_cabang) {
         for (let key in payloadData) {
           payload.append(key, payloadData[key]);
         }
@@ -899,13 +903,13 @@ export default {
       } else {
         this.alert = {
           show: true,
-          msg: 'Silahkan pilih Majelis',
+          msg: "Silahkan pilih Majelis",
         };
       }
     },
   },
   mounted() {
-    this.setForm()
-  }
+    this.setForm();
+  },
 };
 </script>

@@ -253,11 +253,6 @@ const menu = [
             component: import('@/pages/Transaksi/Laporan/LaporanListTransaksiMajelis'),
           },
           {
-            target: 'transaksi-rembug',
-            label: 'Laporan Transaksi Majelis',
-            component: import('@/pages/Transaksi/Laporan/LaporanTransaksiMajelis'),
-          },
-          {
             target: 'transaksi-kas-petugas',
             label: 'Laporan Transaksi Kas Petugas',
             component: import('@/pages/Transaksi/Laporan/LaporanTransaksiKasPetugas'),
