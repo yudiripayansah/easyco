@@ -450,6 +450,9 @@ export default {
           biaya_asuransi_jiwa: 0,
           tabungan_persen: 0,
           dana_kebajikan: 0,
+          dana_gotongroyong: 0,
+          tab_sukarela: 0,
+          blokir_angsuran: 0,
           // tanggal_registrasi: null,
           tanggal_akad: null,
           // tanggal_mulai_angsur: null,
@@ -674,6 +677,28 @@ export default {
         var tgl = new Date(pengajuan.tanggal_pengajuan);
         this.form.data.tanggal_pengajuan = new Date(tgl.setDate(tgl.getDate()));
         this.form.data.tanggal_akad = new Date(tgl.setDate(tgl.getDate() + 7));
+        this.doGetBiaya()
+      }
+    },
+    async doGetBiaya() {
+      let payload = {
+        kode_produk: this.form.data.kode_produk,
+        jumlah_pengajuan: this.form.data.jumlah_pengajuan
+      };
+      try {
+        let req = await easycoApi.regisAkadBiaya(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.form.data.biaya_administrasi = data.biaya_administrasi
+          this.form.data.biaya_asuransi_jiwa = data.biaya_asuransi_jiwa
+          this.form.data.tabungan_persen = data.tabungan_persen
+          this.form.data.dana_gotongroyong = data.dana_gotongroyong
+          this.form.data.tab_sukarela = data.tab_sukarela
+          this.form.data.dana_kebajikan = data.dana_kebajikan
+          this.form.data.blokir_angsuran = data.blokir_angsuran
+        }
+      } catch (error) {
+        console.error(error);
       }
     },
     async doGetCabang() {
@@ -862,6 +887,9 @@ export default {
         payload.margin = Number(payload.margin);
         payload.pokok = Number(payload.pokok);
         payload.tabungan_persen = Number(payload.tabungan_persen);
+        payload.dana_gotongroyong = Number(payload.dana_gotongroyong);
+        payload.tab_sukarela = Number(payload.tab_sukarela);
+        payload.blokir_angsuran = Number(payload.blokir_angsuran);
         payload.created_by = this.user.id;
         let req = false;
         if (payload.id) {

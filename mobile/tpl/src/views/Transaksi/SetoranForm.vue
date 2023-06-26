@@ -143,13 +143,13 @@
           </v-col>
         </v-row>
         <v-row v-for="(taber,taberIndex) in form.data.taber" :key="taberIndex">
-          <v-col cols="3" class="pb-0" v-if="taber.kode_produk != '099'">
+          <v-col cols="3" class="pb-0" v-if="taber.kode_produk != '099' && taber.nama_produk != 'TIAR'">
             <label class="black--text">{{ (taber.nama_produk) ? taber.nama_produk : 'Taber' }}</label>
           </v-col>
           <!-- <v-col cols="4" class="pb-0 d-flex justify-end">
             Tidak <v-switch hide-details class="pa-0 ma-0" v-model="taber.state"/> Bayar
           </v-col> -->
-          <v-col cols="4" v-if="taber.kode_produk != '099'">
+          <v-col cols="4" v-if="taber.kode_produk != '099' && taber.nama_produk != 'TIAR'">
             <v-text-field 
               color="black"
               autocomplete="off" 
@@ -160,7 +160,7 @@
               :disabled="!taber.state"
             />
           </v-col>
-          <v-col cols="5" v-if="taber.kode_produk != '099'">
+          <v-col cols="5" v-if="taber.kode_produk != '099' && taber.nama_produk != 'TIAR'">
             <v-text-field 
               color="black"
               autocomplete="off" 
@@ -280,7 +280,7 @@
             />
           </v-col>
           <v-col cols="7" class="pb-0">
-            <label class="black--text">Tabungan 4%</label>
+            <label class="black--text">Tabungan 5%</label>
           </v-col>
           <v-col cols="5">
             <v-text-field 
@@ -307,6 +307,38 @@
               dense
               disabled
               v-model="form.data.dana_kebajikan"
+              v-mask="thousandMask"
+              class="justify-end text-right"
+            />
+          </v-col>
+          <v-col cols="7" class="pb-0">
+            <label class="black--text">Dana Gotong Royong</label>
+          </v-col>
+          <v-col cols="5">
+            <v-text-field 
+              color="black"
+              autocomplete="off" 
+              hide-details
+              solo
+              dense
+              disabled
+              v-model="form.data.dana_gotongroyong"
+              v-mask="thousandMask"
+              class="justify-end text-right"
+            />
+          </v-col>
+          <v-col cols="7" class="pb-0">
+            <label class="black--text">TIAR</label>
+          </v-col>
+          <v-col cols="5">
+            <v-text-field 
+              color="black"
+              autocomplete="off" 
+              hide-details
+              solo
+              dense
+              disabled
+              v-model="form.data.blokir_angsuran"
               v-mask="thousandMask"
               class="justify-end text-right"
             />
@@ -366,6 +398,9 @@ export default {
           biaya_asuransi_jiwa: 0,
           tabungan_persen: 0,
           dana_kebajikan: 0,
+          dana_gotongroyong: 0,
+          blokir_angsuran: 0,
+          tab_sukarela: 0,
           pembiayaan: [],
           berencana: [],
           total_setoran: 0,
@@ -424,7 +459,7 @@ export default {
               no_rekening: dataDeposit.no_rekening,
               angsuran: dataDeposit.angsuran,
               frekuensi: 1,
-              setoran_sukarela: 0,
+              setoran_sukarela: dataDeposit.tab_sukarela,
               setoran_simpanan_wajib: 0,
               penarikan_sukarela: 0,
               simwaState: true,
@@ -435,6 +470,9 @@ export default {
               biaya_asuransi_jiwa: dataDeposit.biaya_asuransi_jiwa,
               tabungan_persen: dataDeposit.tabungan_persen,
               dana_kebajikan: dataDeposit.dana_kebajikan,
+              dana_gotongroyong: dataDeposit.dana_gotongroyong,
+              blokir_angsuran: dataDeposit.blokir_angsuran,
+              tab_sukarela: dataDeposit.tab_sukarela,
               pembiayaan: dataDeposit.pembiayaan,
               total_setoran: 0,
               simsuk: dataDeposit.simsuk,
@@ -571,7 +609,6 @@ export default {
       payload.append('kode_rembug',formData.kode_rembug)
       payload.append('kode_rembug',formData.kode_rembug)
       formData.taber.map((item) => {
-        item.setoran = (item.setoran) ? Number(item.setoran.replace(/\./g,"")) : 0
         payload.append('no_rekening_tabungan[]',item.no_rekening)
         payload.append('amount_tabungan[]',item.setoran*item.freq_saving)
       })
@@ -581,7 +618,9 @@ export default {
       payload.append('biaya_asuransi_jiwa',Number(formData.biaya_asuransi_jiwa))
       payload.append('tabungan_persen',Number(formData.tabungan_persen))
       payload.append('dana_kebajikan',Number(formData.dana_kebajikan))
-      
+      payload.append('dana_gotongroyong',Number(formData.dana_gotongroyong))
+      payload.append('blokir_angsuran',Number(formData.blokir_angsuran))
+      payload.append('tab_sukarela',Number(formData.tab_sukarela))
       try {
         let req = await services.transSetoranProses(payload, this.user.token)
         if(req.status === 200) {

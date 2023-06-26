@@ -473,6 +473,15 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+  regisAkadBiaya(payload, token) {
+    let url = "registrasiakad/biaya";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
   updateKomite(payload, token) {
     let url = "pengajuan/update_komite";
     let config = {
