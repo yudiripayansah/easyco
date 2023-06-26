@@ -78,6 +78,15 @@
             <template #cell(no)="item">
               {{ item.index + 1 }}
             </template>
+            <template #cell(debet)="row">
+              <div class="text-right">{{ thousand(row.value) }}</div>
+            </template>
+            <template #cell(credit)="row">
+              <div class="text-right">{{ thousand(row.value) }}</div>
+            </template>
+            <template #cell(saldo_akhir)="row">
+              <div class="text-right">{{ thousand(row.value) }}</div>
+            </template>
           </b-table>
         </b-col>
         <b-col cols="12" class="justify-content-end d-flex">
@@ -129,9 +138,9 @@
               <td>{{ reportIndex + 1 }}</td>
               <td>{{ report.trx_date }}</td>
               <td>{{ report.description }}</td>
-              <td>Rp {{ thousand(report.debet) }}</td>
-              <td>Rp {{ thousand(report.credit) }}</td>
-              <td>Rp {{ thousand(report.saldo_akhir) }}</td>
+              <td class="text-right">{{ thousand(report.debet) }}</td>
+              <td class="text-right">{{ thousand(report.credit) }}</td>
+              <td class="text-right">{{ thousand(report.saldo_akhir) }}</td>
             </tr>
           </tbody>
           <tbody v-else>
