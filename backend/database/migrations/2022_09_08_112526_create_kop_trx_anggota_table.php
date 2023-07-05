@@ -18,6 +18,7 @@ class CreateKopTrxAnggotaTable extends Migration
             $table->id();
             $table->string('id_trx_anggota', 32)->unique()->default(DB::raw('uuid()'));
             $table->string('id_trx_rembug', 32)->nullable(TRUE);
+            $table->string('kode_cabang', 6);
             $table->string('no_anggota', 20);
             $table->string('no_rekening', 25)->nullable(TRUE);
             $table->date('trx_date');
@@ -34,6 +35,7 @@ class CreateKopTrxAnggotaTable extends Migration
             $table->string('deleted_by', 30)->nullable(TRUE);
 
             $table->foreign('no_anggota')->references('no_anggota')->on('kop_anggota')->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreign('kode_cabang')->references('kode_cabang')->on('kop_cabang')->cascadeOnUpdate()->restrictOnDelete();
         });
     }
 

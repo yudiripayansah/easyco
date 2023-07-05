@@ -105,6 +105,24 @@ class KopAnggota extends Model
         return $show;
     }
 
+    function tpl_trx_member($kode_rembug, $trx_date)
+    {
+        $show = KopAnggota::select('kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kr.kode_rembug', 'kr.nama_rembug')
+            ->join('kop_rembug AS kr', 'kr.kode_rembug', 'kop_anggota.kode_rembug')
+            ->leftjoin('kop_trx_anggota AS kta', function ($join) use ($trx_date) {
+                $join->on('kta.no_anggota', 'kop_anggota.no_anggota')
+                    ->where('kta.verified_by', null)
+                    ->where('kta.trx_date', $trx_date);
+            })
+            ->where('kr.kode_rembug', $kode_rembug)
+            ->groupBy('kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kr.kode_rembug', 'kr.nama_rembug', 'kta.created_by')
+            ->orderBy('kta.created_by', 'DESC')
+            ->orderBy('kop_anggota.no_anggota', 'ASC')
+            ->get();
+
+        return $show;
+    }
+
     function report_list($kode_cabang, $kode_rembug, $from_date, $thru_date)
     {
         $show = KopAnggota::select('kop_anggota.*', 'kc.nama_cabang', 'kr.nama_rembug', DB::raw('COALESCE(kp.saldo_pokok+kp.saldo_margin,0) AS saldo_outstanding'))

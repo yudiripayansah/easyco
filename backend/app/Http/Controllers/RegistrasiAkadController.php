@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\KopAnggota;
 use App\Models\KopPembiayaan;
 use App\Models\KopPengajuan;
+use App\Models\KopPrdPembiayaan;
 use App\Models\KopTabungan;
 use App\Models\KopUser;
 use Exception;
@@ -74,7 +75,7 @@ class RegistrasiAkadController extends Controller
                 'nama_anggota' => $nama_anggota,
                 'nama_cabang' => $nama_cabang,
                 'nama_rembug' => $nama_rembug,
-                'jumlah_pengajuan' => str_replace('.00', '', $jumlah_pengajuan),
+                'jumlah_pengajuan' => (int)$jumlah_pengajuan,
                 'tanggal_pengajuan' => $tanggal_pengajuan,
                 'rencana_droping' => $rencana_droping,
                 'peruntukan' => $peruntukan,
@@ -171,6 +172,42 @@ class RegistrasiAkadController extends Controller
                 'nama_produk' => $nama_produk
             );
         }
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $data,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function biaya(Request $request)
+    {
+        $kode_produk = $request->kode_produk;
+        $plafon = $request->jumlah_pengajuan;
+
+        $show = KopPrdPembiayaan::where('kode_produk', $kode_produk)->first();
+
+        $biaya_administrasi = ($plafon * $show->prs_biayaadm) / 100;
+        $biaya_asuransi_jiwa = ($plafon * $show->prs_asuransi) / 100;
+        $tabungan_persen = ($plafon * $show->prs_tabwajib) / 100;
+        $dana_gotongroyong = ($plafon * $show->prs_gotongroyong) / 100;
+        $tab_sukarela = ($plafon * $show->prs_sukarela) / 100;
+        $dana_kebajikan = ($plafon * $show->prs_kebajikan) / 100;
+        $blokir_angsuran = ($plafon * $show->prs_tabblokirangs) / 100;
+
+        $data = array(
+            'biaya_administrasi' => $biaya_administrasi,
+            'biaya_asuransi_jiwa' => $biaya_asuransi_jiwa,
+            'tabungan_persen' => $tabungan_persen,
+            'dana_gotongroyong' => $dana_gotongroyong,
+            'tab_sukarela' => $tab_sukarela,
+            'dana_kebajikan' => $dana_kebajikan,
+            'blokir_angsuran' => $blokir_angsuran
+        );
 
         $res = array(
             'status' => TRUE,
@@ -591,8 +628,11 @@ class RegistrasiAkadController extends Controller
         //$get->biaya_notaris = $request->biaya_notaris;
         $get->tabungan_persen = $request->tabungan_persen;
         $get->dana_kebajikan = $request->dana_kebajikan;
+        $get->dana_gotongroyong = $request->dana_gotongroyong;
+        $get->tab_sukarela = $request->tab_sukarela;
+        $get->blokir_angsuran = $request->blokir_angsuran;
         //$get->tanggal_registrasi = $request->tanggal_registrasi;
-        $get->tanggal_akad = $request->tanggal_akad;
+        $get->tanggal_akad = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_akad)));
 
         if ($get->periode_jangka_waktu == 0) {
             $tanggal_mulai_angsur = date('Y-m-d', strtotime($get->tanggal_akad . ' + 1 DAY'));
@@ -715,12 +755,28 @@ class RegistrasiAkadController extends Controller
         $getPengajuan = KopPengajuan::where('no_pengajuan', $data->no_pengajuan)->first();
         $getAnggota = KopAnggota::where('no_anggota', $getPengajuan->no_anggota)->first();
         $sequence = KopTabungan::get_seq_rekening($getAnggota->no_anggota, '099');
+        $sequenceTiar = KopTabungan::get_seq_rekening($getAnggota->no_anggota, '003');
 
         if ($sequence['jumlah'] == 0) {
             $no_rekening = $getAnggota->no_anggota . '09901';
-            $createSaving = array(
+            $createSavingTab5 = array(
                 'no_anggota' => $getAnggota->no_anggota,
                 'kode_produk' => '099',
+                'setoran' => 0,
+                'periode_setoran' => 0,
+                'jangka_waktu' => 0,
+                'no_rekening' => $no_rekening,
+                'flag_taber' => 0,
+                'tanggal_buka' => date('Y-m-d'),
+                'created_by' => 'SYSTEM'
+            );
+        }
+
+        if ($sequenceTiar['jumlah'] == 0) {
+            $no_rekening = $getAnggota->no_anggota . '00301';
+            $createSavingTiar = array(
+                'no_anggota' => $getAnggota->no_anggota,
+                'kode_produk' => '003',
                 'setoran' => 0,
                 'periode_setoran' => 0,
                 'jangka_waktu' => 0,
@@ -761,8 +817,13 @@ class RegistrasiAkadController extends Controller
 
             try {
                 $data->save();
+
                 if ($sequence['jumlah'] == 0) {
-                    KopTabungan::create($createSaving);
+                    KopTabungan::create($createSavingTab5);
+                }
+
+                if ($sequenceTiar['jumlah'] == 0) {
+                    KopTabungan::create($createSavingTiar);
                 }
 
                 KopPembiayaan::buat_karwas($data->no_rekening);

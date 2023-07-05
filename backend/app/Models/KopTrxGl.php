@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class KopTrxGl extends Model
@@ -81,6 +82,13 @@ class KopTrxGl extends Model
             ->whereBetween('voucher_date', [$from_date, $thru_date])
             ->orderBy('voucher_date')
             ->get();
+
+        return $show;
+    }
+
+    function get_saldo_awal($kode_gl, $from, $kode_cabang)
+    {
+        $show = DB::select("SELECT fn_get_saldoawal_gl('" . $kode_gl . "','" . $from . "','" . $kode_cabang . "') AS saldo_awal");
 
         return $show;
     }

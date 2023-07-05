@@ -91,8 +91,8 @@ class TrxRembug extends Controller
         $penarikan = KopTrxRembug::total_cashflow_verification($id_trx_rembug, 'D');
         $detail = KopTrxRembug::get_detail($id_trx_rembug);
 
-        $data['penerimaan'] = $penerimaan['amount'];
-        $data['penarikan'] = $penarikan['amount'];
+        $data['penerimaan'] = (int)$penerimaan['amount'];
+        $data['penarikan'] = (int)$penarikan['amount'];
 
         $res = array(
             'status' => true,
@@ -301,7 +301,7 @@ class TrxRembug extends Controller
         } else {
             $res = array(
                 'status' => FALSE,
-                'msg' => 'Maaf! Kecamatan tidak ditemukan'
+                'msg' => 'Gagal!'
             );
         }
 
@@ -337,9 +337,9 @@ class TrxRembug extends Controller
             $penarikan = KopTrxRembug::total_cashflow($sh['kode_rembug'], $sh['trx_date'], 'D');
 
             if ($sh['verified_by'] <> null) {
-                $status = 'Tidak';
-            } else {
                 $status = 'Ya';
+            } else {
+                $status = 'Tidak';
             }
 
             $data[] = array(

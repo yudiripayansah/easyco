@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BukuBesarExport;
 use App\Exports\JurnalTransaksiExport;
 use App\Exports\KartuAngsuranExport;
 use App\Exports\KasPetugasExport;
@@ -732,9 +733,9 @@ class LaporanController extends Controller
             $detail = KopTrxRembug::get_detail($sh['id_trx_rembug']);
 
             if ($sh['verified_by'] <> null) {
-                $status = 'Tidak';
-            } else {
                 $status = 'Ya';
+            } else {
+                $status = 'Tidak';
             }
 
             $data[] = array(
@@ -808,5 +809,110 @@ class LaporanController extends Controller
         }
 
         $insert_temp = $this->model_laporan_to_pdf->insert_temp_2($kode_cabang, $report_code, $fromlm, $from, $thru, $kode_petugas, $flag_akhir_tahun);
+    }
+
+    function list_pdf_gl_inquiry(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $kode_gl = $request->kode_gl;
+
+        if ($request->from) {
+            $from = date('Y-m-d', strtotime(str_replace('/', '-', $request->from)));
+        } else {
+            $from = date('Y-m-d');
+        }
+
+        if ($request->thru) {
+            $thru = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru)));
+        } else {
+            $thru = date('Y-m-d');
+        }
+
+        $saldo_awal = KopTrxGl::get_saldo_awal($kode_gl, $from, $kode_cabang);
+        $show = KopTrxGlDetail::get_detail_inquiry($kode_cabang, $kode_gl, $from, $thru);
+
+        if ($kode_cabang <> '~') {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+
+            if ($branch <> '00000') {
+                $cabang = $branch->nama_cabang;
+            } else {
+                $cabang = 'SEMUA CABANG';
+            }
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        $saldo_akhir = $saldo_awal[0]->saldo_awal;
+        $total_debit = 0;
+        $total_credit = 0;
+        $i = 0;
+
+        for ($j = 0; $j <= $show->count(); $j++) {
+            if ($j == 0) {
+                $data[$j]['nomor'] = '';
+                $data[$j]['trx_date'] = '';
+                $data[$j]['description'] = 'Saldo Awal';
+                $data[$j]['debet'] = 0;
+                $data[$j]['credit'] = 0;
+                $data[$j]['saldo_akhir'] = (int)$saldo_akhir;
+                $data[$j]['id_trx_gl'] = '';
+            } else {
+                if ($show[$i]['flag_dc'] == 'C') {
+                    if ($show[$i]['default_saldo'] == 'C') {
+                        $saldo_akhir += $show[$i]['amount'];
+                    } else {
+                        $saldo_akhir -= $show[$i]['amount'];
+                    }
+                }
+
+                if ($show[$i]['flag_dc'] == 'D') {
+                    if ($show[$i]['default_saldo'] == 'D') {
+                        $saldo_akhir += $show[$i]['amount'];
+                    } else {
+                        $saldo_akhir -= $show[$i]['amount'];
+                    }
+                }
+
+                $data[$j]['nomor'] = $i + 1;
+                $data[$j]['trx_date'] = date('d-m-Y', strtotime($show[$i]['voucher_date']));
+                $data[$j]['description'] = $show[$i]['description'];
+                $data[$j]['debet'] = (int)$show[$i]['debet'];
+                $data[$j]['credit'] = (int)$show[$i]['credit'];
+                $data[$j]['saldo_akhir'] = (int)$saldo_akhir;
+                $data[$j]['id_trx_gl'] = $show[$i]['id_trx_gl'];
+
+                $total_debit  += $show[$i]['debet'];
+                $total_credit += $show[$i]['credit'];
+
+                $i++;
+            }
+        }
+
+        $res = array(
+            'status' => true,
+            'nama_cabang' => $cabang,
+            'from_date' => $from,
+            'thru_date' => $thru,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function list_excel_gl_inquiry(Request $request)
+    {
+        $list = new BukuBesarExport($request->kode_cabang, $request->kode_gl, $request->from_date, $request->thru_date, 'excel');
+
+        return $list->download('LAPORAN_BUKU_BESAR_' . $request->kode_cabang . '_' . $request->kode_gl . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+    }
+
+    function list_csv_gl_inquiry(Request $request)
+    {
+        $list = new BukuBesarExport($request->kode_cabang, $request->kode_gl, $request->from_date, $request->thru_date, 'csv');
+
+        return $list->download('LAPORAN_BUKU_BESAR_' . $request->kode_cabang . '_' . $request->kode_gl . '_' . $request->from_date . '_' . $request->thru_date . '.csv');
     }
 }
