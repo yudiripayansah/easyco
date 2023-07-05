@@ -21,7 +21,7 @@
                   </b-input-group>
                 </b-col>
                 <b-col cols="3">
-                  <b-input-group prepend="Petugas" class="mb-3">
+                  <b-input-group prepend="Jenis" class="mb-3">
                     <b-form-select
                       v-model="paging.jenis"
                       :options="opt.jenis"
@@ -94,21 +94,12 @@ export default {
   mounted() {
     this.doGetCabang();
     this.doGetJenis();
-    this.doGet();
   },
   methods: {
     ...helper,
     async exportPdf() {
-      let url = `https://easycop.kopsyahmsi.com/report/print_balance_sheet_pdf/${this.paging.cabang}/${this.paging.jenis}/${this.paging.tanggal}`;
-      let req = axios.get(url);
-      var fileURL = window.URL.createObjectURL(
-        new Blob([req.data], { type: "application/pdf" })
-      );
-      var fileLink = document.createElement("a");
-      fileLink.href = fileURL;
-      fileLink.setAttribute("download", "file.pdf");
-      document.body.appendChild(fileLink);
-      fileLink.click();
+      const url = `https://easycop.kopsyahmsi.com/report/print_balance_sheet_pdf/${this.paging.cabang}/${this.paging.jenis}/${this.paging.tanggal}`;
+      window.open(url, "_blank");
     },
     getCabangName(id) {
       if (id > 0) {

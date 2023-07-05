@@ -44,7 +44,7 @@
                         {{ glIndex + 1 }}
                       </td>
                       <td>
-                        <b-form-select v-model="gl.kode_gl" :options="opt.gl"/>
+                        <multiselect label="text" v-model="gl.gl" :options="opt.gl"/>
                       </td>
                       <td>
                         <b-form-input v-model="gl.description"/>
@@ -116,6 +116,7 @@
 </template>
 
 <script>
+import Multiselect from 'vue-multiselect'
 import { mapGetters } from "vuex";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -123,7 +124,7 @@ import easycoApi from "@/core/services/easyco.service";
 import helper from "@/core/helper"
 export default {
   name: "TransaksiJurnalUmum",
-  components: {},
+  components: {Multiselect},
   data() {
     return {
       form: {
@@ -137,6 +138,7 @@ export default {
           created_by: null,
           detail: [
             {
+              gl: Object,
               kode_gl: null,
               amount_kredit: 0,
               amount_debet: 0,
@@ -238,7 +240,7 @@ export default {
       if (!this.$v.form.$anyError) {
         this.form.loading = true;
         try {
-          let payload = this.form.data;
+          const payload = Object.assign({}, this.form.data);
           let error = 0
           payload.detail.map((item,index) => {
             if(item.amount_debet > 0){
@@ -248,14 +250,17 @@ export default {
               item.amount = item.amount_kredit
               item.flag_dc = 'C'
             }
-            if(!item.kode_gl) {
+            if(!item.gl) {
               error++
+            } else {
+              item.kode_gl = item.gl.value
             }
           })
           if(error < 1){
             if(payload.total_debet > 0 || payload.total_kredit > 0){
               if(payload.total_debet == payload.total_kredit){
                 payload.created_by = this.user.id;
+                console.log(payload)
                 let req = await easycoApi.jurnalUmumCreate(payload, this.user.token);
                 let { status } = req.data;
                 if (status) {
@@ -273,6 +278,7 @@ export default {
           } else {
             this.notify("danger", "Error", "Terdapat jurnal yang tidak memiliki data akun");
           }
+          this.form.data.detail
           this.form.loading = false;
         } catch (error) {
           this.notify("danger", "Error", error);
@@ -284,6 +290,7 @@ export default {
     },
     addItem() {
       this.form.data.detail.push({
+        gl: Object,
         kode_gl: null,
         amount_kredit: 0,
         amount_debet: 0,
@@ -315,6 +322,7 @@ export default {
         created_by: null,
         detail: [
           {
+            gl: Object,
             kode_gl: null,
             amount_kredit: 0,
             amount_debet: 0,

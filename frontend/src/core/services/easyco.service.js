@@ -196,8 +196,29 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
+  bukuBesarExcel(payload, token){
+    let url = "laporan/list/excel/gl_inquiry?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
 
   // laporan csv
+  bukuBesarCsv(payload, token) {
+    let url =
+      "laporan/list/csv/gl_inquiry?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
   anggotaCsv(payload, token) {
     let url =
       "laporan/list/csv/anggota_masuk?"+payload;
@@ -445,6 +466,15 @@ const easycoApi = {
   },
   pembiayaanGetKreditur(payload, token) {
     let url = "registrasiakad/kreditur";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  regisAkadBiaya(payload, token) {
+    let url = "registrasiakad/biaya";
     let config = {
       headers: {
         token: token,
@@ -1267,7 +1297,18 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+  // LAPORAN PDF
   
+  
+  laporanBukuBesar(payload, token) {
+    let url = "laporan/list/pdf/gl_inquiry";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
   laporanProfilAnggota(payload, token) {
     let url = "laporan/list/pdf/profil_anggota";
     let config = {
@@ -1328,6 +1369,16 @@ const easycoApi = {
 
   approvalAnggotaKeluar(payload, token) {
     let url = "anggotamutasi/read";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  
+  kartuAngsuran(payload, token) {
+    let url = "trx_member/kartu_angsuran";
     let config = {
       headers: {
         token: token,
