@@ -134,4 +134,26 @@ class KopTrxAnggota extends Model
 
         return $show;
     }
+
+    function check_transaction($kode_cabang, $trx_date)
+    {
+        $show = KopTrxAnggota::select('e.kode_cabang', 'kop_trx_anggota.trx_date', 'kop_trx_anggota.trx_type', 'b.nama_trx', DB::raw('kop_trx_anggota.flag_debet_credit AS d_c'), 'b.gl_debit', DB::raw('c.nama_gl AS nama_gl_debit'), 'b.gl_credit', DB::raw('d.nama_gl AS nama_gl_credit'), DB::raw('SUM(kop_trx_anggota.amount) AS amount'))
+            ->join('kop_anggota AS e', 'e.no_anggota', 'kop_trx_anggota.no_anggota')
+            ->leftjoin('kop_list_trx_anggota AS b', 'b.kode_trx', 'kop_trx_anggota.trx_type')
+            ->leftjoin('kop_gl AS c', 'c.kode_gl', 'b.gl_debit')
+            ->leftjoin('kop_gl AS d', 'd.kode_gl', 'b.gl_credit')
+            ->where('e.kode_cabang', $kode_cabang)
+            ->where('kop_trx_anggota.trx_date', $trx_date)
+            ->groupBy('e.kode_cabang', 'kop_trx_anggota.trx_date', 'kop_trx_anggota.trx_type', 'b.nama_trx', 'kop_trx_anggota.flag_debet_credit', 'b.gl_debit', 'c.nama_gl', 'b.gl_credit', 'd.nama_gl')
+            ->orderBy('kop_trx_anggota.trx_date', 'ASC')
+            ->orderBy('kop_trx_anggota.trx_type', 'ASC')
+            ->get();
+
+        return $show;
+    }
+
+    function buat_jurnal($kode_cabang, $voucher_date)
+    {
+        DB::select("SELECT fn_insert_jurnal_trx_anggota('" . $kode_cabang . "','" . $voucher_date . "')");
+    }
 }

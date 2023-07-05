@@ -733,9 +733,9 @@ class LaporanController extends Controller
             $detail = KopTrxRembug::get_detail($sh['id_trx_rembug']);
 
             if ($sh['verified_by'] <> null) {
-                $status = 'Tidak';
-            } else {
                 $status = 'Ya';
+            } else {
+                $status = 'Tidak';
             }
 
             $data[] = array(

@@ -14,7 +14,7 @@ class KopPembiayaan extends Model
     use SoftDeletes;
 
     protected $table = 'kop_pembiayaan';
-    protected $fillable = ['kode_produk', 'kode_akad', 'kode_petugas', 'no_pengajuan', 'no_rekening', 'pokok', 'margin', 'nisbah_bagihasil', 'periode_jangka_waktu', 'jangka_waktu', 'angsuran_pokok', 'angsuran_margin', 'angsuran_catab', 'angsuran_minggon', 'biaya_administrasi', 'biaya_asuransi_jiwa', 'biaya_asuransi_jaminan', 'biaya_notaris', 'tabungan_persen', 'dana_kebajikan', 'tanggal_registrasi', 'tanggal_akad', 'tanggal_mulai_angsur', 'tanggal_jtempo', 'counter_angsuran', 'saldo_pokok', 'saldo_margin', 'saldo_catab', 'saldo_minggon', 'jtempo_angsuran_last', 'jtempo_angsuran_next', 'sumber_dana', 'dana_sendiri', 'dana_kreditur', 'kode_kreditur', 'ujroh_kreditur', 'ujroh_kreditur_persen', 'ujroh_kreditur_nominal', 'ujroh_kreditur_carabayar', 'status_pyd_kreditur', 'status_rekening', 'status_kolektibilitas', 'status_par', 'iswakalah', 'proses_wakalah', 'angsuran_jadwal_khusus', 'rescheduling', 'peruntukan', 'norek_tabungan', 'created_by'];
+    protected $fillable = ['kode_produk', 'kode_akad', 'kode_petugas', 'no_pengajuan', 'no_rekening', 'pokok', 'margin', 'nisbah_bagihasil', 'periode_jangka_waktu', 'jangka_waktu', 'angsuran_pokok', 'angsuran_margin', 'angsuran_catab', 'angsuran_minggon', 'biaya_administrasi', 'biaya_asuransi_jiwa', 'biaya_asuransi_jaminan', 'biaya_notaris', 'tabungan_persen', 'dana_kebajikan', 'tanggal_registrasi', 'tanggal_akad', 'tanggal_mulai_angsur', 'tanggal_jtempo', 'counter_angsuran', 'saldo_pokok', 'saldo_margin', 'saldo_catab', 'saldo_minggon', 'jtempo_angsuran_last', 'jtempo_angsuran_next', 'sumber_dana', 'dana_sendiri', 'dana_kreditur', 'kode_kreditur', 'ujroh_kreditur', 'ujroh_kreditur_persen', 'ujroh_kreditur_nominal', 'ujroh_kreditur_carabayar', 'status_pyd_kreditur', 'status_rekening', 'status_kolektibilitas', 'status_par', 'iswakalah', 'proses_wakalah', 'angsuran_jadwal_khusus', 'rescheduling', 'peruntukan', 'norek_tabungan', 'created_by', 'dana_gotongroyong', 'blokir_angsuran', 'tab_sukarela'];
 
     public function validateAdd($validate)
     {
@@ -103,10 +103,10 @@ class KopPembiayaan extends Model
             //'biaya_notaris' => 'numeric',
             //'tabungan_persen' => 'numeric',
             'dana_kebajikan' => 'numeric',
-            'tanggal_registrasi' => 'required',
+            //'tanggal_registrasi' => 'required',
             'tanggal_akad' => 'required',
-            'tanggal_mulai_angsur' => 'required',
-            'tanggal_jtempo' => 'required',
+            //'tanggal_mulai_angsur' => 'required',
+            //'tanggal_jtempo' => 'required',
             'saldo_pokok' => 'numeric',
             'saldo_margin' => 'numeric',
             'saldo_catab' => 'numeric',
@@ -233,7 +233,7 @@ class KopPembiayaan extends Model
 
     function tpl_droping($no_anggota)
     {
-        $show = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'kop_pembiayaan.pokok', 'kop_pembiayaan.biaya_administrasi', 'kop_pembiayaan.biaya_asuransi_jiwa', 'kop_pembiayaan.biaya_asuransi_jaminan', 'kop_pembiayaan.biaya_notaris', 'kop_pembiayaan.tabungan_persen', 'kop_pembiayaan.dana_kebajikan')
+        $show = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'kop_pembiayaan.pokok', 'kop_pembiayaan.biaya_administrasi', 'kop_pembiayaan.biaya_asuransi_jiwa', 'kop_pembiayaan.biaya_asuransi_jaminan', 'kop_pembiayaan.biaya_notaris', 'kop_pembiayaan.tabungan_persen', 'kop_pembiayaan.dana_kebajikan', 'kop_pembiayaan.dana_gotongroyong', 'kop_pembiayaan.blokir_angsuran', 'kop_pembiayaan.tab_sukarela')
             ->join('kop_pengajuan AS kpp', 'kpp.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')
             ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kpp.no_anggota')
             ->where('kop_pembiayaan.status_rekening', 1)
@@ -306,6 +306,19 @@ class KopPembiayaan extends Model
             ->join('kop_prd_pembiayaan AS kpp', 'kpp.kode_produk', 'kop_pembiayaan.kode_produk')
             ->where('kpg.no_anggota', $no_anggota)
             ->orderBy('kop_pembiayaan.tanggal_akad', 'DESC')
+            ->get();
+
+        return $show;
+    }
+
+    function member_droping($kode_rembug)
+    {
+        $show = KopPembiayaan::select('ka.no_anggota', 'ka.nama_anggota')
+            ->join('kop_pengajuan AS kpg', 'kpg.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kpg.no_anggota')
+            ->where('ka.kode_rembug', $kode_rembug)
+            ->where('kop_pembiayaan.status_rekening', 1)
+            ->where('kop_pembiayaan.status_droping', 0)
             ->get();
 
         return $show;
