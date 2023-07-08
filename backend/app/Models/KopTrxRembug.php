@@ -111,7 +111,6 @@ class KopTrxRembug extends Model
             ->where('kop_trx_rembug.kode_rembug', $kode_rembug)
             ->where('kop_trx_rembug.trx_date', $trx_date)
             ->where('kta.flag_debet_credit', $flag)
-            ->where('kop_trx_rembug.verified_by', null)
             ->first();
 
         return $show;
@@ -157,7 +156,9 @@ class KopTrxRembug extends Model
         COALESCE(g.biaya_asuransi_jiwa::INTEGER,0) AS biaya_asuransi_jiwa,
         COALESCE(i.angsuran_pokok::INTEGER,0) AS angsuran_pokok,
         COALESCE(j.angsuran_margin::INTEGER,0) AS angsuran_margin,
-        COALESCE(k.angsuran_catab::INTEGER,0) AS angsuran_catab
+        COALESCE(k.angsuran_catab::INTEGER,0) AS angsuran_catab,
+        COALESCE(l.dana_kebajikan::INTEGER,0) AS dana_kebajikan,
+        COALESCE(m.dana_gotong_royong::INTEGER,0) AS dana_gotong_royong
         FROM kop_anggota AS ka
         JOIN kop_trx_rembug AS h ON h.kode_rembug = ka.kode_rembug
         LEFT JOIN (
@@ -225,7 +226,7 @@ class KopTrxRembug extends Model
             JOIN kop_pengajuan AS kpg ON kpg.no_pengajuan = kp.no_pengajuan
             JOIN kop_trx_anggota AS kta ON kta.no_anggota = kpg.no_anggota
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
-            WHERE ktr.id_trx_rembug = ? AND kp.status_rekening = '1' AND kp.status_droping = '0'
+            WHERE ktr.id_trx_rembug = ? AND kp.status_rekening = '1'
             GROUP BY 1,2,3,4
         ) AS g ON g.no_anggota = ka.no_anggota
         LEFT JOIN (
@@ -255,9 +256,27 @@ class KopTrxRembug extends Model
             WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '34'
             GROUP BY 1
         ) AS k ON k.no_anggota = ka.no_anggota
+        LEFT JOIN (
+            SELECT
+            kta.no_anggota,
+            SUM(kta.amount) AS dana_kebajikan
+            FROM kop_trx_anggota AS kta
+            JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
+            WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '37'
+            GROUP BY 1
+        ) AS l ON l.no_anggota = ka.no_anggota
+        LEFT JOIN (
+            SELECT
+            kta.no_anggota,
+            SUM(kta.amount) AS dana_gotong_royong
+            FROM kop_trx_anggota AS kta
+            JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
+            WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '38'
+            GROUP BY 1
+        ) AS m ON m.no_anggota = ka.no_anggota
         WHERE h.id_trx_rembug = ? AND ka.status <> 2";
 
-        $show = DB::select($statement, [$id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug]);
+        $show = DB::select($statement, [$id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug]);
 
         return $show;
     }

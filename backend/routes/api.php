@@ -6,6 +6,7 @@ use App\Http\Controllers\AnggotaUkController;
 use App\Http\Controllers\AnggotaUser;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CabangController;
+use App\Http\Controllers\ClosingGlController;
 use App\Http\Controllers\DesaController;
 use App\Http\Controllers\GlController;
 use App\Http\Controllers\KasPetugasController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\RegistrasiAkadController;
 use App\Http\Controllers\RembugController;
 use App\Http\Controllers\TabunganController;
 use App\Http\Controllers\TplController;
+use App\Http\Controllers\TrxAnggota;
 use App\Http\Controllers\TrxGl;
 use App\Http\Controllers\TrxRembug;
 use App\Http\Controllers\UserController;
@@ -232,6 +234,7 @@ Route::prefix('map')->middleware('checkToken')->group(function () {
 Route::prefix('registrasiakad')->middleware('checkToken')->group(function () {
   Route::post('/rembug', [RegistrasiAkadController::class, 'rembug']);
   Route::post('/pengajuan', [RegistrasiAkadController::class, 'pengajuan']);
+  Route::post('/biaya', [RegistrasiAkadController::class, 'biaya']);
   Route::post('/fa', [RegistrasiAkadController::class, 'fa']);
   Route::post('/peruntukan', [RegistrasiAkadController::class, 'peruntukan']);
   Route::post('/product', [RegistrasiAkadController::class, 'product']);
@@ -247,11 +250,14 @@ Route::prefix('registrasiakad')->middleware('checkToken')->group(function () {
 
 Route::prefix('general_ledger')->middleware('checkToken')->group(function () {
   Route::post('/create', [TrxGl::class, 'create']);
+  Route::post('/check', [TrxAnggota::class, 'check']);
+  Route::post('/posting', [TrxAnggota::class, 'posting']);
 });
 
 Route::prefix('laporan')->group(function () {
   Route::prefix('list')->group(function () {
     Route::post('/transaksi_majelis', [TrxRembug::class, 'transaksi_majelis']);
+    Route::get('/get_closing_date', [ClosingGlController::class, 'get_closing_date']);
 
     Route::prefix('excel')->group(function () {
       Route::get('/anggota_masuk', [LaporanController::class, 'list_excel_anggota_masuk']);
@@ -264,6 +270,7 @@ Route::prefix('laporan')->group(function () {
       Route::get('/kas_petugas', [LaporanController::class, 'list_excel_kas_petugas']);
       Route::get('/detail_transaksi_majelis', [LaporanController::class, 'list_excel_detail_transaksi_majelis']);
       Route::get('/jurnal_transaksi', [LaporanController::class, 'list_excel_jurnal_transaksi']);
+      Route::get('/gl_inquiry', [LaporanController::class, 'list_excel_gl_inquiry']);
     });
 
     Route::prefix('csv')->group(function () {
@@ -275,6 +282,7 @@ Route::prefix('laporan')->group(function () {
       Route::get('/saldo_outstanding', [LaporanController::class, 'list_csv_saldo_outstanding']);
       Route::get('/kartu_angsuran', [LaporanController::class, 'list_csv_kartu_angsuran']);
       Route::get('/kas_petugas', [LaporanController::class, 'list_csv_kas_petugas']);
+      Route::get('/gl_inquiry', [LaporanController::class, 'list_csv_gl_inquiry']);
     });
 
     Route::prefix('pdf')->group(function () {
@@ -283,6 +291,7 @@ Route::prefix('laporan')->group(function () {
       Route::post('/detail_transaksi_majelis', [LaporanController::class, 'list_pdf_detail_transaksi_majelis']);
       Route::post('/jurnal_transaksi', [LaporanController::class, 'list_pdf_jurnal_transaksi']);
       Route::post('/neraca_berjalan', [LaporanController::class, 'list_pdf_neraca_berjalan']);
+      Route::post('/gl_inquiry', [LaporanController::class, 'list_pdf_gl_inquiry']);
     });
   });
 
@@ -328,6 +337,7 @@ Route::prefix('tpl')->group(function () {
   Route::prefix('information')->middleware('checkToken')->group(function () {
     Route::post('/rembug', [TplController::class, 'rembug']);
     Route::post('/member', [TplController::class, 'member']);
+    Route::post('/member_droping', [TplController::class, 'member_droping']);
   });
 
   Route::prefix('transaction')->middleware('checkToken')->group(function () {

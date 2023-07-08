@@ -1256,6 +1256,15 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+  transaksiRembugReject(payload, token) {
+    let url = "trx_rembug/reject";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
   // LAPORAN TRANSAKSI KAS PETUGAS
   kodeKasPetugas(payload, token){
     let url = "kaspetugas/read";

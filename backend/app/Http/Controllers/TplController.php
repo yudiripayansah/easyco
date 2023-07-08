@@ -119,7 +119,7 @@ class TplController extends Controller
             $trx_date = $today;
         }
 
-        $read = KopAnggota::tpl_member($kode_rembug);
+        $read = KopAnggota::tpl_trx_member($kode_rembug, $trx_date);
 
         $count = $read->count();
 
@@ -160,6 +160,35 @@ class TplController extends Controller
         return $response;
     }
 
+    function member_droping(Request $request)
+    {
+        $kode_rembug = $request->kode_rembug;
+
+        $read = KopPembiayaan::member_droping($kode_rembug);
+
+        $count = $read->count();
+
+        if ($count > 0) {
+            $res = array(
+                'status' => TRUE,
+                'data' => $read,
+                'msg' => 'Berhasil!',
+                'error' => NULL
+            );
+        } else {
+            $res = array(
+                'status' => FALSE,
+                'data' => NULL,
+                'msg' => 'Maaf! Data tidak ditemukan',
+                'error' => NULL
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
     function deposit(Request $request)
     {
         $no_anggota = $request->no_anggota;
@@ -183,6 +212,9 @@ class TplController extends Controller
         $biaya_notaris = (isset($getDroping->biaya_notaris) ? $getDroping->biaya_notaris : 0);
         $tabungan_persen = (isset($getDroping->tabungan_persen) ? $getDroping->tabungan_persen : 0);
         $dana_kebajikan = (isset($getDroping->dana_kebajikan) ? $getDroping->dana_kebajikan : 0);
+        $dana_gotongroyong = (isset($getDroping->dana_gotongroyong) ? $getDroping->dana_gotongroyong : 0);
+        $blokir_angsuran = (isset($getDroping->blokir_angsuran) ? $getDroping->blokir_angsuran : 0);
+        $tab_sukarela = (isset($getDroping->tab_sukarela) ? $getDroping->tab_sukarela : 0);
 
         if ($rekening_angsuran == '') {
             $no_rekening = $rekening_pencairan;
@@ -219,7 +251,7 @@ class TplController extends Controller
                     'nama_produk' => $sh['nama_singkat'],
                     'counter_angsuran' => $sh['counter_angsuran'],
                     'jangka_waktu' => $sh['jangka_waktu'],
-                    'pokok' => str_replace('.', '', number_format($sh['saldo_pokok'], 0, ',', '.'))
+                    'pokok' => (int)$sh['saldo_pokok']
                 );
             }
         } else {
@@ -249,8 +281,8 @@ class TplController extends Controller
                 $saving[] = array(
                     'nama_produk' => $rd['nama_singkat'],
                     'no_rekening' => $rd['no_rekening'],
-                    'setoran' => str_replace('.', '', number_format($rd['setoran'], 0, ',', '.')),
-                    'saldo' => str_replace('.', '', number_format($rd['saldo'], 0, ',', '.')),
+                    'setoran' => (int)$rd['setoran'],
+                    'saldo' => (int)$rd['saldo'],
                     'freq_saving' => $freq_saving,
                     'counter_angsuran' => $rd['counter_angsuran'],
                     'jangka_waktu' => $rd['jangka_waktu'],
@@ -271,39 +303,42 @@ class TplController extends Controller
         $data = array(
             'no_rekening' => $no_rekening,
             'angsuran' => [
-                'amount' => str_replace('.', '', number_format($angsuran, 0, ',', '.')),
+                'amount' => (int)$angsuran,
                 'detail' => [
                     [
                         'id' => '32',
                         'nama' => 'angsuran pokok',
-                        'amount' => str_replace('.', '', number_format($angsuran_pokok, 0, ',', '.'))
+                        'amount' => (int)$angsuran_pokok
                     ],
                     [
                         'id' => '33',
                         'nama' => 'angsuran margin',
-                        'amount' => str_replace('.', '', number_format($angsuran_margin, 0, ',', '.'))
+                        'amount' => (int)$angsuran_margin
                     ],
                     [
                         'id' => '34',
                         'nama' => 'angsuran catab',
-                        'amount' => str_replace('.', '', number_format($angsuran_catab, 0, ',', '.'))
+                        'amount' => (int)$angsuran_catab
                     ]
                 ]
             ],
             'frekuensi' => $freq,
-            'setoran_simpanan_pokok' => str_replace('.', '', number_format($setoran_simpanan_pokok, 0, ',', '.')),
-            'simpok' => str_replace('.', '', number_format($simpok, 0, ',', '.')),
-            'simwa' => str_replace('.', '', number_format($simwa, 0, ',', '.')),
-            'simsuk' => str_replace('.', '', number_format($simsuk, 0, ',', '.')),
+            'setoran_simpanan_pokok' => (int)$setoran_simpanan_pokok,
+            'simpok' => (int)$simpok,
+            'simwa' => (int)$simwa,
+            'simsuk' => (int)$simsuk,
             'pembiayaan' => $financing,
             'berencana' => $saving,
-            'pokok' => str_replace('.', '', number_format($pokok, 0, ',', '.')),
-            'biaya_administrasi' => str_replace('.', '', number_format($biaya_administrasi, 0, ',', '.')),
-            'biaya_asuransi_jiwa' => str_replace('.', '', number_format($biaya_asuransi_jiwa, 0, ',', '.')),
-            'biaya_asuransi_jaminan' => str_replace('.', '', number_format($biaya_asuransi_jaminan, 0, ',', '.')),
-            'biaya_notaris' => str_replace('.', '', number_format($biaya_notaris, 0, ',', '.')),
-            'tabungan_persen' => str_replace('.', '', number_format($tabungan_persen, 0, ',', '.')),
-            'dana_kebajikan' => str_replace('.', '', number_format($dana_kebajikan, 0, ',', '.'))
+            'pokok' => (int)$pokok,
+            'biaya_administrasi' => (int)$biaya_administrasi,
+            'biaya_asuransi_jiwa' => (int)$biaya_asuransi_jiwa,
+            'biaya_asuransi_jaminan' => (int)$biaya_asuransi_jaminan,
+            'biaya_notaris' => (int)$biaya_notaris,
+            'tabungan_persen' => (int)$tabungan_persen,
+            'dana_kebajikan' => (int)$dana_kebajikan,
+            'dana_gotongroyong' => (int)$dana_gotongroyong,
+            'blokir_angsuran' => (int)$blokir_angsuran,
+            'tab_sukarela' => (int)$tab_sukarela
         );
 
         $res = array(
@@ -330,7 +365,6 @@ class TplController extends Controller
         $setoran_simpanan_wajib = $request->setoran_simpanan_wajib;
         $setoran_simpanan_pokok = $request->setoran_simpanan_pokok;
         $penarikan_sukarela = $request->penarikan_sukarela;
-        $tabungan_persen = $request->tabungan_persen;
 
         $no_rekening_tabungan = $request->no_rekening_tabungan;
         $amount_tabungan = $request->amount_tabungan;
@@ -338,6 +372,11 @@ class TplController extends Controller
         $pokok = $request->pokok;
         $biaya_administrasi = $request->biaya_administrasi;
         $biaya_asuransi_jiwa = $request->biaya_asuransi_jiwa;
+        $tabungan_persen = $request->tabungan_persen;
+        $dana_kebajikan = $request->dana_kebajikan;
+        $dana_gotongroyong = $request->dana_gotongroyong;
+        $blokir_angsuran = $request->blokir_angsuran;
+        $tab_sukarela = $request->tab_sukarela;
 
         $count = count($no_rekening_tabungan);
 
@@ -519,6 +558,67 @@ class TplController extends Controller
                     'flag_debet_credit' => 'C',
                     'trx_type' => '21',
                     'description' => 'Setoran Tabungan',
+                    'created_by' => $kode_petugas
+                );
+            }
+
+            if ($dana_kebajikan > 0) {
+                $data_trx_anggota[] = array(
+                    'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                    'id_trx_rembug' => $uuid,
+                    'no_anggota' => $no_anggota,
+                    'no_rekening' => NULL,
+                    'trx_date' => $trx_date,
+                    'amount' => $dana_kebajikan,
+                    'flag_debet_credit' => 'C',
+                    'trx_type' => '37',
+                    'description' => 'Bayar By Dana Kebajikan Pembiayaan',
+                    'created_by' => $kode_petugas
+                );
+            }
+
+            if ($dana_gotongroyong > 0) {
+                $data_trx_anggota[] = array(
+                    'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                    'id_trx_rembug' => $uuid,
+                    'no_anggota' => $no_anggota,
+                    'no_rekening' => NULL,
+                    'trx_date' => $trx_date,
+                    'amount' => $dana_gotongroyong,
+                    'flag_debet_credit' => 'C',
+                    'trx_type' => '38',
+                    'description' => 'Bayar By Gotong Royong Pembiayaan',
+                    'created_by' => $kode_petugas
+                );
+            }
+
+            if ($blokir_angsuran > 0) {
+                $getRekeningTiar = KopTabungan::get_rekening_tabungan($no_anggota, '003');
+                $data_trx_anggota[] = array(
+                    'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                    'id_trx_rembug' => $uuid,
+                    'no_anggota' => $no_anggota,
+                    'no_rekening' => $getRekeningTiar->no_rekening,
+                    'trx_date' => $trx_date,
+                    'amount' => $blokir_angsuran,
+                    'flag_debet_credit' => 'C',
+                    'trx_type' => '21',
+                    'description' => 'Setoran Tabungan Tiar',
+                    'created_by' => $kode_petugas
+                );
+            }
+
+            if ($tab_sukarela > 0) {
+                $data_trx_anggota[] = array(
+                    'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                    'id_trx_rembug' => $uuid,
+                    'no_anggota' => $no_anggota,
+                    'no_rekening' => NULL,
+                    'trx_date' => $trx_date,
+                    'amount' => $tab_sukarela,
+                    'flag_debet_credit' => 'C',
+                    'trx_type' => '13',
+                    'description' => 'Potongan Simsuk Pencairan',
                     'created_by' => $kode_petugas
                 );
             }
