@@ -8,7 +8,11 @@
             <b-row>
               <b-col cols="6">
                 <b-form-group label="Cabang">
-                  <b-select v-model="form.data.kode_cabang" :options="opt.cabang" :state="validateState('kode_cabang')"/>
+                  <b-select
+                    v-model="form.data.kode_cabang"
+                    :options="opt.cabang"
+                    :state="validateState('kode_cabang')"
+                  />
                 </b-form-group>
               </b-col>
               <b-col cols="6">
@@ -18,12 +22,24 @@
               </b-col>
               <b-col cols="6">
                 <b-form-group label="Tanggal">
-                  <b-form-datepicker v-model="form.data.voucher_date" :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" locale="id" :state="validateState('voucher_date')"/>
+                  <b-form-datepicker
+                    v-model="form.data.voucher_date"
+                    :date-format-options="{
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                    }"
+                    locale="id"
+                    :state="validateState('voucher_date')"
+                  />
                 </b-form-group>
               </b-col>
               <b-col cols="6">
                 <b-form-group label="Keterangan">
-                  <b-textarea v-model="form.data.description" :state="validateState('description')"/>
+                  <b-textarea
+                    v-model="form.data.description"
+                    :state="validateState('description')"
+                  />
                 </b-form-group>
               </b-col>
               <b-col cols="12">
@@ -39,24 +55,43 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(gl,glIndex) in form.data.detail" :key="`gl-${glIndex}`">
+                    <tr
+                      v-for="(gl, glIndex) in form.data.detail"
+                      :key="`gl-${glIndex}`"
+                    >
                       <td class="text-center">
                         {{ glIndex + 1 }}
                       </td>
                       <td>
-                        <multiselect label="text" v-model="gl.gl" :options="opt.gl"/>
+                        <multiselect
+                          label="text"
+                          v-model="gl.gl"
+                          :options="opt.gl"
+                        />
                       </td>
                       <td>
-                        <b-form-input v-model="gl.description"/>
+                        <b-form-input v-model="gl.description" />
                       </td>
                       <td>
                         <b-input-group prepend="Rp ">
-                          <vue-numeric class="form-control" separator="." v-model="gl.amount_debet" v-on:keyup.native="countTotal" :disabled="gl.amount_kredit > 0"/>
+                          <vue-numeric
+                            class="form-control"
+                            separator="."
+                            v-model="gl.amount_debet"
+                            v-on:keyup.native="countTotal"
+                            :disabled="gl.amount_kredit > 0"
+                          />
                         </b-input-group>
                       </td>
                       <td>
                         <b-input-group prepend="Rp ">
-                          <vue-numeric class="form-control" separator="." v-model="gl.amount_kredit" v-on:keyup.native="countTotal" :disabled="gl.amount_debet > 0"/>
+                          <vue-numeric
+                            class="form-control"
+                            separator="."
+                            v-model="gl.amount_kredit"
+                            v-on:keyup.native="countTotal"
+                            :disabled="gl.amount_debet > 0"
+                          />
                         </b-input-group>
                       </td>
                       <td class="text-center">
@@ -74,14 +109,18 @@
                     </tr>
                     <tr>
                       <td class="text-right" colspan="3">Total:</td>
-                      <td class="text-right">Rp {{ thousand(form.data.total_debet) }}</td>
-                      <td class="text-right">Rp {{ thousand(form.data.total_kredit) }}</td>
+                      <td class="text-right">
+                        Rp {{ thousand(form.data.total_debet) }}
+                      </td>
+                      <td class="text-right">
+                        Rp {{ thousand(form.data.total_kredit) }}
+                      </td>
                       <td></td>
                     </tr>
                     <tr>
                       <td colspan="6">
                         <b-button variant="success" block @click="addItem()">
-                          Tambah <b-icon icon="plus"/>
+                          Tambah <b-icon icon="plus" />
                         </b-button>
                       </td>
                     </tr>
@@ -116,15 +155,15 @@
 </template>
 
 <script>
-import Multiselect from 'vue-multiselect'
+import Multiselect from "vue-multiselect";
 import { mapGetters } from "vuex";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import easycoApi from "@/core/services/easyco.service";
-import helper from "@/core/helper"
+import helper from "@/core/helper";
 export default {
   name: "TransaksiJurnalUmum",
-  components: {Multiselect},
+  components: { Multiselect },
   data() {
     return {
       form: {
@@ -143,7 +182,7 @@ export default {
               amount_kredit: 0,
               amount_debet: 0,
               description: null,
-              flag_dc: null
+              flag_dc: null,
             },
           ],
           total_debet: 0,
@@ -154,7 +193,7 @@ export default {
       opt: {
         perPage: [10, 25, 50, 100],
         gl: [],
-        cabang: []
+        cabang: [],
       },
     };
   },
@@ -175,8 +214,8 @@ export default {
     },
   },
   mounted() {
-    this.doGetGl()
-    this.doGetCabang()
+    this.doGetGl();
+    this.doGetCabang();
   },
   computed: {
     ...mapGetters(["user"]),
@@ -189,13 +228,13 @@ export default {
     },
     async doGetCabang() {
       let payload = {
-        perPage: '~',
+        perPage: "~",
         page: 1,
-        sortBy: 'nama_cabang',
-        sortDir: 'ASC',
-        search: null
-      }
-      this.opt.cabang = []
+        sortBy: "nama_cabang",
+        sortDir: "ASC",
+        search: null,
+      };
+      this.opt.cabang = [];
       try {
         let req = await easycoApi.cabangRead(payload, this.user.token);
         let { data, status, msg, total } = req.data;
@@ -203,9 +242,9 @@ export default {
           data.map((item) => {
             this.opt.cabang.push({
               text: item.nama_cabang,
-              value: item.kode_cabang
-            })
-          })
+              value: item.kode_cabang,
+            });
+          });
         }
       } catch (error) {
         console.error(error);
@@ -213,13 +252,13 @@ export default {
     },
     async doGetGl() {
       let payload = {
-        perPage: '~',
+        perPage: "~",
         page: 1,
-        sortBy: 'nama_gl',
-        sortDir: 'ASC',
-        search: null
-      }
-      this.opt.gl = []
+        sortBy: "nama_gl",
+        sortDir: "ASC",
+        search: null,
+      };
+      this.opt.gl = [];
       try {
         let req = await easycoApi.glRead(payload, this.user.token);
         let { data, status, msg, total } = req.data;
@@ -227,9 +266,9 @@ export default {
           data.map((item) => {
             this.opt.gl.push({
               text: `${item.kode_gl} - ${item.nama_gl}`,
-              value: item.kode_gl
-            })
-          })
+              value: item.kode_gl,
+            });
+          });
         }
       } catch (error) {
         console.error(error);
@@ -241,44 +280,55 @@ export default {
         this.form.loading = true;
         try {
           const payload = Object.assign({}, this.form.data);
-          let error = 0
-          payload.detail.map((item,index) => {
-            if(item.amount_debet > 0){
-              item.amount = item.amount_debet
-              item.flag_dc = 'D'
+          let error = 0;
+          payload.detail.map((item, index) => {
+            if (item.amount_debet > 0) {
+              item.amount = item.amount_debet;
+              item.flag_dc = "D";
             } else {
-              item.amount = item.amount_kredit
-              item.flag_dc = 'C'
+              item.amount = item.amount_kredit;
+              item.flag_dc = "C";
             }
-            if(!item.gl) {
-              error++
+            if (!item.gl) {
+              error++;
             } else {
-              item.kode_gl = item.gl.value
+              item.kode_gl = item.gl.value;
             }
-          })
-          if(error < 1){
-            if(payload.total_debet > 0 || payload.total_kredit > 0){
-              if(payload.total_debet == payload.total_kredit){
+          });
+          if (error < 1) {
+            if (payload.total_debet > 0 || payload.total_kredit > 0) {
+              if (payload.total_debet == payload.total_kredit) {
                 payload.created_by = this.user.id;
-                console.log(payload)
-                let req = await easycoApi.jurnalUmumCreate(payload, this.user.token);
+                console.log(payload);
+                let req = await easycoApi.jurnalUmumCreate(
+                  payload,
+                  this.user.token
+                );
                 let { status } = req.data;
                 if (status) {
                   this.notify("success", "Success", "Data berhasil disimpan");
-                  this.doClearForm()
+                  this.doClearForm();
                 } else {
                   this.notify("danger", "Error", "Data gagal disimpan");
                 }
               } else {
-                this.notify("danger", "Error", "Total Debet dan Kredit Belum seimbang");
+                this.notify(
+                  "danger",
+                  "Error",
+                  "Total Debet dan Kredit Belum seimbang"
+                );
               }
             } else {
               this.notify("danger", "Error", "Masukan minimal 1 jurnal");
             }
           } else {
-            this.notify("danger", "Error", "Terdapat jurnal yang tidak memiliki data akun");
+            this.notify(
+              "danger",
+              "Error",
+              "Terdapat jurnal yang tidak memiliki data akun"
+            );
           }
-          this.form.data.detail
+          this.form.data.detail;
           this.form.loading = false;
         } catch (error) {
           this.notify("danger", "Error", error);
@@ -295,21 +345,21 @@ export default {
         amount_kredit: 0,
         amount_debet: 0,
         description: null,
-        flag_dc: null
-      })
+        flag_dc: null,
+      });
     },
     deleteItem(idx) {
-      if(this.form.data.detail.length > 1){
-        this.form.data.detail.splice(idx,1)
+      if (this.form.data.detail.length > 1) {
+        this.form.data.detail.splice(idx, 1);
       }
     },
     countTotal() {
-      this.form.data.total_debet = 0
-      this.form.data.total_kredit = 0
+      this.form.data.total_debet = 0;
+      this.form.data.total_kredit = 0;
       this.form.data.detail.map((item) => {
-        this.form.data.total_debet += item.amount_debet
-        this.form.data.total_kredit += item.amount_kredit
-      })
+        this.form.data.total_debet += item.amount_debet;
+        this.form.data.total_kredit += item.amount_kredit;
+      });
     },
     doClearForm() {
       this.form.data = {
@@ -327,7 +377,7 @@ export default {
             amount_kredit: 0,
             amount_debet: 0,
             description: null,
-            flag_dc: null
+            flag_dc: null,
           },
         ],
       };

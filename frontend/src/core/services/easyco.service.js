@@ -1408,5 +1408,33 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
+
+  postingJurnal(payload, token) {
+    let url = "general_ledger/check";
+    let config = {
+      headers: {
+        token:token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  sendPostingJurnal(payload, token) {
+    let url = "general_ledger/posting";
+    let config = {
+      headers: {
+        token:token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  closingDate(payload, token) {
+    let url = "laporan/list/get_closing_date";
+    let config = {
+      headers: {
+        token:token,
+      },
+    };
+    return axios.get(url, config);
+  }
 };
 export default easycoApi;

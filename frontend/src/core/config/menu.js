@@ -240,7 +240,12 @@ const menu = [
       {
         target: 'verifikasi-transaksi-jurnal',
         label: 'Verifikasi Transaksi Jurnal',
-        component: import('@/pages/Dummy.vue'),
+        component: import('@/pages/Dummy.vue')  ,
+      },
+      {
+        target: 'posting-jurnal',
+        label: 'Posting Jurnal',
+        component: import('@/pages/Transaksi/PostingJurnal.vue'),
       },
       {
         target: 'laporan',
@@ -301,7 +306,7 @@ const menu = [
       {
         target: 'laporan-labarugi',
         label: 'Laporan Laba Rugi',
-        component: import('@/pages/Dummy.vue'),
+        component: import('@/pages/Keuangan/LaporanLabaRugi.vue'),
       },
     ]
   },

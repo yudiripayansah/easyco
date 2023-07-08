@@ -151,36 +151,16 @@
             <b-row>
               <b-col cols="9">
                 <b-row class="w-100 no-gutters">
-                  <b-col cols="3" class="bold">
-                    Majelis
-                  </b-col>
-                  <b-col cols="3">
-                    : {{ dt.nama_rembug }}
-                  </b-col>
-                  <b-col cols="3" class="bold">
-                    Petugas
-                  </b-col>
-                  <b-col cols="3">
-                    : {{ dt.nama_petugas }}
-                  </b-col>
-                  <b-col cols="3" class="bold">
-                    Tanggal Bayar
-                  </b-col>
-                  <b-col cols="3">
-                    : {{ dt.tanggal_bayar }}
-                  </b-col>
-                  <b-col cols="3" class="bold">
-                    Tanggal Transaksi
-                  </b-col>
-                  <b-col cols="3">
-                    : {{ dt.tanggal }}
-                  </b-col>
-                  <b-col cols="3" class="bold">
-                    Status Verifikasi
-                  </b-col>
-                  <b-col cols="3">
-                    : {{ dt.status_verifikasi }}
-                  </b-col>
+                  <b-col cols="3" class="bold"> Majelis </b-col>
+                  <b-col cols="3"> : {{ dt.nama_rembug }} </b-col>
+                  <b-col cols="3" class="bold"> Petugas </b-col>
+                  <b-col cols="3"> : {{ dt.nama_petugas }} </b-col>
+                  <b-col cols="3" class="bold"> Tanggal Bayar </b-col>
+                  <b-col cols="3"> : {{ dt.tanggal_bayar }} </b-col>
+                  <b-col cols="3" class="bold"> Tanggal Transaksi </b-col>
+                  <b-col cols="3"> : {{ dt.tanggal }} </b-col>
+                  <b-col cols="3" class="bold"> Status Verifikasi </b-col>
+                  <b-col cols="3"> : {{ dt.status_verifikasi }} </b-col>
                 </b-row>
               </b-col>
               <b-col cols="3">
@@ -681,8 +661,9 @@ export default {
         if (status) {
           this.opt.petugas = [
             {
-              value: null,
-              text: "All",
+              value: [],
+              text: "Pilih Kantor Cabang",
+              disabled: true,
             },
           ];
           data.map((item) => {
