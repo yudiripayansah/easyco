@@ -659,7 +659,7 @@ export default {
         ? Number(formData.total_angsuran.replace(/\./g, ""))
         : 0;
       formData.setoran_sukarela = formData.setoran_sukarela
-        ? Number(formData.setoran_sukarela.replace(/\./g, ""))
+        ? Number(formData.setoran_sukarela)
         : 0;
       formData.setoran_simpanan_wajib = formData.setoran_simpanan_wajib
         ? Number(formData.setoran_simpanan_wajib.replace(/\./g, ""))

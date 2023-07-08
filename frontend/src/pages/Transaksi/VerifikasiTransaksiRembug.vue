@@ -386,16 +386,16 @@
               type="button"
               :disabled="form.loading"
               class="mx-1"
-              @click="$bvModal.hide('modal-form')"
+              @click="doSave('Reject')"
             >
               {{ form.loading ? "Memproses..." : "Reject" }}
             </b-button>
             <b-button
               variant="success"
-              type="submit"
+              type="button"
               :disabled="form.loading"
               class="mx-1"
-              @click="doSave"
+              @click="doSave('Approve')"
             >
               {{ form.loading ? "Memproses..." : "Approve" }}
             </b-button>
@@ -665,16 +665,24 @@ export default {
         }
       }
     },
-    async doSave(e) {
+    async doSave(type) {
       this.form.loading = true;
       try {
         let payload = {
           id_trx_rembug: this.form.id_trx_rembug,
         };
-        let req = await easycoApi.transaksiRembugProses(
-          payload,
-          this.user.token
-        );
+        let req = false
+        if(type == 'Approve'){
+          req = await easycoApi.transaksiRembugProses(
+            payload,
+            this.user.token
+          );
+        } else {
+          req = await easycoApi.transaksiRembugReject(
+            payload,
+            this.user.token
+          );
+        }
         let { status } = req.data;
         if (status) {
           this.notify("success", "Success", "Data berhasil disimpan");

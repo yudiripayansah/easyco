@@ -515,14 +515,12 @@ export default {
       payloadData.tanggal_mutasi = this.formatDate(payloadData.tanggal_mutasi)
       payloadData.setoran_tambahan = Number(this.removeThousand(this.form.data.setoran_tambahan))
       payloadData.kode_petugas = this.user.kode_petugas
-      console.log('Menyimpan')
       if(payloadData.no_anggota){
         let canProses = true
         if(payloadData.penarikan_sukarela >= 0){
           canProses = true
         } else {
           let nilai = Number(payloadData.penarikan_sukarela) + Number(payloadData.setoran_tambahan)
-          console.log(nilai,payloadData)
           if(nilai != 0) {
             canProses = false
             this.alert = {
@@ -538,28 +536,29 @@ export default {
             payload.append(key, payloadData[key]);
           }
           try {
-            let req = await services.anggotaKeluar(payload, this.user.token);
-            if (req.status === 200) {
-              if(req.data.status){
-                this.alert = {
-                  show: true,
-                  msg: "Registrasi Anggota Keluar Berhasil",
-                };
-                setTimeout(() => {
-                  this.$router.push(`/keanggotaan`);
-                }, 2000);
-              } else {
-                this.alert = {
-                  show: true,
-                  msg: req.data.msg,
-                };
-              }
-            } else {
-              this.alert = {
-                show: true,
-                msg: "Registrasi Anggota Keluar Gagal",
-              };
-            }
+            console.log(payload)
+            // let req = await services.anggotaKeluar(payload, this.user.token);
+            // if (req.status === 200) {
+            //   if(req.data.status){
+            //     this.alert = {
+            //       show: true,
+            //       msg: "Registrasi Anggota Keluar Berhasil",
+            //     };
+            //     setTimeout(() => {
+            //       this.$router.push(`/keanggotaan`);
+            //     }, 2000);
+            //   } else {
+            //     this.alert = {
+            //       show: true,
+            //       msg: req.data.msg,
+            //     };
+            //   }
+            // } else {
+            //   this.alert = {
+            //     show: true,
+            //     msg: "Registrasi Anggota Keluar Gagal",
+            //   };
+            // }
           } catch (error) {
             this.alert = {
               show: true,
