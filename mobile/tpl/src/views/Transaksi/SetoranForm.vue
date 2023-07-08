@@ -708,13 +708,13 @@ export default {
       })
       
       payload.append('pokok',Number(formData.pokok))
-      payload.append('biaya_administrasi',Number(formData.biaya_administrasi))
-      payload.append('biaya_asuransi_jiwa',Number(formData.biaya_asuransi_jiwa))
-      payload.append('tabungan_persen',Number(formData.tabungan_persen))
-      payload.append('dana_kebajikan',Number(formData.dana_kebajikan))
-      payload.append('dana_gotongroyong',Number(formData.dana_gotongroyong))
-      payload.append('blokir_angsuran',Number(formData.blokir_angsuran))
-      payload.append('tab_sukarela',Number(formData.tab_sukarela))
+      payload.append('biaya_administrasi',Number(this.removeThousand(formData.biaya_administrasi)))
+      payload.append('biaya_asuransi_jiwa',Number(this.removeThousand(formData.biaya_asuransi_jiwa)))
+      payload.append('tabungan_persen',Number(this.removeThousand(formData.tabungan_persen)))
+      payload.append('dana_kebajikan',Number(this.removeThousand(formData.dana_kebajikan)))
+      payload.append('dana_gotongroyong',Number(this.removeThousand(formData.dana_gotongroyong)))
+      payload.append('blokir_angsuran',Number(this.removeThousand(formData.blokir_angsuran)))
+      payload.append('tab_sukarela',Number(this.removeThousand(formData.tab_sukarela)))
       try {
         let req = await services.transSetoranProses(payload, this.user.token);
         if (req.status === 200) {
