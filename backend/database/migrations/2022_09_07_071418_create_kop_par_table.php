@@ -16,7 +16,7 @@ class CreateKopParTable extends Migration
     {
         Schema::create('kop_par', function (Blueprint $table) {
             $table->id();
-            $table->string('id_par', 32)->unique()->default(DB::raw('uuid()'));
+            $table->string('kode_cabang', 6);
             $table->string('no_rekening', 25);
             $table->string('kategori_par', 10)->nullable(TRUE);
             $table->date('tanggal_hitung');
@@ -35,6 +35,7 @@ class CreateKopParTable extends Migration
             $table->softDeletes();
             $table->string('deleted_by', 30)->nullable(TRUE);
 
+            $table->foreign('kode_cabang')->references('kode_cabang')->on('kop_cabang')->cascadeOnUpdate()->restrictOnDelete();
             $table->foreign('no_rekening')->references('no_rekening')->on('kop_pembiayaan')->cascadeOnUpdate()->restrictOnDelete();
         });
     }

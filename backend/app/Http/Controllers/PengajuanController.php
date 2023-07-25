@@ -379,7 +379,8 @@ class PengajuanController extends Controller
 
             if ($search) {
                 $total->where('kop_pengajuan.no_anggota', 'LIKE', '%' . $search . '%')
-                    ->orWhere('kop_pengajuan.no_pengajuan', 'LIKE', '%' . $search . '%');
+                    ->orWhere('kop_pengajuan.no_pengajuan', 'LIKE', '%' . $search . '%')
+                    ->orWhere('kop_anggota.nama_anggota', 'LIKE', '%' . $search . '%');
             }
 
             if ($status && $status != '~') {

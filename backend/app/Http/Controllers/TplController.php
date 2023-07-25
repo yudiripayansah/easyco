@@ -608,6 +608,7 @@ class TplController extends Controller
                 );
             }
 
+            /*
             if ($tab_sukarela > 0) {
                 $data_trx_anggota[] = array(
                     'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
@@ -622,6 +623,7 @@ class TplController extends Controller
                     'created_by' => $kode_petugas
                 );
             }
+            */
         }
 
         $validate = KopTrxRembug::validateAdd($data_trx_rembug);
@@ -906,6 +908,8 @@ class TplController extends Controller
                     'jumlah' => ($cd->angsuran_pokok + $cd->angsuran_margin),
                     'angsuran_pokok' => $cd->angsuran_pokok,
                     'angsuran_margin' => $cd->angsuran_margin,
+                    'saldo_pokok' => $cd->saldo_pokok,
+                    'saldo_margin' => $cd->saldo_margin,
                     'petugas' => $cd->nama_pgw
                 );
             }

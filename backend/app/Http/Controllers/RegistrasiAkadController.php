@@ -251,6 +251,7 @@ class RegistrasiAkadController extends Controller
     {
         $data = $request->all();
 
+        $data['no_anggota'] = $request->no_anggota;
         $data['saldo_pokok'] = $request->pokok;
         $data['saldo_margin'] = $request->margin;
         $data['tanggal_registrasi'] = date('Y-m-d');
@@ -277,7 +278,8 @@ class RegistrasiAkadController extends Controller
         $data['tanggal_jtempo'] = $tanggal_jtempo;
         $data['jtempo_angsuran_next'] = $tanggal_mulai_angsur;
         $data['no_rekening'] = $request->no_anggota . $request->kode_produk . $pengajuan_ke;
-        $data['status_rekening'] = 1;
+        $data['angsuran_catab'] = $request->angsuran_minggon;
+        $data['status_rekening'] = 0;
         $data['status_droping'] = 0;
         $data['verified_at'] = date('Y-m-d');
         $data['verified_by'] = $request->created_by;
@@ -345,6 +347,7 @@ class RegistrasiAkadController extends Controller
         $produk = '~';
         $status_rekening = '~';
         $status_droping = '~';
+        $stat = 1;
         $from = NULL;
         $to = NULL;
 
@@ -379,6 +382,7 @@ class RegistrasiAkadController extends Controller
 
         if ($request->status_droping) {
             $status_droping = $request->status_droping;
+            $stat = 2;
         }
 
         if ($request->cabang) {
@@ -454,10 +458,6 @@ class RegistrasiAkadController extends Controller
             $read->where('kop_pembiayaan.kode_produk', $produk);
         }
 
-        if ($status_droping == 0) {
-            $read->where('kop_pembiayaan.ttd_pencairan', null);
-        }
-
         if ($status_rekening && $status_rekening != '~') {
             $read->whereIn('kop_pembiayaan.status_rekening', $status_rekening);
         }
@@ -471,9 +471,10 @@ class RegistrasiAkadController extends Controller
                 ->orWhere('kop_pengajuan.no_pengajuan', 'LIKE', '%' . $search . '%');
         }
 
-        if ($status_droping == 1) {
+        if ($stat == 2) {
             if ($from && $to) {
                 $read->whereBetween('kop_pembiayaan.tanggal_akad', [$from, $to]);
+                $read->where('kop_pembiayaan.ttd_pencairan', null);
             }
         } else {
             if ($from && $to) {
@@ -527,7 +528,7 @@ class RegistrasiAkadController extends Controller
                     ->orWhere('kop_pengajuan.no_pengajuan', 'LIKE', '%' . $search . '%');
             }
 
-            if ($status_droping == 1) {
+            if ($stat == 2) {
                 if ($from && $to) {
                     $read->whereBetween('kop_pembiayaan.tanggal_akad', [$from, $to]);
                 }
@@ -812,6 +813,9 @@ class RegistrasiAkadController extends Controller
         if ($id) {
             $data->doc_pencairan = $doc_pencairan;
             $data->ttd_pencairan = $ttd_pencairan;
+            $data->status_droping = 1;
+            $data->droping_at = date('Y-m-d H:i:s');
+            $data->droping_by = 'SYSTEM';
 
             DB::beginTransaction();
 
@@ -894,6 +898,41 @@ class RegistrasiAkadController extends Controller
             $res = array(
                 'status' => FALSE,
                 'msg' => 'Maaf! Registrasi Akad tidak ditemukan'
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function hitung_kolek(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $tanggal = $request->tanggal;
+
+        $created_by = 'SYSTEM';
+        $created_date = date('Y-m-d H:i:s');
+
+        DB::beginTransaction();
+
+        try {
+            KopPembiayaan::hitung_kolek($kode_cabang, $tanggal, $created_by, $created_date);
+
+            $res = array(
+                'status' => TRUE,
+                'data' => NULL,
+                'msg' => 'Berhasil!'
+            );
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            $res = array(
+                'status' => FALSE,
+                'data' => $request->all(),
+                'msg' => $e->getMessage()
             );
         }
 
