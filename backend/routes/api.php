@@ -247,6 +247,8 @@ Route::prefix('registrasiakad')->middleware('checkToken')->group(function () {
   Route::post('/approve', [RegistrasiAkadController::class, 'approve']);
   Route::get('/reject', [RegistrasiAkadController::class, 'reject']);
   Route::post('/hitung_kolek', [RegistrasiAkadController::class, 'hitung_kolek']);
+  Route::post('/koreksi_droping', [RegistrasiAkadController::class, 'koreksi_droping']);
+  Route::post('/proses_koreksi_droping', [RegistrasiAkadController::class, 'proses_koreksi_droping']);
 });
 
 Route::prefix('general_ledger')->middleware('checkToken')->group(function () {

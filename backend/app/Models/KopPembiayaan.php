@@ -328,4 +328,16 @@ class KopPembiayaan extends Model
     {
         DB::select("SELECT fn_insert_par('" . $kode_cabang . "','" . $tanggal . "','" . $created_by . "','" . $created_date . "')");
     }
+
+    function koreksiDroping($no_rekening)
+    {
+        $show = KopPembiayaan::select('*')
+            ->where('status_rekening', 1)
+            ->where('status_droping', 1)
+            ->where('counter_angsuran', 0)
+            ->where('no_rekening', $no_rekening)
+            ->get();
+
+        return $show;
+    }
 }

@@ -195,7 +195,7 @@ class KopTrxRembug extends Model
             SUM(kta.amount) AS setoran_simpok
             FROM kop_trx_anggota AS kta
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
-            WHERE ktr.id_trx_rembug = ? AND kta.trx_type IN('11','12')
+            WHERE ktr.id_trx_rembug = ? AND kta.trx_type IN('11','12','16')
             GROUP BY 1
         ) AS d ON d.no_anggota = ka.no_anggota
         LEFT JOIN (
