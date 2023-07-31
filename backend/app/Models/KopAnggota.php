@@ -115,6 +115,7 @@ class KopAnggota extends Model
                     ->where('kta.trx_date', $trx_date);
             })
             ->where('kr.kode_rembug', $kode_rembug)
+            ->where('kop_anggota.status', 1)
             ->groupBy('kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kr.kode_rembug', 'kr.nama_rembug', 'kta.created_by')
             ->orderBy('kta.created_by', 'DESC')
             ->orderBy('kop_anggota.no_anggota', 'ASC')

@@ -92,4 +92,29 @@ class KopCabang extends Model
 
         return $show;
     }
+
+    function branch_gl()
+    {
+        $show = KopCabang::select('kop_cabang.kode_cabang', 'kop_cabang.nama_cabang')
+            ->join('kop_trx_gl AS ktg', 'ktg.kode_cabang', 'kop_cabang.kode_cabang')
+            ->where('kop_cabang.kode_cabang', '<>', '00000')
+            ->groupBy('kop_cabang.kode_cabang', 'kop_cabang.nama_cabang')
+            ->orderBy('kop_cabang.kode_cabang', 'ASC')
+            ->get();
+
+        return $show;
+    }
+
+    function branch_akhir_tahun($from_date, $thru_date)
+    {
+        $show = KopCabang::select()
+            ->join('kop_trx_gl AS ktg', 'ktg.kode_cabang', 'kop_cabang.kode_cabang')
+            ->where('kop_cabang.jenis_cabang', '<>', 0)
+            ->whereBetween('ktg.voucher_date', [$from_date, $thru_date])
+            ->groupBy('kop_cabang.kode_cabang', 'kop_cabang.nama_cabang')
+            ->orderBy('kop_cabang.kode_cabang', 'ASC')
+            ->get();
+
+        return $show;
+    }
 }

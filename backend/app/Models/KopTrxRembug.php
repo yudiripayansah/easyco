@@ -195,7 +195,7 @@ class KopTrxRembug extends Model
             SUM(kta.amount) AS setoran_simpok
             FROM kop_trx_anggota AS kta
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
-            WHERE ktr.id_trx_rembug = ? AND kta.trx_type IN('11','12')
+            WHERE ktr.id_trx_rembug = ? AND kta.trx_type IN('11','12','16')
             GROUP BY 1
         ) AS d ON d.no_anggota = ka.no_anggota
         LEFT JOIN (
@@ -226,7 +226,7 @@ class KopTrxRembug extends Model
             JOIN kop_pengajuan AS kpg ON kpg.no_pengajuan = kp.no_pengajuan
             JOIN kop_trx_anggota AS kta ON kta.no_anggota = kpg.no_anggota
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
-            WHERE ktr.id_trx_rembug = ? AND kp.status_rekening = '1'
+            WHERE ktr.id_trx_rembug = ? AND kp.status_rekening = '0' AND kp.status_droping = '1'
             GROUP BY 1,2,3,4
         ) AS g ON g.no_anggota = ka.no_anggota
         LEFT JOIN (
@@ -277,6 +277,16 @@ class KopTrxRembug extends Model
         WHERE h.id_trx_rembug = ? AND ka.status <> 2";
 
         $show = DB::select($statement, [$id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug]);
+
+        return $show;
+    }
+
+    function check_unverified($from, $thru)
+    {
+        $show = KopTrxRembug::select(DB::raw('COUNT(*) AS jumlah'))
+            ->whereBetween('trx_date', [$from, $thru])
+            ->where('verified_by', null)
+            ->first();
 
         return $show;
     }

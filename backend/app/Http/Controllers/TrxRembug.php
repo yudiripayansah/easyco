@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\KopAnggota;
 use App\Models\KopKartuAngsuran;
+use App\Models\KopLembaga;
 use App\Models\KopPembiayaan;
 use App\Models\KopTabungan;
 use App\Models\KopTrxAnggota;
@@ -185,9 +186,7 @@ class TrxRembug extends Controller
             if ($trx_type == 31) {
                 if ($amount > 0) {
                     $get = KopPembiayaan::find($pembiayaan['id']);
-                    $get->status_droping = 1;
-                    $get->droping_by = $trx_rembug['kode_petugas'];
-                    $get->droping_at = date('Y-m-d H:i:s');
+                    $get->status_rekening = 1;
                     $get->save();
                 }
             }
@@ -561,6 +560,37 @@ class TrxRembug extends Controller
                 'data' => $data,
                 'msg' => $validate['msg'],
                 'error' => $validate['errors']
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function check_unverified()
+    {
+        $getLembaga = KopLembaga::first();
+        $get = KopTrxRembug::check_unverified($getLembaga->periode_awal, $getLembaga->periode_akhir);
+
+        $data = array(
+            'periode_akhir' => $getLembaga->periode_akhir,
+            'jumlah' => $get->jumlah
+        );
+
+        if ($get->jumlah > 0) {
+            $res = array(
+                'status' => FALSE,
+                'data' => $data,
+                'msg' => 'Masih ada ' . $get->jumlah . ' Transaksi Majelis yang belum diverifikasi',
+                'error' => NULL
+            );
+        } else {
+            $res = array(
+                'status' => TRUE,
+                'data' => $data,
+                'msg' => NULL,
+                'error' => NULL
             );
         }
 

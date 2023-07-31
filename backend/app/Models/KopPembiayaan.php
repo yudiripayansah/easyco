@@ -236,8 +236,8 @@ class KopPembiayaan extends Model
         $show = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'kop_pembiayaan.pokok', 'kop_pembiayaan.biaya_administrasi', 'kop_pembiayaan.biaya_asuransi_jiwa', 'kop_pembiayaan.biaya_asuransi_jaminan', 'kop_pembiayaan.biaya_notaris', 'kop_pembiayaan.tabungan_persen', 'kop_pembiayaan.dana_kebajikan', 'kop_pembiayaan.dana_gotongroyong', 'kop_pembiayaan.blokir_angsuran', 'kop_pembiayaan.tab_sukarela')
             ->join('kop_pengajuan AS kpp', 'kpp.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')
             ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kpp.no_anggota')
-            ->where('kop_pembiayaan.status_rekening', 1)
-            ->where('kop_pembiayaan.status_droping', 0)
+            ->where('kop_pembiayaan.status_rekening', 0)
+            ->where('kop_pembiayaan.status_droping', 1)
             ->where('ka.no_anggota', $no_anggota)
             ->get();
 
@@ -319,6 +319,23 @@ class KopPembiayaan extends Model
             ->where('ka.kode_rembug', $kode_rembug)
             ->where('kop_pembiayaan.status_rekening', 1)
             ->where('kop_pembiayaan.status_droping', 0)
+            ->get();
+
+        return $show;
+    }
+
+    function hitung_kolek($kode_cabang, $tanggal, $created_by, $created_date)
+    {
+        DB::select("SELECT fn_insert_par('" . $kode_cabang . "','" . $tanggal . "','" . $created_by . "','" . $created_date . "')");
+    }
+
+    function koreksiDroping($no_rekening)
+    {
+        $show = KopPembiayaan::select('*')
+            ->where('status_rekening', 1)
+            ->where('status_droping', 1)
+            ->where('counter_angsuran', 0)
+            ->where('no_rekening', $no_rekening)
             ->get();
 
         return $show;

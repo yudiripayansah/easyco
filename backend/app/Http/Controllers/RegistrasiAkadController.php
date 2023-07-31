@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KopAnggota;
+use App\Models\KopLogKoreksiDroping;
 use App\Models\KopPembiayaan;
 use App\Models\KopPengajuan;
 use App\Models\KopPrdPembiayaan;
@@ -251,6 +252,7 @@ class RegistrasiAkadController extends Controller
     {
         $data = $request->all();
 
+        $data['no_anggota'] = $request->no_anggota;
         $data['saldo_pokok'] = $request->pokok;
         $data['saldo_margin'] = $request->margin;
         $data['tanggal_registrasi'] = date('Y-m-d');
@@ -277,7 +279,8 @@ class RegistrasiAkadController extends Controller
         $data['tanggal_jtempo'] = $tanggal_jtempo;
         $data['jtempo_angsuran_next'] = $tanggal_mulai_angsur;
         $data['no_rekening'] = $request->no_anggota . $request->kode_produk . $pengajuan_ke;
-        $data['status_rekening'] = 1;
+        $data['angsuran_catab'] = $request->angsuran_minggon;
+        $data['status_rekening'] = 0;
         $data['status_droping'] = 0;
         $data['verified_at'] = date('Y-m-d');
         $data['verified_by'] = $request->created_by;
@@ -345,6 +348,7 @@ class RegistrasiAkadController extends Controller
         $produk = '~';
         $status_rekening = '~';
         $status_droping = '~';
+        $stat = 1;
         $from = NULL;
         $to = NULL;
 
@@ -379,6 +383,7 @@ class RegistrasiAkadController extends Controller
 
         if ($request->status_droping) {
             $status_droping = $request->status_droping;
+            $stat = 2;
         }
 
         if ($request->cabang) {
@@ -454,10 +459,6 @@ class RegistrasiAkadController extends Controller
             $read->where('kop_pembiayaan.kode_produk', $produk);
         }
 
-        if ($status_droping == 0) {
-            $read->where('kop_pembiayaan.ttd_pencairan', null);
-        }
-
         if ($status_rekening && $status_rekening != '~') {
             $read->whereIn('kop_pembiayaan.status_rekening', $status_rekening);
         }
@@ -471,9 +472,10 @@ class RegistrasiAkadController extends Controller
                 ->orWhere('kop_pengajuan.no_pengajuan', 'LIKE', '%' . $search . '%');
         }
 
-        if ($status_droping == 1) {
+        if ($stat == 2) {
             if ($from && $to) {
                 $read->whereBetween('kop_pembiayaan.tanggal_akad', [$from, $to]);
+                $read->where('kop_pembiayaan.ttd_pencairan', null);
             }
         } else {
             if ($from && $to) {
@@ -527,7 +529,7 @@ class RegistrasiAkadController extends Controller
                     ->orWhere('kop_pengajuan.no_pengajuan', 'LIKE', '%' . $search . '%');
             }
 
-            if ($status_droping == 1) {
+            if ($stat == 2) {
                 if ($from && $to) {
                     $read->whereBetween('kop_pembiayaan.tanggal_akad', [$from, $to]);
                 }
@@ -812,6 +814,9 @@ class RegistrasiAkadController extends Controller
         if ($id) {
             $data->doc_pencairan = $doc_pencairan;
             $data->ttd_pencairan = $ttd_pencairan;
+            $data->status_droping = 1;
+            $data->droping_at = date('Y-m-d H:i:s');
+            $data->droping_by = 'SYSTEM';
 
             DB::beginTransaction();
 
@@ -894,6 +899,188 @@ class RegistrasiAkadController extends Controller
             $res = array(
                 'status' => FALSE,
                 'msg' => 'Maaf! Registrasi Akad tidak ditemukan'
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function hitung_kolek(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $tanggal = $request->tanggal;
+
+        $created_by = 'SYSTEM';
+        $created_date = date('Y-m-d H:i:s');
+
+        DB::beginTransaction();
+
+        try {
+            KopPembiayaan::hitung_kolek($kode_cabang, $tanggal, $created_by, $created_date);
+
+            $res = array(
+                'status' => TRUE,
+                'data' => NULL,
+                'msg' => 'Berhasil!'
+            );
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            $res = array(
+                'status' => FALSE,
+                'data' => $request->all(),
+                'msg' => $e->getMessage()
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function koreksi_droping(Request $request)
+    {
+        $no_rekening = $request->no_rekening;
+
+        $show = KopPembiayaan::koreksiDroping($no_rekening);
+
+        $count = $show->count();
+
+        $data = array();
+
+        if ($count > 0) {
+            foreach ($show as $sh) {
+                $data[] = array(
+                    'pokok_lama' => (int)$sh->pokok,
+                    'pokok_baru' => (int)$sh->pokok,
+                    'margin_lama' => (int)$sh->margin,
+                    'margin_baru' => (int)$sh->margin,
+                    'jangka_waktu_lama' => $sh->jangka_waktu,
+                    'jangka_waktu_baru' => $sh->jangka_waktu,
+                    'periode_jangka_waktu_lama' => $sh->periode_jangka_waktu,
+                    'periode_jangka_waktu_baru' => $sh->periode_jangka_waktu,
+                    'angsuran_pokok_lama' => (int)$sh->angsuran_pokok,
+                    'angsuran_pokok_baru' => (int)$sh->angsuran_pokok,
+                    'angsuran_margin_lama' => (int)$sh->angsuran_margin,
+                    'angsuran_margin_baru' => (int)$sh->angsuran_margin,
+                    'angsuran_catab_lama' => (int)$sh->angsuran_catab,
+                    'angsuran_catab_baru' => (int)$sh->angsuran_catab,
+                    'biaya_administrasi_lama' => (int)$sh->biaya_administrasi,
+                    'biaya_administrasi_baru' => (int)$sh->biaya_administrasi,
+                    'biaya_asuransi_jiwa_lama' => (int)$sh->biaya_asuransi_jiwa,
+                    'biaya_asuransi_jiwa_baru' => (int)$sh->biaya_asuransi_jiwa,
+                    'dana_kebajikan_lama' => (int)$sh->dana_kebajikan,
+                    'dana_kebajikan_baru' => (int)$sh->dana_kebajikan,
+                    'tabungan_persen_lama' => (int)$sh->tabungan_persen,
+                    'tabungan_persen_baru' => (int)$sh->tabungan_persen,
+                    'tanggal_akad_lama' => date('d/m/Y', strtotime($sh->tanggal_akad)),
+                    'tanggal_akad_baru' => date('d/m/Y', strtotime($sh->tanggal_akad)),
+                    'tanggal_mulai_angsur_lama' => date('d/m/Y', strtotime($sh->tanggal_mulai_angsur)),
+                    'tanggal_mulai_angsur_baru' => date('d/m/Y', strtotime($sh->tanggal_mulai_angsur)),
+                    'tanggal_jtempo_lama' => date('d/m/Y', strtotime($sh->tanggal_jtempo)),
+                    'tanggal_jtempo_baru' => date('d/m/Y', strtotime($sh->tanggal_jtempo))
+                );
+            }
+
+            $res = array(
+                'status' => TRUE,
+                'data' => $data,
+                'msg' => 'Berhasil!'
+            );
+        } else {
+            $res = array(
+                'status' => FALSE,
+                'data' => NULL,
+                'msg' => 'Data tidak ditemukan! Kemungkinan sudah masuk angsuran!'
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function proses_koreksi_droping(Request $request)
+    {
+        $no_rekening = $request->no_rekening;
+
+        $get = KopPembiayaan::where('no_rekening', $no_rekening)->first();
+        $find = KopPembiayaan::find($get->id);
+
+        $find->pokok = $request->pokok_baru;
+        $find->margin = $request->margin_baru;
+        $find->jangka_waktu = $request->jangka_waktu_baru;
+        $find->periode_jangka_waktu = $request->periode_jangka_waktu_baru;
+        $find->angsuran_pokok = $request->angsuran_pokok_baru;
+        $find->angsuran_margin = $request->angsuran_margin_baru;
+        $find->angsuran_catab = $request->angsuran_catab_baru;
+        $find->biaya_administrasi = $request->biaya_administrasi_baru;
+        $find->biaya_asuransi_jiwa = $request->biaya_asuransi_jiwa_baru;
+        $find->dana_kebajikan = $request->dana_kebajikan_baru;
+        $find->tabungan_persen = $request->tabungan_persen_baru;
+        $find->tanggal_akad = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_akad_baru)));
+        $find->tanggal_mulai_angsur = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_mulai_angsur_baru)));
+        $find->tanggal_mulai_angsur = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_mulai_angsur_baru)));
+
+        $data = array(
+            'no_rekening' => $request->no_rekening,
+            'pokok_lama' => $request->pokok_lama,
+            'pokok_baru' => $request->pokok_baru,
+            'margin_lama' => $request->margin_lama,
+            'margin_baru' => $request->margin_baru,
+            'periode_jangka_waktu_lama' => $request->periode_jangka_waktu_lama,
+            'periode_jangka_waktu_baru' => $request->periode_jangka_waktu_baru,
+            'jangka_waktu_lama' => $request->jangka_waktu_lama,
+            'jangka_waktu_baru' => $request->jangka_waktu_baru,
+            'angsuran_pokok_lama' => $request->angsuran_pokok_lama,
+            'angsuran_pokok_baru' => $request->angsuran_pokok_baru,
+            'angsuran_margin_lama' => $request->angsuran_margin_lama,
+            'angsuran_margin_baru' => $request->angsuran_margin_baru,
+            'angsuran_catab_lama' => $request->angsuran_catab_lama,
+            'angsuran_catab_baru' => $request->angsuran_catab_baru,
+            'biaya_administrasi_lama' => $request->biaya_administrasi_lama,
+            'biaya_administrasi_baru' => $request->biaya_administrasi_baru,
+            'biaya_asuransi_jiwa_lama' => $request->biaya_asuransi_jiwa_lama,
+            'biaya_asuransi_jiwa_baru' => $request->biaya_asuransi_jiwa_baru,
+            'tabungan_persen_lama' => $request->tabungan_persen_lama,
+            'tabungan_persen_baru' => $request->tabungan_persen_baru,
+            'dana_kebajikan_lama' => $request->dana_kebajikan_lama,
+            'dana_kebajikan_baru' => $request->dana_kebajikan_baru,
+            'tanggal_akad_lama' => date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_akad_lama))),
+            'tanggal_akad_baru' => date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_akad_baru))),
+            'tanggal_mulai_angsur_lama' => date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_mulai_angsur_lama))),
+            'tanggal_mulai_angsur_baru' => date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_mulai_angsur_baru))),
+            'tanggal_jtempo_lama' => date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_jtempo_lama))),
+            'tanggal_jtempo_baru' => date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_jtempo_baru))),
+            'created_by' => $request->created_by,
+            'created_at' => date('Y-m-d H:i:s')
+        );
+
+        DB::beginTransaction();
+
+        try {
+            KopLogKoreksiDroping::create($data);
+            $find->save();
+            KopPembiayaan::buat_karwas($no_rekening);
+
+            $res = array(
+                'status' => TRUE,
+                'data' => NULL,
+                'msg' => 'Berhasil!'
+            );
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            $res = array(
+                'status' => FALSE,
+                'data' => $request->all(),
+                'msg' => $e->getMessage()
             );
         }
 

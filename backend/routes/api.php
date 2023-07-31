@@ -246,12 +246,17 @@ Route::prefix('registrasiakad')->middleware('checkToken')->group(function () {
   Route::get('/delete', [RegistrasiAkadController::class, 'delete']);
   Route::post('/approve', [RegistrasiAkadController::class, 'approve']);
   Route::get('/reject', [RegistrasiAkadController::class, 'reject']);
+  Route::post('/hitung_kolek', [RegistrasiAkadController::class, 'hitung_kolek']);
+  Route::post('/koreksi_droping', [RegistrasiAkadController::class, 'koreksi_droping']);
+  Route::post('/proses_koreksi_droping', [RegistrasiAkadController::class, 'proses_koreksi_droping']);
 });
 
 Route::prefix('general_ledger')->middleware('checkToken')->group(function () {
   Route::post('/create', [TrxGl::class, 'create']);
   Route::post('/check', [TrxAnggota::class, 'check']);
   Route::post('/posting', [TrxAnggota::class, 'posting']);
+  Route::get('/check_unverified', [TrxRembug::class, 'check_unverified']);
+  Route::post('/closing', [ClosingGlController::class, 'closing']);
 });
 
 Route::prefix('laporan')->group(function () {

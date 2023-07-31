@@ -233,9 +233,13 @@ class TplController extends Controller
         $getLembaga = KopLembaga::first();
 
         if ($simpok == 0) {
+            $setoran_simpanan_wajib = $getLembaga->simwa;
             $setoran_simpanan_pokok = $getLembaga->simpok;
+            $setoran_administrasi = $getLembaga->adm;
         } else {
+            $setoran_simpanan_wajib = 0;
             $setoran_simpanan_pokok = 0;
+            $setoran_administrasi = 0;
         }
 
         // PEMBIAYAAN
@@ -323,7 +327,9 @@ class TplController extends Controller
                 ]
             ],
             'frekuensi' => $freq,
+            'setoran_simpanan_wajib' => (int)$setoran_simpanan_wajib,
             'setoran_simpanan_pokok' => (int)$setoran_simpanan_pokok,
+            'setoran_administrasi' => (int)$setoran_administrasi,
             'simpok' => (int)$simpok,
             'simwa' => (int)$simwa,
             'simsuk' => (int)$simsuk,
@@ -364,6 +370,7 @@ class TplController extends Controller
         $setoran_sukarela = $request->setoran_sukarela;
         $setoran_simpanan_wajib = $request->setoran_simpanan_wajib;
         $setoran_simpanan_pokok = $request->setoran_simpanan_pokok;
+        $setoran_administrasi = $request->setoran_administrasi;
         $penarikan_sukarela = $request->penarikan_sukarela;
 
         $no_rekening_tabungan = $request->no_rekening_tabungan;
@@ -467,6 +474,22 @@ class TplController extends Controller
                 'flag_debet_credit' => 'C',
                 'trx_type' => '12',
                 'description' => 'Bayar Simwa',
+                'created_by' => $kode_petugas
+            );
+        }
+
+        // SETORAN ADMINISTRASI
+        if ($setoran_administrasi > 0) {
+            $data_trx_anggota[] = array(
+                'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                'id_trx_rembug' => $uuid,
+                'no_anggota' => $no_anggota,
+                'no_rekening' => NULL,
+                'trx_date' => $trx_date,
+                'amount' => $setoran_administrasi,
+                'flag_debet_credit' => 'C',
+                'trx_type' => '16',
+                'description' => 'Biaya Adm Anggota',
                 'created_by' => $kode_petugas
             );
         }
@@ -608,6 +631,7 @@ class TplController extends Controller
                 );
             }
 
+            /*
             if ($tab_sukarela > 0) {
                 $data_trx_anggota[] = array(
                     'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
@@ -622,6 +646,7 @@ class TplController extends Controller
                     'created_by' => $kode_petugas
                 );
             }
+            */
         }
 
         $validate = KopTrxRembug::validateAdd($data_trx_rembug);
@@ -906,6 +931,8 @@ class TplController extends Controller
                     'jumlah' => ($cd->angsuran_pokok + $cd->angsuran_margin),
                     'angsuran_pokok' => $cd->angsuran_pokok,
                     'angsuran_margin' => $cd->angsuran_margin,
+                    'saldo_pokok' => $cd->saldo_pokok,
+                    'saldo_margin' => $cd->saldo_margin,
                     'petugas' => $cd->nama_pgw
                 );
             }
