@@ -1444,6 +1444,33 @@ const easycoApi = {
       },
     };
     return axios.get(url, config);
+  },
+  tutupBukuCheck(payload, token) {
+    let url = "general_ledger/check_unverified";
+    let config = {
+      headers: {
+        token:token,
+      },
+    };
+    return axios.get(url, config);
+  },
+  tutupBukuProses(payload, token) {
+    let url = "general_ledger/closing";
+    let config = {
+      headers: {
+        token:token,
+      },
+    };
+    return axios.post(url,payload, config);
+  },
+  hitungKolek(payload, token) {
+    let url = "registrasiakad/hitung_kolek";
+    let config = {
+      headers: {
+        token:token,
+      },
+    };
+    return axios.post(url,payload, config);
   }
 };
 export default easycoApi;

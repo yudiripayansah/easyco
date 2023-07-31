@@ -1,0 +1,12 @@
+{
+  "name": "MSI TPL",
+  "short_name": "MSI TPL",
+  "theme_color": "#fff",
+  "background_color": "#1A237E",
+  "display": "standalone",
+  "scope": "./",
+  "start_url": "./",
+  "icons": [
+    "./assets/logo-baik.png"
+  ]
+}

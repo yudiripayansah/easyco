@@ -246,7 +246,6 @@
               dense
               v-model="form.data.setoran_sukarela"
               @change="countTotalSetoran()"
-              v-mask="thousandMask"
               class="justify-end text-right"
             />
           </v-col>
@@ -289,7 +288,6 @@
               solo
               dense
               v-model="form.data.penarikan_sukarela"
-              v-mask="thousandMask"
               class="justify-end text-right"
             />
           </v-col>
@@ -521,7 +519,6 @@ export default {
           );
           if (req.status === 200) {
             let dataDeposit = { ...req.data.data };
-
             let formData = {
               kode_cabang: this.user.kode_cabang,
               kode_rembug: this.rembug,

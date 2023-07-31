@@ -33,7 +33,22 @@ const dateFormatId = (date, sepparator='-') => {
     let d = theDate.getDate()
     let m = theDate.getMonth() + 1
     let y = theDate.getFullYear()
+    d = ('0' + d.toString()).slice(-2)
+    m = ('0' + m.toString()).slice(-2)
     return `${d}${sepparator}${m}${sepparator}${y}`
+  } else {
+    return null
+  }
+}
+const dateFormat = (date, sepparator='-') => {
+  if(date) {
+    let theDate = new Date(date)
+    let d = theDate.getDate()
+    let m = theDate.getMonth() + 1
+    let y = theDate.getFullYear()
+    d = ('0' + d.toString()).slice(-2)
+    m = ('0' + m.toString()).slice(-2)
+    return `${y}${sepparator}${m}${sepparator}${d}`
   } else {
     return null
   }
@@ -44,4 +59,4 @@ const maxLength = (s,l) => {
 }
 
 
-export default { thousand, thousandMask, removeThousand, dateFormatId , maxLength}
+export default { thousand, thousandMask, removeThousand, dateFormatId , maxLength, dateFormat}

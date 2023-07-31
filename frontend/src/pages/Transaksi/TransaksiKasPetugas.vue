@@ -35,7 +35,7 @@
                 <b-col cols="6">
                   <b-input-group prepend="Petugas" class="mb-3">
                     <b-form-select
-                      v-model="paging.petugas"
+                      v-model="paging.kode_kas_petugas"
                       :options="opt.petugas"
                     />
                   </b-input-group>
@@ -322,6 +322,7 @@ export default {
       paging: {
         page: 1,
         perPage: 10,
+        status: 1
       },
       remove: {
         data: {},
@@ -401,21 +402,16 @@ export default {
       return $dirty ? !$error : null;
     },
     async doGet() {
-      this.table.loading = true;
-      setTimeout(() => {
-        this.table.loading = false;
-        this.table.items = [
-          {
-            tanggal: "01-12-20",
-            nama: "Siti Amaninah",
-            jenis_transaksi: "Modal Awal",
-            no_rek: "201.0010001",
-            jumlah: "2.0000.0000",
-            keterangan: "MBA",
-          },
-        ];
-        this.doInfo("Data berhasil diambil", "Berhasil", "success");
-      }, 5000);
+      let payload = this.paging
+      try {
+        let req = await easycoApi.getTrxKasPetugas(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.table.items = data
+        }
+      } catch (error) {
+        console.error(error);
+      }
     },
     async doGetCabang() {
       let payload = {
@@ -450,7 +446,7 @@ export default {
         search: "",
       };
       try {
-        let req = await easycoApi.getKasPetugas(payload, this.user.token);
+        let req = await easycoApi.kodeKasPetugas(payload, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
           this.opt.petugas = [];
@@ -475,7 +471,7 @@ export default {
         search: "",
       };
       try {
-        let req = await easycoApi.getKasPetugas(payload, this.user.token);
+        let req = await easycoApi.kodeKasPetugas(payload, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
           this.opt.kas_teler = [];

@@ -248,6 +248,16 @@ const menu = [
         component: import('@/pages/Transaksi/PostingJurnal.vue'),
       },
       {
+        target: 'tutup-buku',
+        label: 'Tutup Buku',
+        component: import('@/pages/Transaksi/TutupBuku.vue'),
+      },
+      {
+        target: 'hitung-kolektabilitas',
+        label: 'Hitung Kolektabilitas',
+        component: import('@/pages/Transaksi/HitungKolektabilitas.vue'),
+      },
+      {
         target: 'laporan',
         label: 'Laporan Transaksi',
         component: import('@/pages/Transaksi'),
@@ -310,6 +320,20 @@ const menu = [
       },
     ]
   },
+  // Proses Akhir Bulan
+  // {
+  //   target: '/proses-akhir-bulan',
+  //   label: 'Proses Akhir Bulan',
+  //   icon: 'menu-icon fas fa-wrench',
+  //   component: import('@/pages/Pengaturan'),
+  //   children: [
+  //     {
+  //       target: 'tutup-buku',
+  //       label: 'Tutup Buku',
+  //       component: import('@/pages/Dummy.vue'),
+  //     },
+  //   ]
+  // },
   // Pengaturan
   {
     target: '/pengaturan',

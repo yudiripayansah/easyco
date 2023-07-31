@@ -7,17 +7,17 @@
           <div class="row">
             <b-col cols="12">
               <b-input-group prepend="Cabang" class="mb-3">
-                <b-form-select v-model="paging.cabang" :options="opt.cabang" />
+                <b-form-select v-model="paging.cabang" :options="opt.cabang" @change="doGetReport()"/>
               </b-input-group>
             </b-col>
             <b-col>
               <b-input-group prepend="Dari Tanggal">
-                <b-form-datepicker v-model="paging.from" />
+                <b-form-datepicker v-model="paging.from" @input="doGetReport()"/>
               </b-input-group>
             </b-col>
             <b-col>
               <b-input-group prepend="Sampai Tanggal">
-                <b-form-datepicker v-model="paging.to" />
+                <b-form-datepicker v-model="paging.to" @input="doGetReport()"/>
               </b-input-group>
             </b-col>
           </div>
@@ -38,6 +38,54 @@
               XLS
             </b-button>
           </b-button-group>
+        </b-col>
+        <b-col cols="12">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr class="text-center">
+                <th style="width:5%">No</th>
+                <th style="width:10%">Tanggal</th>
+                <th style="width:10%">Tgl. Voucher</th>
+                <th>Keterangan</th>
+                <th style="width:15%">Jumlah</th>
+              </tr>
+            </thead>
+            <tbody v-if="report.items.length > 0">
+              <tr
+                v-for="(report, reportIndex) in report.items"
+                :key="`report-${reportIndex}`"
+              >
+                <td class="text-center ">{{ reportIndex + 1 }}</td>
+                <td class="text-center ">
+                  <div class="px-2">
+                    {{ dateFormatId(report.trx_date) }}
+                  </div>
+                </td>
+                <td class="text-center ">
+                  <div class="px-2">
+                    {{ dateFormatId(report.voucher_date) }}
+                  </div>
+                </td>
+                <td class="">
+                  <div class="px-2">
+                    {{ report.description }}
+                  </div>
+                </td>
+                <td>
+                  <div class="text-right px-2">
+                    <span style="border: 0" class="text-right">
+                      {{ thousand(report.jumlah) }}
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tbody v-else>
+              <tr class="text-center">
+                <td colspan="12">There's no data to display...</td>
+              </tr>
+            </tbody>
+          </table>
         </b-col>
       </b-row>
     </b-card>
@@ -62,9 +110,9 @@
           <thead>
             <tr class="text-center">
               <th>No</th>
-              <th>Tanggal</th>
-              <th>Tgl. Voucher</th>
-              <th>Keterangan</th>
+              <th style="width:10%">Tanggal</th>
+              <th style="width:10%">Tgl. Voucher</th>
+              <th style="width:25%">Keterangan</th>
               <th>No Akun</th>
               <th>Debit</th>
               <th>Kredit</th>
@@ -75,38 +123,50 @@
               v-for="(report, reportIndex) in report.items"
               :key="`report-${reportIndex}`"
             >
-              <td>{{ reportIndex + 1 }}</td>
-              <td>{{ report.trx_date }}</td>
-              <td>{{ report.voucher_date }}</td>
-              <td>{{ report.description }}</td>
-              <td>
+              <td class="text-center ">{{ reportIndex + 1 }}</td>
+              <td class="text-center ">
+                <div class="px-2">
+                  {{ dateFormatId(report.trx_date) }}
+                </div>
+              </td>
+              <td class="text-center ">
+                <div class="px-2">
+                  {{ dateFormatId(report.voucher_date) }}
+                </div>
+              </td>
+              <td class="">
+                <div class="px-2">
+                  {{ report.description }}
+                </div>
+              </td>
+              <td class="">
                 <div
                   v-for="(dtl, dtlIndex) in report.detail"
-                  :key="`dtl-${dtlIndex}`"
+                  :key="`dtl-${dtlIndex}`" class="px-2"
                 >
                   <td style="border: 0">
                     {{ dtl.kode_gl }} - {{ dtl.nama_gl }}
                   </td>
                 </div>
               </td>
-              <td>
+              <td class="px-1">
                 <div
                   v-for="(dtl, dtlIndex) in report.detail"
-                  :key="`dtl-${dtlIndex}`"
+                  :key="`dtl-${dtlIndex}`" class="text-right px-2"
                 >
-                  <td style="border: 0">
-                    {{ dtl.flag_dc == "D" ? dtl.amount : 0 }}
-                  </td>
+                  <span style="border: 0" class="text-right">
+                    {{ dtl.flag_dc == "D" ? thousand(dtl.amount) : 0 }}
+                  </span>
                 </div>
               </td>
-              <td>
+              <td class="px-1">
                 <div
                   v-for="(dtl, dtlIndex) in report.detail"
-                  :key="`dtl-${dtlIndex}`"
+                  :key="`dtl-${dtlIndex}`" class="text-right px-2"
                 >
-                  <td style="border: 0">
-                    {{ dtl.flag_dc == "C" ? dtl.amount : 0 }}
-                  </td>
+                  <span style="border: 0" class="text-right">
+                    {{ dtl.flag_dc == "C" ? thousand(dtl.amount) : 0 }}
+                  </span>
                 </div>
               </td>
             </tr>
@@ -322,6 +382,14 @@ export default {
         );
         let { data, status, msg, total } = req.data;
         if (status) {
+          data.map((item) => {
+            item.jumlah = 0
+            item.detail.map((dt) => {
+              if(dt.flag_dc == "D") {
+                item.jumlah += Number(dt.amount)
+              }
+            })
+          })
           this.report.items = data;
           this.report.totalRows = total;
         } else {

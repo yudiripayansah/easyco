@@ -232,7 +232,7 @@
                   autocomplete="off"
                   hide-details
                   outlined
-                  v-model="form.data.p_tgllahir"
+                  v-model="form.data.p_tglahir"
                   label="Tanggal Lahir"
                   type="date"
                 />
@@ -687,7 +687,7 @@ export default {
           created_by: null,
           p_nama: "PAS AMINAH",
           p_tmplahir: "BOGOR",
-          p_tgllahir: null,
+          p_tglahir: null,
           usia: 30,
           p_noktp: "327104010119920001",
           p_nohp: "0812",
@@ -873,7 +873,16 @@ export default {
     },
     async doRegisterAnggota() {
       let payload = new FormData();
-      let payloadData = this.form.data;
+      let payloadData = {...this.form.data};
+      payloadData.p_pendapatan = this.removeThousand(payloadData.p_pendapatan)
+      payloadData.ush_omset = this.removeThousand(payloadData.ush_omset)
+      payloadData.by_beras = this.removeThousand(payloadData.by_beras)
+      payloadData.by_dapur = this.removeThousand(payloadData.by_dapur)
+      payloadData.by_listrik = this.removeThousand(payloadData.by_listrik)
+      payloadData.by_telpon = this.removeThousand(payloadData.by_telpon)
+      payloadData.by_sekolah = this.removeThousand(payloadData.by_sekolah)
+      payloadData.by_lain = this.removeThousand(payloadData.by_lain)
+      
       if (this.form.data.kode_cabang) {
         for (let key in payloadData) {
           payload.append(key, payloadData[key]);

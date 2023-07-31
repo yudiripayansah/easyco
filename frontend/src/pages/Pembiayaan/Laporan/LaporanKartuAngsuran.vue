@@ -6,19 +6,18 @@
         <b-col cols="9" class="mb-5">
           <b-row class="no-gutters">
             <b-col cols="12">
-              <b-input-group prepend="No Rekening">
-                <b-form-select
+                <multiselect
+                  label="text"
                   v-model="paging.no_rekening"
                   :options="opt.no_rekening"
-                  @change="setRekening()"
+                  @select="setRekening()"
                 />
-              </b-input-group>
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Plafon</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.pokok }}
+              {{ thousand(rekening.pokok) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Nama</b>
@@ -30,7 +29,7 @@
               <b>Margin</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.margin }}
+              {{ thousand(rekening.margin) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Majelis</b>
@@ -54,7 +53,7 @@
               <b>Angsuran Pokok</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.angsuran_pokok }}
+              {{ thousand(rekening.angsuran_pokok) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Produk</b>
@@ -66,25 +65,25 @@
               <b>Angsuran Margin</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.angsuran_margin }}
+              {{ thousand(rekening.angsuran_margin) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Tanggal</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.tanggal_akad }}
+              {{ dateFormatId(rekening.tanggal_akad) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Total Angsuran</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.angsuran_pokok + rekening.angsuran_margin }}
+              {{ thousand(Number(rekening.angsuran_pokok) + Number(rekening.angsuran_margin)) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Mulai Angsuran</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.tanggal_mulai_angsur }}
+              {{ dateFormatId(rekening.tanggal_mulai_angsur) }}
             </b-col>
           </b-row>
         </b-col>
@@ -118,6 +117,27 @@
             <template #cell(no)="item">
               {{ item.index + 1 }}
             </template>
+            <template #cell(angsuran_pokok)="item">
+              {{ thousand(item.item.angsuran_pokok) }}
+            </template>
+            <template #cell(angsuran_margin)="item">
+              {{ thousand(item.item.angsuran_margin) }}
+            </template>
+            <template #cell(saldo_pokok)="item">
+              {{ thousand(item.item.saldo_pokok) }}
+            </template>
+            <template #cell(saldo_margin)="item">
+              {{ thousand(item.item.saldo_margin) }}
+            </template>
+            <template #cell(jumlah)="item">
+              {{ thousand(item.item.jumlah) }}
+            </template>
+            <template #cell(trx_date)="item">
+              {{ dateFormatId(item.item.trx_date) }}
+            </template>
+            <template #cell(tgl_bayar)="item">
+              {{ dateFormatId(item.item.tgl_bayar) }}
+            </template>
           </b-table>
         </b-col>
         <b-col cols="12" class="justify-content-end d-flex">
@@ -148,13 +168,14 @@
               <b>No Rekening</b>
             </b-col>
             <b-col cols="10" class="mt-3">
-              {{ paging.no_rekening }}
+              {{ paging.no_rekening.value }}
             </b-col>
+            
             <b-col cols="2" class="mt-3">
               <b>Plafon</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.pokok }}
+              {{ thousand(rekening.pokok) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Nama</b>
@@ -166,7 +187,7 @@
               <b>Margin</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.margin }}
+              {{ thousand(rekening.margin) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Majelis</b>
@@ -190,7 +211,7 @@
               <b>Angsuran Pokok</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.angsuran_pokok }}
+              {{ thousand(rekening.angsuran_pokok) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Produk</b>
@@ -202,25 +223,25 @@
               <b>Angsuran Margin</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.angsuran_margin }}
+              {{ thousand(rekening.angsuran_margin) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Tanggal</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.tanggal_akad }}
+              {{ dateFormatId(rekening.tanggal_akad) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Total Angsuran</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.angsuran_pokok + rekening.angsuran_margin }}
+              {{ thousand(Number(rekening.angsuran_pokok) + Number(rekening.angsuran_margin)) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Mulai Angsuran</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.tanggal_mulai_angsur }}
+              {{ dateFormatId(rekening.tanggal_mulai_angsur) }}
             </b-col>
           </b-row>
         </b-col>
@@ -238,6 +259,27 @@
         >
           <template #cell(no)="item">
             {{ item.index + 1 }}
+          </template>
+          <template #cell(angsuran_pokok)="item">
+            {{ thousand(item.item.angsuran_pokok) }}
+          </template>
+          <template #cell(angsuran_margin)="item">
+            {{ thousand(item.item.angsuran_margin) }}
+          </template>
+          <template #cell(saldo_pokok)="item">
+            {{ thousand(item.item.saldo_pokok) }}
+          </template>
+          <template #cell(saldo_margin)="item">
+            {{ thousand(item.item.saldo_margin) }}
+          </template>
+          <template #cell(jumlah)="item">
+            {{ thousand(item.item.jumlah) }}
+          </template>
+          <template #cell(trx_date)="item">
+            {{ dateFormatId(item.item.trx_date) }}
+          </template>
+          <template #cell(tgl_bayar)="item">
+            {{ dateFormatId(item.item.tgl_bayar) }}
           </template>
         </b-table>
       </div>
@@ -273,13 +315,14 @@
 </template>
   
 <script>
+import Multiselect from "vue-multiselect";
 import helper from "@/core/helper";
 import html2pdf from "html2pdf.js";
 import { mapGetters } from "vuex";
 import easycoApi from "@/core/services/easyco.service";
 export default {
   name: "LaporanSaldoAnggota",
-  components: {},
+  components: { Multiselect },
   data() {
     return {
       table: {
@@ -296,7 +339,14 @@ export default {
             sortable: true,
             label: "Tanggal",
             thClass: "text-center",
-            tdClass: "",
+            tdClass: "text-center",
+          },
+          {
+            key: "tgl_bayar",
+            sortable: true,
+            label: "Tanggal Bayar",
+            thClass: "text-center",
+            tdClass: "text-center",
           },
           {
             key: "angsuran_ke",
@@ -325,6 +375,20 @@ export default {
             label: "Total",
             thClass: "text-center",
             tdClass: "text-right",
+          },
+          {
+            key: "saldo_pokok",
+            sortable: true,
+            label: "Saldo Pokok",
+            thClass: "text-center",
+            tdClass: "text-right",
+          },
+          {
+            key: "saldo_margin",
+            sortable: true,
+            label: "Saldo Margin",
+            thClass: "text-center",
+            tdClass: "text-right",
           }
         ],
         items: [],
@@ -341,6 +405,7 @@ export default {
         cabang: "",
         from: null,
         to: null,
+        no_rekening: Object
       },
       opt: {
         cabang: [],
@@ -393,7 +458,7 @@ export default {
       });
     },
     async exportXls() {
-      let payload = `no_rekening=${this.paging.no_rekening}`;
+      let payload = `no_rekening=${this.paging.no_rekening.value}`;
       let req = await easycoApi.kartuAngsuranExcel(payload);
       console.log(req.data);
       const url = window.URL.createObjectURL(new Blob([req.data]));
@@ -432,7 +497,7 @@ export default {
     },
     async setRekening() {
       let payload = {
-        no_rekening: this.paging.no_rekening,
+        no_rekening: this.paging.no_rekening.value,
       }
       try {
         let req = await easycoApi.kartuAngsuran(payload, this.user.token);
