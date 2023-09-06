@@ -81,6 +81,20 @@ class KopAnggota extends Model
         return $res;
     }
 
+    function get_jumlah_anggota($kode_cabang)
+    {
+        $show = KopAnggota::select(DB::raw('COUNT(*) AS jumlah_anggota'))
+            ->where('status', 1);
+
+        if ($kode_cabang <> '00000') {
+            $show = $show->where('kode_cabang', $kode_cabang);
+        }
+
+        $show = $show->first();
+
+        return $show;
+    }
+
     function rembug($kode_cabang)
     {
         $show = KopRembug::orderBy('id', 'ASC');
@@ -115,7 +129,7 @@ class KopAnggota extends Model
                     ->where('kta.trx_date', $trx_date);
             })
             ->where('kr.kode_rembug', $kode_rembug)
-            ->where('kop_anggota.status', 1)
+            ->whereIn('kop_anggota.status', [1, 3])
             ->groupBy('kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kr.kode_rembug', 'kr.nama_rembug', 'kta.created_by')
             ->orderBy('kta.created_by', 'DESC')
             ->orderBy('kop_anggota.no_anggota', 'ASC')
@@ -126,7 +140,7 @@ class KopAnggota extends Model
 
     function report_list($kode_cabang, $kode_rembug, $from_date, $thru_date)
     {
-        $show = KopAnggota::select('kop_anggota.*', 'kc.nama_cabang', 'kr.nama_rembug', DB::raw('COALESCE(kp.saldo_pokok+kp.saldo_margin,0) AS saldo_outstanding'))
+        $show = KopAnggota::select('kop_anggota.*', 'kc.nama_cabang', 'kr.nama_rembug', DB::raw('COALESCE(kp.saldo_pokok+kp.saldo_margin,0) AS saldo_outstanding'), DB::raw('COALESCE(kt.saldo,0) AS taber'))
             ->join('kop_cabang AS kc', 'kc.kode_cabang', '=', 'kop_anggota.kode_cabang')
             ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'kop_anggota.kode_rembug')
             ->leftjoin('kop_pengajuan AS kpg', function ($join) {
@@ -134,6 +148,11 @@ class KopAnggota extends Model
             })
             ->leftjoin('kop_pembiayaan AS kp', function ($join) {
                 $join->on('kp.no_pengajuan', 'kpg.no_pengajuan')->where('kp.status_rekening', 1);
+            })
+            ->leftjoin('kop_tabungan AS kt', function ($join) {
+                $join->on('kt.no_anggota', 'kop_anggota.no_anggota')
+                    ->where('kt.status_rekening', 1)
+                    ->where('kt.flag_taber', 1);
             });
 
         if ($kode_cabang <> '~') {

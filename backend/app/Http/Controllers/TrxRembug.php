@@ -132,6 +132,13 @@ class TrxRembug extends Controller
             $param_pembiayaan = array('no_rekening' => $no_rekening);
             $pembiayaan = KopPembiayaan::where($param_pembiayaan)->first();
 
+            // ANGGOTA KELUAR
+            if ($anggota['status'] == 3) {
+                $get = KopAnggota::find($anggota['id']);
+                $get->status = 2;
+                $get->save();
+            }
+
             // SETORAN SIMPOK
             if ($trx_type == 11) {
                 if ($amount > 0) {

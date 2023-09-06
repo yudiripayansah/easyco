@@ -237,16 +237,16 @@ class LaporanController extends Controller
 
     function list_excel_saldo_outstanding(Request $request)
     {
-        $list = new ListSaldoOutstandingExport($request->kode_cabang, $request->kode_rembug, 'excel');
+        $list = new ListSaldoOutstandingExport($request->kode_cabang, $request->kode_rembug, $request->kode_petugas, 'excel');
 
-        if ($request->kode_cabang <> '~') {
+        if ($request->kode_cabang <> 'null') {
             $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
             $cabang = str_replace(' ', '_', $branch->nama_cabang);
         } else {
             $cabang = 'SEMUA_CABANG';
         }
 
-        if ($request->kode_rembug <> '~') {
+        if ($request->kode_rembug <> 'null') {
             $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
             $rembug = str_replace(' ', '_', $cm->nama_rembug);
         } else {
@@ -258,7 +258,7 @@ class LaporanController extends Controller
 
     function list_csv_saldo_outstanding(Request $request)
     {
-        $list = new ListSaldoOutstandingExport($request->kode_cabang, $request->kode_rembug, 'csv');
+        $list = new ListSaldoOutstandingExport($request->kode_cabang, $request->kode_rembug, $request->kode_petugas, 'csv');
 
         if ($request->kode_cabang <> '~') {
             $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();

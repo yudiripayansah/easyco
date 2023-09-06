@@ -78,6 +78,21 @@ class KopTabungan extends Model
         return $res;
     }
 
+    function get_saldo_tabungan($kode_cabang)
+    {
+        $show = KopTabungan::select(DB::raw('COALESCE(SUM(saldo),0) AS saldo_tabungan'))
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kop_tabungan.no_anggota')
+            ->where('status_rekening', 1);
+
+        if ($kode_cabang <> '00000') {
+            $show = $show->where('ka.kode_cabang', $kode_cabang);
+        }
+
+        $show = $show->first();
+
+        return $show;
+    }
+
     function get_seq_rekening($no_anggota, $kode_produk)
     {
         $show = KopTabungan::select(DB::raw('COUNT(*) AS jumlah'))

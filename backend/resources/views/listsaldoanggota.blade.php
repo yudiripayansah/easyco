@@ -67,7 +67,7 @@
             <td style="border: 1px solid #000;">'{{ $saldo->no_telp }}</td>
             <td style="border: 1px solid #000;">{{ $saldo->simpok }}</td>
             <td style="border: 1px solid #000;">{{ $saldo->simwa }}</td>
-            <td style="border: 1px solid #000;">{{ $saldo->sukarela }}</td>
+            <td style="border: 1px solid #000;">{{ (int) $saldo->simsuk }}</td>
             <td style="border: 1px solid #000;">{{ $saldo->taber }}</td>
             <td style="border: 1px solid #000;">{{ $saldo->saldo_outstanding }}</td>
         </tr>

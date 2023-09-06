@@ -117,16 +117,41 @@ class KopAnggotaMutasi extends Model
 
     function get_saldo_keluar($no_anggota)
     {
-        $show = KopAnggota::select(DB::raw('COALESCE(SUM(kpb.saldo_pokok),0) AS saldo_pokok'), DB::raw('COALESCE(SUM(kpb.saldo_margin),0) AS saldo_margin'), DB::raw('COALESCE(SUM(kpb.saldo_catab),0) AS saldo_catab'), DB::raw('COALESCE(SUM(kpb.saldo_minggon),0) AS saldo_minggon'), DB::raw('COALESCE(SUM(kop_anggota.simpok),0) AS simpok'), DB::raw('COALESCE(SUM(kop_anggota.simwa),0) AS simwa'), DB::raw('COALESCE(SUM(kop_anggota.simsuk),0) AS simsuk'), DB::raw('COALESCE(SUM(kt.saldo),0) AS saldo_tabungan'), DB::raw('0 AS saldo_deposito'), DB::raw('0 AS bonus_bagihasil'))
-            ->leftjoin('kop_pengajuan AS kp', 'kp.no_anggota', 'kop_anggota.no_anggota')
-            ->leftjoin('kop_pembiayaan AS kpb', function ($join) {
-                $join->on('kpb.no_pengajuan', 'kp.no_pengajuan')->where('kpb.status_rekening', 1);
-            })
-            ->leftjoin('kop_tabungan AS kt', function ($joins) {
-                $joins->on('kt.no_anggota', 'kop_anggota.no_anggota')->where('kt.status_rekening', 1);
-            })
-            ->where('kop_anggota.no_anggota', $no_anggota)
-            ->first();
+        $statement = "SELECT
+        COALESCE(a.saldo_pokok) AS saldo_pokok,
+        COALESCE(a.saldo_margin) AS saldo_margin,
+        COALESCE(a.saldo_catab) AS saldo_catab,
+        COALESCE(a.saldo_minggon) AS saldo_minggon,
+        COALESCE(ka.simpok,0) AS simpok,
+        COALESCE(ka.simwa,0) AS simwa,
+        COALESCE(ka.simsuk,0) AS simsuk,
+        COALESCE(b.saldo_tabungan,0) AS saldo_tabungan,
+        0 AS saldo_deposito,
+        0 AS bonus_bagihasil
+        FROM kop_anggota AS ka
+        LEFT JOIN (
+            SELECT
+            kp.no_anggota,
+            SUM(kpb.saldo_pokok) AS saldo_pokok,
+            SUM(kpb.saldo_margin) AS saldo_margin,
+            SUM(kpb.saldo_catab) AS saldo_catab,
+            SUM(kpb.saldo_minggon) AS saldo_minggon
+            FROM kop_pengajuan AS kp
+            JOIN kop_pembiayaan AS kpb ON kpb.no_pengajuan = kp.no_pengajuan
+            WHERE kpb.status_rekening = 1
+            GROUP BY 1
+        ) AS a ON a.no_anggota = ka.no_anggota
+        LEFT JOIN (
+            SELECT
+            no_anggota,
+            SUM(saldo) AS saldo_tabungan
+            FROM kop_tabungan
+            WHERE status_rekening = 1 AND kode_produk <> '099'
+            GROUP BY 1
+        ) AS b ON b.no_anggota = ka.no_anggota
+        WHERE ka.no_anggota = ?";
+
+        $show = DB::select($statement, [$no_anggota]);
 
         return $show;
     }

@@ -17,6 +17,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LembagaController;
 use App\Http\Controllers\ListKodeController;
 use App\Http\Controllers\MapController;
+use App\Http\Controllers\ParController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PrdDepositoController;
@@ -47,6 +48,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('authenticate')->group(function () {
   Route::post('/login', [AuthController::class, 'authentication']);
+});
+
+Route::prefix('dashboard')->middleware('checkToken')->group(function () {
+  Route::get('/saldosaldo', [AnggotaController::class, 'saldosaldo']);
 });
 
 Route::prefix('cabang')->middleware('checkToken')->group(function () {
@@ -263,6 +268,8 @@ Route::prefix('laporan')->group(function () {
   Route::prefix('list')->group(function () {
     Route::post('/transaksi_majelis', [TrxRembug::class, 'transaksi_majelis']);
     Route::get('/get_closing_date', [ClosingGlController::class, 'get_closing_date']);
+    Route::post('/get_par_date', [ParController::class, 'get_par_date']);
+    Route::post('/get_kolektibilitas', [ParController::class, 'get_kolektibilitas']);
 
     Route::prefix('excel')->group(function () {
       Route::get('/anggota_masuk', [LaporanController::class, 'list_excel_anggota_masuk']);
