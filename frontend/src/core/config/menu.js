@@ -281,7 +281,7 @@ const menu = [
       {
         target: 'laporan-jurnal-transaksi',
         label: 'Laporan Jurnal Transaksi',
-        component: import('@/pages/Dummy.vue'),
+        component: import('@/pages/Transaksi/Laporan/LaporanTransaksiJurnal.vue'), //import('@/pages/Dummy.vue'),
       },
       {
         target: 'laporan-buku-besar',
