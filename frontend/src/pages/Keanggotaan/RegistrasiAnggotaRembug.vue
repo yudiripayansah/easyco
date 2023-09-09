@@ -177,7 +177,7 @@
             </b-form-group>
           </b-col>
           <b-col cols="12" sm="6">
-            <b-form-group label="Majelis">
+            <b-form-group label="Nama Majelis">
               <b-select v-model="form.data.kode_rembug" :options="opt.rembug"/>
             </b-form-group>
           </b-col>
@@ -330,7 +330,7 @@
             {
               key: 'nama_rembug',
               sortable: true,
-              label: 'Majelis',
+              label: 'Nama Majelis',
               thClass: 'text-center',
               tdClass: ''
             },
