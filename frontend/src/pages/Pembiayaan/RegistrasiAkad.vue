@@ -123,7 +123,7 @@
             </b-form-group>
           </b-col> -->
           <b-col cols="12" sm="4">
-            <b-form-group label="Rembug">
+            <b-form-group label="Majelis">
               <b-select
                 v-model="form.data.kode_rembug"
                 :options="opt.rembug"

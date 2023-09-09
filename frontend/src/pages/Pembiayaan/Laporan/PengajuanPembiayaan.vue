@@ -207,7 +207,7 @@ export default {
           {
             key: "nama_rembug",
             sortable: true,
-            label: "Majelis",
+            label: "Nama Majelis",
             thClass: "text-center",
             tdClass: "",
           },
@@ -270,7 +270,7 @@ export default {
           {
             key: "nama_rembug",
             sortable: false,
-            label: "Rembug",
+            label: "Nama Majelis",
             thClass: "text-center",
             tdClass: "",
           },
