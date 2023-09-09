@@ -50,7 +50,7 @@ const menu = [
           {
             target: 'anggota-keluar',
             label: 'Anggota Keluar',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Keanggotaan/Laporan/AnggotaKeluar.vue'),
           },
         ],
       },
