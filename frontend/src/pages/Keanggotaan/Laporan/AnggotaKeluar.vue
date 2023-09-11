@@ -505,10 +505,26 @@ export default {
             });
         },
         async exportXls() {
-            this.notify("info", "Info!", "Sorry, this feature in under development!");
+            let payload = `kode_cabang=${this.paging.kode_cabang}&kode_rembug=${this.paging.kode_rembug}&from_date=${this.paging.from_date}&thru_date=${this.paging.thru_date}`;
+            const req = await easycoApi.listAnggotaKeluarExportToXLSX(payload);
+            const url = window.URL.createObjectURL(new Blob([req.data]));
+            const link = document.createElement("a");
+            const fileName = "Anggota_Keluar.xls";
+            link.href = url;
+            link.setAttribute("download", fileName);
+            document.body.appendChild(link);
+            link.click();
         },
         async exportCsv() {
-            this.notify("info", "Info!", "Sorry, this feature in under development!");
+            let payload = `kode_cabang=${this.paging.kode_cabang}&kode_rembug=${this.paging.kode_rembug}&from_date=${this.paging.from_date}&thru_date=${this.paging.thru_date}`;
+            let req = await easycoApi.listAnggotaKeluarExportToCSV(payload);
+            const url = window.URL.createObjectURL(new Blob([req.data]));
+            const link = document.createElement("a");
+            const fileName = "Anggota_Keluar.csv";
+            link.href = url;
+            link.setAttribute("download", fileName);
+            document.body.appendChild(link);
+            link.click();
         },
         getCabangName(id) {
             if (id > 0) {
