@@ -1,5 +1,6 @@
 import axios from "axios";
 axios.defaults.baseURL = "https://easyco.kopikoding.com/api/api/";
+import anggotaKeluarService from "./anggotaKeluar.service";
 
 const easycoApi = {
   login(payload) {
@@ -98,10 +99,10 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
-  
+
   anggotaExcel(payload, token) {
     let url =
-      "laporan/list/excel/anggota_masuk?"+payload;
+      "laporan/list/excel/anggota_masuk?" + payload;
     let config = {
       headers: {
         token: token,
@@ -112,7 +113,7 @@ const easycoApi = {
   },
   saldoAnggotaExcel(payload, token) {
     let url =
-      "laporan/list/excel/saldo_anggota?"+payload;
+      "laporan/list/excel/saldo_anggota?" + payload;
     let config = {
       headers: {
         token: token,
@@ -123,7 +124,7 @@ const easycoApi = {
   },
   pengajuanPembiayaanExcel(payload, token) {
     let url =
-      "laporan/list/excel/pengajuan?"+payload;
+      "laporan/list/excel/pengajuan?" + payload;
     let config = {
       headers: {
         token: token,
@@ -134,7 +135,7 @@ const easycoApi = {
   },
   pencairanPembiayaanExcel(payload, token) {
     let url =
-      "laporan/list/excel/pencairan?"+payload;
+      "laporan/list/excel/pencairan?" + payload;
     let config = {
       headers: {
         token: token,
@@ -145,7 +146,7 @@ const easycoApi = {
   },
   outstandingPembiayaanExcel(payload, token) {
     let url =
-      "laporan/list/excel/saldo_outstanding?"+payload;
+      "laporan/list/excel/saldo_outstanding?" + payload;
     let config = {
       headers: {
         token: token,
@@ -156,7 +157,7 @@ const easycoApi = {
   },
   registrasiAkadExcel(payload, token) {
     let url =
-      "laporan/list/excel/regis_akad?"+payload;
+      "laporan/list/excel/regis_akad?" + payload;
     let config = {
       headers: {
         token: token,
@@ -165,8 +166,8 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
-  kasPetugasExcel(payload, token){
-    let url = "laporan/list/excel/kas_petugas?"+payload;
+  kasPetugasExcel(payload, token) {
+    let url = "laporan/list/excel/kas_petugas?" + payload;
     let config = {
       headers: {
         token: token,
@@ -175,8 +176,8 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
-  listTransaksiMajelisExcel(payload, token){
-    let url = "laporan/list/excel/detail_transaksi_majelis?"+payload;
+  listTransaksiMajelisExcel(payload, token) {
+    let url = "laporan/list/excel/detail_transaksi_majelis?" + payload;
     let config = {
       headers: {
         token: token,
@@ -185,8 +186,8 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
-  jurnalTransaksiExcel(payload, token){
-    let url = "laporan/list/excel/jurnal_transaksi?"+payload;
+  jurnalTransaksiExcel(payload, token) {
+    let url = "laporan/list/excel/jurnal_transaksi?" + payload;
     let config = {
       headers: {
         token: token,
@@ -195,8 +196,8 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
-  kartuAngsuranExcel(payload, token){
-    let url = "laporan/list/excel/kartu_angsuran?"+payload;
+  kartuAngsuranExcel(payload, token) {
+    let url = "laporan/list/excel/kartu_angsuran?" + payload;
     let config = {
       headers: {
         token: token,
@@ -205,8 +206,8 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
-  bukuBesarExcel(payload, token){
-    let url = "laporan/list/excel/gl_inquiry?"+payload;
+  bukuBesarExcel(payload, token) {
+    let url = "laporan/list/excel/gl_inquiry?" + payload;
     let config = {
       headers: {
         token: token,
@@ -219,7 +220,7 @@ const easycoApi = {
   // laporan csv
   bukuBesarCsv(payload, token) {
     let url =
-      "laporan/list/csv/gl_inquiry?"+payload;
+      "laporan/list/csv/gl_inquiry?" + payload;
     let config = {
       headers: {
         token: token,
@@ -230,7 +231,7 @@ const easycoApi = {
   },
   anggotaCsv(payload, token) {
     let url =
-      "laporan/list/csv/anggota_masuk?"+payload;
+      "laporan/list/csv/anggota_masuk?" + payload;
     let config = {
       headers: {
         token: token,
@@ -241,7 +242,7 @@ const easycoApi = {
   },
   saldoAnggotaCsv(payload, token) {
     let url =
-      "laporan/list/csv/saldo_anggota?"+payload;
+      "laporan/list/csv/saldo_anggota?" + payload;
     let config = {
       headers: {
         token: token,
@@ -252,7 +253,7 @@ const easycoApi = {
   },
   pengajuanPembiayaanCsv(payload, token) {
     let url =
-      "laporan/list/csv/pengajuan?"+payload;
+      "laporan/list/csv/pengajuan?" + payload;
     let config = {
       headers: {
         token: token,
@@ -263,7 +264,7 @@ const easycoApi = {
   },
   pencairanPembiayaanCsv(payload, token) {
     let url =
-      "laporan/list/csv/pencairan?"+payload;
+      "laporan/list/csv/pencairan?" + payload;
     let config = {
       headers: {
         token: token,
@@ -274,7 +275,7 @@ const easycoApi = {
   },
   outstandingPembiayaanCsv(payload, token) {
     let url =
-      "laporan/list/csv/saldo_outstanding?"+payload;
+      "laporan/list/csv/saldo_outstanding?" + payload;
     let config = {
       headers: {
         token: token,
@@ -285,7 +286,7 @@ const easycoApi = {
   },
   registrasiAkadCsv(payload, token) {
     let url =
-      "laporan/list/csv/regis_akad?"+payload;
+      "laporan/list/csv/regis_akad?" + payload;
     let config = {
       headers: {
         token: token,
@@ -294,8 +295,8 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
-  kasPetugasCsv(payload, token){
-    let url = "laporan/list/csv/kas_petugas?"+payload;
+  kasPetugasCsv(payload, token) {
+    let url = "laporan/list/csv/kas_petugas?" + payload;
     let config = {
       headers: {
         token: token,
@@ -304,8 +305,8 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
-  kartuAngsuranCsv(payload, token){
-    let url = "laporan/list/csv/kartu_angsuran?"+payload;
+  kartuAngsuranCsv(payload, token) {
+    let url = "laporan/list/csv/kartu_angsuran?" + payload;
     let config = {
       headers: {
         token: token,
@@ -1275,7 +1276,7 @@ const easycoApi = {
     return axios.post(url, payload, config);
   },
   // LAPORAN TRANSAKSI KAS PETUGAS
-  kodeKasPetugas(payload, token){
+  kodeKasPetugas(payload, token) {
     let url = "kaspetugas/read";
     let config = {
       headers: {
@@ -1284,7 +1285,7 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
- 
+
 
   // GET KODE CABANG
   getKodeCabang(payload, token) {
@@ -1316,8 +1317,8 @@ const easycoApi = {
     return axios.post(url, payload, config);
   },
   // LAPORAN PDF
-  
-  
+
+
   laporanBukuBesar(payload, token) {
     let url = "laporan/list/pdf/gl_inquiry";
     let config = {
@@ -1345,7 +1346,7 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
-  
+
   registrasiTabungan(payload, token) {
     let url = "tabungan/registrasi";
     let config = {
@@ -1414,7 +1415,7 @@ const easycoApi = {
 
   approveAnggotaKeluar(payload, token) {
     let url =
-      "anggotamutasi/approve?"+payload;
+      "anggotamutasi/approve?" + payload;
     let config = {
       headers: {
         token: token,
@@ -1425,7 +1426,7 @@ const easycoApi = {
 
   rejectAnggotaKeluar(payload, token) {
     let url =
-      "anggotamutasi/reject?"+payload;
+      "anggotamutasi/reject?" + payload;
     let config = {
       headers: {
         token: token,
@@ -1433,12 +1434,20 @@ const easycoApi = {
     };
     return axios.get(url, config);
   },
-
   postingJurnal(payload, token) {
     let url = "general_ledger/check";
     let config = {
       headers: {
         token:token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  listAnggotaKeluar(payload, token) {
+    const url = "laporan/list/list_pdf_anggota_keluar";
+    const config = {
+      headers: {
+        token: token,
       },
     };
     return axios.post(url, payload, config);
@@ -1496,6 +1505,7 @@ const easycoApi = {
       },
     };
     return axios.post(url,payload, config);
-  }
+  },
+  ...anggotaKeluarService,
 };
 export default easycoApi;

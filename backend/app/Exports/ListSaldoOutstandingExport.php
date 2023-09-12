@@ -12,12 +12,13 @@ class ListSaldoOutstandingExport implements FromView
 {
     use Exportable;
 
-    protected $kode_cabang, $kode_rembug, $format;
+    protected $kode_cabang, $kode_rembug, $kode_petugas, $format;
 
-    function __construct($kode_cabang, $kode_rembug, $format)
+    function __construct($kode_cabang, $kode_rembug, $kode_petugas, $format)
     {
         $this->kode_cabang = $kode_cabang;
         $this->kode_rembug = $kode_rembug;
+        $this->kode_petugas = $kode_petugas;
         $this->format = $format;
     }
 
@@ -25,7 +26,15 @@ class ListSaldoOutstandingExport implements FromView
     {
         $format = $this->format;
 
-        $show = KopPembiayaan::report_list($this->kode_cabang, 9, '~', $this->kode_rembug, 99, '', '', [1], [1], 2);
+        if ($this->kode_petugas == 'null') {
+            $kode_petugas = '~';
+        }
+
+        if ($this->kode_rembug == 'null') {
+            $kode_rembug = '~';
+        }
+
+        $show = KopPembiayaan::report_list($this->kode_cabang, 9, $kode_petugas, $kode_rembug, 99, '', '', [1], [1], 2);
 
         if ($this->kode_cabang <> '~') {
             $branch = KopCabang::where('kode_cabang', $this->kode_cabang)->first();

@@ -29,9 +29,9 @@ class TrxAnggota extends Controller
 
         foreach ($get as $gt) {
             if ($gt['d_c'] == 'D') {
-                $total_debet += $gt['amount'];
-            } else {
                 $total_credit += $gt['amount'];
+            } else {
+                $total_debet += $gt['amount'];
             }
 
             $data[] = array(

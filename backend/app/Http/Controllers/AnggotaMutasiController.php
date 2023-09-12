@@ -15,18 +15,20 @@ class AnggotaMutasiController extends Controller
     {
         $data = KopAnggotaMutasi::get_saldo_keluar($request->no_anggota);
 
-        $saldo = array(
-            'saldo_pokok' => (int)$data['saldo_pokok'],
-            'saldo_margin' => (int)$data['saldo_margin'],
-            'saldo_catab' => (int)$data['saldo_catab'],
-            'saldo_minggon' => (int)$data['saldo_minggon'],
-            'simpok' => (int)$data['simpok'],
-            'simwa' => (int)$data['simwa'],
-            'simsuk' => (int)$data['simsuk'],
-            'saldo_tabungan' => (int)$data['saldo_tabungan'],
-            'saldo_deposito' => (int)$data['saldo_deposito'],
-            'bonus_bagihasil' => (int)$data['bonus_bagihasil']
-        );
+        foreach ($data as $dt) {
+            $saldo = array(
+                'saldo_pokok' => (int)$dt->saldo_pokok,
+                'saldo_margin' => (int)$dt->saldo_margin,
+                'saldo_catab' => (int)$dt->saldo_catab,
+                'saldo_minggon' => (int)$dt->saldo_minggon,
+                'simpok' => (int)$dt->simpok,
+                'simwa' => (int)$dt->simwa,
+                'simsuk' => (int)$dt->simsuk,
+                'saldo_tabungan' => (int)$dt->saldo_tabungan,
+                'saldo_deposito' => (int)$dt->saldo_deposito,
+                'bonus_bagihasil' => (int)$dt->bonus_bagihasil
+            );
+        }
 
         $res = array(
             'status' => TRUE,
@@ -48,7 +50,13 @@ class AnggotaMutasiController extends Controller
         $data['saldo_simwa'] = $request->simwa;
         $data['saldo_simpok'] = $request->simpok;
         $data['saldo_sukarela'] = $request->simsuk;
-        $data['saldo_tab_berencaa=na'] = $request->tabungan;
+        $data['saldo_tab_berencana'] = $request->saldo_tabungan;
+
+        if ($request->flag_saldo_margin) {
+            $data['flag_saldo_margin'] = 1;
+        } else {
+            $data['flag_saldo_margin'] = 0;
+        }
 
         $validate = KopAnggotaMutasi::validateAdd($data);
 
@@ -58,12 +66,6 @@ class AnggotaMutasiController extends Controller
             try {
                 $create = KopAnggotaMutasi::create($data);
                 $find = KopAnggotaMutasi::find($create->id);
-
-                $param = array('no_anggota' => $request->no_anggota);
-                $anggota = KopAnggota::where($param)->first();
-                $get = KopAnggota::find($anggota->id);
-                $get->status = 3;
-                $get->save();
 
                 $res = array(
                     'status' => TRUE,
@@ -360,9 +362,15 @@ class AnggotaMutasiController extends Controller
     {
         $get = KopAnggotaMutasi::find($request->id);
 
+        $param = array('no_anggota' => $get->no_anggota);
+        $anggota = KopAnggota::where($param)->first();
+        $get2 = KopAnggota::find($anggota->id);
+
+        $get2->status = 3;
         $get->status_mutasi = 1;
 
         $get->save();
+        $get2->save();
 
         $res = array(
             'status' => TRUE,

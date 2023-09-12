@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KopAnggota;
+use App\Models\KopAnggotaMutasi;
 use App\Models\KopKartuAngsuran;
 use App\Models\KopLembaga;
 use App\Models\KopPembiayaan;
@@ -193,14 +194,40 @@ class TplController extends Controller
     {
         $no_anggota = $request->no_anggota;
 
+        $param = array('no_anggota' => $no_anggota);
+
+        // KEANGGOTAAN
+        $getAnggota = KopAnggota::where($param)->first();
+
+        // ANGGOTA MUTASI
+        $getAnggotaMutasi = KopAnggotaMutasi::where($param)->first();
+        $penarikan_sukarela = (($getAnggota['status'] == 3) ? ($getAnggotaMutasi->saldo_minggon + $getAnggotaMutasi->saldo_sukarela + $getAnggotaMutasi->saldo_tab_berencana + $getAnggotaMutasi->saldo_deposito + $getAnggotaMutasi->saldo_simpok + $getAnggotaMutasi->saldo_simwa) : 0);
+
         // ANGSURAN
         $getFinancing = KopPembiayaan::tpl_deposit($no_anggota)->first();
+        $jangka_waktu = (isset($getFinancing->jangka_waktu) ? $getFinancing->jangka_waktu : 0);
+        $counter_angsuran = (isset($getFinancing->counter_angsuran) ? $getFinancing->counter_angsuran : 0);
         $rekening_angsuran = (isset($getFinancing->no_rekening) ? $getFinancing->no_rekening : '');
         $angsuran = (isset($getFinancing->angsuran) ? $getFinancing->angsuran : 0);
         $angsuran_pokok = (isset($getFinancing->angsuran_pokok) ? $getFinancing->angsuran_pokok : 0);
         $angsuran_margin = (isset($getFinancing->angsuran_margin) ? $getFinancing->angsuran_margin : 0);
         $angsuran_catab = (isset($getFinancing->angsuran_catab) ? $getFinancing->angsuran_catab : 0);
-        $freq = (isset($getFinancing->angsuran) ? 1 : 0);
+
+        if ($getAnggota['status'] == 1) {
+            $freq = (isset($getFinancing->angsuran) ? 1 : 0);
+        } else {
+            $freq = $jangka_waktu - $counter_angsuran;
+            $angsuran_pokok *= $freq;
+
+            if ($getAnggotaMutasi['flag_saldo_margin'] == 1) {
+                $angsuran_margin *= $freq;
+            } else {
+                $angsuran_margin = 0;
+            }
+
+            $angsuran_catab = 0;
+            $angsuran = $angsuran_pokok + $angsuran_margin;
+        }
 
         // PENCAIRAN
         $getDroping = KopPembiayaan::tpl_droping($no_anggota)->first();
@@ -223,19 +250,24 @@ class TplController extends Controller
         }
 
         // SIMPOK, SIMWA, SIMSUK
-        $param = array('no_anggota' => $no_anggota);
         $getMember = KopAnggota::where($param)->first();
-        $simpok = $getMember->simpok;
-        $simwa = $getMember->simwa;
-        $simsuk = $getMember->simsuk;
+        $simpok = (($getAnggota['status'] == 1) ? $getMember->simpok : 0);
+        $simwa = (($getAnggota['status'] == 1) ? $getMember->simwa : 0);
+        $simsuk = (($getAnggota['status'] == 1) ? $getMember->simsuk : 0);
 
         // SIMPOK LEMBAGA
         $getLembaga = KopLembaga::first();
 
-        if ($simpok == 0) {
-            $setoran_simpanan_wajib = $getLembaga->simwa;
-            $setoran_simpanan_pokok = $getLembaga->simpok;
-            $setoran_administrasi = $getLembaga->adm;
+        if ($getAnggota['status'] == 1) {
+            if ($simpok == 0) {
+                $setoran_simpanan_wajib = $getLembaga->simwa;
+                $setoran_simpanan_pokok = $getLembaga->simpok;
+                $setoran_administrasi = $getLembaga->adm;
+            } else {
+                $setoran_simpanan_wajib = 0;
+                $setoran_simpanan_pokok = 0;
+                $setoran_administrasi = 0;
+            }
         } else {
             $setoran_simpanan_wajib = 0;
             $setoran_simpanan_pokok = 0;
@@ -285,9 +317,9 @@ class TplController extends Controller
                 $saving[] = array(
                     'nama_produk' => $rd['nama_singkat'],
                     'no_rekening' => $rd['no_rekening'],
-                    'setoran' => (int)$rd['setoran'],
-                    'saldo' => (int)$rd['saldo'],
-                    'freq_saving' => $freq_saving,
+                    'setoran' => (($getAnggota['status'] == 1) ? (int)$rd['setoran'] : 0),
+                    'saldo' => (($getAnggota['status'] == 1) ? (int)$rd['saldo'] : 0),
+                    'freq_saving' => (($getAnggota['status'] == 1) ? $freq_saving : 0),
                     'counter_angsuran' => $rd['counter_angsuran'],
                     'jangka_waktu' => $rd['jangka_waktu'],
                     'kode_produk' => $rd['kode_produk']
@@ -305,6 +337,7 @@ class TplController extends Controller
         }
 
         $data = array(
+            'status_anggota' => $getAnggota['status'],
             'no_rekening' => $no_rekening,
             'angsuran' => [
                 'amount' => (int)$angsuran,
@@ -330,6 +363,7 @@ class TplController extends Controller
             'setoran_simpanan_wajib' => (int)$setoran_simpanan_wajib,
             'setoran_simpanan_pokok' => (int)$setoran_simpanan_pokok,
             'setoran_administrasi' => (int)$setoran_administrasi,
+            'penarikan_sukarela' => (int)$penarikan_sukarela,
             'simpok' => (int)$simpok,
             'simwa' => (int)$simwa,
             'simsuk' => (int)$simsuk,

@@ -7,30 +7,17 @@
           <div class="row">
             <b-col cols="12">
               <b-input-group prepend="Cabang" class="mb-3">
-                <b-form-select
-                  v-model="paging.cabang"
-                  :options="opt.cabang"
-                  @change="doGetMajelis()"
-                />
+                <b-form-select v-model="paging.cabang" :options="opt.cabang" @change="doGetMajelis()" />
               </b-input-group>
             </b-col>
             <b-col>
               <b-input-group prepend="Majelis">
-                <b-form-select
-                  v-model="paging.majelis"
-                  :options="opt.majelis"
-                  @change="doGetAnggota()"
-                />
+                <b-form-select v-model="paging.majelis" :options="opt.majelis" @change="doGetAnggota()" />
               </b-input-group>
             </b-col>
             <b-col>
               <b-input-group prepend="Anggota">
-                <b-form-select
-                  v-model="paging.anggota"
-                  :options="opt.anggota"
-                  @change="doGet()"
-                /> </b-input-group
-              ><br />
+                <b-form-select v-model="paging.anggota" :options="opt.anggota" @change="doGet()" /> </b-input-group><br />
             </b-col>
           </div>
           <div class="row">
@@ -54,121 +41,79 @@
                 <b-form-input v-model="profil.rembug" />
               </b-input-group>
             </b-col>
+            <b-col cols="12">
+              <b-input-group prepend="Simpanan Pokok" class="mb-3">
+                <b-form-input v-model="profil.simpok" readonly />
+              </b-input-group>
+            </b-col>
+            <b-col cols="12">
+              <b-input-group prepend="Simpanan Sukarela" class="mb-3">
+                <b-form-input v-model="profil.simsuk" readonly />
+              </b-input-group>
+            </b-col>
+            <b-col cols="12">
+              <b-input-group prepend="Simpanan Wajib" class="mb-3">
+                <b-form-input v-model="profil.simwa" readonly />
+              </b-input-group>
+            </b-col>
           </div>
         </b-col>
         <b-col cols="4" class="d-flex justify-content-end align-items-start">
           <b-button-group>
-            <b-button
-              text="Button"
-              variant="danger"
-              @click="
-                $bvModal.show('modal-pdf');
-                doGetReport();
-              "
-            >
+            <b-button text="Button" variant="danger" @click="
+              $bvModal.show('modal-pdf');
+            doGetReport();
+            ">
               PDF
             </b-button>
-            <export-excel
-              class="btn btn-success"
-              :data="report.items"
-              :fields="report.field_excel"
-              worksheet="Sheet 1"
-              name="Profil_Anggota.xls"
-            >
+            <export-excel class="btn btn-success" :data="report.items" :fields="report.field_excel" worksheet="Sheet 1"
+              name="Profil_Anggota.xls">
               XLS
             </export-excel>
-            <b-button
-              text="Button"
-              variant="warning"
-              @click="csvExport(report.items)"
-            >
+            <b-button text="Button" variant="warning" @click="csvExport(report.items)">
               CSV
             </b-button>
           </b-button-group>
         </b-col>
         <b-col cols="12">
           <h1 class="text-center">Tabungan Berencana</h1>
-          <b-table
-            responsive
-            bordered
-            outlined
-            small
-            striped
-            hover
-            :fields="table_1.fields"
-            :items="table_1.items"
-            show-empty
-            :emptyText="table_1.loading ? 'Memuat data...' : 'Tidak ada data'"
-          >
+          <b-table responsive bordered outlined small striped hover :fields="table_1.fields" :items="table_1.items"
+            show-empty :emptyText="table_1.loading ? 'Memuat data...' : 'Tidak ada data'">
             <template #cell(no)="item">
               {{ item.index + 1 }}
             </template>
             <template #cell(action)="item">
-              <b-button
-                variant="success"
-                size="xs"
-                class="mx-1"
-                @click="doUpdate(item, false)"
-              >
+              <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item, false)">
                 Lihat statement
               </b-button>
             </template>
           </b-table>
         </b-col>
         <b-col cols="12" class="justify-content-end d-flex">
-          <b-pagination
-            v-model="paging.page"
-            :total-rows="table_1.totalRows"
-            :per-page="paging.perPage"
-          >
+          <b-pagination v-model="paging.page" :total-rows="table_1.totalRows" :per-page="paging.perPage">
           </b-pagination>
         </b-col>
         <b-col cols="12">
           <h1 class="text-center">Pembiayaan</h1>
-          <b-table
-            responsive
-            bordered
-            outlined
-            small
-            striped
-            hover
-            :fields="table_2.fields"
-            :items="table_2.items"
-            show-empty
-            :emptyText="table_2.loading ? 'Memuat data...' : 'Tidak ada data'"
-          >
+          <b-table responsive bordered outlined small striped hover :fields="table_2.fields" :items="table_2.items"
+            show-empty :emptyText="table_2.loading ? 'Memuat data...' : 'Tidak ada data'">
             <template #cell(no)="item">
               {{ item.index + 1 }}
             </template>
             <template #cell(action)="item">
-              <b-button
-                variant="success"
-                size="xs"
-                class="mx-1"
-                @click="doUpdate(item, false)"
-              >
+              <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item, false)">
                 Lihat statement
               </b-button>
             </template>
           </b-table>
         </b-col>
         <b-col cols="12" class="justify-content-end d-flex">
-          <b-pagination
-            v-model="paging.page"
-            :total-rows="table_1.totalRows"
-            :per-page="paging.perPage"
-          >
+          <b-pagination v-model="paging.page" :total-rows="table_1.totalRows" :per-page="paging.perPage">
           </b-pagination>
         </b-col>
       </b-row>
     </b-card>
-    <b-modal
-      title="PREVIEW LAPORAN PROFIL ANGGOTA"
-      id="modal-pdf"
-      hide-footer
-      size="xl"
-      centered
-    >
+    <b-modal title="PREVIEW LAPORAN PROFIL ANGGOTA" id="modal-pdf" hide-footer size="xl" centered>
       <div id="table-print" class="p-5">
         <h5 class="text-center">
           KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
@@ -200,10 +145,7 @@
             </tr>
           </thead>
           <tbody v-if="report.items.length > 0">
-            <tr
-              v-for="(report, reportIndex) in report.items"
-              :key="`report-${reportIndex}`"
-            >
+            <tr v-for="(report, reportIndex) in report.items" :key="`report-${reportIndex}`">
               <td>{{ reportIndex + 1 }}</td>
               <td>{{ report.no_anggota }}</td>
               <td>{{ report.nama_anggota }}</td>
@@ -226,28 +168,13 @@
         </table>
       </div>
       <b-row>
-        <b-col
-          cols="12"
-          sm="12"
-          class="d-flex justify-content-end border-top pt-5"
-        >
-          <b-button variant="secondary" @click="$bvModal.hide('modal-pdf')"
-            >Cancel
+        <b-col cols="12" sm="12" class="d-flex justify-content-end border-top pt-5">
+          <b-button variant="secondary" @click="$bvModal.hide('modal-pdf')">Cancel
           </b-button>
-          <b-button
-            variant="danger"
-            type="button"
-            class="ml-3"
-            @click="doPrintPdf()"
-          >
+          <b-button variant="danger" type="button" class="ml-3" @click="doPrintPdf()">
             Cetak PDF
           </b-button>
-          <b-button
-            variant="warning"
-            type="button"
-            class="ml-3"
-            @click="doSavePdf()"
-          >
+          <b-button variant="warning" type="button" class="ml-3" @click="doSavePdf()">
             Simpan PDF
           </b-button>
         </b-col>
@@ -256,7 +183,7 @@
   </div>
 </template>
     
-  <script>
+<script>
 import helper from "@/core/helper";
 import html2pdf from "html2pdf.js";
 import { mapGetters } from "vuex";
@@ -531,6 +458,9 @@ export default {
         no_ktp: null,
         alamat: null,
         rembug: null,
+        simpok: null,
+        simsuk: null,
+        simwa: null,
       },
     };
   },
@@ -755,6 +685,9 @@ export default {
         no_ktp: profil.no_ktp,
         alamat: profil.alamat,
         rembug: profil.nama_rembug,
+        simpok: this.numberFormat(profil.simpok, 0),
+        simsuk: this.numberFormat(profil.simsuk, 0),
+        simwa: this.numberFormat(profil.simwa, 0),
       };
       console.log(profil);
     },

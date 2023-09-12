@@ -71,7 +71,7 @@ class AuthController extends Controller
                                 'kode_petugas' => $kode_petugas,
                                 'hari_transaksi' => (isset($get3->hari_transaksi) ? $get3->hari_transaksi : null),
                                 'kode_kas_petugas' => (isset($get2->kode_kas_petugas) ? $get2->kode_kas_petugas : null),
-                                'saldo_awal' => (isset($get2->saldo) ? $get2->saldo : 0),
+                                'saldo_awal' => (isset($get2->saldo) ? (int) $get2->saldo : 0),
                                 'nama_user' => $get->nama_user,
                                 'role_user' => $get->role_user,
                                 'akses_user' => $get->akses_user,

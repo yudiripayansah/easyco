@@ -146,6 +146,22 @@ class KopPembiayaan extends Model
         return $res;
     }
 
+    function get_saldo_outstanding($kode_cabang)
+    {
+        $show = KopPembiayaan::select(DB::raw('COALESCE(SUM(saldo_pokok),0) AS saldo_outstanding'))
+            ->join('kop_pengajuan AS kp', 'kp.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kp.no_anggota')
+            ->where('status_rekening', 1);
+
+        if ($kode_cabang <> '00000') {
+            $show = $show->where('ka.kode_cabang', $kode_cabang);
+        }
+
+        $show = $show->first();
+
+        return $show;
+    }
+
     function rembug($kode_cabang)
     {
         $show = KopRembug::where('kode_cabang', $kode_cabang)->orderBy('id', 'ASC')->get();
@@ -207,7 +223,7 @@ class KopPembiayaan extends Model
 
     function tpl_deposit($no_anggota)
     {
-        $show = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'kop_pembiayaan.angsuran_pokok', 'kop_pembiayaan.angsuran_margin', 'kop_pembiayaan.angsuran_catab', DB::raw('COALESCE((kop_pembiayaan.angsuran_pokok+kop_pembiayaan.angsuran_margin+kop_pembiayaan.angsuran_catab),0) AS angsuran'))
+        $show = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'kop_pembiayaan.angsuran_pokok', 'kop_pembiayaan.angsuran_margin', 'kop_pembiayaan.angsuran_catab', DB::raw('COALESCE((kop_pembiayaan.angsuran_pokok+kop_pembiayaan.angsuran_margin+kop_pembiayaan.angsuran_catab),0) AS angsuran'), 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.counter_angsuran')
             ->join('kop_pengajuan AS kpp', 'kpp.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')
             ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kpp.no_anggota')
             ->where('kop_pembiayaan.status_rekening', 1)

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\KopAnggota;
 use App\Models\KopAnggotaUk;
 use App\Models\KopLembaga;
+use App\Models\KopPembiayaan;
+use App\Models\KopTabungan;
 use App\Models\KopUser;
 use Exception;
 use Illuminate\Http\Request;
@@ -12,6 +14,34 @@ use Illuminate\Support\Facades\DB;
 
 class AnggotaController extends Controller
 {
+    function saldosaldo(Request $request)
+    {
+        $token = $request->header('token');
+        $param = array('token' => $token);
+        $get = KopUser::where($param)->first();
+        $cabang = $get->kode_cabang;
+
+        $anggota = KopAnggota::get_jumlah_anggota($cabang);
+        $outstanding = KopPembiayaan::get_saldo_outstanding($cabang);
+        $tabungan = KopTabungan::get_saldo_tabungan($cabang);
+
+        $data = array(
+            'jumlah_anggota' => $anggota->jumlah_anggota,
+            'saldo_outstanding' => (int) $outstanding->saldo_outstanding,
+            'saldo_tabungan' => (int) $tabungan->saldo_tabungan
+        );
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $data,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
     function rembug(Request $request)
     {
         $kode_cabang = $request->kode_cabang;
@@ -117,6 +147,7 @@ class AnggotaController extends Controller
         $data['kabupaten'] = strtoupper($request->kabupaten);
         $data['nama_pasangan'] = strtoupper($request->nama_pasangan);
         $data['ket_pekerjaan'] = strtoupper($request->ket_pekerjaan);
+        $data['simpok'] = 0;
         $data['tgl_gabung'] = date('Y-m-d');
 
         $validate = KopAnggota::validateAdd($data);
@@ -403,8 +434,6 @@ class AnggotaController extends Controller
         $get->ket_pekerjaan = $request->ket_pekerjaan;
         $get->pendapatan_perbulan = $request->pendapatan_perbulan;
         $get->tgl_gabung = $request->tgl_gabung;
-        $get->simpok = $request->simpok;
-        $get->simwa = $request->simwa;
         $get->status = $request->status;
 
         $param = array('no_anggota' => $get->no_anggota);

@@ -1,0 +1,5 @@
+# ignore file inside folder
+frontend/.env
+mobile/tpl/.env
+mobile/tpl/package-lock.json
+mobile/tpl/yarn.lock
