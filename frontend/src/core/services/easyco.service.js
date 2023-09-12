@@ -6,6 +6,15 @@ const easycoApi = {
     let url = "authenticate/login";
     return axios.post(url, payload);
   },
+  dashboard(token) {
+    let url = "dashboard/saldosaldo";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.get(url, config);
+  },
   anggotaCreate(payload, token) {
     let url = "anggota/create";
     let config = {
@@ -1375,7 +1384,6 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
-
   approvalAnggotaKeluar(payload, token) {
     let url = "anggotamutasi/read";
     let config = {
@@ -1385,7 +1393,15 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
-  
+  anggotaMutasiDetail(payload, token) {
+    let url = "anggotamutasi/detail?"+payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.get(url, config);
+  },
   kartuAngsuran(payload, token) {
     let url = "trx_member/kartu_angsuran";
     let config = {
@@ -1465,6 +1481,15 @@ const easycoApi = {
   },
   hitungKolek(payload, token) {
     let url = "registrasiakad/hitung_kolek";
+    let config = {
+      headers: {
+        token:token,
+      },
+    };
+    return axios.post(url,payload, config);
+  },
+  laporanKolek(payload, token) {
+    let url = "laporan/list/get_kolektibilitas";
     let config = {
       headers: {
         token:token,

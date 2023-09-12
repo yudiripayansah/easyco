@@ -22,11 +22,11 @@ const menu = [
         label: 'Registrasi Anggota Majelis',
         component: import('@/pages/Keanggotaan/RegistrasiAnggotaRembug.vue'),
       },
-      // {
-      //   target: 'approval-registrasi-keluar',
-      //   label: 'Approval Registrasi Anggota Keluar',
-      //   component: import('@/pages/Keanggotaan/ApprovalRegistrasiAnggotaKeluar.vue'),
-      // },
+      {
+        target: 'approval-registrasi-keluar',
+        label: 'Approval Registrasi Anggota Keluar',
+        component: import('@/pages/Keanggotaan/ApprovalRegistrasiAnggotaKeluar.vue'),
+      },
       {
         target: 'laporan',
         label: 'Laporan Keanggotaan',
@@ -149,6 +149,11 @@ const menu = [
         label: 'Cetak Akad',
         component: import('@/pages/Dummy.vue'),
       },
+      {
+        target: 'hitung-kolektibilitas',
+        label: 'Hitung Kolektibilitas',
+        component: import('@/pages/Pembiayaan/HitungKolektibilitas.vue'),
+      },
       /*
       {
         target: 'pencairan',
@@ -199,7 +204,7 @@ const menu = [
           {
             target: 'par-kolektibilitas',
             label: 'PAR/ Kolektibilitas',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Pembiayaan/Laporan/LaporanKolektibilitas.vue'),
           },
         ],
       },

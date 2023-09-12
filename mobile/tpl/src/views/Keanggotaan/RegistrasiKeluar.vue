@@ -79,6 +79,7 @@
                   <v-col>
                     <v-checkbox
                       v-model="form.data.flag_saldo_margin"
+                      label="Dibayar"
                       hide-details
                       flat
                       solo
@@ -87,7 +88,7 @@
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col cols="12">
+              <!-- <v-col cols="12">
                 <v-row>
                   <v-col cols="10">
                     <v-text-field 
@@ -103,6 +104,7 @@
                   <v-col>
                     <v-checkbox
                       v-model="form.data.flag_saldo_catab"
+                      label="Dibayar"
                       hide-details
                       flat
                       solo
@@ -110,7 +112,7 @@
                       @change="countHutang()"/>
                   </v-col>
                 </v-row>
-              </v-col>
+              </v-col> -->
               <v-col cols="12">
                 <v-text-field 
                   color="black"
@@ -199,8 +201,8 @@
                   autocomplete="off" 
                   hide-details
                   outlined
-                  :value="thousandMask(form.data.penarikan_sukarela)"
-                  label="Penarikan Sukarela"
+                  :value="thousandMask(form.data.total_simpanan)"
+                  label="Total Simpanan"
                   disabled
                 />
               </v-col>
@@ -210,9 +212,20 @@
                   autocomplete="off" 
                   hide-details
                   outlined
-                  v-model="form.data.setoran_tambahan"
+                  :value="thousandMask(form.data.setoran_tambahan)"
                   label="Setoran Tambahan"
-                  v-mask="thousandMask"
+                  disabled
+                />
+              </v-col>
+              <v-col cols="12">
+                <v-text-field 
+                  color="black"
+                  autocomplete="off" 
+                  hide-details
+                  outlined
+                  :value="thousandMask(form.data.penarikan_sukarela)"
+                  label="Penarikan Sukarela"
+                  disabled
                 />
               </v-col>
             </v-row>
@@ -284,6 +297,7 @@ export default {
           bonus_bagihasil: 0,
           setoran_tambahan: 0,
           penarikan_sukarela: 0,
+          total_simpanan: 0,
           flag_saldo_margin: 0,
           flag_saldo_catab: 0,
           status_mutasi: 0,
@@ -460,7 +474,7 @@ export default {
             let saldo = {...data}
             this.form.data.saldo_pokok = saldo.saldo_pokok
             this.form.data.saldo_margin = saldo.saldo_margin
-            this.form.data.saldo_catab = saldo.saldo_catab
+            this.form.data.saldo_catab = 0
             this.form.data.saldo_minggon = saldo.saldo_minggon
             this.form.data.saldo_deposito = saldo.saldo_deposito
             this.form.data.bonus_bagihasil = saldo.bonus_bagihasil
@@ -507,7 +521,13 @@ export default {
       let bonus_bagihasil = this.form.data.bonus_bagihasil
       let saldo_pokok = this.form.data.saldo_pokok
       let saldo_margin = (this.form.data.flag_saldo_margin) ? this.form.data.saldo_margin : 0
-      this.form.data.penarikan_sukarela = (saldo_catab+saldo_minggon+saldo_sukarela+saldo_tab_berencana+saldo_deposito+saldo_simpok+saldo_simwa+bonus_bagihasil) - (saldo_pokok+saldo_margin)
+      let total_simpanan = (saldo_catab+saldo_minggon+saldo_sukarela+saldo_tab_berencana+saldo_deposito+saldo_simpok+saldo_simwa+bonus_bagihasil)
+      let total_saldo = (saldo_pokok+saldo_margin)
+      this.form.data.total_simpanan = total_simpanan
+      let setoran_tambahan = total_saldo - total_simpanan
+      this.form.data.setoran_tambahan = (setoran_tambahan <= 0) ? 0 : setoran_tambahan
+      let penarikan_sukarela = total_simpanan - total_saldo
+      this.form.data.penarikan_sukarela = (penarikan_sukarela <= 0) ? 0 : penarikan_sukarela
     },
     async doSave() {
       let payload = new FormData();
@@ -536,29 +556,28 @@ export default {
             payload.append(key, payloadData[key]);
           }
           try {
-            console.log(payload)
-            // let req = await services.anggotaKeluar(payload, this.user.token);
-            // if (req.status === 200) {
-            //   if(req.data.status){
-            //     this.alert = {
-            //       show: true,
-            //       msg: "Registrasi Anggota Keluar Berhasil",
-            //     };
-            //     setTimeout(() => {
-            //       this.$router.push(`/keanggotaan`);
-            //     }, 2000);
-            //   } else {
-            //     this.alert = {
-            //       show: true,
-            //       msg: req.data.msg,
-            //     };
-            //   }
-            // } else {
-            //   this.alert = {
-            //     show: true,
-            //     msg: "Registrasi Anggota Keluar Gagal",
-            //   };
-            // }
+            let req = await services.anggotaKeluar(payload, this.user.token);
+            if (req.status === 200) {
+              if(req.data.status){
+                this.alert = {
+                  show: true,
+                  msg: "Registrasi Anggota Keluar Berhasil",
+                };
+                setTimeout(() => {
+                  this.$router.push(`/keanggotaan`);
+                }, 2000);
+              } else {
+                this.alert = {
+                  show: true,
+                  msg: req.data.msg,
+                };
+              }
+            } else {
+              this.alert = {
+                show: true,
+                msg: "Registrasi Anggota Keluar Gagal",
+              };
+            }
           } catch (error) {
             this.alert = {
               show: true,
