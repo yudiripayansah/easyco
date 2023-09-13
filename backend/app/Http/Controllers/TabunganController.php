@@ -276,4 +276,38 @@ class TabunganController extends Controller
 
         return $response;
     }
+
+    function get_rekening(Request $request)
+    {
+        $no_anggota = $request->no_anggota;
+
+        $get = KopTabungan::get_all_rekening($no_anggota);
+
+        $data = array();
+
+        foreach ($get as $gt) {
+            $data[] = array(
+                'nama_produk' => $gt['nama_produk'],
+                'kode_produk' => $gt['kode_produk'],
+                'no_anggota' => $gt['no_anggota'],
+                'no_rekening' => $gt['no_rekening']
+            );
+        }
+
+        if ($get->count() > 0) {
+            $res = array(
+                'data' => $data,
+                'msg' => 'Berhasil!'
+            );
+        } else {
+            $res = array(
+                'data' => null,
+                'msg' => 'Rekening tidak ditemukan'
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
 }

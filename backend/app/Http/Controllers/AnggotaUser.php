@@ -272,7 +272,7 @@ class AnggotaUser extends Controller
             $saldo_akhir = $saldo_awal;
 
             $get_history = KopTrxAnggota::get_history_member($no_anggota, [12, 12], $from_date, $thru_date);
-        } else if ($jenis_trx == 3) { // SIMPANAN WAJIB
+        } else if ($jenis_trx == 3) { // SIMPANAN SUKARELA
             $get_credit = KopTrxAnggota::get_credit_member($no_anggota, 13, $from_date);
             $get_debet = KopTrxAnggota::get_debet_member($no_anggota, 22, $from_date);
 

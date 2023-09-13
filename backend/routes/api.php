@@ -214,6 +214,7 @@ Route::prefix('tabungan')->middleware('checkToken')->group(function () {
   Route::post('/tutup', [TabunganController::class, 'tutup']);
   Route::post('/verifikasi_tutup', [TabunganController::class, 'approve_tutup']);
   Route::post('/reject_tutup', [TabunganController::class, 'reject_tutup']);
+  Route::post('/get_rekening', [TabunganController::class, 'get_rekening']);
 });
 
 Route::prefix('pengajuan')->middleware('checkToken')->group(function () {
@@ -270,7 +271,9 @@ Route::prefix('laporan')->group(function () {
     Route::get('/get_closing_date', [ClosingGlController::class, 'get_closing_date']);
     Route::post('/get_par_date', [ParController::class, 'get_par_date']);
     Route::post('/get_kolektibilitas', [ParController::class, 'get_kolektibilitas']);
-    Route::post('/list_pdf_anggota_keluar', [LaporanController::class, 'list_pdf_anggota_keluar']);
+    Route::post('/anggota_keluar', [LaporanController::class, 'anggota_keluar']);
+    Route::post('/statement_tabungan', [LaporanController::class, 'statement_tabungan']);
+    Route::post('/pelunasan', [LaporanController::class, 'list_pdf_pelunasan']);
 
     Route::prefix('excel')->group(function () {
       Route::get('/anggota_masuk', [LaporanController::class, 'list_excel_anggota_masuk']);
@@ -285,6 +288,7 @@ Route::prefix('laporan')->group(function () {
       Route::get('/jurnal_transaksi', [LaporanController::class, 'list_excel_jurnal_transaksi']);
       Route::get('/gl_inquiry', [LaporanController::class, 'list_excel_gl_inquiry']);
       Route::get('/anggota_keluar', [LaporanController::class, 'list_excel_anggota_keluar']);
+      Route::get('/statement_tabungan', [LaporanController::class, 'list_excel_statement_tabungan']);
     });
 
     Route::prefix('csv')->group(function () {
@@ -298,6 +302,7 @@ Route::prefix('laporan')->group(function () {
       Route::get('/kas_petugas', [LaporanController::class, 'list_csv_kas_petugas']);
       Route::get('/gl_inquiry', [LaporanController::class, 'list_csv_gl_inquiry']);
       Route::get('/anggota_keluar', [LaporanController::class, 'list_csv_anggota_keluar']);
+      Route::get('/statement_tabungan', [LaporanController::class, 'list_csv_statement_tabungan']);
     });
 
     Route::prefix('pdf')->group(function () {
