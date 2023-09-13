@@ -539,7 +539,7 @@ class TplController extends Controller
                 'amount' => $penarikan_sukarela,
                 'flag_debet_credit' => 'D',
                 'trx_type' => '22',
-                'description' => 'Penarikan Tabungan',
+                'description' => 'Penarikan Sukarela',
                 'created_by' => $kode_petugas
             );
         }
