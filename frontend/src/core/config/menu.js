@@ -96,7 +96,7 @@ const menu = [
           {
             target: 'statement-tabungan',
             label: 'Statement Tabungan',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Tabungan/StatementTabungan.vue'),
           },
           {
             target: 'penutupan-rekening-tabungan',
@@ -245,7 +245,7 @@ const menu = [
       {
         target: 'verifikasi-transaksi-jurnal',
         label: 'Verifikasi Transaksi Jurnal',
-        component: import('@/pages/Dummy.vue')  ,
+        component: import('@/pages/Dummy.vue'),
       },
       {
         target: 'posting-jurnal',
