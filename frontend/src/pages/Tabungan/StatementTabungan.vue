@@ -121,7 +121,7 @@
                         </tbody>
                         <tbody v-else>
                             <tr class="text-center">
-                                <td colspan="5">There's no data to display...</td>
+                                <td colspan="6">There's no data to display...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -373,7 +373,7 @@ export default {
             const req = await easycoApi.listStatementTabunganExportToXLSX(payload);
             const url = window.URL.createObjectURL(new Blob([req.data]));
             const link = document.createElement("a");
-            const fileName = this.getFileName();
+            const fileName = `${this.getFileName()}.xlsx`;
             link.href = url;
             link.setAttribute("download", fileName);
             document.body.appendChild(link);
@@ -385,7 +385,7 @@ export default {
             let req = await easycoApi.listStatementTabunganExportToCSV(payload);
             const url = window.URL.createObjectURL(new Blob([req.data]));
             const link = document.createElement("a");
-            const fileName = this.getFileName();
+            const fileName = `${this.getFileName()}.csv`;
             link.href = url;
             link.setAttribute("download", fileName);
             document.body.appendChild(link);

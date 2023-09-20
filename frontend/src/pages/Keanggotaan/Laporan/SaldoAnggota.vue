@@ -454,10 +454,8 @@ export default {
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
       }
-      if (this.report.from && this.report.to) {
-        filename += ` - Dari ${this.dateFormatId(
-          this.report.from
-        )} Sampai ${this.dateFormatId(this.report.to)}`;
+      if (this.report.rembug) {
+        filename += ` - Majelis ${this.report.rembug}`;
       }
       let element = document.getElementById("table-print");
       let options = {
@@ -484,10 +482,8 @@ export default {
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
       }
-      if (this.report.from && this.report.to) {
-        filename += ` - Dari ${this.dateFormatId(
-          this.report.from
-        )} Sampai ${this.dateFormatId(this.report.to)}`;
+      if (this.report.rembug) {
+        filename += ` - Majelis ${this.report.rembug}`;
       }
 
       html2pdf(document.getElementById("table-print"), {
@@ -501,7 +497,10 @@ export default {
       });
     },
     async exportXls() {
-      let payload = `kode_cabang=${this.paging.cabang}&kode_rembug=~&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let pCabang = (this.paging.cabang) ? this.paging.cabang : '~'
+      let pRembug = (this.paging.rembug) ? this.paging.rembug : '~'
+      let pPetugas = (this.paging.petugas) ? this.paging.petugas : '~'
+      let payload = `kode_cabang=${pCabang}&kode_rembug=${pRembug}&kode_petugas=${pPetugas}&from_date=~&thru_date=~`;
       let req = await easycoApi.saldoAnggotaExcel(payload);
       console.log(req.data);
       const url = window.URL.createObjectURL(new Blob([req.data]));
@@ -513,7 +512,10 @@ export default {
       link.click();
     },
     async exportCsv() {
-      let payload = `kode_cabang=${this.paging.cabang}&kode_rembug=~&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let pCabang = (this.paging.cabang) ? this.paging.cabang : '~'
+      let pRembug = (this.paging.rembug) ? this.paging.rembug : '~'
+      let pPetugas = (this.paging.petugas) ? this.paging.petugas : '~'
+      let payload = `kode_cabang=${pCabang}&kode_rembug=${pRembug}&kode_petugas=${pPetugas}&from_date=~&thru_date=~`;
       let req = await easycoApi.saldoAnggotaCsv(payload);
       console.log(req.data);
       const url = window.URL.createObjectURL(new Blob([req.data]));
