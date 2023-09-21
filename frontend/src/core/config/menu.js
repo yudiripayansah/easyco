@@ -323,6 +323,11 @@ const menu = [
         label: 'Laporan Laba Rugi',
         component: import('@/pages/Keuangan/LaporanLabaRugi.vue'),
       },
+      {
+        target: 'laporan-keuangan-bulan-lalu',
+        label: 'Laporan Keuangan Bulan Lalu',
+        component: import('@/pages/Keuangan/LaporanKeuangnBulanLalu.vue'),
+      },
     ]
   },
   // Proses Akhir Bulan

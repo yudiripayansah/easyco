@@ -2,6 +2,7 @@ import axios from "axios";
 axios.defaults.baseURL = "https://easyco.kopikoding.com/api/api/";
 import anggotaKeluarService from "./anggotaKeluar.service";
 import laporanStatementTabungan from "./laporanStatementTabungan.service";
+import laporanKeuanganBulanLalu from "./laporanKeuanganBulanLalu.service";
 
 const easycoApi = {
   login(payload) {
@@ -1509,5 +1510,6 @@ const easycoApi = {
   },
   ...anggotaKeluarService,
   ...laporanStatementTabungan,
+  ...laporanKeuanganBulanLalu,
 };
 export default easycoApi;
