@@ -6,18 +6,22 @@ use App\Exports\BukuBesarExport;
 use App\Exports\JurnalTransaksiExport;
 use App\Exports\KartuAngsuranExport;
 use App\Exports\KasPetugasExport;
+use App\Exports\ListAnggotaKeluarExport;
 use App\Exports\ListAnggotaMasukExport;
 use App\Exports\ListPengajuanExport;
 use App\Exports\ListRegisAkadExport;
 use App\Exports\ListPencairanExport;
 use App\Exports\ListSaldoAnggotaExport;
 use App\Exports\ListSaldoOutstandingExport;
+use App\Exports\StatementTabunganExport;
 use App\Exports\TransaksiMajelisExport;
 use App\Models\KopAnggota;
+use App\Models\KopAnggotaMutasi;
 use App\Models\KopCabang;
 use App\Models\KopPembiayaan;
 use App\Models\KopRembug;
 use App\Models\KopTabungan;
+use App\Models\KopTrxAnggota;
 use App\Models\KopTrxGl;
 use App\Models\KopTrxGlDetail;
 use App\Models\KopTrxRembug;
@@ -365,7 +369,11 @@ class LaporanController extends Controller
     {
         $getAnggota = KopAnggota::get_profile($request->no_anggota);
         $data = array(
+            'no_anggota' => $getAnggota['no_anggota'],
             'nama_anggota' => $getAnggota['nama_anggota'],
+            'simpok' => (int) $getAnggota['simpok'],
+            'simwa' => (int) $getAnggota['simwa'],
+            'simsuk' => (int) $getAnggota['simsuk'],
             'no_ktp' => $getAnggota['no_ktp'],
             'alamat' => $getAnggota['alamat'],
             'nama_rembug' => $getAnggota['nama_rembug']
@@ -914,5 +922,367 @@ class LaporanController extends Controller
         $list = new BukuBesarExport($request->kode_cabang, $request->kode_gl, $request->from_date, $request->thru_date, 'csv');
 
         return $list->download('LAPORAN_BUKU_BESAR_' . $request->kode_cabang . '_' . $request->kode_gl . '_' . $request->from_date . '_' . $request->thru_date . '.csv');
+    }
+
+    function anggota_keluar(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $kode_rembug = $request->kode_rembug;
+
+        if ($request->from_date) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
+
+        if ($request->thru_date) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
+
+        if ($kode_cabang <> '~') {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+
+            if ($branch <> '00000') {
+                $cabang = $branch->nama_cabang;
+            } else {
+                $cabang = 'SEMUA CABANG';
+            }
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        $show = KopAnggotaMutasi::get_anggota_keluar($kode_cabang, $kode_rembug, $from_date, $thru_date);
+
+        $data = array();
+
+        foreach ($show as $sh) {
+            if ($sh['alasan_mutasi'] == 1) {
+                $alasan = 'Meninggal';
+            } else if ($sh['alasan_mutasi'] == 2) {
+                $alasan = 'Karakter';
+            } else if ($sh['alasan_mutasi'] == 3) {
+                $alasan = 'Pindah Lembaga Lain';
+            } else if ($sh['alasan_mutasi'] == 4) {
+                $alasan = 'Tidak diijinkan Pasangan';
+            } else if ($sh['alasan_mutasi'] == 5) {
+                $alasan = 'Simpanan Kurang';
+            } else if ($sh['alasan_mutasi'] == 6) {
+                $alasan = 'Kondisi Keluarga';
+            } else if ($sh['alasan_mutasi'] == 7) {
+                $alasan = 'Pindah Alamat';
+            } else if ($sh['alasan_mutasi'] == 8) {
+                $alasan = 'Tidak Setuju Keputusan Lembaga';
+            } else if ($sh['alasan_mutasi'] == 9) {
+                $alasan = 'Usia / Jompo';
+            } else if ($sh['alasan_mutasi'] == 10) {
+                $alasan = 'Sakit';
+            } else if ($sh['alasan_mutasi'] == 11) {
+                $alasan = 'Kumpulan Bubar';
+            } else if ($sh['alasan_mutasi'] == 12) {
+                $alasan = 'Tidak Punya Waktu';
+            } else if ($sh['alasan_mutasi'] == 13) {
+                $alasan = 'Kerja';
+            } else if ($sh['alasan_mutasi'] == 14) {
+                $alasan = 'Cerai';
+            } else if ($sh['alasan_mutasi'] == 15) {
+                $alasan = 'Pembiayaan Bermasalah';
+            } else if ($sh['alasan_mutasi'] == 16) {
+                $alasan = 'Usaha Sudah Berkembang';
+            } else if ($sh['alasan_mutasi'] == 17) {
+                $alasan = 'Tidak Mau Kumpulan';
+            } else if ($sh['alasan_mutasi'] == 18) {
+                $alasan = 'Batal Pembiayaan (Anggota baru)';
+            } else {
+                $alasan = 'Migrasi Anggota Individu';
+            }
+
+            $data[] = array(
+                'nama_cabang' => $sh['nama_cabang'],
+                'nama_rembug' => $sh['nama_rembug'],
+                'no_anggota' => $sh['no_anggota'],
+                'nama_anggota' => $sh['nama_anggota'],
+                'alasan_mutasi' => $alasan,
+                'keterangan_mutasi' => $sh['keterangan_mutasi'],
+                'tanggal_mutasi' => date('d/m/Y', strtotime(str_replace('-', '/', $sh['tanggal_mutasi']))),
+                'saldo_pokok' => (int) $sh['saldo_pokok'],
+                'saldo_margin' => (int) $sh['saldo_margin'],
+                'saldo_catab' => (int) $sh['saldo_catab'],
+                'saldo_minggon' => (int) $sh['saldo_minggon'],
+                'saldo_sukarela' => (int) $sh['saldo_sukarela'],
+                'saldo_tab_berencana' => (int) $sh['saldo_tab_berencana'],
+                'saldo_deposito' => (int) $sh['saldo_deposito'],
+                'saldo_simpok' => (int) $sh['saldo_simpok'],
+                'saldo_simwa' => (int) $sh['saldo_simwa'],
+                'bonus_bagihasil' => (int) $sh['bonus_bagihasil'],
+                'penarikan_sukarela' => (int) ($sh['setoran_tambahan'] + $sh['penarikan_sukarela']),
+                'nama_petugas' => $sh['nama_pgw']
+            );
+        }
+
+        $res = array(
+            'status' => true,
+            'nama_cabang' => $cabang,
+            'from_date' => $from_date,
+            'thru_date' => $thru_date,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function list_excel_anggota_keluar(Request $request)
+    {
+        $list = new ListAnggotaKeluarExport($request->kode_cabang, $request->kode_rembug, $request->from_date, $request->thru_date, 'excel');
+
+        if ($request->kode_cabang <> '00000') {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = str_replace(' ', '_', $branch->nama_cabang);
+        } else {
+            $cabang = 'SEMUA_CABANG';
+        }
+
+        return $list->download('LAPORAN_ANGGOTA_KELUAR_' . $cabang . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
+    }
+
+    function list_csv_anggota_keluar(Request $request)
+    {
+        $list = new ListAnggotaKeluarExport($request->kode_cabang, $request->kode_rembug, $request->from_date, $request->thru_date, 'csv');
+
+        if ($request->kode_cabang <> '00000') {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = str_replace(' ', '_', $branch->nama_cabang);
+        } else {
+            $cabang = 'SEMUA_CABANG';
+        }
+
+        return $list->download('LAPORAN_ANGGOTA_KELUAR_' . $cabang . '_' . $request->from_date . '_' . $request->thru_date . '.csv');
+    }
+
+    function list_pdf_pelunasan(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $kode_rembug = $request->kode_rembug;
+
+        if ($request->from_date) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
+
+        if ($request->thru_date) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
+
+        if ($kode_cabang <> '~') {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+
+            if ($branch <> '00000') {
+                $cabang = $branch->nama_cabang;
+            } else {
+                $cabang = 'SEMUA CABANG';
+            }
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        $show = KopAnggotaMutasi::get_pelunasan($kode_cabang, $kode_rembug, $from_date, $thru_date);
+
+        $data = array();
+
+        foreach ($show as $sh) {
+            if ($sh['alasan_mutasi'] == 1) {
+                $alasan = 'Meninggal';
+            } else if ($sh['alasan_mutasi'] == 2) {
+                $alasan = 'Karakter';
+            } else if ($sh['alasan_mutasi'] == 3) {
+                $alasan = 'Pindah Lembaga Lain';
+            } else if ($sh['alasan_mutasi'] == 4) {
+                $alasan = 'Tidak diijinkan Pasangan';
+            } else if ($sh['alasan_mutasi'] == 5) {
+                $alasan = 'Simpanan Kurang';
+            } else if ($sh['alasan_mutasi'] == 6) {
+                $alasan = 'Kondisi Keluarga';
+            } else if ($sh['alasan_mutasi'] == 7) {
+                $alasan = 'Pindah Alamat';
+            } else if ($sh['alasan_mutasi'] == 8) {
+                $alasan = 'Tidak Setuju Keputusan Lembaga';
+            } else if ($sh['alasan_mutasi'] == 9) {
+                $alasan = 'Usia / Jompo';
+            } else if ($sh['alasan_mutasi'] == 10) {
+                $alasan = 'Sakit';
+            } else if ($sh['alasan_mutasi'] == 11) {
+                $alasan = 'Kumpulan Bubar';
+            } else if ($sh['alasan_mutasi'] == 12) {
+                $alasan = 'Tidak Punya Waktu';
+            } else if ($sh['alasan_mutasi'] == 13) {
+                $alasan = 'Kerja';
+            } else if ($sh['alasan_mutasi'] == 14) {
+                $alasan = 'Cerai';
+            } else if ($sh['alasan_mutasi'] == 15) {
+                $alasan = 'Pembiayaan Bermasalah';
+            } else if ($sh['alasan_mutasi'] == 16) {
+                $alasan = 'Usaha Sudah Berkembang';
+            } else if ($sh['alasan_mutasi'] == 17) {
+                $alasan = 'Tidak Mau Kumpulan';
+            } else if ($sh['alasan_mutasi'] == 18) {
+                $alasan = 'Batal Pembiayaan (Anggota baru)';
+            } else {
+                $alasan = 'Migrasi Anggota Individu';
+            }
+
+            $data[] = array(
+                'nama_cabang' => $sh['nama_cabang'],
+                'nama_rembug' => $sh['nama_rembug'],
+                'no_anggota' => $sh['no_anggota'],
+                'nama_anggota' => $sh['nama_anggota'],
+                'alasan_mutasi' => $alasan,
+                'keterangan_mutasi' => $sh['keterangan_mutasi'],
+                'tanggal_mutasi' => date('d/m/Y', strtotime(str_replace('-', '/', $sh['tanggal_mutasi']))),
+                'saldo_pokok' => (int) $sh['saldo_pokok'],
+                'saldo_margin' => (int) $sh['saldo_margin'],
+                'saldo_catab' => (int) $sh['saldo_catab'],
+                'saldo_minggon' => (int) $sh['saldo_minggon'],
+                'saldo_sukarela' => (int) $sh['saldo_sukarela'],
+                'saldo_tab_berencana' => (int) $sh['saldo_tab_berencana'],
+                'saldo_deposito' => (int) $sh['saldo_deposito'],
+                'saldo_simpok' => (int) $sh['saldo_simpok'],
+                'saldo_simwa' => (int) $sh['saldo_simwa'],
+                'bonus_bagihasil' => (int) $sh['bonus_bagihasil'],
+                'penarikan_sukarela' => (int) ($sh['setoran_tambahan'] + $sh['penarikan_sukarela']),
+                'nama_petugas' => $sh['nama_pgw']
+            );
+        }
+
+        $res = array(
+            'status' => true,
+            'nama_cabang' => $cabang,
+            'from_date' => $from_date,
+            'thru_date' => $thru_date,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function statement_tabungan(Request $request)
+    {
+        $no_anggota = $request->no_anggota;
+        $jenis_tabungan = $request->jenis_tabungan;
+        $no_rekening = $request->no_rekening;
+        $from_date = $request->from_date;
+        $thru_date = $request->thru_date;
+
+        $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $from_date)));
+        $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $thru_date)));
+
+        $nama = KopAnggota::get_profile($no_anggota);
+
+        if ($jenis_tabungan == 1) {
+            // Tabungan Sukarela
+            $get_credit = KopTrxAnggota::get_credit_member($no_anggota, 13, $from_date);
+            $get_debet = KopTrxAnggota::get_debet_member($no_anggota, 22, $from_date);
+
+            $credit = (isset($get_credit->amount) ? $get_credit->amount : 0);
+            $debet = (isset($get_debet->amount) ? $get_debet->amount : 0);
+
+            $saldo_awal = $credit - $debet;
+            $saldo_akhir = $saldo_awal;
+
+            $get_history = KopTrxAnggota::get_history_member($no_anggota, [13, 22], $from_date, $thru_date);
+        } elseif ($jenis_tabungan == 2) {
+            // Tabungan Berencana
+            $get_credit = KopTrxAnggota::get_history_dc_member($no_rekening, 'C', $from_date);
+            $get_debet = KopTrxAnggota::get_history_dc_member($no_rekening, 'D', $from_date);
+
+            $credit = (isset($get_credit->amount) ? $get_credit->amount : 0);
+            $debet = (isset($get_debet->amount) ? $get_debet->amount : 0);
+
+            $saldo_awal = $credit - $debet;
+            $saldo_akhir = $saldo_awal;
+
+            $get_history = KopTrxAnggota::get_history_savingplan($no_rekening, $from_date, $thru_date);
+        } else {
+            // Simpanan Wajib / Minggon
+            $get_credit = KopTrxAnggota::get_credit_member($no_anggota, 12, $from_date);
+            $get_debet = 0;
+
+            $credit = (isset($get_credit->amount) ? $get_credit->amount : 0);
+            $debet = 0;
+
+            $saldo_awal = $credit - $debet;
+            $saldo_akhir = $saldo_awal;
+
+            $get_history = KopTrxAnggota::get_history_member($no_anggota, [12], $from_date, $thru_date);
+        }
+
+        $data = array();
+
+        for ($i = 0; $i < count($get_history); $i++) {
+            $trx_date = $get_history[$i]->trx_date;
+            $amount = $get_history[$i]->amount;
+            $flag_debet_credit = $get_history[$i]->flag_debet_credit;
+            $description = $get_history[$i]->description;
+
+            if ($flag_debet_credit == 'C') {
+                $history_credit = $amount;
+                $setor = $history_credit;
+                $tarik = 0;
+            } else {
+                $history_debet = $amount;
+                $setor = 0;
+                $tarik = $history_debet;
+            }
+
+            $saldo_akhir += $setor - $tarik;
+
+            $data[] = array(
+                'trx_date' => $trx_date,
+                'setor' => (int) $setor,
+                'tarik' => (int) $tarik,
+                'saldo_akhir' => (int) $saldo_akhir,
+                'keterangan' => $description
+            );
+        }
+
+        $res = array(
+            'status' => true,
+            'nama' => $nama->nama_anggota,
+            'from_date' => $from_date,
+            'thru_date' => $thru_date,
+            'saldo_awal' => (int) $saldo_awal,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function list_excel_statement_tabungan(Request $request)
+    {
+        $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
+        $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
+
+        $list = new StatementTabunganExport($request->no_anggota, $request->jenis_tabungan, $request->no_rekening, $request->from_date, $request->thru_date, 'excel');
+
+        return $list->download('LAPORAN_STATEMENT_TABUNGAN_' . $request->no_anggota . '_' . $from_date . '_' . $thru_date . '.xlsx');
+    }
+
+    function list_csv_statement_tabungan(Request $request)
+    {
+        $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
+        $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
+
+        $list = new StatementTabunganExport($request->no_anggota, $request->jenis_tabungan, $request->no_rekening, $request->from_date, $request->thru_date, 'csv');
+
+        return $list->download('LAPORAN_STATEMENT_TABUNGAN_' . $request->no_anggota . '_' . $from_date . '_' . $thru_date . '.csv');
     }
 }

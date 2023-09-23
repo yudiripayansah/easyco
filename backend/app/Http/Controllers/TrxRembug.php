@@ -237,6 +237,11 @@ class TrxRembug extends Controller
                     $get = KopPembiayaan::find($pembiayaan['id']);
                     $get->saldo_catab = $pembiayaan['angsuran_catab'] + $amount;
                     $get->save();
+
+                    $get = KopAnggota::find($anggota['id']);
+                    $simwa = $pembiayaan['angsuran_catab'] + $amount;
+                    $get->simwa = $simwa;
+                    $get->save();
                 }
             }
 

@@ -15,7 +15,6 @@
             <b-form-select
               v-model="paging.rembug"
               :options="opt.majelis"
-              @change="doGet()"
             />
           </b-form-group>
         </b-col>
@@ -55,8 +54,8 @@
     >
       <b-form>
         <b-row>
-          <b-col cols="3">
-            <b-form-group label="Cabang" label-for="cabang">
+          <b-col cols="6">
+            <b-form-group label="Majlis" label-for="cabang">
               <b-form-input
                 id="cabang"
                 disabled
@@ -64,156 +63,173 @@
               />
             </b-form-group>
           </b-col>
-          <b-col cols="3">
+          <b-col cols="6">
+            <b-form-group label="No Anggota" label-for="no_anggota">
+              <b-form-input
+                id="no_anggota"
+                disabled
+                :value="form.data.no_anggota"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="6">
             <b-form-group label="Nama Anggota" label-for="nama_anggota">
               <b-form-input
-                id="anggota"
+                id="nama_anggota"
                 disabled
                 :value="form.data.nama_anggota"
               />
             </b-form-group>
           </b-col>
-          <b-col cols="3">
-            <b-form-group label="Alasan" label-for="alasan">
-              <b-form-input
-                id="alasan"
-                disabled
-                :value="form.data.alasan_mutasi_text"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="3">
-            <b-form-group label="Keterangan" label-for="keterangan_mutasi">
-              <b-form-textarea
-                id="keterangan_mutasi"
-                size="m"
-                :value="form.data.keterangan_mutasi"
-                rows="2"
-                disabled
-              ></b-form-textarea>
-            </b-form-group>
-          </b-col>
-          <b-col cols="3">
+          <b-col cols="6">
             <b-form-group label="Tgl Mutasi" label-for="tgl_mutasi">
               <b-form-input
                 id="tgl_mutasi"
                 disabled
-                :value="form.data.tanggal_mutasi"
+                :value="dateFormatId(form.data.tanggal_mutasi)"
               />
             </b-form-group>
           </b-col>
-          <b-col cols="3">
+          <b-col cols="12">
+            <b-form-group label="Keterangan" label-for="keterangan">
+              <b-form-textarea
+                id="keterangan"
+                row="5"
+                :value="form.data.keterangan_mutasi"
+                disabled
+              />
+            </b-form-group>
+          </b-col>
+          <b-col cols="6">
             <b-form-group label="Saldo Pokok" label-for="saldo_pokok">
-              <b-form-input
-                id="saldo_pokok"
-                disabled
-                :value="form.data.saldo_pokok"
-              />
+              <b-input-group prepend="Rp">
+                <b-form-input
+                  id="saldo_pokok"
+                  disabled
+                  :value="thousand(form.data.saldo_pokok)"
+                />
+              </b-input-group>
             </b-form-group>
           </b-col>
-          <b-col cols="3">
+          <b-col cols="6">
             <b-form-group label="Saldo Margin" label-for="saldo_margin">
-              <b-form-input
-                id="saldo_margin"
-                disabled
-                :value="form.data.saldo_margin"
-              />
+              <b-input-group prepend="Rp">
+                <b-form-input
+                  id="saldo_margin"
+                  disabled
+                  :value="thousand(form.data.saldo_margin)"
+                />
+              </b-input-group>
             </b-form-group>
           </b-col>
-          <b-col cols="3">
+          <b-col cols="6">
             <b-form-group label="Saldo Catab" label-for="saldo_catab">
-              <b-form-input
-                id="saldo_catab"
-                disabled
-                :value="form.data.saldo_catab"
-              />
+              <b-input-group prepend="Rp">
+                <b-form-input
+                  id="saldo_catab"
+                  disabled
+                  :value="thousand(form.data.saldo_catab)"
+                />
+              </b-input-group>
             </b-form-group>
           </b-col>
-          <b-col cols="3">
+          <b-col cols="6">
             <b-form-group label="Saldo Minggon" label-for="saldo_minggon">
-              <b-form-input
-                id="saldo_minggon"
-                disabled
-                :value="form.data.saldo_minggon"
-              />
+              <b-input-group prepend="Rp">
+                <b-form-input
+                  id="saldo_minggon"
+                  disabled
+                  :value="thousand(form.data.saldo_minggon)"
+                />
+              </b-input-group>
             </b-form-group>
           </b-col>
-          <b-col cols="3">
+          <b-col cols="6">
             <b-form-group label="Saldo Sukarela" label-for="saldo_sukarela">
-              <b-form-input
-                id="saldo_sukarela"
-                disabled
-                :value="form.data.saldo_sukarela"
-              />
+              <b-input-group prepend="Rp">
+                <b-form-input
+                  id="saldo_sukarela"
+                  disabled
+                  :value="thousand(form.data.saldo_sukarela)"
+                />
+              </b-input-group>
             </b-form-group>
           </b-col>
-          <b-col cols="3">
-            <b-form-group
-              label="Saldo Tab Berencana"
-              label-for="saldo_tab_berencana"
-            >
-              <b-form-input
-                id="saldo_tab_berencana"
-                disabled
-                :value="form.data.saldo_tab_berencana"
-              />
+          <b-col cols="6">
+            <b-form-group label="Saldo Tab Berencana" label-for="saldo_tab_berencana">
+              <b-input-group prepend="Rp">
+                <b-form-input
+                  id="saldo_tab_berencana"
+                  disabled
+                  :value="thousand(form.data.saldo_tab_berencana)"
+                />
+              </b-input-group>
             </b-form-group>
           </b-col>
-          <b-col cols="3">
-            <b-form-group label="Saldo Deposito" label-for="saldo_depostio">
-              <b-form-input
-                id="saldo_depostio"
-                disabled
-                :value="form.data.saldo_deposito"
-              />
+          <b-col cols="6">
+            <b-form-group label="Saldo Deposito" label-for="saldo_deposito">
+              <b-input-group prepend="Rp">
+                <b-form-input
+                  id="saldo_deposito"
+                  disabled
+                  :value="thousand(form.data.saldo_deposito)"
+                />
+              </b-input-group>
             </b-form-group>
           </b-col>
-          <b-col cols="3">
+          <b-col cols="6">
             <b-form-group label="Saldo Simpok" label-for="salso_simpok">
-              <b-form-input
-                id="saldo_simpok"
-                disabled
-                :value="form.data.saldo_simpok"
-              />
+              <b-input-group prepend="Rp">
+                <b-form-input
+                  id="saldo_simpok"
+                  disabled
+                  :value="thousand(form.data.saldo_simpok)"
+                />
+              </b-input-group>
             </b-form-group>
           </b-col>
-          <b-col cols="3">
+          <b-col cols="6">
             <b-form-group label="Saldo Simwa" label-for="saldo_simwa">
-              <b-form-input
-                id="saldo_simwa"
-                disabled
-                :value="form.data.saldo_simwa"
-              />
+              <b-input-group prepend="Rp">
+                <b-form-input
+                  id="saldo_simwa"
+                  disabled
+                  :value="thousand(form.data.saldo_simwa)"
+                />
+              </b-input-group>
             </b-form-group>
           </b-col>
-          <b-col cols="3">
+          <b-col cols="6">
             <b-form-group label="Bonus Bagi Hasil" label-for="bonus_bagihasil">
-              <b-form-input
-                id="bonus_bagihasil"
-                disabled
-                :value="form.data.bonus_bagihasil"
-              />
+              <b-input-group prepend="Rp">
+                <b-form-input
+                  id="bonus_bagihasil"
+                  disabled
+                  :value="thousand(form.data.bonus_bagihasil)"
+                />
+              </b-input-group>
             </b-form-group>
           </b-col>
-          <b-col cols="3">
-            <b-form-group
-              label="Penarikan Sukarela"
-              label-for="penarikan_sukarela"
-            >
-              <b-form-input
-                id="penarikan_sukarela"
-                disabled
-                :value="form.data.penarikan_sukarela"
-              />
+          <b-col cols="6">
+            <b-form-group label="Penarikan Sukarela" label-for="penarikan_sukarela">
+              <b-input-group prepend="Rp">
+                <b-form-input
+                  id="penarikan_sukarela"
+                  disabled
+                  :value="thousand(form.data.penarikan_sukarela)"
+                />
+              </b-input-group>
             </b-form-group>
           </b-col>
-          <b-col cols="3">
+          <b-col cols="6">
             <b-form-group label="Setoran Tambahan" label-for="setoran_tambahan">
-              <b-form-input
-                id="setoran_tambahan"
-                disabled
-                :value="form.data.setoran_tambahan"
-              />
+              <b-input-group prepend="Rp">
+                <b-form-input
+                  id="setoran_tambahan"
+                  disabled
+                  :value="thousand(form.data.setoran_tambahan)"
+                />
+              </b-input-group>
             </b-form-group>
           </b-col>
         </b-row>
@@ -505,14 +521,7 @@ export default {
     async doGetDetil(item) {
       console.log(item);
       this.form.data = { ...item };
-      this.form.data.alasan_mutasi_text = this.getAlasan(
-        this.form.data.alasan_mutasi
-      );
       this.$bvModal.show("modal-form");
-    },
-    getAlasan(val) {
-      let alasan = this.opt.alasan.find((item) => item.value == val);
-      return alasan.text;
     },
     async doGet() {
       let payload = { ...this.paging };

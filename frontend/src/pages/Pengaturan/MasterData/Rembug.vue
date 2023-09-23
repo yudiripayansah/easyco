@@ -3,19 +3,8 @@
     <h1 class="mb-5">{{ $route.name }}</h1>
     <b-card>
       <b-row no-gutters>
-        <b-col
-          cols="12"
-          class="d-flex justify-content-end mb-5 pb-5 border-bottom"
-        >
-          <b-button
-            variant="success"
-            @click="
-              $bvModal.show('modal-form');
-              doClearForm();
-            "
-            v-b-tooltip.hover
-            title="Tambah Data Baru"
-          >
+        <b-col cols="12" class="d-flex justify-content-end mb-5 pb-5 border-bottom">
+          <b-button variant="success" @click="$bvModal.show('modal-form'); doClearForm();" v-b-tooltip.hover title="Tambah Data Baru">
             <b-icon icon="plus" />
             Tambah Baru
           </b-button>
@@ -449,15 +438,20 @@ export default {
       }
     },
     async doGetPetugas() {
+      this.opt.petugas = [];
       this.form.data.kode_rembug = this.form.data.kode_cabang
       let payload = {
+        page: 1,
+        perPage: '~',
+        sortDir: 'ASC',
+        sortBy: 'tgl_gabung',
+        search: '',
         kode_cabang: this.form.data.kode_cabang
       };
       try {
         let req = await easycoApi.pegawaiRead(payload, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
-          this.opt.petugas = [];
           data.map((item) => {
             this.opt.petugas.push({
               value: item.kode_pgw,
@@ -543,6 +537,7 @@ export default {
         let { data, status, msg } = req.data;
         if (status) {
           this.form.data = data;
+          this.doGetPetugas()
           this.$bvModal.show("modal-form");
         }
       } catch (error) {

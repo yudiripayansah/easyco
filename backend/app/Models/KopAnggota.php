@@ -140,7 +140,7 @@ class KopAnggota extends Model
 
     function report_list($kode_cabang, $kode_rembug, $from_date, $thru_date)
     {
-        $show = KopAnggota::select('kop_anggota.*', 'kc.nama_cabang', 'kr.nama_rembug', DB::raw('COALESCE(kp.saldo_pokok+kp.saldo_margin,0) AS saldo_outstanding'), DB::raw('COALESCE(kt.saldo,0) AS taber'))
+        $show = KopAnggota::select('kop_anggota.nama_anggota', 'kop_anggota.desa', 'kop_anggota.no_telp', 'kop_anggota.simpok', 'kop_anggota.simwa', 'kop_anggota.simsuk', 'kc.nama_cabang', 'kr.nama_rembug', DB::raw('SUM(COALESCE(kp.saldo_pokok+kp.saldo_margin,0)) AS saldo_outstanding'), DB::raw('SUM(COALESCE(kt.saldo,0)) AS taber'))
             ->join('kop_cabang AS kc', 'kc.kode_cabang', '=', 'kop_anggota.kode_cabang')
             ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'kop_anggota.kode_rembug')
             ->leftjoin('kop_pengajuan AS kpg', function ($join) {
@@ -167,7 +167,8 @@ class KopAnggota extends Model
             $show->whereBetween('kop_anggota.tgl_gabung', [$from_date, $thru_date]);
         }
 
-        $show->orderBy('kc.kode_cabang', 'ASC')
+        $show->groupBy('kop_anggota.nama_anggota', 'kop_anggota.desa', 'kop_anggota.no_telp', 'kop_anggota.simpok', 'kop_anggota.simwa', 'kop_anggota.simsuk', 'kc.nama_cabang', 'kr.nama_rembug', 'kc.kode_cabang', 'kr.kode_rembug', 'kop_anggota.no_anggota')
+            ->orderBy('kc.kode_cabang', 'ASC')
             ->orderBy('kr.kode_rembug', 'ASC')
             ->orderBy('kop_anggota.no_anggota', 'ASC');
 

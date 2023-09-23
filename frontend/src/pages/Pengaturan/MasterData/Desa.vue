@@ -61,7 +61,7 @@
       </b-row>
     </b-card>
     <b-modal title="Form Desa" id="modal-form" hide-footer size="lg" centered>
-      <b-form @submit="doSave()">
+      <b-form @submit="doSave">
         <b-row>
           <b-col cols="6">
             <b-form-group label="Kode Kecamatan" label-for="kode_kecamatan">
@@ -225,8 +225,9 @@ export default {
     },
     async doGenerateKodeDesa() {
       let payload = {
-        kode_kota: this.form.data.kode_kota
+        kode_kecamatan: this.form.data.kode_kecamatan
       };
+      console.log(payload)
       try {
         let req = await easycoApi.desaGenerate(payload, this.user.token);
         let { data, status, msg } = req.data;

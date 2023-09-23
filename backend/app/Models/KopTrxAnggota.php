@@ -72,12 +72,24 @@ class KopTrxAnggota extends Model
         return $show;
     }
 
+    function get_history_dc_member($no_rekening, $flag_debet_credit, $trx_date)
+    {
+        $show = KopTrxAnggota::select(DB::raw('COALESCE(SUM(amount),0) AS amount'))
+            ->where('no_rekening', $no_rekening)
+            ->where('flag_debet_credit', $flag_debet_credit)
+            ->where('trx_date', '<', $trx_date)
+            ->first();
+
+        return $show;
+    }
+
     function get_credit_member($no_anggota, $jenis_trx, $from_date)
     {
         $show = KopTrxAnggota::select(DB::raw('COALESCE(SUM(kop_trx_anggota.amount),0) AS amount'))
             ->join('kop_list_kode AS klk', 'klk.kode_value', 'kop_trx_anggota.trx_type')
             ->where('kop_trx_anggota.no_anggota', $no_anggota)
             ->where('klk.kode_value', $jenis_trx)
+            ->where('klk.nama_kode', 'transaksi_anggota')
             ->where('kop_trx_anggota.flag_debet_credit', 'C')
             ->where('kop_trx_anggota.trx_date', '<', $from_date)
             ->groupBy('kop_trx_anggota.no_anggota')
@@ -92,10 +104,24 @@ class KopTrxAnggota extends Model
             ->join('kop_list_kode AS klk', 'klk.kode_value', 'kop_trx_anggota.trx_type')
             ->where('kop_trx_anggota.no_anggota', $no_anggota)
             ->where('klk.kode_value', $jenis_trx)
+            ->where('klk.nama_kode', 'transaksi_anggota')
             ->where('kop_trx_anggota.flag_debet_credit', 'D')
             ->where('kop_trx_anggota.trx_date', '<', $from_date)
             ->groupBy('kop_trx_anggota.no_anggota')
             ->first();
+
+        return $show;
+    }
+
+    function get_history_savingplan($no_rekening, $from_date, $thru_date)
+    {
+        $show = KopTrxAnggota::select('trx_date', DB::raw('COALESCE(amount,0) AS amount'), 'flag_debet_credit', 'description')
+            ->where('no_rekening', $no_rekening)
+            ->where('amount', '>', 0)
+            ->where('trx_type', 21)
+            ->whereBetween('trx_date', [$from_date, $thru_date])
+            ->orderBy('trx_date', 'ASC')
+            ->get();
 
         return $show;
     }
@@ -107,6 +133,7 @@ class KopTrxAnggota extends Model
             ->where('kop_trx_anggota.no_anggota', $no_anggota)
             ->where('kop_trx_anggota.amount', '>', 0)
             ->whereIn('klk.kode_value', $jenis_trx)
+            ->where('klk.nama_kode', 'transaksi_anggota')
             ->whereBetween('kop_trx_anggota.trx_date', [$from_date, $thru_date])
             ->orderBy('kop_trx_anggota.trx_date', 'ASC')
             ->get();

@@ -121,10 +121,10 @@ class KopAnggotaMutasi extends Model
         COALESCE(a.saldo_pokok) AS saldo_pokok,
         COALESCE(a.saldo_margin) AS saldo_margin,
         COALESCE(a.saldo_catab) AS saldo_catab,
-        COALESCE(a.saldo_minggon) AS saldo_minggon,
+        COALESCE(ka.simwa,0) AS saldo_minggon,
         COALESCE(ka.simpok,0) AS simpok,
-        COALESCE(ka.simwa,0) AS simwa,
         COALESCE(ka.simsuk,0) AS simsuk,
+        COALESCE(c.simwa) AS simwa,
         COALESCE(b.saldo_tabungan,0) AS saldo_tabungan,
         0 AS saldo_deposito,
         0 AS bonus_bagihasil
@@ -134,8 +134,7 @@ class KopAnggotaMutasi extends Model
             kp.no_anggota,
             SUM(kpb.saldo_pokok) AS saldo_pokok,
             SUM(kpb.saldo_margin) AS saldo_margin,
-            SUM(kpb.saldo_catab) AS saldo_catab,
-            SUM(kpb.saldo_minggon) AS saldo_minggon
+            SUM(kpb.saldo_catab) AS saldo_catab
             FROM kop_pengajuan AS kp
             JOIN kop_pembiayaan AS kpb ON kpb.no_pengajuan = kp.no_pengajuan
             WHERE kpb.status_rekening = 1
@@ -149,9 +148,44 @@ class KopAnggotaMutasi extends Model
             WHERE status_rekening = 1 AND kode_produk <> '099'
             GROUP BY 1
         ) AS b ON b.no_anggota = ka.no_anggota
+        LEFT JOIN (
+            SELECT
+            no_anggota,
+            SUM(saldo) AS simwa
+            FROM kop_tabungan
+            WHERE status_rekening = 1 AND kode_produk = '099'
+            GROUP BY 1
+        ) AS c ON c.no_anggota = ka.no_anggota
         WHERE ka.no_anggota = ?";
 
         $show = DB::select($statement, [$no_anggota]);
+
+        return $show;
+    }
+
+    function get_anggota_keluar($kode_cabang, $kode_rembug, $from_date, $thru_date)
+    {
+        $show = KopAnggotaMutasi::select('kop_anggota_mutasi.*', 'ka.nama_anggota', 'kp.nama_pgw', 'kc.nama_cabang', 'kr.nama_rembug')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kop_anggota_mutasi.no_anggota')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'ka.kode_cabang')
+            ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+            ->join('kop_pegawai AS kp', 'kp.kode_pgw', 'kop_anggota_mutasi.kode_petugas')
+            ->where('kop_anggota_mutasi.status_mutasi', 1);
+
+        if ($kode_cabang != '00000') {
+            $show->where('ka.kode_cabang', $kode_cabang);
+        }
+
+        if ($kode_rembug != '00000') {
+            $show->where('ka.kode_rembug', $kode_rembug);
+        }
+
+        $show->whereBetween('kop_anggota_mutasi.tanggal_mutasi', [$from_date, $thru_date])
+            ->orderBy('ka.kode_cabang', 'DESC')
+            ->orderBy('ka.kode_rembug', 'DESC')
+            ->orderBy('kop_anggota_mutasi.tanggal_mutasi', 'DESC');
+
+        $show = $show->get();
 
         return $show;
     }

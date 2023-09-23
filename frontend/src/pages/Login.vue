@@ -19,19 +19,19 @@
       <div class="d-flex flex-column-fluid flex-center">
         <!--begin::Signin-->
         <div class="login-form login-signin">
-          <form class="form w-100" novalidate="novalidate" id="kt_login_signin_form" @submit.prevent="doLogin()">
-            <div class="pb-13 pt-lg-0 pt-5">
+          <form class="form w-100 flex-column align-items-start" novalidate="novalidate" id="kt_login_signin_form" @submit.prevent="doLogin()">
+            <div class="w-100 pt-lg-0 pt-5">
               <h3 class="font-weight-bolder text-light font-size-h4 font-size-h1-lg">
                 Welcome to EASYCO
               </h3>
             </div>
-            <div class="form-group">
+            <div class="w-100 form-group">
               <label class="font-size-h6 font-weight-bolder text-light">Username</label>
               <div id="example-input-group-1" label="" label-for="example-input-1">
                 <input class="form-control form-control-solid h-auto py-7 px-6 rounded-lg" type="text" name="nama_user" ref="nama_user" v-model="form.nama_user" />
               </div>
             </div>
-            <div class="form-group">
+            <div class="w-100 form-group">
               <div class="d-flex justify-content-between mt-n5">
                 <label class="font-size-h6 font-weight-bolder text-light pt-5">Password</label>
               </div>

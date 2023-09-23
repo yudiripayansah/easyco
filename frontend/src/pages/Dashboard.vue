@@ -9,7 +9,7 @@
             <inline-svg src="media/svg/icons/General/User.svg" />
           </span>
           <router-link to="/pasien" class="text-info font-weight-bold font-size-h6 mt-2">
-            <h2><b>{{dashboard.anggota}}</b></h2>
+            <h2><b>{{thousand(dashboard.jumlah_anggota)}}</b></h2>
             <h4>Anggota</h4>
           </router-link>
         </div>
@@ -20,7 +20,7 @@
             <inline-svg src="media/svg/icons/Shopping/Dollar.svg" />
           </span>
           <router-link to="/hasil-test" class="text-success font-weight-bold font-size-h6 mt-2">
-            <h2><b>{{dashboard.outstanding}}</b></h2>
+            <h2><b>Rp {{thousand(dashboard.saldo_outstanding)}}</b></h2>
             <h4>Outstanding</h4>
           </router-link>
         </div>
@@ -31,7 +31,7 @@
             <inline-svg src="media/svg/icons/Shopping/Money.svg" />
           </span>
           <router-link to="/hasil-test-antibody" class="text-danger font-weight-bold font-size-h6 mt-2">
-            <h2><b>{{dashboard.simpanan}}</b></h2>
+            <h2><b>Rp {{thousand(dashboard.saldo_tabungan)}}</b></h2>
             <h4>Tabungan</h4>
           </router-link>
         </div>
@@ -57,7 +57,9 @@
 </template>
 
 <script>
-import axios from '@/core/plugins/axios'
+import { mapGetters } from "vuex";
+import easycoApi from "@/core/services/easyco.service";
+import helper from "@/core/helper";
 export default {
   name: "dashboard",
   components: {
@@ -69,7 +71,10 @@ export default {
         anggota: '10.000',
         outstanding: 'Rp 4.657.897.500',
         par: '0%',
-        simpanan: 'Rp 10.768.456.200'
+        simpanan: 'Rp 10.768.456.200',
+        jumlah_anggota: 0,
+        saldo_outstanding: 0,
+        saldo_tabungan: 0,
       },
       chart: {
         series: [{
@@ -146,11 +151,23 @@ export default {
     }
   },
   mounted() {
-    // this.getDashboard()
+    this.getDashboard()
+  },
+  computed: {
+    ...mapGetters(["user"]),
   },
   methods: {
-    getDashboard() {
-      
+    ...helper,
+    async getDashboard() {
+      try {
+        let req = await easycoApi.dashboard(this.user.token)
+        if(req.status == 200) {
+          let {data,msg,status} = req.data
+          this.dashboard = {...this.dashboard, ...data}
+        }
+      } catch (error) {
+        
+      }
     },
     notify(type, title, msg) {
       this.$bvToast.toast(msg, {

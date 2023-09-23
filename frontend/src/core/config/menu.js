@@ -22,11 +22,11 @@ const menu = [
         label: 'Registrasi Anggota Majelis',
         component: import('@/pages/Keanggotaan/RegistrasiAnggotaRembug.vue'),
       },
-      // {
-      //   target: 'approval-registrasi-keluar',
-      //   label: 'Approval Registrasi Anggota Keluar',
-      //   component: import('@/pages/Keanggotaan/ApprovalRegistrasiAnggotaKeluar.vue'),
-      // },
+      {
+        target: 'approval-registrasi-keluar',
+        label: 'Approval Registrasi Anggota Keluar',
+        component: import('@/pages/Keanggotaan/ApprovalRegistrasiAnggotaKeluar.vue'),
+      },
       {
         target: 'laporan',
         label: 'Laporan Keanggotaan',
@@ -50,7 +50,7 @@ const menu = [
           {
             target: 'anggota-keluar',
             label: 'Anggota Keluar',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Keanggotaan/Laporan/AnggotaKeluar.vue'),
           },
         ],
       },
@@ -96,7 +96,7 @@ const menu = [
           {
             target: 'statement-tabungan',
             label: 'Statement Tabungan',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Tabungan/StatementTabungan.vue'),
           },
           {
             target: 'penutupan-rekening-tabungan',
@@ -149,6 +149,11 @@ const menu = [
         label: 'Cetak Akad',
         component: import('@/pages/Dummy.vue'),
       },
+      {
+        target: 'hitung-kolektibilitas',
+        label: 'Hitung Kolektibilitas',
+        component: import('@/pages/Pembiayaan/HitungKolektibilitas.vue'),
+      },
       /*
       {
         target: 'pencairan',
@@ -199,7 +204,7 @@ const menu = [
           {
             target: 'par-kolektibilitas',
             label: 'PAR/ Kolektibilitas',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Pembiayaan/Laporan/LaporanKolektibilitas.vue'),
           },
         ],
       },
@@ -243,6 +248,21 @@ const menu = [
         component: import('@/pages/Dummy.vue'),
       },
       {
+        target: 'posting-jurnal',
+        label: 'Posting Jurnal',
+        component: import('@/pages/Transaksi/PostingJurnal.vue'),
+      },
+      {
+        target: 'tutup-buku',
+        label: 'Tutup Buku',
+        component: import('@/pages/Transaksi/TutupBuku.vue'),
+      },
+      {
+        target: 'hitung-kolektabilitas',
+        label: 'Hitung Kolektabilitas',
+        component: import('@/pages/Transaksi/HitungKolektabilitas.vue'),
+      },
+      {
         target: 'laporan',
         label: 'Laporan Transaksi',
         component: import('@/pages/Transaksi'),
@@ -281,30 +301,59 @@ const menu = [
       {
         target: 'laporan-jurnal-transaksi',
         label: 'Laporan Jurnal Transaksi',
-        component: import('@/pages/Dummy.vue'),
+        component: import('@/pages/Transaksi/Laporan/LaporanTransaksiJurnal.vue'), //import('@/pages/Dummy.vue'),
       },
       {
         target: 'laporan-buku-besar',
         label: 'Laporan Buku Besar',
         component: import('@/pages/Keuangan/LaporanBukuBesar.vue'),
       },
+      // {
+      //   target: 'laporan-neraca-saldo',
+      //   label: 'Laporan Neraca Saldo',
+      //   component: import('@/pages/Dummy.vue'),
+      // },
+      // {
+      //   target: 'laporan-neraca',
+      //   label: 'Laporan Neraca',
+      //   component: import('@/pages/Keuangan/LaporanNeraca.vue'),
+      // },
+      // {
+      //   target: 'laporan-labarugi',
+      //   label: 'Laporan Laba Rugi',
+      //   component: import('@/pages/Keuangan/LaporanLabaRugi.vue'),
+      // },
       {
-        target: 'laporan-neraca-saldo',
-        label: 'Laporan Neraca Saldo',
-        component: import('@/pages/Dummy.vue'),
+        target: 'laporan-keuangan-bulan-lalu',
+        label: 'Laporan Keuangan Bulan Lalu',
+        component: import('@/pages/Keuangan/LaporanKeuanganBulanLalu.vue'),
       },
       {
-        target: 'laporan-neraca',
-        label: 'Laporan Neraca',
-        component: import('@/pages/Keuangan/LaporanNeraca.vue'),
+        target: 'laporan-keuangan-bulan-berjalan',
+        label: 'Laporan Keuangan Bulan Berjalan',
+        component: import('@/pages/Keuangan/LaporanKeuanganBulanBerjalan.vue'),
       },
       {
-        target: 'laporan-labarugi',
-        label: 'Laporan Laba Rugi',
-        component: import('@/pages/Dummy.vue'),
+        target: 'laporan-pelunasan-pembiayaan',
+        label: 'Laporan Pelunasan Pembiayaan',
+        component: import('@/pages/Keuangan/LaporanPelunasanPembiayaan.vue'),
       },
     ]
   },
+  // Proses Akhir Bulan
+  // {
+  //   target: '/proses-akhir-bulan',
+  //   label: 'Proses Akhir Bulan',
+  //   icon: 'menu-icon fas fa-wrench',
+  //   component: import('@/pages/Pengaturan'),
+  //   children: [
+  //     {
+  //       target: 'tutup-buku',
+  //       label: 'Tutup Buku',
+  //       component: import('@/pages/Dummy.vue'),
+  //     },
+  //   ]
+  // },
   // Pengaturan
   {
     target: '/pengaturan',

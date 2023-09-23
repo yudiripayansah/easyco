@@ -5,12 +5,29 @@
       <b-row no-gutters>
         <b-col cols="8" class="mb-5">
           <div class="row">
-            <b-col cols="12">
+            <b-col cols="4">
               <b-input-group prepend="Cabang" class="mb-3">
-                <b-form-select v-model="paging.cabang" :options="opt.cabang" />
+                <b-form-select
+                  v-model="paging.cabang"
+                  :options="opt.cabang"
+                  @change="doGetMajelis()"
+                />
               </b-input-group>
             </b-col>
-            <b-col>
+            <b-col cols="4">
+              <b-input-group prepend="Majelis" class="mb-3">
+                <b-form-select v-model="paging.rembug" :options="opt.rembug" />
+              </b-input-group>
+            </b-col>
+            <b-col cols="4">
+              <b-input-group prepend="Petugas" class="mb-3">
+                <b-form-select
+                  v-model="paging.petugas"
+                  :options="opt.petugas"
+                />
+              </b-input-group>
+            </b-col>
+            <!-- <b-col>
               <b-input-group prepend="Dari Tanggal">
                 <b-form-datepicker v-model="paging.from" />
               </b-input-group>
@@ -19,7 +36,7 @@
               <b-input-group prepend="Sampai Tanggal">
                 <b-form-datepicker v-model="paging.to" />
               </b-input-group>
-            </b-col>
+            </b-col> -->
           </div>
         </b-col>
         <b-col cols="4" class="d-flex justify-content-end align-items-start">
@@ -101,6 +118,33 @@
       size="xl"
       centered
     >
+      <b-row>
+        <b-col
+          cols="12"
+          sm="12"
+          class="d-flex justify-content-end border-top pt-5"
+        >
+          <b-button variant="secondary" @click="$bvModal.hide('modal-pdf')"
+            >Cancel
+          </b-button>
+          <b-button
+            variant="danger"
+            type="button"
+            class="ml-3"
+            @click="doPrintPdf()"
+          >
+            Cetak PDF
+          </b-button>
+          <b-button
+            variant="warning"
+            type="button"
+            class="ml-3"
+            @click="doSavePdf()"
+          >
+            Simpan PDF
+          </b-button>
+        </b-col>
+      </b-row>
       <div id="table-print" class="p-5">
         <h5 class="text-center">
           KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
@@ -157,37 +201,10 @@
           </tbody>
         </table>
       </div>
-      <b-row>
-        <b-col
-          cols="12"
-          sm="12"
-          class="d-flex justify-content-end border-top pt-5"
-        >
-          <b-button variant="secondary" @click="$bvModal.hide('modal-pdf')"
-            >Cancel
-          </b-button>
-          <b-button
-            variant="danger"
-            type="button"
-            class="ml-3"
-            @click="doPrintPdf()"
-          >
-            Cetak PDF
-          </b-button>
-          <b-button
-            variant="warning"
-            type="button"
-            class="ml-3"
-            @click="doSavePdf()"
-          >
-            Simpan PDF
-          </b-button>
-        </b-col>
-      </b-row>
     </b-modal>
   </div>
 </template>
-    
+
 <script>
 import helper from "@/core/helper";
 import html2pdf from "html2pdf.js";
@@ -206,6 +223,13 @@ export default {
             label: "No",
             thClass: "text-center w-5p",
             tdClass: "text-center",
+          },
+          {
+            key: "no_ktp",
+            sortable: true,
+            label: "NIK",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
             key: "nama_anggota",
@@ -269,6 +293,13 @@ export default {
             label: "No",
             thClass: "text-center w-5p",
             tdClass: "text-center",
+          },
+          {
+            key: "no_ktp",
+            sortable: true,
+            label: "NIK",
+            thClass: "text-center",
+            tdClass: "",
           },
           {
             key: "nama_anggota",
@@ -335,11 +366,13 @@ export default {
         search: "",
         status: "~",
         cabang: 0,
-        from: null,
-        to: null,
+        rembug: 0,
+        petugas: 0
       },
       opt: {
         cabang: [],
+        petugas: [],
+        rembug: [],
       },
     };
   },
@@ -357,18 +390,72 @@ export default {
   mounted() {
     this.doGet();
     this.doGetCabang();
+    this.doGetPetugas();
   },
   methods: {
     ...helper,
+    async doGetMajelis() {
+      this.opt.rembug = [];
+      let payload = {
+        perPage: "~",
+        page: 1,
+        sortBy: "kode_rembug",
+        sortDir: "ASC",
+        search: "",
+        kode_cabang: this.paging.cabang,
+      };
+      try {
+        let req = await easycoApi.rembugRead(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.majelis = [
+            {
+              value: 0,
+              text: "All",
+            },
+          ];
+          data.map((item) => {
+            this.opt.rembug.push({
+              value: item.kode_rembug,
+              text: item.nama_rembug,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doGetPetugas() {
+      let payload = null;
+      try {
+        let req = await easycoApi.petugasRead(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.petugas = [
+            {
+              value: 0,
+              text: "All",
+              disabled: true,
+            },
+          ];
+          data.map((item) => {
+            this.opt.petugas.push({
+              value: Number(item.kode_petugas),
+              text: item.nama_kas_petugas,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
     doPrintPdf() {
       let filename = "LAPORAN SALDO ANGGOTA";
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
       }
-      if (this.report.from && this.report.to) {
-        filename += ` - Dari ${this.dateFormatId(
-          this.report.from
-        )} Sampai ${this.dateFormatId(this.report.to)}`;
+      if (this.report.rembug) {
+        filename += ` - Majelis ${this.report.rembug}`;
       }
       let element = document.getElementById("table-print");
       let options = {
@@ -385,7 +472,7 @@ export default {
         .from(element)
         .toPdf()
         .get("pdf")
-        .then(function (pdf) {
+        .then(function(pdf) {
           console.log("hi");
           window.open(pdf.output("bloburl"), "_blank");
         });
@@ -395,10 +482,8 @@ export default {
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
       }
-      if (this.report.from && this.report.to) {
-        filename += ` - Dari ${this.dateFormatId(
-          this.report.from
-        )} Sampai ${this.dateFormatId(this.report.to)}`;
+      if (this.report.rembug) {
+        filename += ` - Majelis ${this.report.rembug}`;
       }
 
       html2pdf(document.getElementById("table-print"), {
@@ -412,7 +497,10 @@ export default {
       });
     },
     async exportXls() {
-      let payload = `kode_cabang=${this.paging.cabang}&kode_rembug=~&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let pCabang = (this.paging.cabang) ? this.paging.cabang : '~'
+      let pRembug = (this.paging.rembug) ? this.paging.rembug : '~'
+      let pPetugas = (this.paging.petugas) ? this.paging.petugas : '~'
+      let payload = `kode_cabang=${pCabang}&kode_rembug=${pRembug}&kode_petugas=${pPetugas}&from_date=~&thru_date=~`;
       let req = await easycoApi.saldoAnggotaExcel(payload);
       console.log(req.data);
       const url = window.URL.createObjectURL(new Blob([req.data]));
@@ -424,7 +512,10 @@ export default {
       link.click();
     },
     async exportCsv() {
-      let payload = `kode_cabang=${this.paging.cabang}&kode_rembug=~&from_date=${this.paging.from}&thru_date=${this.paging.to}`;
+      let pCabang = (this.paging.cabang) ? this.paging.cabang : '~'
+      let pRembug = (this.paging.rembug) ? this.paging.rembug : '~'
+      let pPetugas = (this.paging.petugas) ? this.paging.petugas : '~'
+      let payload = `kode_cabang=${pCabang}&kode_rembug=${pRembug}&kode_petugas=${pPetugas}&from_date=~&thru_date=~`;
       let req = await easycoApi.saldoAnggotaCsv(payload);
       console.log(req.data);
       const url = window.URL.createObjectURL(new Blob([req.data]));
@@ -499,7 +590,7 @@ export default {
       }
     },
     async doGetReport() {
-      let payload = this.paging;
+      let payload = { ...this.paging };
       payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
       payload.perPage = "~";
       this.report.loading = true;
@@ -542,4 +633,3 @@ export default {
   },
 };
 </script>
-  

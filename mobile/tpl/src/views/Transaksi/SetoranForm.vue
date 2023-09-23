@@ -131,6 +131,60 @@
       </v-card>
       <v-card class="white elevation-3 rounded-lg pa-3 mb-3">
         <h6 class="text-h6 font-weight-bold mb-4">Setoran</h6>
+        <v-row v-if="form.data.setoran_simpanan_pokok > 0">
+          <v-col cols="7" class="pb-0">
+            <label class="black--text">Simpok</label>
+          </v-col>
+          <v-col cols="5">
+            <v-text-field
+              color="black"
+              autocomplete="off"
+              hide-details
+              solo
+              dense
+              :value="thousand(form.data.setoran_simpanan_pokok)"
+              @change="countTotalSetoran()"
+              class="justify-end text-right"
+              disabled
+            />
+          </v-col>
+        </v-row>
+        <v-row v-if="form.data.setoran_simpanan_wajib > 0">
+          <v-col cols="7" class="pb-0">
+            <label class="black--text">Simwa</label>
+          </v-col>
+          <v-col cols="5">
+            <v-text-field
+              color="black"
+              autocomplete="off"
+              hide-details
+              solo
+              dense
+              :value="thousand(form.data.setoran_simpanan_wajib)"
+              @change="countTotalSetoran()"
+              class="justify-end text-right"
+              disabled
+            />
+          </v-col>
+        </v-row>
+        <v-row v-if="form.data.setoran_administrasi > 0">
+          <v-col cols="7" class="pb-0">
+            <label class="black--text">Biaya ADM</label>
+          </v-col>
+          <v-col cols="5">
+            <v-text-field
+              color="black"
+              autocomplete="off"
+              hide-details
+              solo
+              dense
+              :value="thousand(form.data.setoran_administrasi)"
+              @change="countTotalSetoran()"
+              class="justify-end text-right"
+              disabled
+            />
+          </v-col>
+        </v-row>
         <v-row>
           <v-col cols="3">
             <label class="black--text">Angs</label>
@@ -157,6 +211,18 @@
               solo
               dense
               :value="thousand(form.data.angsuran.amount * form.data.frekuensi)"
+              disabled
+              class="justify-end text-right"
+              v-if="form.data.status_anggota != 3"
+            />
+            <v-text-field
+              v-else
+              color="black"
+              autocomplete="off"
+              hide-details
+              solo
+              dense
+              :value="thousand(form.data.angsuran.amount)"
               disabled
               class="justify-end text-right"
             />
@@ -246,8 +312,8 @@
               dense
               v-model="form.data.setoran_sukarela"
               @change="countTotalSetoran()"
-              v-mask="thousandMask"
               class="justify-end text-right"
+              :disabled="form.data.status_anggota == 3"
             />
           </v-col>
         </v-row>
@@ -266,10 +332,24 @@
               :value="
                 thousand(
                   Number(form.data.total_setoran) +
-                    Number(removeThousand(form.data.setoran_simpanan_wajib)) +
-                    Number(removeThousand(form.data.setoran_sukarela))
+                  Number(removeThousand(form.data.setoran_sukarela)) + 
+                  Number(form.data.setoran_administrasi) + 
+                  Number(form.data.setoran_simpanan_pokok) + 
+                  Number(form.data.setoran_simpanan_wajib)
                 )
               "
+              class="justify-end text-right"
+              v-if="form.data.status_anggota != 3"
+            />
+            <v-text-field
+              v-else
+              color="black"
+              autocomplete="off"
+              hide-details
+              solo
+              dense
+              disabled
+              :value="thousand(form.data.angsuran.amount)"
               class="justify-end text-right"
             />
           </v-col>
@@ -289,8 +369,8 @@
               solo
               dense
               v-model="form.data.penarikan_sukarela"
-              v-mask="thousandMask"
               class="justify-end text-right"
+              :disabled="form.data.status_anggota == 3"
             />
           </v-col>
         </v-row>
@@ -521,7 +601,6 @@ export default {
           );
           if (req.status === 200) {
             let dataDeposit = { ...req.data.data };
-
             let formData = {
               kode_cabang: this.user.kode_cabang,
               kode_rembug: this.rembug,
@@ -531,12 +610,11 @@ export default {
               no_anggota: this.anggota,
               no_rekening: dataDeposit.no_rekening,
               angsuran: dataDeposit.angsuran,
-              frekuensi: 1,
+              frekuensi: (dataDeposit.status_anggota == 3) ? dataDeposit.frekuensi : 1,
               setoran_sukarela: dataDeposit.tab_sukarela,
-              setoran_simpanan_wajib: 0,
-              penarikan_sukarela: 0,
+              penarikan_sukarela: (dataDeposit.status_anggota == 3) ? this.thousand(dataDeposit.penarikan_sukarela): 0,
               simwaState: true,
-              angsuranState: true,
+              angsuranState: (dataDeposit.status_anggota == 3) ? false: true,
               taber: [],
               pokok: dataDeposit.pokok,
               biaya_administrasi: dataDeposit.biaya_administrasi,
@@ -551,6 +629,10 @@ export default {
               simsuk: dataDeposit.simsuk,
               simwa: dataDeposit.simwa,
               simpok: dataDeposit.simpok,
+              setoran_administrasi: dataDeposit.setoran_administrasi,
+              setoran_simpanan_pokok: dataDeposit.setoran_simpanan_pokok,
+              setoran_simpanan_wajib: dataDeposit.setoran_simpanan_wajib,
+              status_anggota: dataDeposit.status_anggota
             };
             dataDeposit.berencana.forEach((taber, index) => {
               let dataTaber = { ...taber };
@@ -661,9 +743,6 @@ export default {
       formData.setoran_sukarela = formData.setoran_sukarela
         ? Number(formData.setoran_sukarela)
         : 0;
-      formData.setoran_simpanan_wajib = formData.setoran_simpanan_wajib
-        ? Number(formData.setoran_simpanan_wajib.replace(/\./g, ""))
-        : 0;
       formData.penarikan_sukarela = formData.penarikan_sukarela
         ? Number(formData.penarikan_sukarela.replace(/\./g, ""))
         : 0;
@@ -682,6 +761,15 @@ export default {
       formData.dana_kebajikan = formData.dana_kebajikan
         ? Number(this.removeThousand(formData.dana_kebajikan))
         : 0;
+      formData.setoran_administrasi = formData.setoran_administrasi
+        ? Number(formData.setoran_administrasi)
+        : 0;
+      formData.setoran_simpanan_pokok = formData.setoran_simpanan_pokok
+        ? Number(formData.setoran_simpanan_pokok)
+        : 0;
+      formData.setoran_simpanan_wajib = formData.setoran_simpanan_wajib
+        ? Number(formData.setoran_simpanan_wajib)
+        : 0;
       payload.append("kode_cabang", formData.kode_cabang);
       payload.append("kode_rembug", formData.kode_rembug);
       payload.append("kode_petugas", formData.kode_petugas);
@@ -692,12 +780,21 @@ export default {
       formData.angsuran.detail.map((item, i) => {
         payload.append(`angsuran[${i}][id]`, item.id);
         payload.append(`angsuran[${i}][nama]`, item.nama);
-        payload.append(
-          `angsuran[${i}][amount]`,
-          item.amount * formData.frekuensi
-        );
+        if(formData.status_anggota != 3){
+          payload.append(
+            `angsuran[${i}][amount]`,
+            item.amount * formData.frekuensi
+          );
+        } else {
+          payload.append(
+            `angsuran[${i}][amount]`,
+            item.amount
+          );
+        }
       });
       payload.append("setoran_sukarela", formData.setoran_sukarela);
+      payload.append("setoran_administrasi", formData.setoran_administrasi);
+      payload.append("setoran_simpanan_pokok", formData.setoran_simpanan_pokok);
       payload.append("setoran_simpanan_wajib", formData.setoran_simpanan_wajib);
       payload.append("penarikan_sukarela", formData.penarikan_sukarela);
       payload.append("kode_rembug", formData.kode_rembug);
@@ -739,14 +836,13 @@ export default {
       }
     },
     countTotalSetoran() {
-      let { angsuran, frekuensi, taber } = this.form.data;
+      let { angsuran, frekuensi, taber, setoran_administrasi, setoran_simpanan_pokok, setoran_simpanan_wajib } = this.form.data;
       let total_taber = 0;
       taber.map((item) => {
         total_taber =
           total_taber + Number(item.setoran) * Number(item.freq_saving);
       });
-      let total_setoran =
-        Number(angsuran.amount) * Number(frekuensi) + Number(total_taber);
+      let total_setoran = Number(angsuran.amount) * Number(frekuensi) + Number(total_taber);
       this.form.data.total_setoran = total_setoran;
     },
     getDate() {

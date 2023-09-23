@@ -476,7 +476,7 @@ export default {
       }
     },
     async doGetReport() {
-      let payload = this.paging;
+      let payload = {...this.paging};
       payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
       payload.perPage = "~";
       this.report.loading = true;
@@ -484,6 +484,7 @@ export default {
       this.report.to = payload.to;
       this.report.cabang = this.getCabangName(payload.cabang);
       try {
+        console.log('report',payload)
         let req = await easycoApi.pengajuanRead(payload, this.user.token);
         let { data, status, msg, total } = req.data;
         if (status) {

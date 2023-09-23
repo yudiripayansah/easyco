@@ -108,6 +108,26 @@
               </b-button>
             </template>
           </b-table>
+          <b-row>
+            <b-col cols="10" class="text-right">
+              Total Setoran: 
+            </b-col>
+            <b-col cols="2" class="text-right bold">
+              Rp {{ thousand(grand_total.total_penerimaan) }}
+            </b-col>
+            <b-col cols="10" class="text-right">
+              Total Penarikan: 
+            </b-col>
+            <b-col cols="2" class="text-right bold">
+              Rp {{ thousand(grand_total.total_penarikan) }}
+            </b-col>
+            <b-col cols="10" class="text-right">
+              Saldo: 
+            </b-col>
+            <b-col cols="2" class="text-right bold">
+              Rp {{ thousand(grand_total.total_penerimaan - grand_total.total_penarikan) }}
+            </b-col>
+          </b-row>
         </b-col>
         <!-- <b-col cols="12" class="justify-content-end d-flex">
           <b-pagination
@@ -180,7 +200,7 @@
                       Setoran
                     </td>
                     <td class="text-center align-center">Penarikan</td>
-                    <td class="text-center align-center" colspan="3">
+                    <td class="text-center align-center" colspan="5">
                       Realisasi Pembiayaan
                     </td>
                     <td class="text-center align-center" rowspan="3">Ket.</td>
@@ -205,6 +225,10 @@
                     <td class="text-center align-center" rowspan="2">Adm</td>
                     <td class="text-center align-center" rowspan="2">
                       Asuransi
+                    </td><td class="text-center align-center" rowspan="2">
+                      Dana Gotong Royong
+                    </td><td class="text-center align-center" rowspan="2">
+                      Dana Kebajikan
                     </td>
                   </tr>
                   <tr>
@@ -271,6 +295,18 @@
                         class="text-right"
                       />
                     </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(item.dana_gotong_royong)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(item.dana_kebajikan)"
+                        class="text-right"
+                      />
+                    </td>
                     <td><b-button variant="info">...</b-button></td>
                   </tr>
                   <tr>
@@ -320,6 +356,18 @@
                     <td>
                       <b-form-input
                         :value="thousand(form.total.biaya_asuransi_jiwa)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(form.total.dana_gotong_royong)"
+                        class="text-right"
+                      />
+                    </td>
+                    <td>
+                      <b-form-input
+                        :value="thousand(form.total.dana_kebajikan)"
                         class="text-right"
                       />
                     </td>
@@ -552,6 +600,10 @@ export default {
         cabang: [],
         petugas: [],
       },
+      grand_total: {
+        total_penarikan: 0,
+        total_penerimaan: 0
+      }
     }
   },
   mixins: [validationMixin],
@@ -653,10 +705,11 @@ export default {
             payload,
             this.user.token
           );
-          let { data, status, msg, total } = req.data;
+          let { data, status, msg, total, grand_total } = req.data;
           if (status) {
             this.table.items = data;
             this.table.totalRows = total;
+            this.grand_total = grand_total
           }
           this.table.loading = false;
         } catch (error) {
@@ -722,6 +775,8 @@ export default {
           this.form.total.pokok = 0;
           this.form.total.biaya_administrasi = 0;
           this.form.total.biaya_asuransi_jiwa = 0;
+          this.form.total.dana_gotong_royong = 0;
+          this.form.total.dana_kebajikan = 0;
           detail.map((item) => {
             this.form.total.frek += Number(item.frek);
             this.form.total.angsuran += Number(item.angsuran);
@@ -737,6 +792,12 @@ export default {
             );
             this.form.total.biaya_asuransi_jiwa += Number(
               item.biaya_asuransi_jiwa
+            );
+            this.form.total.dana_gotong_royong += Number(
+              item.dana_gotong_royong
+            );
+            this.form.total.dana_kebajikan += Number(
+              item.dana_kebajikan
             );
           });
           this.$bvModal.show("modal-form");
