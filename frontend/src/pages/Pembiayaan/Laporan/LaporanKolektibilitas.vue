@@ -94,7 +94,7 @@ import helper from "@/core/helper";
 import { mapGetters } from "vuex";
 import easycoApi from "@/core/services/easyco.service";
 export default {
-  name: "RegistrasiAkad",
+  name: "LaporanKolektibilitas",
   components: {},
   data() {
     return {
