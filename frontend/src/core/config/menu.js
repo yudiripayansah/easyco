@@ -333,6 +333,11 @@ const menu = [
         label: 'Laporan Keuangan Bulan Berjalan',
         component: import('@/pages/Keuangan/LaporanKeuanganBulanBerjalan.vue'),
       },
+      {
+        target: 'laporan-pelunasan-pembiayaan',
+        label: 'Laporan Pelunasan Pembiayaan',
+        component: import('@/pages/Keuangan/LaporanPelunasanPembiayaan.vue'),
+      },
     ]
   },
   // Proses Akhir Bulan

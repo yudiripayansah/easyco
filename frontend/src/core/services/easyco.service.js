@@ -3,6 +3,7 @@ axios.defaults.baseURL = "https://easyco.kopikoding.com/api/api/";
 import anggotaKeluarService from "./anggotaKeluar.service";
 import laporanStatementTabungan from "./laporanStatementTabungan.service";
 import laporanKeuanganBulanLalu from "./laporanKeuanganBulanLalu.service";
+import laporanPelunasanPembiayaan from "./laporanPelunasanPembiayaan.service";
 
 const easycoApi = {
   login(payload) {
@@ -1397,7 +1398,7 @@ const easycoApi = {
     return axios.post(url, payload, config);
   },
   anggotaMutasiDetail(payload, token) {
-    let url = "anggotamutasi/detail?"+payload;
+    let url = "anggotamutasi/detail?" + payload;
     let config = {
       headers: {
         token: token,
@@ -1440,7 +1441,7 @@ const easycoApi = {
     let url = "general_ledger/check";
     let config = {
       headers: {
-        token:token,
+        token: token,
       },
     };
     return axios.post(url, payload, config);
@@ -1458,7 +1459,7 @@ const easycoApi = {
     let url = "general_ledger/posting";
     let config = {
       headers: {
-        token:token,
+        token: token,
       },
     };
     return axios.post(url, payload, config);
@@ -1467,7 +1468,7 @@ const easycoApi = {
     let url = "laporan/list/get_closing_date";
     let config = {
       headers: {
-        token:token,
+        token: token,
       },
     };
     return axios.get(url, config);
@@ -1476,7 +1477,7 @@ const easycoApi = {
     let url = "general_ledger/check_unverified";
     let config = {
       headers: {
-        token:token,
+        token: token,
       },
     };
     return axios.get(url, config);
@@ -1485,31 +1486,33 @@ const easycoApi = {
     let url = "general_ledger/closing";
     let config = {
       headers: {
-        token:token,
+        token: token,
       },
     };
-    return axios.post(url,payload, config);
+    return axios.post(url, payload, config);
   },
   hitungKolek(payload, token) {
     let url = "registrasiakad/hitung_kolek";
     let config = {
       headers: {
-        token:token,
+        token: token,
       },
     };
-    return axios.post(url,payload, config);
+    return axios.post(url, payload, config);
   },
   laporanKolek(payload, token) {
     let url = "laporan/list/get_kolektibilitas";
     let config = {
       headers: {
-        token:token,
+        token: token,
       },
     };
-    return axios.post(url,payload, config);
+    return axios.post(url, payload, config);
   },
   ...anggotaKeluarService,
   ...laporanStatementTabungan,
   ...laporanKeuanganBulanLalu,
+  ...laporanPelunasanPembiayaan,
+
 };
 export default easycoApi;
