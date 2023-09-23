@@ -77,9 +77,9 @@
 					KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
 				</h5>
 				<h5 class="text-center">LAPORAN PELUNASAN PEMBIAYAAN</h5>
-				<h5 class="text-center" v-show="report.kode_petugas">Cabang: {{ report.kode_cabang }}</h5>
-				<h5 class="text-center" v-show="report.kode_petugas">Petugas: {{ report.kode_petugas }}</h5>
-				<h5 class="text-center" v-show="report.kode_rembug">Majelis: {{ report.kode_rembug }}</h5>
+				<h5 class="text-center" v-show="report.nama_cabang">Cabang: {{ report.nama_cabang }}</h5>
+				<h5 class="text-center" v-show="report.nama_petugas">Petugas: {{ report.nama_petugas }}</h5>
+				<h5 class="text-center" v-show="report.nama_rembug">Majelis: {{ report.nama_rembug }}</h5>
 				<h6 class="text-center mb-5 pb-5" v-show="report.from_date && report.thru_date"> Tanggal {{
 					dateFormatId(report.from_date) }} s.d {{ dateFormatId(report.thru_date) }}</h6>
 				<div class="table-responsive">
@@ -88,7 +88,7 @@
 							<th v-for="table in table.fields" :key="table.key" :class="table.thClass">{{ table.label }}
 							</th>
 						</thead>
-						<tbody v-if="report.items.length > 0">
+						<tbody v-if="report && report.items && report.items.length > 0">
 							<tr v-for="(report, reportIndex) in report.items" :key="`report-${reportIndex}`">
 								<td>{{ reportIndex + 1 }}</td>
 								<td class="text-center">{{ report.tanggal_pelunasan }}</td>
@@ -110,7 +110,7 @@
 						</tbody>
 						<tbody v-else>
 							<tr class="text-center">
-								<td :colspan="report.fields.length">There's no data to display...</td>
+								<td :colspan="table.fields.length">There's no data to display...</td>
 							</tr>
 						</tbody>
 					</table>
@@ -383,6 +383,9 @@ export default {
 				kode_cabang: null,
 				kode_petugas: null,
 				kode_rembug: null,
+				nama_cabang: '',
+				nama_petugas: '',
+				nama_rembug: '',
 				from_date: null,
 				thru_date: null,
 			},
@@ -425,10 +428,14 @@ export default {
 	methods: {
 		...helper,
 		getFileName() {
+			const singleObjKodeCabang = this.opt.kode_cabang.find(item => item.value == this.paging.kode_cabang);
+			const singleObjKodePetugas = this.opt.kode_petugas.find(item => item.value == this.paging.kode_petugas);
+			const singleObjKodeRembug = this.opt.kode_rembug.find(item => item.value == this.paging.kode_rembug);
+
 			let fileName = "LAPORAN PELUNASAN PEMBIAYAAN";
-			if (this.paging.kode_cabang) fileName += ` - Cabang ${this.paging.kode_cabang}`;
-			if (this.paging.kode_petugas) fileName += ` - Petugas ${this.paging.kode_petugas}`;
-			if (this.paging.kode_rembug) fileName += ` - Majelis ${this.paging.kode_rembug}`;
+			if (this.paging.kode_cabang) fileName += ` - Cabang ${(singleObjKodeCabang?.value != null ? singleObjKodeCabang?.text : '')}_`;
+			if (this.paging.kode_petugas) fileName += ` - Petugas ${(singleObjKodePetugas?.value != null ? singleObjKodePetugas?.text : '')}_`;
+			if (this.paging.kode_rembug) fileName += ` - Majelis ${(singleObjKodeRembug?.value != null ? singleObjKodeRembug?.text : '')}_`;
 			if (this.paging.from_date && this.paging.thru_date) fileName += ` - Dari ${this.dateFormatId(this.paging.from_date)} Sampai ${this.dateFormatId(this.paging.thru_date)}`;
 			return fileName;
 		},
@@ -649,6 +656,15 @@ export default {
 			this.report = {
 				...this.paging
 			};
+
+			const singleObjKodeCabang = this.opt.kode_cabang.find(item => item.value == this.paging.kode_cabang);
+			const singleObjKodePetugas = this.opt.kode_petugas.find(item => item.value == this.paging.kode_petugas);
+			const singleObjKodeRembug = this.opt.kode_rembug.find(item => item.value == this.paging.kode_rembug);
+
+			this.report.nama_cabang = (singleObjKodeCabang?.value != null ? singleObjKodeCabang?.text : '');
+			this.report.nama_petugas = (singleObjKodePetugas?.value != null ? singleObjKodePetugas?.text : '');
+			this.report.nama_rembug = (singleObjKodeRembug?.value != null ? singleObjKodeRembug?.text : '');
+
 			try {
 				let req = await easycoApi.listReportPelunasanPembiayaan(payload, this.user.token);
 				let { data, status, msg, total } = req.data;
