@@ -434,6 +434,14 @@ export default {
             }
         },
         async doGetMajelis() {
+            // reset value
+            this.paging.kode_rembug = null;
+            this.paging.no_anggota = null;
+            this.paging.jenis_tabungan = null;
+            this.paging.no_rekening = null;
+            this.opt.no_anggota = [];
+            this.opt.no_rekening = [];
+
             this.opt.kode_rembug = [];
             let payload = {
                 perPage: "~",
@@ -465,6 +473,12 @@ export default {
             }
         },
         async doGetAnggota() {
+            // reset value
+            this.paging.no_anggota = null;
+            this.paging.jenis_tabungan = null;
+            this.paging.no_rekening = null;
+            this.opt.no_rekening = [];
+
             this.opt.no_anggota = [];
             let payload = {
                 perPage: "~",
@@ -472,8 +486,8 @@ export default {
                 sortBy: "kode_rembug",
                 sortDir: "ASC",
                 search: "",
-                cabang: this.paging.cabang,
-                rembug: this.paging.majelis,
+                cabang: this.paging.kode_cabang,
+                rembug: this.paging.kode_rembug,
             };
             try {
                 let req = await easycoApi.anggotaRead(payload, this.user.token);
@@ -501,6 +515,11 @@ export default {
             }
         },
         async doGetRekening() {
+            // reset value
+            this.paging.jenis_tabungan = null;
+            this.paging.no_rekening = null;
+            this.opt.no_rekening = [];
+
             this.opt.no_rekening = [];
             let payload = {
                 no_anggota: this.paging.no_anggota,
@@ -547,6 +566,14 @@ export default {
                 let req = await easycoApi.listStatementTabungan(params, this.user.token);
                 let { data, status, msg, total } = req.data;
                 if (status) {
+                    if (data && data.length > 0) {
+                        data.forEach(item => {
+                            item.setor = this.numberFormat(item.setor, 0);
+                            item.tarik = this.numberFormat(item.tarik, 0);
+                            item.saldo_akhir = this.numberFormat(item.saldo_akhir, 0);
+                        });
+                    }
+
                     this.table.items = data;
                     this.table.totalRows = total;
                 } else {
