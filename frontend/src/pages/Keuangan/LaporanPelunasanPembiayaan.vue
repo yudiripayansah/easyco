@@ -432,11 +432,11 @@ export default {
 			const singleObjKodePetugas = this.opt.kode_petugas.find(item => item.value == this.paging.kode_petugas);
 			const singleObjKodeRembug = this.opt.kode_rembug.find(item => item.value == this.paging.kode_rembug);
 
-			let fileName = "LAPORAN PELUNASAN PEMBIAYAAN";
-			if (this.paging.kode_cabang) fileName += ` - Cabang ${(singleObjKodeCabang?.value != null ? singleObjKodeCabang?.text : '')}_`;
-			if (this.paging.kode_petugas) fileName += ` - Petugas ${(singleObjKodePetugas?.value != null ? singleObjKodePetugas?.text : '')}_`;
-			if (this.paging.kode_rembug) fileName += ` - Majelis ${(singleObjKodeRembug?.value != null ? singleObjKodeRembug?.text : '')}_`;
-			if (this.paging.from_date && this.paging.thru_date) fileName += ` - Dari ${this.dateFormatId(this.paging.from_date)} Sampai ${this.dateFormatId(this.paging.thru_date)}`;
+			let fileName = "LAPORAN PELUNASAN PEMBIAYAAN_";
+			if (this.paging.kode_cabang) fileName += `Cabang ${(singleObjKodeCabang?.value != null ? singleObjKodeCabang?.text : '')}_`;
+			if (this.paging.kode_petugas) fileName += `Petugas ${(singleObjKodePetugas?.value != null ? singleObjKodePetugas?.text : '')}_`;
+			if (this.paging.kode_rembug) fileName += `Majelis ${(singleObjKodeRembug?.value != null ? singleObjKodeRembug?.text : '')}_`;
+			if (this.paging.from_date && this.paging.thru_date) fileName += `Dari ${this.dateFormatId(this.paging.from_date)} Sampai ${this.dateFormatId(this.paging.thru_date)}`;
 			return fileName;
 		},
 		doPrintPdf() {
@@ -474,17 +474,17 @@ export default {
 			});
 		},
 		async exportXls() {
-			if (this.kode_cabang == null ||
-				this.kode_petugas == null ||
-				this.kode_rembug == null ||
-				this.from_date == null ||
-				this.thru_date == null) {
+			if (this.paging.kode_cabang == null &&
+				this.paging.kode_petugas == null &&
+				this.paging.kode_rembug == null &&
+				this.paging.from_date == null &&
+				this.paging.thru_date == null) {
 				this.notify("info", "Info", "Please entry a filter before export!");
 				return false;
 			}
 
 			this.showOverlay = true;
-			const payload = `kode_cabang=${this.paging.kode_cabang}&kode_petugas=${this.paging.kode_petugas}&kode_rembug=${this.paging.kode_rembug}&thru_date=${this.paging.thru_date}`;
+			const payload = `kode_cabang=${this.paging.kode_cabang}&kode_petugas=${this.paging.kode_petugas}&kode_rembug=${this.paging.kode_rembug}&from_date=${this.paging.from_date}&thru_date=${this.paging.thru_date}`;
 			const req = await easycoApi.listReportPelunasanPembiayaanExportToXLSX(payload);
 			const url = window.URL.createObjectURL(new Blob([req.data]));
 			const link = document.createElement("a");
@@ -496,17 +496,17 @@ export default {
 			this.showOverlay = false;
 		},
 		async exportCsv() {
-			if (this.kode_cabang == null ||
-				this.kode_petugas == null ||
-				this.kode_rembug == null ||
-				this.from_date == null ||
-				this.thru_date == null) {
+			if (this.paging.kode_cabang == null &&
+				this.paging.kode_petugas == null &&
+				this.paging.kode_rembug == null &&
+				this.paging.from_date == null &&
+				this.paging.thru_date == null) {
 				this.notify("info", "Info", "Please entry a filter before export!");
 				return false;
 			}
 
 			this.showOverlay = true;
-			const payload = `kode_cabang=${this.paging.kode_cabang}&kode_petugas=${this.paging.kode_petugas}&kode_rembug=${this.paging.kode_rembug}&thru_date=${this.paging.thru_date}`;
+			const payload = `kode_cabang=${this.paging.kode_cabang}&kode_petugas=${this.paging.kode_petugas}&kode_rembug=${this.paging.kode_rembug}&from_date=${this.paging.from_date}&thru_date=${this.paging.thru_date}`;
 			const req = await easycoApi.listReportPelunasanPembiayaanExportToCSV(payload);
 			const url = window.URL.createObjectURL(new Blob([req.data]));
 			const link = document.createElement("a");
@@ -547,7 +547,6 @@ export default {
 			}
 		},
 		async doGetPetugas() {
-			// reset value
 			this.opt.kode_petugas = [];
 			let payload = {
 				perPage: "~",
@@ -579,7 +578,6 @@ export default {
 			}
 		},
 		async doGetMajelis() {
-			// reset value
 			this.opt.kode_rembug = [];
 			let payload = {
 				perPage: "~",
