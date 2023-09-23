@@ -1,84 +1,87 @@
 <template>
     <div>
         <h1 class="mb-5">{{ $route.name }}</h1>
-        <b-card>
-            <b-row no-gutters>
-                <b-col cols="8" class="mb-5">
-                    <div class="row mb-3">
-                        <b-col>
-                            <b-input-group prepend="Cabang">
-                                <b-form-select v-model="paging.kode_cabang" :options="opt.kode_cabang"
-                                    @change="doGetMajelis()" />
-                            </b-input-group>
-                        </b-col>
-                        <b-col>
-                            <b-input-group prepend="Majelis">
-                                <b-form-select v-model="paging.kode_rembug" :options="opt.kode_rembug"
-                                    @change="doGetAnggota()" />
-                            </b-input-group>
-                        </b-col>
-                    </div>
-                    <div class="row">
-                        <b-col>
-                            <b-input-group prepend="Anggota">
-                                <b-form-select v-model="paging.no_anggota" :options="opt.no_anggota"
-                                    @change="doGetRekening()" />
-                            </b-input-group><br />
-                        </b-col>
-                        <b-col>
-                            <b-input-group prepend="Tabungan">
-                                <b-form-select v-model="paging.jenis_tabungan" :options="opt.jenis_tabungan" />
-                            </b-input-group><br />
-                        </b-col>
-                        <b-col>
-                            <b-input-group prepend="Rekening">
-                                <b-form-select v-model="paging.no_rekening" :options="opt.no_rekening" />
-                            </b-input-group><br />
-                        </b-col>
-                    </div>
-                    <div class="row">
-                        <b-col>
-                            <b-input-group prepend="Dari Tanggal">
-                                <b-form-datepicker v-model="paging.from_date" />
-                            </b-input-group>
-                        </b-col>
-                        <b-col>
-                            <b-input-group prepend="Sampai Tanggal">
-                                <b-form-datepicker v-model="paging.thru_date" />
-                            </b-input-group>
-                        </b-col>
-                    </div>
-                </b-col>
-                <b-col cols="4" class="d-flex justify-content-end align-items-start">
-                    <b-button-group>
-                        <b-button text="Button" variant="danger" @click="
-                            $bvModal.show('modal-pdf');
-                        doGetReport();
-                        ">
-                            PDF
-                        </b-button>
-                        <b-button text="Button" variant="success" @click="exportXls()">
-                            XLS
-                        </b-button>
-                        <b-button text="Button" variant="warning" @click="exportCsv()">
-                            CSV
-                        </b-button>
-                    </b-button-group>
-                </b-col>
-                <b-col cols="12">
-                    <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
-                        show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
-                        <template #cell(no)="item">
-                            {{ item.index + 1 }}
-                        </template>
-                    </b-table>
-                </b-col>
-                <b-col cols="12" class="justify-content-end d-flex">
-                    <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
-                    </b-pagination>
-                </b-col>
-            </b-row>
-        </b-card>
+        <b-overlay :show="showOverlay" rounded="sm">
+            <b-card>
+                <b-row no-gutters>
+                    <b-col cols="8" class="mb-5">
+                        <div class="row mb-3">
+                            <b-col>
+                                <b-input-group prepend="Cabang">
+                                    <b-form-select v-model="paging.kode_cabang" :options="opt.kode_cabang"
+                                        @change="doGetMajelis()" />
+                                </b-input-group>
+                            </b-col>
+                            <b-col>
+                                <b-input-group prepend="Majelis">
+                                    <b-form-select v-model="paging.kode_rembug" :options="opt.kode_rembug"
+                                        @change="doGetAnggota()" />
+                                </b-input-group>
+                            </b-col>
+                        </div>
+                        <div class="row">
+                            <b-col>
+                                <b-input-group prepend="Anggota">
+                                    <b-form-select v-model="paging.no_anggota" :options="opt.no_anggota"
+                                        @change="doGetRekening()" />
+                                </b-input-group><br />
+                            </b-col>
+                            <b-col>
+                                <b-input-group prepend="Tabungan">
+                                    <b-form-select v-model="paging.jenis_tabungan" :options="opt.jenis_tabungan" />
+                                </b-input-group><br />
+                            </b-col>
+                            <b-col>
+                                <b-input-group prepend="Rekening">
+                                    <b-form-select v-model="paging.no_rekening" :options="opt.no_rekening" />
+                                </b-input-group><br />
+                            </b-col>
+                        </div>
+                        <div class="row">
+                            <b-col>
+                                <b-input-group prepend="Dari Tanggal">
+                                    <b-form-datepicker v-model="paging.from_date" />
+                                </b-input-group>
+                            </b-col>
+                            <b-col>
+                                <b-input-group prepend="Sampai Tanggal">
+                                    <b-form-datepicker v-model="paging.thru_date" />
+                                </b-input-group>
+                            </b-col>
+                        </div>
+                    </b-col>
+                    <b-col cols="4" class="d-flex justify-content-end align-items-start">
+                        <b-button-group>
+                            <b-button text="Button" variant="danger" @click="
+                                $bvModal.show('modal-pdf');
+                            doGetReport();
+                            ">
+                                PDF
+                            </b-button>
+                            <b-button text="Button" variant="success" @click="exportXls()">
+                                XLS
+                            </b-button>
+                            <b-button text="Button" variant="warning" @click="exportCsv()">
+                                CSV
+                            </b-button>
+                        </b-button-group>
+                    </b-col>
+                    <b-col cols="12">
+                        <b-table responsive bordered outlined small striped hover :fields="table.fields"
+                            :items="table.items" show-empty
+                            :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
+                            <template #cell(no)="item">
+                                {{ item.index + 1 }}
+                            </template>
+                        </b-table>
+                    </b-col>
+                    <b-col cols="12" class="justify-content-end d-flex">
+                        <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
+                        </b-pagination>
+                    </b-col>
+                </b-row>
+            </b-card>
+        </b-overlay>
 
         <b-modal title="PREVIEW STATEMENT TABUNGAN" id="modal-pdf" hide-footer size="xl" centered>
             <div id="table-print" class="p-5">
@@ -291,6 +294,7 @@ export default {
                 ],
                 no_rekening: [],
             },
+            showOverlay: false,
         };
     },
     computed: {
@@ -368,6 +372,7 @@ export default {
             });
         },
         async exportXls() {
+            this.showOverlay = true;
             this.validateFilter();
             let payload = `no_anggota=${this.paging.no_anggota}&jenis_tabungan=${this.paging.jenis_tabungan}&from_date=${this.paging.from_date}&thru_date=${this.paging.thru_date}`;
             const req = await easycoApi.listStatementTabunganExportToXLSX(payload);
@@ -378,8 +383,10 @@ export default {
             link.setAttribute("download", fileName);
             document.body.appendChild(link);
             link.click();
+            this.showOverlay = false;
         },
         async exportCsv() {
+            this.showOverlay = true;
             this.validateFilter();
             let payload = `no_anggota=${this.paging.no_anggota}&jenis_tabungan=${this.paging.jenis_tabungan}&from_date=${this.paging.from_date}&thru_date=${this.paging.thru_date}`;
             let req = await easycoApi.listStatementTabunganExportToCSV(payload);
@@ -390,6 +397,7 @@ export default {
             link.setAttribute("download", fileName);
             document.body.appendChild(link);
             link.click();
+            this.showOverlay = false;
         },
         getCabangName(id) {
             if (id > 0) {
@@ -439,9 +447,11 @@ export default {
             this.paging.no_anggota = null;
             this.paging.jenis_tabungan = null;
             this.paging.no_rekening = null;
+            this.paging.from_date = null;
+            this.paging.thru_date = null;
+
             this.opt.no_anggota = [];
             this.opt.no_rekening = [];
-
             this.opt.kode_rembug = [];
             let payload = {
                 perPage: "~",
@@ -477,8 +487,10 @@ export default {
             this.paging.no_anggota = null;
             this.paging.jenis_tabungan = null;
             this.paging.no_rekening = null;
-            this.opt.no_rekening = [];
+            this.paging.from_date = null;
+            this.paging.thru_date = null;
 
+            this.opt.no_rekening = [];
             this.opt.no_anggota = [];
             let payload = {
                 perPage: "~",
@@ -518,7 +530,8 @@ export default {
             // reset value
             this.paging.jenis_tabungan = null;
             this.paging.no_rekening = null;
-            this.opt.no_rekening = [];
+            this.paging.from_date = null;
+            this.paging.thru_date = null;
 
             this.opt.no_rekening = [];
             let payload = {
@@ -551,6 +564,8 @@ export default {
             }
         },
         async doGet() {
+            this.showOverlay = true;
+
             let payload = this.paging;
             payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
             payload.perPage = 10;
@@ -584,6 +599,8 @@ export default {
                 this.table.loading = false;
                 console.error(error);
                 this.notify("danger", "Error", error);
+            } finally {
+                this.showOverlay = false;
             }
         },
         async doGetReport() {

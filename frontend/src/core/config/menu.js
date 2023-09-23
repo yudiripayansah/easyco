@@ -326,7 +326,12 @@ const menu = [
       {
         target: 'laporan-keuangan-bulan-lalu',
         label: 'Laporan Keuangan Bulan Lalu',
-        component: import('@/pages/Keuangan/LaporanKeuangnBulanLalu.vue'),
+        component: import('@/pages/Keuangan/LaporanKeuanganBulanLalu.vue'),
+      },
+      {
+        target: 'laporan-keuangan-bulan-berjalan',
+        label: 'Laporan Keuangan Bulan Berjalan',
+        component: import('@/pages/Keuangan/LaporanKeuanganBulanBerjalan.vue'),
       },
     ]
   },
