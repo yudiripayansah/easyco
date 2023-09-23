@@ -45,7 +45,7 @@ import { mapGetters } from "vuex";
 import easycoApi from "@/core/services/easyco.service";
 
 export default {
-	name: "StatementTabungan",
+	name: "LaporanKeuanganBulanLalu",
 	components: {},
 	data() {
 		return {

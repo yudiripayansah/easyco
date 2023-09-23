@@ -16,16 +16,9 @@
 									<b-form-select v-model="paging.jenis" :options="opt.jenis" />
 								</b-input-group>
 							</b-col>
-						</div>
-						<div class="row">
 							<b-col>
-								<b-input-group prepend="Dari Tanggal">
-									<b-form-datepicker v-model="paging.from_date" />
-								</b-input-group>
-							</b-col>
-							<b-col>
-								<b-input-group prepend="Sampai Tanggal">
-									<b-form-datepicker v-model="paging.thru_date" />
+								<b-input-group prepend="Tanggal">
+									<b-form-datepicker v-model="paging.closing_date" />
 								</b-input-group>
 							</b-col>
 						</div>
@@ -52,7 +45,7 @@ import { mapGetters } from "vuex";
 import easycoApi from "@/core/services/easyco.service";
 
 export default {
-	name: "StatementTabungan",
+	name: "LaporanKeuanganBulanBerjalan",
 	components: {},
 	data() {
 		return {
@@ -65,14 +58,14 @@ export default {
 				status: "~",
 				kode_cabang: null,
 				jenis: null,
-				from_date: null,
-				thru_date: null,
+				closing_date: null,
 			},
 			opt: {
 				kode_cabang: [],
 				jenis: [],
+				closing_date: [],
 			},
-			showOverlay: false,
+			showOverlay: false
 		};
 	},
 	computed: {
@@ -137,7 +130,7 @@ export default {
 			}
 		},
 		async doGetJenis() {
-			let payload = `kode=0`;
+			let payload = `kode=1`;
 			try {
 				let req = await easycoApi.getReportSetup(payload, this.user.token);
 				let { data, status, msg } = req.data;
