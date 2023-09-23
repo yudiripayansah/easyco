@@ -86,12 +86,12 @@ const menu = [
           {
             target: 'pembukaan-rekening-tabungan',
             label: 'Laporan Pembukaan Rekening Tabungan',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Tabungan/Laporan/PembukaanTabungan.vue'),
           },
           {
             target: 'saldo-tabungan',
             label: 'Saldo Tabungan',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Tabungan/Laporan/SaldoTabungan.vue'),
           },
           {
             target: 'statement-tabungan',

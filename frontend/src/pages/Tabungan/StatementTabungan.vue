@@ -4,7 +4,7 @@
         <b-overlay :show="showOverlay" rounded="sm">
             <b-card>
                 <b-row no-gutters>
-                    <b-col cols="8" class="mb-5">
+                    <b-col cols="10" class="mb-5">
                         <div class="row mb-3">
                             <b-col>
                                 <b-input-group prepend="Cabang">
@@ -50,7 +50,7 @@
                             </b-col>
                         </div>
                     </b-col>
-                    <b-col cols="4" class="d-flex justify-content-end align-items-start">
+                    <b-col cols="2" class="d-flex justify-content-end align-items-start">
                         <b-button-group>
                             <b-button text="Button" variant="danger" @click="
                                 $bvModal.show('modal-pdf');
@@ -103,13 +103,9 @@
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
                         <thead>
-                            <tr class="text-center">
-                                <th>No</th>
-                                <th>Trx Date</th>
-                                <th>Setor</th>
-                                <th>Tarik</th>
-                                <th>Saldo Akhir</th>
-                                <th>Keterangan</th>
+                            <tr>
+                                <th v-for="table in table.fields" :key="table.key" :class="table.thClass">{{ table.label }}
+                                </th>
                             </tr>
                         </thead>
                         <tbody v-if="report.items.length > 0">
@@ -262,21 +258,36 @@ export default {
                 sortBy: "id",
                 search: "",
                 status: "~",
-                kode_cabang: null,
-                kode_rembug: null,
-                no_anggota: null,
-                jenis_tabungan: null,
-                no_rekening: null,
-                from_date: null,
-                thru_date: null,
+                kode_cabang: '',
+                kode_rembug: '',
+                no_anggota: '',
+                jenis_tabungan: '',
+                no_rekening: '',
+                from_date: '',
+                thru_date: '',
             },
             opt: {
-                kode_cabang: [],
-                kode_rembug: [],
-                no_anggota: [],
+                kode_cabang: [
+                    {
+                        value: '',
+                        text: "All",
+                    },
+                ],
+                kode_rembug: [
+                    {
+                        value: '',
+                        text: "All",
+                    },
+                ],
+                no_anggota: [
+                    {
+                        value: '',
+                        text: "All",
+                    },
+                ],
                 jenis_tabungan: [
                     {
-                        value: 0,
+                        value: '',
                         text: "All",
                     },
                     {
@@ -292,7 +303,12 @@ export default {
                         text: "Tabungan Simpanan Wajib/Minggon",
                     }
                 ],
-                no_rekening: [],
+                no_rekening: [
+                    {
+                        value: '',
+                        text: "All",
+                    },
+                ],
             },
             showOverlay: false,
         };
@@ -315,10 +331,10 @@ export default {
     methods: {
         ...helper,
         validateFilter() {
-            if (this.paging.no_anggota == null &&
-                this.paging.jenis_tabungan == null &&
-                this.paging.from_date == null &&
-                this.paging.thru_date == null) {
+            if (this.paging.no_anggota == '' &&
+                this.paging.jenis_tabungan == '' &&
+                this.paging.from_date == '' &&
+                this.paging.thru_date == '') {
                 this.notify("info", "Info", "Please entry a filter before export!");
                 return false;
             }
@@ -426,7 +442,7 @@ export default {
                 if (status) {
                     this.opt.kode_cabang = [
                         {
-                            value: 0,
+                            value: '',
                             text: "All",
                         },
                     ];
@@ -443,16 +459,19 @@ export default {
         },
         async doGetMajelis() {
             // reset value
-            this.paging.kode_rembug = null;
-            this.paging.no_anggota = null;
-            this.paging.jenis_tabungan = null;
-            this.paging.no_rekening = null;
-            this.paging.from_date = null;
-            this.paging.thru_date = null;
+            this.opt.no_anggota = [
+                {
+                    value: '',
+                    text: "All",
+                },
+            ];
+            this.opt.no_rekening = [
+                {
+                    value: '',
+                    text: "All",
+                },
+            ];
 
-            this.opt.no_anggota = [];
-            this.opt.no_rekening = [];
-            this.opt.kode_rembug = [];
             let payload = {
                 perPage: "~",
                 page: 1,
@@ -467,7 +486,7 @@ export default {
                 if (status) {
                     this.opt.kode_rembug = [
                         {
-                            value: 0,
+                            value: '',
                             text: "All",
                         },
                     ];
@@ -484,14 +503,13 @@ export default {
         },
         async doGetAnggota() {
             // reset value
-            this.paging.no_anggota = null;
-            this.paging.jenis_tabungan = null;
-            this.paging.no_rekening = null;
-            this.paging.from_date = null;
-            this.paging.thru_date = null;
+            this.opt.no_rekening = [
+                {
+                    value: '',
+                    text: "All",
+                },
+            ];
 
-            this.opt.no_rekening = [];
-            this.opt.no_anggota = [];
             let payload = {
                 perPage: "~",
                 page: 1,
@@ -507,7 +525,7 @@ export default {
                 if (status) {
                     this.opt.no_anggota = [
                         {
-                            value: 0,
+                            value: '',
                             text: "All",
                         },
                     ];
@@ -533,7 +551,12 @@ export default {
             this.paging.from_date = null;
             this.paging.thru_date = null;
 
-            this.opt.no_rekening = [];
+            this.opt.no_rekening = [
+                {
+                    value: '',
+                    text: "All",
+                },
+            ];
             let payload = {
                 no_anggota: this.paging.no_anggota,
             };
@@ -543,7 +566,7 @@ export default {
                 if (data.length > 0) {
                     this.opt.no_rekening = [
                         {
-                            value: 0,
+                            value: '',
                             text: "All",
                         },
                     ];
@@ -571,14 +594,13 @@ export default {
             payload.perPage = 10;
             this.table.loading = true;
             try {
-                let params = new FormData();
-                params.append('no_anggota', (payload.no_anggota == null ? '1010200000254' : payload.no_anggota));
-                params.append('jenis_tabungan', (payload.jenis_tabungan == null ? '1' : payload.jenis_tabungan));
-                params.append('no_rekening', (payload.no_rekening == null ? '101020000025409901' : payload.no_rekening));
-                params.append('from_date', (payload.from_date == null ? '2023-01-01' : payload.from_date));
-                params.append('thru_date', (payload.thru_date == null ? '2023-01-01' : payload.thru_date));
+                payload.no_anggota = this.paging.no_anggota == '' ? '1010200000254' : this.paging.no_anggota;
+                payload.jenis_tabungan = this.paging.jenis_tabungan == '' ? '1' : this.paging.jenis_tabungan;
+                payload.no_rekening = this.paging.no_rekening == '' ? '101020000025409901' : this.paging.no_rekening;
+                payload.from_date = this.paging.from_date == '' ? '2023-01-01' : this.paging.from_date;
+                payload.thru_date = this.paging.thru_date == '' ? '2023-01-01' : this.paging.thru_date;
 
-                let req = await easycoApi.listStatementTabungan(params, this.user.token);
+                let req = await easycoApi.listStatementTabungan(payload, this.user.token);
                 let { data, status, msg, total } = req.data;
                 if (status) {
                     if (data && data.length > 0) {
@@ -612,14 +634,7 @@ export default {
                 ...this.paging
             };
             try {
-                let params = new FormData();
-                params.append('no_anggota', (payload.no_anggota == null ? '1010200000254' : payload.no_anggota));
-                params.append('jenis_tabungan', (payload.jenis_tabungan == null ? '1' : payload.jenis_tabungan));
-                params.append('no_rekening', (payload.no_rekening == null ? '101020000025409901' : payload.no_rekening));
-                params.append('from_date', (payload.from_date == null ? '2023-01-01' : payload.from_date));
-                params.append('thru_date', (payload.thru_date == null ? '2023-01-01' : payload.thru_date));
-
-                let req = await easycoApi.listStatementTabungan(params, this.user.token);
+                let req = await easycoApi.listStatementTabungan(payload, this.user.token);
                 let { data, status, msg, total } = req.data;
                 if (status) {
                     this.report.items = data;

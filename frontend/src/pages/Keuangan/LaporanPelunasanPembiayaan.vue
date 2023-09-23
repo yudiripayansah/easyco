@@ -20,8 +20,7 @@
 							</b-col>
 							<b-col>
 								<b-input-group prepend="Majelis">
-									<b-form-select v-model="paging.kode_rembug" :options="opt.kode_rembug"
-										@change="doGetMajelis()" />
+									<b-form-select v-model="paging.kode_rembug" :options="opt.kode_rembug" />
 								</b-input-group>
 							</b-col>
 						</div>
@@ -85,8 +84,10 @@
 				<div class="table-responsive">
 					<table class="table table-bordered table-striped">
 						<thead>
-							<th v-for="table in table.fields" :key="table.key" :class="table.thClass">{{ table.label }}
-							</th>
+							<tr>
+								<th v-for="table in table.fields" :key="table.key" :class="table.thClass">{{ table.label }}
+								</th>
+							</tr>
 						</thead>
 						<tbody v-if="report && report.items && report.items.length > 0">
 							<tr v-for="(report, reportIndex) in report.items" :key="`report-${reportIndex}`">
@@ -403,9 +404,24 @@ export default {
 				thru_date: '',
 			},
 			opt: {
-				kode_cabang: [],
-				kode_petugas: [],
-				kode_rembug: []
+				kode_cabang: [
+					{
+						value: '',
+						text: "All",
+					},
+				],
+				kode_petugas: [
+					{
+						value: '',
+						text: "All",
+					},
+				],
+				kode_rembug: [
+					{
+						value: '',
+						text: "All",
+					},
+				]
 			},
 			showOverlay: false,
 		};
@@ -474,12 +490,8 @@ export default {
 			});
 		},
 		async exportXls() {
-			if (this.paging.kode_cabang == null &&
-				this.paging.kode_petugas == null &&
-				this.paging.kode_rembug == null &&
-				this.paging.from_date == null &&
-				this.paging.thru_date == null) {
-				this.notify("info", "Info", "Please entry a filter before export!");
+			if (this.paging.kode_cabang == '') {
+				this.notify("info", "Info", "Please select Cabang before export!");
 				return false;
 			}
 
@@ -496,12 +508,8 @@ export default {
 			this.showOverlay = false;
 		},
 		async exportCsv() {
-			if (this.paging.kode_cabang == null &&
-				this.paging.kode_petugas == null &&
-				this.paging.kode_rembug == null &&
-				this.paging.from_date == null &&
-				this.paging.thru_date == null) {
-				this.notify("info", "Info", "Please entry a filter before export!");
+			if (this.paging.kode_cabang == '') {
+				this.notify("info", "Info", "Please select Cabang before export!");
 				return false;
 			}
 
@@ -531,8 +539,8 @@ export default {
 				if (status) {
 					this.opt.kode_cabang = [
 						{
-							value: null,
-							text: "Please Select",
+							value: '',
+							text: "All",
 						},
 					];
 					data.map((item) => {
@@ -547,7 +555,15 @@ export default {
 			}
 		},
 		async doGetPetugas() {
+			this.paging.kode_petugas = '';
+			this.paging.kode_rembug = '';
 			this.opt.kode_petugas = [];
+			this.opt.kode_rembug = [
+				{
+					value: '',
+					text: "All",
+				},
+			];
 			let payload = {
 				perPage: "~",
 				page: 1,
@@ -562,8 +578,8 @@ export default {
 				if (status) {
 					this.opt.kode_petugas = [
 						{
-							value: null,
-							text: "Please Select",
+							value: '',
+							text: "All",
 						},
 					];
 					data.map((item) => {
@@ -578,6 +594,7 @@ export default {
 			}
 		},
 		async doGetMajelis() {
+			this.paging.kode_rembug = '';
 			this.opt.kode_rembug = [];
 			let payload = {
 				perPage: "~",
@@ -593,8 +610,8 @@ export default {
 				if (status) {
 					this.opt.kode_rembug = [
 						{
-							value: null,
-							text: "Please Select",
+							value: '',
+							text: "All",
 						},
 					];
 					data.map((item) => {
