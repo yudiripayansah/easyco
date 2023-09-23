@@ -199,7 +199,7 @@ const menu = [
           {
             target: 'list-pelunasan',
             label: 'List Pelunasan',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Keuangan/LaporanPelunasanPembiayaan.vue'),
           },
           {
             target: 'par-kolektibilitas',
@@ -308,25 +308,30 @@ const menu = [
         label: 'Laporan Buku Besar',
         component: import('@/pages/Keuangan/LaporanBukuBesar.vue'),
       },
-      {
-        target: 'laporan-neraca-saldo',
-        label: 'Laporan Neraca Saldo',
-        component: import('@/pages/Dummy.vue'),
-      },
-      {
-        target: 'laporan-neraca',
-        label: 'Laporan Neraca',
-        component: import('@/pages/Keuangan/LaporanNeraca.vue'),
-      },
-      {
-        target: 'laporan-labarugi',
-        label: 'Laporan Laba Rugi',
-        component: import('@/pages/Keuangan/LaporanLabaRugi.vue'),
-      },
+      // {
+      //   target: 'laporan-neraca-saldo',
+      //   label: 'Laporan Neraca Saldo',
+      //   component: import('@/pages/Dummy.vue'),
+      // },
+      // {
+      //   target: 'laporan-neraca',
+      //   label: 'Laporan Neraca',
+      //   component: import('@/pages/Keuangan/LaporanNeraca.vue'),
+      // },
+      // {
+      //   target: 'laporan-labarugi',
+      //   label: 'Laporan Laba Rugi',
+      //   component: import('@/pages/Keuangan/LaporanLabaRugi.vue'),
+      // },
       {
         target: 'laporan-keuangan-bulan-lalu',
         label: 'Laporan Keuangan Bulan Lalu',
-        component: import('@/pages/Keuangan/LaporanKeuangnBulanLalu.vue'),
+        component: import('@/pages/Keuangan/LaporanKeuanganBulanLalu.vue'),
+      },
+      {
+        target: 'laporan-keuangan-bulan-berjalan',
+        label: 'Laporan Keuangan Bulan Berjalan',
+        component: import('@/pages/Keuangan/LaporanKeuanganBulanBerjalan.vue'),
       },
     ]
   },

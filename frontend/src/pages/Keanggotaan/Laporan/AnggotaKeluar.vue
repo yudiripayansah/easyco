@@ -1,65 +1,68 @@
 <template>
     <div>
         <h1 class="mb-5">{{ $route.name }}</h1>
-        <b-card>
-            <b-row no-gutters>
-                <b-col cols="8" class="mb-5">
-                    <div class="row mb-3">
-                        <b-col>
-                            <b-input-group prepend="Cabang">
-                                <b-form-select v-model="paging.kode_cabang" :options="opt.kode_cabang"
-                                    @change="doGetMajelis()" />
-                            </b-input-group>
-                        </b-col>
-                        <b-col>
-                            <b-input-group prepend="Majelis">
-                                <b-form-select v-model="paging.kode_rembug" :options="opt.kode_rembug" />
-                            </b-input-group>
-                        </b-col>
-                    </div>
-                    <div class="row">
-                        <b-col>
-                            <b-input-group prepend="Dari Tanggal">
-                                <b-form-datepicker v-model="paging.from_date" />
-                            </b-input-group>
-                        </b-col>
-                        <b-col>
-                            <b-input-group prepend="Sampai Tanggal">
-                                <b-form-datepicker v-model="paging.thru_date" />
-                            </b-input-group>
-                        </b-col>
-                    </div>
-                </b-col>
-                <b-col cols="4" class="d-flex justify-content-end align-items-start">
-                    <b-button-group>
-                        <b-button text="Button" variant="danger" @click="
-                            $bvModal.show('modal-pdf');
-                        doGetReport();
-                        ">
-                            PDF
-                        </b-button>
-                        <b-button text="Button" variant="success" @click="exportXls()">
-                            XLS
-                        </b-button>
-                        <b-button text="Button" variant="warning" @click="exportCsv()">
-                            CSV
-                        </b-button>
-                    </b-button-group>
-                </b-col>
-                <b-col cols="12">
-                    <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
-                        show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
-                        <template #cell(no)="item">
-                            {{ item.index + 1 }}
-                        </template>
-                    </b-table>
-                </b-col>
-                <b-col cols="12" class="justify-content-end d-flex">
-                    <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
-                    </b-pagination>
-                </b-col>
-            </b-row>
-        </b-card>
+        <b-overlay :show="showOverlay" rounded="sm">
+            <b-card>
+                <b-row no-gutters>
+                    <b-col cols="8" class="mb-5">
+                        <div class="row mb-3">
+                            <b-col>
+                                <b-input-group prepend="Cabang">
+                                    <b-form-select v-model="paging.kode_cabang" :options="opt.kode_cabang"
+                                        @change="doGetMajelis()" />
+                                </b-input-group>
+                            </b-col>
+                            <b-col>
+                                <b-input-group prepend="Majelis">
+                                    <b-form-select v-model="paging.kode_rembug" :options="opt.kode_rembug" />
+                                </b-input-group>
+                            </b-col>
+                        </div>
+                        <div class="row">
+                            <b-col>
+                                <b-input-group prepend="Dari Tanggal">
+                                    <b-form-datepicker v-model="paging.from_date" />
+                                </b-input-group>
+                            </b-col>
+                            <b-col>
+                                <b-input-group prepend="Sampai Tanggal">
+                                    <b-form-datepicker v-model="paging.thru_date" />
+                                </b-input-group>
+                            </b-col>
+                        </div>
+                    </b-col>
+                    <b-col cols="4" class="d-flex justify-content-end align-items-start">
+                        <b-button-group>
+                            <b-button text="Button" variant="danger" @click="
+                                $bvModal.show('modal-pdf');
+                            doGetReport();
+                            ">
+                                PDF
+                            </b-button>
+                            <b-button text="Button" variant="success" @click="exportXls()">
+                                XLS
+                            </b-button>
+                            <b-button text="Button" variant="warning" @click="exportCsv()">
+                                CSV
+                            </b-button>
+                        </b-button-group>
+                    </b-col>
+                    <b-col cols="12">
+                        <b-table responsive bordered outlined small striped hover :fields="table.fields"
+                            :items="table.items" show-empty
+                            :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
+                            <template #cell(no)="item">
+                                {{ item.index + 1 }}
+                            </template>
+                        </b-table>
+                    </b-col>
+                    <b-col cols="12" class="justify-content-end d-flex">
+                        <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
+                        </b-pagination>
+                    </b-col>
+                </b-row>
+            </b-card>
+        </b-overlay>
 
         <b-modal title="PREVIEW ANGGOTA KELUAR" id="modal-pdf" hide-footer size="xl" centered>
             <div id="table-print" class="p-5">
@@ -202,77 +205,77 @@ export default {
                         sortable: true,
                         label: "Saldo Pokok",
                         thClass: "text-center",
-                        tdClass: "",
+                        tdClass: "text-right",
                     },
                     {
                         key: "saldo_margin",
                         sortable: true,
                         label: "Saldo Margin",
                         thClass: "text-center",
-                        tdClass: "",
+                        tdClass: "text-right",
                     },
                     {
                         key: "saldo_catab",
                         sortable: true,
                         label: "Saldo Catab",
                         thClass: "text-center",
-                        tdClass: "",
+                        tdClass: "text-right",
                     },
                     {
                         key: "saldo_minggon",
                         sortable: true,
                         label: "Saldo Minggon",
                         thClass: "text-center",
-                        tdClass: "",
+                        tdClass: "text-right",
                     },
                     {
                         key: "saldo_sukarela",
                         sortable: true,
                         label: "Saldo Sukarela",
                         thClass: "text-center",
-                        tdClass: "",
+                        tdClass: "text-right",
                     },
                     {
                         key: "saldo_tab_berencana",
                         sortable: true,
                         label: "Saldo Tab Berencana",
                         thClass: "saldo_tab_berencana",
-                        tdClass: "",
+                        tdClass: "text-right",
                     },
                     {
                         key: "saldo_deposito",
                         sortable: true,
                         label: "Saldo Deposito",
                         thClass: "text-center",
-                        tdClass: "",
+                        tdClass: "text-right",
                     },
                     {
                         key: "saldo_simpok",
                         sortable: true,
                         label: "Saldo Simpanan Pokok",
                         thClass: "text-center",
-                        tdClass: "",
+                        tdClass: "text-right",
                     },
                     {
                         key: "saldo_simwa",
                         sortable: true,
                         label: "Saldo Simpanan Wajib",
                         thClass: "text-center",
-                        tdClass: "",
+                        tdClass: "text-right",
                     },
                     {
                         key: "bonus_bagihasil",
                         sortable: true,
                         label: "Bonus Bagi Hasil",
                         thClass: "text-center",
-                        tdClass: "",
+                        tdClass: "text-right",
                     },
                     {
                         key: "penarikan_sukarela",
                         sortable: true,
                         label: "Penarikan Sukarela",
                         thClass: "penarikan_sukarela",
-                        tdClass: "",
+                        tdClass: "text-right",
                     },
                     {
                         key: "nama_petugas",
@@ -429,7 +432,7 @@ export default {
                 sortBy: "id",
                 search: "",
                 status: "~",
-                kode_cabang: "00000",
+                kode_cabang: null,
                 kode_rembug: null,
                 from_date: null,
                 thru_date: null,
@@ -438,6 +441,7 @@ export default {
                 kode_cabang: [],
                 kode_rembug: [],
             },
+            showOverlay: false
         };
     },
     computed: {
@@ -505,6 +509,7 @@ export default {
             });
         },
         async exportXls() {
+            this.showOverlay = true;
             let payload = `kode_cabang=${this.paging.kode_cabang}&kode_rembug=${this.paging.kode_rembug}&from_date=${this.paging.from_date}&thru_date=${this.paging.thru_date}`;
             const req = await easycoApi.listAnggotaKeluarExportToXLSX(payload);
             const url = window.URL.createObjectURL(new Blob([req.data]));
@@ -514,8 +519,10 @@ export default {
             link.setAttribute("download", fileName);
             document.body.appendChild(link);
             link.click();
+            this.showOverlay = false;
         },
         async exportCsv() {
+            this.showOverlay = true;
             let payload = `kode_cabang=${this.paging.kode_cabang}&kode_rembug=${this.paging.kode_rembug}&from_date=${this.paging.from_date}&thru_date=${this.paging.thru_date}`;
             let req = await easycoApi.listAnggotaKeluarExportToCSV(payload);
             const url = window.URL.createObjectURL(new Blob([req.data]));
@@ -525,6 +532,7 @@ export default {
             link.setAttribute("download", fileName);
             document.body.appendChild(link);
             link.click();
+            this.showOverlay = false;
         },
         getCabangName(id) {
             if (id > 0) {
@@ -540,6 +548,11 @@ export default {
             }
         },
         async doGetCabang() {
+            this.paging.kode_rembug = null;
+            this.paging.from_date = null;
+            this.paging.thru_date = null;
+            this.opt.kode_rembug = [];
+
             let payload = {
                 perPage: "~",
                 page: 1,
@@ -553,8 +566,8 @@ export default {
                 if (status) {
                     this.opt.kode_cabang = [
                         {
-                            value: 0,
-                            text: "All",
+                            value: null,
+                            text: "Please Select",
                         },
                     ];
                     data.map((item) => {
@@ -569,6 +582,9 @@ export default {
             }
         },
         async doGetMajelis() {
+            this.paging.from_date = null;
+            this.paging.thru_date = null;
+
             this.opt.kode_rembug = [];
             let payload = {
                 perPage: "~",
@@ -584,8 +600,8 @@ export default {
                 if (status) {
                     this.opt.kode_rembug = [
                         {
-                            value: 0,
-                            text: "All",
+                            value: null,
+                            text: "Please Select",
                         },
                     ];
                     data.map((item) => {
@@ -600,20 +616,37 @@ export default {
             }
         },
         async doGet() {
+            this.showOverlay = true;
             let payload = this.paging;
             payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
             payload.perPage = 10;
             this.table.loading = true;
             try {
                 let params = new FormData();
-                params.append('kode_cabang', payload.kode_cabang);
-                params.append('kode_rembug', payload.kode_rembug);
-                params.append('from_date', payload.from_date);
-                params.append('thru_date', payload.thru_date);
+                params.append('kode_cabang', (payload.kode_cabang == null ? "00000" : payload.kode_cabang));
+                params.append('kode_rembug', (payload.kode_rembug == null ? null : payload.kode_rembug));
+                params.append('from_date', (payload.from_date == null ? null : payload.from_date));
+                params.append('thru_date', (payload.thru_date == null ? null : payload.thru_date));
 
                 let req = await easycoApi.listAnggotaKeluar(params, this.user.token);
                 let { data, status, msg, total } = req.data;
                 if (status) {
+                    if (data && data.length > 0) {
+                        data.forEach(item => {
+                            item.saldo_pokok = this.numberFormat(item.saldo_pokok, 0);
+                            item.saldo_margin = this.numberFormat(item.saldo_margin, 0);
+                            item.saldo_catab = this.numberFormat(item.saldo_catab, 0);
+                            item.saldo_minggon = this.numberFormat(item.saldo_minggon, 0);
+                            item.saldo_sukarela = this.numberFormat(item.saldo_sukarela, 0);
+                            item.saldo_tab_berencana = this.numberFormat(item.saldo_tab_berencana, 0);
+                            item.saldo_deposito = this.numberFormat(item.saldo_deposito, 0);
+                            item.saldo_simpok = this.numberFormat(item.saldo_simpok, 0);
+                            item.saldo_simwa = this.numberFormat(item.saldo_simwa, 0);
+                            item.bonus_bagihasil = this.numberFormat(item.bonus_bagihasil, 0);
+                            item.penarikan_sukarela = this.numberFormat(item.penarikan_sukarela, 0);
+                        });
+                    }
+
                     this.table.items = data;
                     this.table.totalRows = total;
                 } else {
@@ -624,6 +657,8 @@ export default {
                 this.table.loading = false;
                 console.error(error);
                 this.notify("danger", "Error", error);
+            } finally {
+                this.showOverlay = false;
             }
         },
         async doGetReport() {

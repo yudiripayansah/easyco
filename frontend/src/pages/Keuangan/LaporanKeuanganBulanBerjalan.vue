@@ -1,50 +1,51 @@
 <template>
 	<div>
 		<h1 class="mb-5">{{ $route.name }}</h1>
-		<b-card>
-			<b-row no-gutters>
-				<b-col cols="10" class="mb-5">
-					<div class="row mb-3">
-						<b-col>
-							<b-input-group prepend="Cabang">
-								<b-form-select v-model="paging.kode_cabang" :options="opt.kode_cabang" />
-							</b-input-group>
-						</b-col>
-						<b-col>
-							<b-input-group prepend="Jenis">
-								<b-form-select v-model="paging.jenis" :options="opt.jenis" />
-							</b-input-group>
-						</b-col>
-						<b-col>
-							<b-input-group prepend="Tanggal" class="mb-3">
-								<b-form-select v-model="paging.closing_date" :options="opt.closing_date" />
-							</b-input-group>
-						</b-col>
-					</div>
-				</b-col>
-				<b-col cols="2" class="d-flex justify-content-end align-items-start">
-					<b-button-group>
-						<b-button text="Button" variant="danger" @click="doExportTo(1)">
-							PDF
-						</b-button>
-						<b-button text="Button" variant="success" @click="doExportTo(2)">
-							XLS
-						</b-button>
-					</b-button-group>
-				</b-col>
-			</b-row>
-		</b-card>
+		<b-overlay :show="showOverlay" rounded="sm">
+			<b-card>
+				<b-row no-gutters>
+					<b-col cols="10" class="mb-5">
+						<div class="row mb-3">
+							<b-col>
+								<b-input-group prepend="Cabang">
+									<b-form-select v-model="paging.kode_cabang" :options="opt.kode_cabang" />
+								</b-input-group>
+							</b-col>
+							<b-col>
+								<b-input-group prepend="Jenis">
+									<b-form-select v-model="paging.jenis" :options="opt.jenis" />
+								</b-input-group>
+							</b-col>
+							<b-col>
+								<b-input-group prepend="Tanggal">
+									<b-form-datepicker v-model="paging.closing_date" />
+								</b-input-group>
+							</b-col>
+						</div>
+					</b-col>
+					<b-col cols="2" class="d-flex justify-content-end align-items-start">
+						<b-button-group>
+							<b-button text="Button" variant="danger" @click="doExportTo(1)">
+								PDF
+							</b-button>
+							<b-button text="Button" variant="success" @click="doExportTo(2)">
+								XLS
+							</b-button>
+						</b-button-group>
+					</b-col>
+				</b-row>
+			</b-card>
+		</b-overlay>
 	</div>
 </template>
       
 <script>
 import helper from "@/core/helper";
-import html2pdf from "html2pdf.js";
 import { mapGetters } from "vuex";
 import easycoApi from "@/core/services/easyco.service";
 
 export default {
-	name: "StatementTabungan",
+	name: "LaporanKeuanganBulanBerjalan",
 	components: {},
 	data() {
 		return {
@@ -64,6 +65,7 @@ export default {
 				jenis: [],
 				closing_date: [],
 			},
+			showOverlay: false
 		};
 	},
 	computed: {
@@ -74,7 +76,6 @@ export default {
 	mounted() {
 		this.doGetCabang();
 		this.doGetJenis();
-		this.doGetTanggal();
 	},
 	methods: {
 		...helper,
@@ -97,6 +98,7 @@ export default {
 			window.open(url, "_blank");
 		},
 		async doGetCabang() {
+			this.showOverlay = true;
 			let payload = {
 				perPage: "~",
 				page: 1,
@@ -123,10 +125,12 @@ export default {
 				}
 			} catch (error) {
 				console.error(error);
+			} finally {
+				this.showOverlay = false;
 			}
 		},
 		async doGetJenis() {
-			let payload = `kode=0`;
+			let payload = `kode=1`;
 			try {
 				let req = await easycoApi.getReportSetup(payload, this.user.token);
 				let { data, status, msg } = req.data;
@@ -141,29 +145,6 @@ export default {
 						this.opt.jenis.push({
 							value: item,
 							text: item.kode_display,
-						});
-					});
-				}
-			} catch (error) {
-				console.error(error);
-			}
-		},
-		async doGetTanggal() {
-			let payload = null;
-			try {
-				let req = await easycoApi.closingDate(payload, this.user.token);
-				let { data, status, msg } = req.data;
-				if (status) {
-					this.opt.closing_date = [
-						{
-							value: null,
-							text: "Please Select"
-						}
-					];
-					data.map((item) => {
-						this.opt.closing_date.push({
-							value: item.thru_date_closing,
-							text: this.dateFormatId(item.thru_date_closing),
 						});
 					});
 				}
