@@ -78,25 +78,9 @@
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
                         <thead>
-                            <tr class="text-center">
-                                <th>No</th>
-                                <th>Nama Anggota</th>
-                                <th>Nama Anggota</th>
-                                <th>Alasan Mutasi</th>
-                                <th>Keterangan Mutasi</th>
-                                <th>Tanggal Mutasi</th>
-                                <th>Saldo Pokok</th>
-                                <th>Saldo Margin</th>
-                                <th>Saldo Catab</th>
-                                <th>Saldo Minggon</th>
-                                <th>Saldo Sukarela</th>
-                                <th>Saldo Tab Berencana</th>
-                                <th>Saldo Deposito</th>
-                                <th>Saldo Simpanan Pokok</th>
-                                <th>Saldo Simpanan Wajib</th>
-                                <th>Bonus Bagi Hasil</th>
-                                <th>Penarikan Sukarela</th>
-                                <th>Nama Petugas</th>
+                            <tr>
+                                <th v-for="table in table.fields" :key="table.key" :class="table.thClass">{{ table.label }}
+                                </th>
                             </tr>
                         </thead>
                         <tbody v-if="report.items.length > 0">
@@ -421,9 +405,6 @@ export default {
                 items: [],
                 loading: false,
                 totalRows: 0,
-                kode_cabang: null,
-                from_date: null,
-                thru_date: null,
             },
             paging: {
                 page: 1,
@@ -432,14 +413,24 @@ export default {
                 sortBy: "id",
                 search: "",
                 status: "~",
-                kode_cabang: null,
-                kode_rembug: null,
-                from_date: null,
-                thru_date: null,
+                kode_cabang: '',
+                kode_rembug: '',
+                from_date: '',
+                thru_date: '',
             },
             opt: {
-                kode_cabang: [],
-                kode_rembug: [],
+                kode_cabang: [
+                    {
+                        value: '',
+                        text: "All",
+                    },
+                ],
+                kode_rembug: [
+                    {
+                        value: '',
+                        text: "All",
+                    },
+                ],
             },
             showOverlay: false
         };
@@ -461,18 +452,22 @@ export default {
     },
     methods: {
         ...helper,
+        getFileName() {
+            const singleObjKodeCabang = this.opt.kode_cabang.find(item => item.value == this.paging.kode_cabang);
+            const singleObjKodeRembug = this.opt.kode_rembug.find(item => item.value == this.paging.kode_rembug);
+
+            let fileName = "ANGGOTA KELUAR_";
+            if (this.paging.kode_cabang) fileName += `Cabang ${(singleObjKodeCabang?.value != null ? singleObjKodeCabang?.text : '')}_`;
+            if (this.paging.kode_rembug) fileName += `Majelis ${(singleObjKodeRembug?.value != null ? singleObjKodeRembug?.text : '')}_`;
+            if (this.paging.from_date && this.paging.thru_date) fileName += `Dari ${this.dateFormatId(this.paging.from_date)} Sampai ${this.dateFormatId(this.paging.thru_date)}`;
+            return fileName;
+        },
         doPrintPdf() {
-            let filename = "ANGGOTA KELUAR";
-            if (this.report.kode_cabang) filename += ` - Cabang ${this.report.kode_cabang}`;
-            if (this.report.from_date && this.report.thru_date) {
-                filename += ` - Dari ${this.dateFormatId(
-                    this.report.from_date
-                )} Sampai ${this.dateFormatId(this.report.thru_date)}`;
-            }
+            const fileName = this.getFileName();
             let element = document.getElementById("table-print");
             let options = {
                 margin: 0,
-                filename: `${filename}.pdf`,
+                filename: `${fileName}.pdf`,
                 scale: 0.75,
                 jsPDF: {
                     unit: "in",
@@ -490,17 +485,10 @@ export default {
                 });
         },
         doSavePdf() {
-            let filename = "ANGGOTA KELUAR";
-            if (this.report.kode_cabang) filename += ` - Cabang ${this.report.kode_cabang}`;
-            if (this.report.from_date && this.report.thru_date) {
-                filename += ` - Dari ${this.dateFormatId(
-                    this.report.from_date
-                )} Sampai ${this.dateFormatId(this.report.thru_date)}`;
-            }
-
+            const fileName = this.getFileName();
             html2pdf(document.getElementById("table-print"), {
                 margin: 0,
-                filename: `${filename}.pdf`,
+                filename: `${fileName}.pdf`,
                 jsPDF: {
                     unit: "in",
                     format: "a4",
@@ -514,7 +502,7 @@ export default {
             const req = await easycoApi.listAnggotaKeluarExportToXLSX(payload);
             const url = window.URL.createObjectURL(new Blob([req.data]));
             const link = document.createElement("a");
-            const fileName = "Anggota_Keluar.xls";
+            const fileName = `${this.getFileName()}.xlsx`;
             link.href = url;
             link.setAttribute("download", fileName);
             document.body.appendChild(link);
@@ -527,7 +515,7 @@ export default {
             let req = await easycoApi.listAnggotaKeluarExportToCSV(payload);
             const url = window.URL.createObjectURL(new Blob([req.data]));
             const link = document.createElement("a");
-            const fileName = "Anggota_Keluar.csv";
+            const fileName = `${this.getFileName()}.csv`;
             link.href = url;
             link.setAttribute("download", fileName);
             document.body.appendChild(link);
@@ -548,10 +536,15 @@ export default {
             }
         },
         async doGetCabang() {
-            this.paging.kode_rembug = null;
-            this.paging.from_date = null;
-            this.paging.thru_date = null;
-            this.opt.kode_rembug = [];
+            this.paging.kode_rembug = '';
+            this.paging.from_date = '';
+            this.paging.thru_date = '';
+            this.opt.kode_rembug = [
+                {
+                    value: '',
+                    text: "All",
+                },
+            ];
 
             let payload = {
                 perPage: "~",
@@ -566,8 +559,8 @@ export default {
                 if (status) {
                     this.opt.kode_cabang = [
                         {
-                            value: null,
-                            text: "Please Select",
+                            value: '',
+                            text: "All",
                         },
                     ];
                     data.map((item) => {
@@ -582,8 +575,8 @@ export default {
             }
         },
         async doGetMajelis() {
-            this.paging.from_date = null;
-            this.paging.thru_date = null;
+            this.paging.from_date = '';
+            this.paging.thru_date = '';
 
             this.opt.kode_rembug = [];
             let payload = {
@@ -600,8 +593,8 @@ export default {
                 if (status) {
                     this.opt.kode_rembug = [
                         {
-                            value: null,
-                            text: "Please Select",
+                            value: '',
+                            text: "All",
                         },
                     ];
                     data.map((item) => {
@@ -622,13 +615,7 @@ export default {
             payload.perPage = 10;
             this.table.loading = true;
             try {
-                let params = new FormData();
-                params.append('kode_cabang', (payload.kode_cabang == null ? "00000" : payload.kode_cabang));
-                params.append('kode_rembug', (payload.kode_rembug == null ? null : payload.kode_rembug));
-                params.append('from_date', (payload.from_date == null ? null : payload.from_date));
-                params.append('thru_date', (payload.thru_date == null ? null : payload.thru_date));
-
-                let req = await easycoApi.listAnggotaKeluar(params, this.user.token);
+                let req = await easycoApi.listAnggotaKeluar(payload, this.user.token);
                 let { data, status, msg, total } = req.data;
                 if (status) {
                     if (data && data.length > 0) {
@@ -666,17 +653,8 @@ export default {
             payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
             payload.perPage = "~";
             this.report.loading = true;
-            this.report.from_date = payload.from;
-            this.report.thru_date = payload.to;
-            this.report.kode_cabang = this.getCabangName(payload.kode_cabang);
             try {
-                let params = new FormData();
-                params.append('kode_cabang', payload.kode_cabang);
-                params.append('kode_rembug', payload.kode_rembug);
-                params.append('from_date', payload.from_date);
-                params.append('thru_date', payload.thru_date);
-
-                let req = await easycoApi.listAnggotaKeluar(params, this.user.token);
+                let req = await easycoApi.listAnggotaKeluar(payload, this.user.token);
                 let { data, status, msg, total } = req.data;
                 if (status) {
                     this.report.items = data;
