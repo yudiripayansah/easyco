@@ -27,6 +27,11 @@
               </b-input-group>
             </b-col>
             <b-col cols="12">
+              <b-input-group prepend="No Anggota" class="mb-3">
+                <b-form-input v-model="profil.no_anggota" />
+              </b-input-group>
+            </b-col>
+            <b-col cols="12">
               <b-input-group prepend="No KTP" class="mb-3">
                 <b-form-input v-model="profil.no_ktp" />
               </b-input-group>
@@ -34,11 +39,6 @@
             <b-col cols="12">
               <b-input-group prepend="Alamat" class="mb-3">
                 <b-form-textarea v-model="profil.alamat" />
-              </b-input-group>
-            </b-col>
-            <b-col cols="12">
-              <b-input-group prepend="Rembug" class="mb-3">
-                <b-form-input v-model="profil.rembug" />
               </b-input-group>
             </b-col>
             <b-col cols="12">
@@ -373,7 +373,7 @@ export default {
           {
             key: "nama_rembug",
             sortable: false,
-            label: "Nama Rembug",
+            label: "Nama Majelis",
             thClass: "text-center",
             tdClass: "",
           },
@@ -447,6 +447,7 @@ export default {
         from: null,
         to: null,
         anggota: null,
+        no_anggota: null,
       },
       opt: {
         cabang: [],
@@ -455,6 +456,7 @@ export default {
       },
       profil: {
         nama_anggota: null,
+        no_anggota: null,
         no_ktp: null,
         alamat: null,
         rembug: null,
@@ -608,6 +610,7 @@ export default {
         search: "",
         cabang: this.paging.cabang,
         rembug: this.paging.majelis,
+        no_anggota: this.paging.no_anggota,
       };
       try {
         let req = await easycoApi.anggotaRead(payload, this.user.token);
@@ -617,6 +620,37 @@ export default {
             this.opt.anggota.push({
               value: Number(item.no_anggota),
               text: item.nama_anggota,
+              data: item,
+            });
+          });
+        } else {
+          this.notify("danger", "Error", msg);
+        }
+      } catch (error) {
+        console.error(error);
+        this.notify("danger", "Login Error", error);
+      }
+    },
+    async doGetNoAnggota() {
+      this.opt.anggota = [];
+      let payload = {
+        perPage: "~",
+        page: 1,
+        sortBy: "no_anggota",
+        sortDir: "ASC",
+        search: "",
+        cabang: this.paging.cabang,
+        rembug: this.paging.majelis,
+        no_anggota: this.paging.no_anggota,
+      };
+      try {
+        let req = await easycoApi.noanggotaRead(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          data.map((item) => {
+            this.opt.noanggota.push({
+              value: Number(item.no_anggota),
+              text: item.no_anggota,
               data: item,
             });
           });
@@ -682,6 +716,7 @@ export default {
       ).data;
       this.profil = {
         nama_anggota: profil.nama_anggota,
+        no_anggota: profil.no_anggota,
         no_ktp: profil.no_ktp,
         alamat: profil.alamat,
         rembug: profil.nama_rembug,

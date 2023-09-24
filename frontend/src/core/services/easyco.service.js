@@ -1502,6 +1502,8 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+  //LaporanKolektibilitas
+
   laporanKolek(payload, token) {
     let url = "laporan/list/get_kolektibilitas";
     let config = {
@@ -1510,6 +1512,26 @@ const easycoApi = {
       },
     };
     return axios.post(url, payload, config);
+  },
+  listReportKolektibilitasExportToXLSX(payload, token) {
+    let url = "laporan/list/excel/kolektibilitas?" + payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
+  },
+  listReportKolektibilitasExportToCSV(payload, token) {
+    let url = "laporan/list/csv/kolektibilitas?" + payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+      responseType: 'blob'
+    };
+    return axios.get(url, config);
   },
   ...anggotaKeluarService,
   ...laporanStatementTabungan,

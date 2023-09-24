@@ -140,7 +140,7 @@
       </b-row>
     </b-card>
     <b-modal
-      title="Form Verifikasi Transaksi Rembug"
+      title="Form Verifikasi Transaksi Majelis"
       id="modal-form"
       hide-footer
       size="xxl"
@@ -163,7 +163,7 @@
             </b-form-group>
           </b-col>
           <b-col cols="3">
-            <b-form-group label="Rembug" label-for="rembug">
+            <b-form-group label="Nama Majelis" label-for="rembug">
               <b-form-input
                 id="rembug"
                 disabled
@@ -513,7 +513,7 @@ export default {
           {
             key: "nama_rembug",
             sortable: true,
-            label: "Majelis",
+            label: "Nama Majelis",
             thClass: "text-center",
             tdClass: "",
           },
