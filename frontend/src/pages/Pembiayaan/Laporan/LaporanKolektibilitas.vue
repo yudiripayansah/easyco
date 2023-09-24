@@ -116,7 +116,7 @@
 								<td class="text-left">{{ report.nama_anggota }}</td>
 								<td class="text-center">Rp {{ numberFormat(report.angsuran_pokok, 0) }}</td>
 								<td class="text-center">Rp {{ numberFormat(report.angsuran_margin, 0) }}</td>
-								<td class="text-center">Rp {{ numberFormat(report.angsuran_terbayar, 0) }}</td>
+								<td class="text-center">{{ report.angsuran_terbayar }}</td>
                 <td class="text-center">Rp {{ numberFormat(report.cadangan_piutang, 0) }}</td>
 								<td class="text-center">{{ report.hari_nunggak }}</td>
 								<td class="text-center">{{ report.jangka_waktu }}</td>
@@ -194,32 +194,32 @@ export default {
             tdClass: "",
           },
           {
-            key: "anguran_pokok",
+            key: "angsuran_pokok",
             sortable: true,
-            label: "Pokok",
+            label: "Angsuran Pokok",
             thClass: "text-center",
-            tdClass: "",
+            tdClass: "text-right",
           },
           {
             key: "angsuran_margin",
             sortable: true,
-            label: "Margin",
+            label: " Angsuran Margin",
             thClass: "text-center",
-            tdClass: "",
+            tdClass: "text-right",
           },
           {
             key: "angsuran_terbayar",
             sortable: true,
             label: "Angsuran Terbayar",
             thClass: "text-center",
-            tdClass: "",
+            tdClass: "text-right",
           },
           {
             key: "cadangan_piutang",
             sortable: true,
             label: "Cadangan Piutang",
             thClass: "text-center",
-            tdClass: "",
+            tdClass: "text-right",
           },
           {
             key: "hari_nunggak",
@@ -329,7 +329,7 @@ export default {
           {
             key: "tunggakan_margin",
             sortable: true,
-            label: "Tanggal Akad",
+            label: "Tunggakan Margin",
             thClass: "text-center",
             tdClass: "text-right",
           },
@@ -506,7 +506,7 @@ export default {
           {
             key: "tunggakan_margin",
             sortable: true,
-            label: "Tanggal Akad",
+            label: "Tunggakan Margin",
             thClass: "text-center",
             tdClass: "text-right",
           },
@@ -699,6 +699,21 @@ export default {
         
         let { data, status, msg, total } = req.data;
         if (status) {
+          if (data && data.length > 0) {
+						data.forEach(item => {
+							item.angsuran_pokok = this.numberFormat(item.angsuran_pokok, 0);
+							item.angsuran_margin = this.numberFormat(item.angsuran_margin, 0);
+							item.cadangan_piutang = this.numberFormat(item.cadangan_piutang, 0);
+							item.margin = this.numberFormat(item.margin, 0);
+							item.pokok = this.numberFormat(item.pokok, 0);
+							item.saldo_margin = this.numberFormat(item.saldo_margin, 0);
+							item.saldo_margin = this.numberFormat(item.saldo_margin, 0);
+							item.saldo_pokok = this.numberFormat(item.saldo_pokok, 0);
+              item.tunggakan_margin = this.numberFormat(item.tunggakan_margin, 0);
+              item.tunggakan_pokok = this.numberFormat(item.tunggakan_pokok, 0);
+						});
+					}
+
           this.table.items = data;
           this.table.totalRows = total;
         } else {
