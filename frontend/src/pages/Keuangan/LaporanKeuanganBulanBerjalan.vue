@@ -56,14 +56,29 @@ export default {
 				sortBy: "id",
 				search: "",
 				status: "~",
-				kode_cabang: null,
-				jenis: null,
-				closing_date: null,
+				kode_cabang: '',
+				jenis: '',
+				closing_date: '',
 			},
 			opt: {
-				kode_cabang: [],
-				jenis: [],
-				closing_date: [],
+				kode_cabang: [
+					{
+						value: '',
+						text: "All",
+					},
+				],
+				jenis: [
+					{
+						value: '',
+						text: "All",
+					},
+				],
+				closing_date: [
+					{
+						value: '',
+						text: "All",
+					},
+				],
 			},
 			showOverlay: false
 		};
@@ -81,7 +96,7 @@ export default {
 		...helper,
 		doExportTo(flag = 0) {
 			if (!this.paging || this.paging.kode_cabang == null || !this.paging.jenis || this.paging.jenis.kode_value == null || this.paging.closing_date == null) {
-				this.notify("info", "Info", "Please enter a filter before export!");
+				this.notify("info", "Info", "Please select a filter before export!");
 				return false;
 			}
 
@@ -112,8 +127,8 @@ export default {
 				if (status) {
 					this.opt.kode_cabang = [
 						{
-							value: null,
-							text: "Please Select",
+							value: '',
+							text: "All",
 						},
 					];
 					data.map((item) => {
@@ -137,8 +152,8 @@ export default {
 				if (status) {
 					this.opt.jenis = [
 						{
-							value: null,
-							text: "Please Select",
+							value: '',
+							text: "All",
 						},
 					];
 					data.map((item) => {

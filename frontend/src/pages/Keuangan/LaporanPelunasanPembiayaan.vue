@@ -20,8 +20,7 @@
 							</b-col>
 							<b-col>
 								<b-input-group prepend="Majelis">
-									<b-form-select v-model="paging.kode_rembug" :options="opt.kode_rembug"
-										@change="doGetMajelis()" />
+									<b-form-select v-model="paging.kode_rembug" :options="opt.kode_rembug" />
 								</b-input-group>
 							</b-col>
 						</div>
@@ -77,18 +76,20 @@
 					KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
 				</h5>
 				<h5 class="text-center">LAPORAN PELUNASAN PEMBIAYAAN</h5>
-				<h5 class="text-center" v-show="report.kode_petugas">Cabang: {{ report.kode_cabang }}</h5>
-				<h5 class="text-center" v-show="report.kode_petugas">Petugas: {{ report.kode_petugas }}</h5>
-				<h5 class="text-center" v-show="report.kode_rembug">Majelis: {{ report.kode_rembug }}</h5>
+				<h5 class="text-center" v-show="report.nama_cabang">Cabang: {{ report.nama_cabang }}</h5>
+				<h5 class="text-center" v-show="report.nama_petugas">Petugas: {{ report.nama_petugas }}</h5>
+				<h5 class="text-center" v-show="report.nama_rembug">Majelis: {{ report.nama_rembug }}</h5>
 				<h6 class="text-center mb-5 pb-5" v-show="report.from_date && report.thru_date"> Tanggal {{
 					dateFormatId(report.from_date) }} s.d {{ dateFormatId(report.thru_date) }}</h6>
 				<div class="table-responsive">
 					<table class="table table-bordered table-striped">
 						<thead>
-							<th v-for="table in table.fields" :key="table.key" :class="table.thClass">{{ table.label }}
-							</th>
+							<tr>
+								<th v-for="table in table.fields" :key="table.key" :class="table.thClass">{{ table.label }}
+								</th>
+							</tr>
 						</thead>
-						<tbody v-if="report.items.length > 0">
+						<tbody v-if="report && report.items && report.items.length > 0">
 							<tr v-for="(report, reportIndex) in report.items" :key="`report-${reportIndex}`">
 								<td>{{ reportIndex + 1 }}</td>
 								<td class="text-center">{{ report.tanggal_pelunasan }}</td>
@@ -110,7 +111,7 @@
 						</tbody>
 						<tbody v-else>
 							<tr class="text-center">
-								<td :colspan="report.fields.length">There's no data to display...</td>
+								<td :colspan="table.fields.length">There's no data to display...</td>
 							</tr>
 						</tbody>
 					</table>
@@ -380,11 +381,14 @@ export default {
 				items: [],
 				loading: false,
 				totalRows: 0,
-				kode_cabang: null,
-				kode_petugas: null,
-				kode_rembug: null,
-				from_date: null,
-				thru_date: null,
+				kode_cabang: '',
+				kode_petugas: '',
+				kode_rembug: '',
+				nama_cabang: '',
+				nama_petugas: '',
+				nama_rembug: '',
+				from_date: '',
+				thru_date: '',
 			},
 			paging: {
 				page: 1,
@@ -393,16 +397,31 @@ export default {
 				sortBy: "id",
 				search: "",
 				status: "~",
-				kode_cabang: null,
-				kode_petugas: null,
-				kode_rembug: null,
-				from_date: null,
-				thru_date: null,
+				kode_cabang: '',
+				kode_petugas: '',
+				kode_rembug: '',
+				from_date: '',
+				thru_date: '',
 			},
 			opt: {
-				kode_cabang: [],
-				kode_petugas: [],
-				kode_rembug: []
+				kode_cabang: [
+					{
+						value: '',
+						text: "All",
+					},
+				],
+				kode_petugas: [
+					{
+						value: '',
+						text: "All",
+					},
+				],
+				kode_rembug: [
+					{
+						value: '',
+						text: "All",
+					},
+				]
 			},
 			showOverlay: false,
 		};
@@ -425,11 +444,15 @@ export default {
 	methods: {
 		...helper,
 		getFileName() {
-			let fileName = "LAPORAN PELUNASAN PEMBIAYAAN";
-			if (this.paging.kode_cabang) fileName += ` - Cabang ${this.paging.kode_cabang}`;
-			if (this.paging.kode_petugas) fileName += ` - Petugas ${this.paging.kode_petugas}`;
-			if (this.paging.kode_rembug) fileName += ` - Majelis ${this.paging.kode_rembug}`;
-			if (this.paging.from_date && this.paging.thru_date) fileName += ` - Dari ${this.dateFormatId(this.paging.from_date)} Sampai ${this.dateFormatId(this.paging.thru_date)}`;
+			const singleObjKodeCabang = this.opt.kode_cabang.find(item => item.value == this.paging.kode_cabang);
+			const singleObjKodePetugas = this.opt.kode_petugas.find(item => item.value == this.paging.kode_petugas);
+			const singleObjKodeRembug = this.opt.kode_rembug.find(item => item.value == this.paging.kode_rembug);
+
+			let fileName = "LAPORAN PELUNASAN PEMBIAYAAN_";
+			if (this.paging.kode_cabang) fileName += `Cabang ${(singleObjKodeCabang?.value != null ? singleObjKodeCabang?.text : '')}_`;
+			if (this.paging.kode_petugas) fileName += `Petugas ${(singleObjKodePetugas?.value != null ? singleObjKodePetugas?.text : '')}_`;
+			if (this.paging.kode_rembug) fileName += `Majelis ${(singleObjKodeRembug?.value != null ? singleObjKodeRembug?.text : '')}_`;
+			if (this.paging.from_date && this.paging.thru_date) fileName += `Dari ${this.dateFormatId(this.paging.from_date)} Sampai ${this.dateFormatId(this.paging.thru_date)}`;
 			return fileName;
 		},
 		doPrintPdf() {
@@ -467,17 +490,13 @@ export default {
 			});
 		},
 		async exportXls() {
-			if (this.kode_cabang == null ||
-				this.kode_petugas == null ||
-				this.kode_rembug == null ||
-				this.from_date == null ||
-				this.thru_date == null) {
-				this.notify("info", "Info", "Please entry a filter before export!");
+			if (this.paging.kode_cabang == '') {
+				this.notify("info", "Info", "Please select Cabang before export!");
 				return false;
 			}
 
 			this.showOverlay = true;
-			const payload = `kode_cabang=${this.paging.kode_cabang}&kode_petugas=${this.paging.kode_petugas}&kode_rembug=${this.paging.kode_rembug}&thru_date=${this.paging.thru_date}`;
+			const payload = `kode_cabang=${this.paging.kode_cabang}&kode_petugas=${this.paging.kode_petugas}&kode_rembug=${this.paging.kode_rembug}&from_date=${this.paging.from_date}&thru_date=${this.paging.thru_date}`;
 			const req = await easycoApi.listReportPelunasanPembiayaanExportToXLSX(payload);
 			const url = window.URL.createObjectURL(new Blob([req.data]));
 			const link = document.createElement("a");
@@ -489,17 +508,13 @@ export default {
 			this.showOverlay = false;
 		},
 		async exportCsv() {
-			if (this.kode_cabang == null ||
-				this.kode_petugas == null ||
-				this.kode_rembug == null ||
-				this.from_date == null ||
-				this.thru_date == null) {
-				this.notify("info", "Info", "Please entry a filter before export!");
+			if (this.paging.kode_cabang == '') {
+				this.notify("info", "Info", "Please select Cabang before export!");
 				return false;
 			}
 
 			this.showOverlay = true;
-			const payload = `kode_cabang=${this.paging.kode_cabang}&kode_petugas=${this.paging.kode_petugas}&kode_rembug=${this.paging.kode_rembug}&thru_date=${this.paging.thru_date}`;
+			const payload = `kode_cabang=${this.paging.kode_cabang}&kode_petugas=${this.paging.kode_petugas}&kode_rembug=${this.paging.kode_rembug}&from_date=${this.paging.from_date}&thru_date=${this.paging.thru_date}`;
 			const req = await easycoApi.listReportPelunasanPembiayaanExportToCSV(payload);
 			const url = window.URL.createObjectURL(new Blob([req.data]));
 			const link = document.createElement("a");
@@ -524,8 +539,8 @@ export default {
 				if (status) {
 					this.opt.kode_cabang = [
 						{
-							value: null,
-							text: "Please Select",
+							value: '',
+							text: "All",
 						},
 					];
 					data.map((item) => {
@@ -540,8 +555,15 @@ export default {
 			}
 		},
 		async doGetPetugas() {
-			// reset value
+			this.paging.kode_petugas = '';
+			this.paging.kode_rembug = '';
 			this.opt.kode_petugas = [];
+			this.opt.kode_rembug = [
+				{
+					value: '',
+					text: "All",
+				},
+			];
 			let payload = {
 				perPage: "~",
 				page: 1,
@@ -556,8 +578,8 @@ export default {
 				if (status) {
 					this.opt.kode_petugas = [
 						{
-							value: null,
-							text: "Please Select",
+							value: '',
+							text: "All",
 						},
 					];
 					data.map((item) => {
@@ -572,7 +594,7 @@ export default {
 			}
 		},
 		async doGetMajelis() {
-			// reset value
+			this.paging.kode_rembug = '';
 			this.opt.kode_rembug = [];
 			let payload = {
 				perPage: "~",
@@ -588,8 +610,8 @@ export default {
 				if (status) {
 					this.opt.kode_rembug = [
 						{
-							value: null,
-							text: "Please Select",
+							value: '',
+							text: "All",
 						},
 					];
 					data.map((item) => {
@@ -649,6 +671,15 @@ export default {
 			this.report = {
 				...this.paging
 			};
+
+			const singleObjKodeCabang = this.opt.kode_cabang.find(item => item.value == this.paging.kode_cabang);
+			const singleObjKodePetugas = this.opt.kode_petugas.find(item => item.value == this.paging.kode_petugas);
+			const singleObjKodeRembug = this.opt.kode_rembug.find(item => item.value == this.paging.kode_rembug);
+
+			this.report.nama_cabang = (singleObjKodeCabang?.value != null ? singleObjKodeCabang?.text : '');
+			this.report.nama_petugas = (singleObjKodePetugas?.value != null ? singleObjKodePetugas?.text : '');
+			this.report.nama_rembug = (singleObjKodeRembug?.value != null ? singleObjKodeRembug?.text : '');
+
 			try {
 				let req = await easycoApi.listReportPelunasanPembiayaan(payload, this.user.token);
 				let { data, status, msg, total } = req.data;

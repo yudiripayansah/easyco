@@ -86,12 +86,12 @@ const menu = [
           {
             target: 'pembukaan-rekening-tabungan',
             label: 'Laporan Pembukaan Rekening Tabungan',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Tabungan/Laporan/PembukaanTabungan.vue'),
           },
           {
             target: 'saldo-tabungan',
             label: 'Saldo Tabungan',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Tabungan/Laporan/SaldoTabungan.vue'),
           },
           {
             target: 'statement-tabungan',
@@ -199,7 +199,7 @@ const menu = [
           {
             target: 'list-pelunasan',
             label: 'List Pelunasan',
-            component: import('@/pages/Dummy.vue'),
+            component: import('@/pages/Keuangan/LaporanPelunasanPembiayaan.vue'),
           },
           {
             target: 'par-kolektibilitas',
@@ -332,11 +332,6 @@ const menu = [
         target: 'laporan-keuangan-bulan-berjalan',
         label: 'Laporan Keuangan Bulan Berjalan',
         component: import('@/pages/Keuangan/LaporanKeuanganBulanBerjalan.vue'),
-      },
-      {
-        target: 'laporan-pelunasan-pembiayaan',
-        label: 'Laporan Pelunasan Pembiayaan',
-        component: import('@/pages/Keuangan/LaporanPelunasanPembiayaan.vue'),
       },
     ]
   },
