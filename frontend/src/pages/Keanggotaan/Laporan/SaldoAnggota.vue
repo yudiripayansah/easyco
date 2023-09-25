@@ -169,9 +169,9 @@
             </tr>
             <tr class="text-center">
               <th>Simpok</th>
-              <th>Simwa</th>
+              <th>Minggon</th>
               <th>Sukarela</th>
-              <th>Taber</th>
+              <th>Taber & Tab 5%</th>
               <th>Pembiayaan</th>
             </tr>
           </thead>
