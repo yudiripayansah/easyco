@@ -10,13 +10,8 @@
                 <b-form-select
                   v-model="paging.cabang"
                   :options="opt.cabang"
-                  @change="doGetMajelis()"
+                  @change="doGetPetugas()"
                 />
-              </b-input-group>
-            </b-col>
-            <b-col cols="4">
-              <b-input-group prepend="Majelis" class="mb-3">
-                <b-form-select v-model="paging.rembug" :options="opt.rembug" />
               </b-input-group>
             </b-col>
             <b-col cols="4">
@@ -24,7 +19,13 @@
                 <b-form-select
                   v-model="paging.petugas"
                   :options="opt.petugas"
+                  @change="doGetMajelis()"
                 />
+              </b-input-group>
+            </b-col>
+            <b-col cols="4">
+              <b-input-group prepend="Majelis" class="mb-3">
+                <b-form-select v-model="paging.rembug" :options="opt.rembug" />
               </b-input-group>
             </b-col>
             <!-- <b-col>
@@ -365,9 +366,9 @@ export default {
         sortBy: "kop_anggota.id",
         search: "",
         status: "~",
-        cabang: 0,
-        rembug: 0,
-        petugas: 0
+        cabang: null,
+        rembug: null,
+        petugas: null
       },
       opt: {
         cabang: [],
@@ -390,7 +391,6 @@ export default {
   mounted() {
     this.doGet();
     this.doGetCabang();
-    this.doGetPetugas();
   },
   methods: {
     ...helper,
@@ -403,9 +403,10 @@ export default {
         sortDir: "ASC",
         search: "",
         kode_cabang: this.paging.cabang,
+        kode_petugas: this.paging.petugas,
       };
       try {
-        let req = await easycoApi.rembugRead(payload, this.user.token);
+        let req = await easycoApi.anggotaRembug(payload, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
           this.opt.majelis = [
@@ -426,21 +427,22 @@ export default {
       }
     },
     async doGetPetugas() {
-      let payload = null;
+      let payload = {
+        kode_cabang: this.paging.cabang,
+      };
       try {
         let req = await easycoApi.petugasRead(payload, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
           this.opt.petugas = [
             {
-              value: 0,
+              value: null,
               text: "All",
-              disabled: true,
             },
           ];
           data.map((item) => {
             this.opt.petugas.push({
-              value: Number(item.kode_petugas),
+              value: item.kode_petugas,
               text: item.nama_kas_petugas,
             });
           });
@@ -553,7 +555,7 @@ export default {
         if (status) {
           this.opt.cabang = [
             {
-              value: 0,
+              value: null,
               text: "All",
             },
           ];
