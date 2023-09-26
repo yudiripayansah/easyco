@@ -273,7 +273,10 @@ Route::prefix('laporan')->group(function () {
     Route::post('/get_kolektibilitas', [ParController::class, 'get_kolektibilitas']);
     Route::post('/anggota_keluar', [LaporanController::class, 'anggota_keluar']);
     Route::post('/statement_tabungan', [LaporanController::class, 'statement_tabungan']);
-    Route::post('/pelunasan', [LaporanController::class, 'list_pdf_pelunasan']);
+    Route::get('/get_report_setup', [ListKodeController::class, 'get_report_setup']);
+    Route::post('/pelunasan', [LaporanController::class, 'list_pelunasan']);
+    Route::post('/saldo_tabungan', [LaporanController::class, 'list_saldo_tabungan']);
+    Route::post('/buka_tabungan', [LaporanController::class, 'list_buka_tabungan']);
 
     Route::prefix('excel')->group(function () {
       Route::get('/anggota_masuk', [LaporanController::class, 'list_excel_anggota_masuk']);
@@ -289,6 +292,10 @@ Route::prefix('laporan')->group(function () {
       Route::get('/gl_inquiry', [LaporanController::class, 'list_excel_gl_inquiry']);
       Route::get('/anggota_keluar', [LaporanController::class, 'list_excel_anggota_keluar']);
       Route::get('/statement_tabungan', [LaporanController::class, 'list_excel_statement_tabungan']);
+      Route::get('/kolektibilitas', [LaporanController::class, 'list_excel_kolektibilitas']);
+      Route::get('/pelunasan', [LaporanController::class, 'list_excel_pelunasan']);
+      Route::get('/saldo_tabungan', [LaporanController::class, 'list_excel_saldo_tabungan']);
+      Route::get('/buka_tabungan', [LaporanController::class, 'list_excel_buka_tabungan']);
     });
 
     Route::prefix('csv')->group(function () {
@@ -303,6 +310,10 @@ Route::prefix('laporan')->group(function () {
       Route::get('/gl_inquiry', [LaporanController::class, 'list_csv_gl_inquiry']);
       Route::get('/anggota_keluar', [LaporanController::class, 'list_csv_anggota_keluar']);
       Route::get('/statement_tabungan', [LaporanController::class, 'list_csv_statement_tabungan']);
+      Route::get('/kolektibilitas', [LaporanController::class, 'list_csv_kolektibilitas']);
+      Route::get('/pelunasan', [LaporanController::class, 'list_csv_pelunasan']);
+      Route::get('/saldo_tabungan', [LaporanController::class, 'list_csv_saldo_tabungan']);
+      Route::get('/buka_tabungan', [LaporanController::class, 'list_csv_buka_tabungan']);
     });
 
     Route::prefix('pdf')->group(function () {

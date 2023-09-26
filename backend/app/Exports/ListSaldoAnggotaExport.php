@@ -12,11 +12,12 @@ class ListSaldoAnggotaExport implements FromView
 {
     use Exportable;
 
-    protected $kode_cabang, $kode_rembug, $from_date, $thru_date, $format;
+    protected $kode_cabang, $kode_petugas, $kode_rembug, $from_date, $thru_date, $format;
 
-    function __construct($kode_cabang, $kode_rembug, $from_date, $thru_date, $format)
+    function __construct($kode_cabang, $kode_petugas, $kode_rembug, $from_date, $thru_date, $format)
     {
         $this->kode_cabang = $kode_cabang;
+        $this->kode_petugas = $kode_petugas;
         $this->kode_rembug = $kode_rembug;
         $this->from_date = $from_date;
         $this->thru_date = $thru_date;
@@ -27,7 +28,7 @@ class ListSaldoAnggotaExport implements FromView
     {
         $format = $this->format;
 
-        $show = KopAnggota::report_list($this->kode_cabang, $this->kode_rembug, $this->from_date, $this->thru_date);
+        $show = KopAnggota::report_list($this->kode_cabang, $this->kode_petugas, $this->kode_rembug, $this->from_date, $this->thru_date);
 
         if ($this->kode_cabang <> '~') {
             $branch = KopCabang::where('kode_cabang', $this->kode_cabang)->first();

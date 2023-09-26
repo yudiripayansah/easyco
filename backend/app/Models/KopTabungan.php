@@ -144,4 +144,61 @@ class KopTabungan extends Model
 
         return $show;
     }
+
+    function get_report_tabungan($kode_cabang, $kode_produk, $perPage, $offset, $total)
+    {
+        $show = KopTabungan::select('kop_tabungan.no_rekening', DB::raw("(CASE WHEN kr.kode_rembug IS NULL THEN 'INDIVIDU' ELSE kr.nama_rembug END) AS nama_rembug"), DB::raw("(CASE WHEN kp.kode_pgw IS NULL THEN 'INDIVIDU' ELSE kp.nama_pgw END) AS nama_pgw"), 'ka.no_anggota', 'ka.nama_anggota', 'kpt.nama_produk', 'kop_tabungan.saldo')
+            ->join('kop_prd_tabungan AS kpt', 'kpt.kode_produk', 'kop_tabungan.kode_produk')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kop_tabungan.no_anggota')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'ka.kode_cabang')
+            ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+            ->leftjoin('kop_pegawai AS kp', 'kp.kode_pgw', 'kr.kode_petugas')
+            ->where('kop_tabungan.status_rekening', 1);
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $show->where('kc.kode_cabang', $kode_cabang);
+        }
+
+        if ($kode_produk <> '~' and $kode_produk <> '00000' and !empty($kode_produk) and $kode_produk <> null) {
+            $show->where('kpt.kode_produk', $kode_produk);
+        }
+
+        $show->orderBy('ka.no_anggota', 'ASC');
+
+        if ($total == 1) {
+            if ($perPage != '~') {
+                $show->skip($offset)->take($perPage);
+            }
+        }
+
+        $show = $show->get();
+
+        return $show;
+    }
+
+    function get_report_buka_tabungan($kode_cabang, $kode_produk, $from_date, $thru_date)
+    {
+        $show = KopTabungan::select('kc.nama_cabang', 'kop_tabungan.tanggal_buka', 'kop_tabungan.no_rekening', 'ka.nama_anggota', 'kpt.nama_produk', 'kop_tabungan.jangka_waktu', 'kop_tabungan.periode_setoran', 'kop_tabungan.saldo')
+            ->join('kop_prd_tabungan AS kpt', 'kpt.kode_produk', 'kop_tabungan.kode_produk')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kop_tabungan.no_anggota')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'ka.kode_cabang')
+            ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+            ->leftjoin('kop_pegawai AS kp', 'kp.kode_pgw', 'kr.kode_petugas')
+            ->where('kop_tabungan.status_rekening', 1)
+            ->whereBetween('kop_tabungan.tanggal_buka', [$from_date, $thru_date]);
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $show->where('kc.kode_cabang', $kode_cabang);
+        }
+
+        if ($kode_produk <> '~' and $kode_produk <> '00000' and !empty($kode_produk) and $kode_produk <> null) {
+            $show->where('kpt.kode_produk', $kode_produk);
+        }
+
+        $show->orderBy('ka.no_anggota', 'ASC');
+
+        $show = $show->get();
+
+        return $show;
+    }
 }
