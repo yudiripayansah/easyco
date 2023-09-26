@@ -95,12 +95,16 @@ class KopAnggota extends Model
         return $show;
     }
 
-    function rembug($kode_cabang)
+    function rembug($kode_cabang, $kode_petugas)
     {
         $show = KopRembug::orderBy('id', 'ASC');
 
         if ($kode_cabang <> '00000') {
             $show = $show->where('kode_cabang', $kode_cabang);
+        }
+
+        if ($kode_petugas <> '' and $kode_petugas <> '~') {
+            $show = $show->where('kode_petugas', $kode_petugas);
         }
 
         $show = $show->get();
@@ -138,9 +142,9 @@ class KopAnggota extends Model
         return $show;
     }
 
-    function report_list($kode_cabang, $kode_rembug, $from_date, $thru_date)
+    function report_list($kode_cabang, $kode_petugas, $kode_rembug, $from_date, $thru_date)
     {
-        $show = KopAnggota::select('kop_anggota.nama_anggota', 'kop_anggota.desa', 'kop_anggota.no_telp', 'kop_anggota.simpok', 'kop_anggota.simwa', 'kop_anggota.simsuk', 'kc.nama_cabang', 'kr.nama_rembug', DB::raw('SUM(COALESCE(kp.saldo_pokok+kp.saldo_margin,0)) AS saldo_outstanding'), DB::raw('SUM(COALESCE(kt.saldo,0)) AS taber'))
+        $show = KopAnggota::select('kop_anggota.nama_anggota', 'kop_anggota.no_anggota', 'kop_anggota.no_ktp', 'kop_anggota.desa', 'kop_anggota.no_telp', 'kop_anggota.simpok', 'kop_anggota.simwa', 'kop_anggota.simsuk', 'kc.nama_cabang', 'kr.nama_rembug', DB::raw('SUM(COALESCE(kp.saldo_pokok+kp.saldo_margin,0)) AS saldo_outstanding'), DB::raw('SUM(COALESCE(kt.saldo,0)) AS taber'))
             ->join('kop_cabang AS kc', 'kc.kode_cabang', '=', 'kop_anggota.kode_cabang')
             ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'kop_anggota.kode_rembug')
             ->leftjoin('kop_pengajuan AS kpg', function ($join) {
@@ -152,11 +156,17 @@ class KopAnggota extends Model
             ->leftjoin('kop_tabungan AS kt', function ($join) {
                 $join->on('kt.no_anggota', 'kop_anggota.no_anggota')
                     ->where('kt.status_rekening', 1)
-                    ->where('kt.flag_taber', 1);
-            });
+                    ->where('kt.flag_taber', 1)
+                    ->where('kt.saldo', '>', 0);
+            })
+            ->where('kop_anggota.status', 1);
 
         if ($kode_cabang <> '~') {
             $show->where('kc.kode_cabang', $kode_cabang);
+        }
+
+        if ($kode_petugas <> '~') {
+            $show->where('kr.kode_petugas', $kode_petugas);
         }
 
         if ($kode_rembug <> '~') {
@@ -167,7 +177,7 @@ class KopAnggota extends Model
             $show->whereBetween('kop_anggota.tgl_gabung', [$from_date, $thru_date]);
         }
 
-        $show->groupBy('kop_anggota.nama_anggota', 'kop_anggota.desa', 'kop_anggota.no_telp', 'kop_anggota.simpok', 'kop_anggota.simwa', 'kop_anggota.simsuk', 'kc.nama_cabang', 'kr.nama_rembug', 'kc.kode_cabang', 'kr.kode_rembug', 'kop_anggota.no_anggota')
+        $show->groupBy('kop_anggota.nama_anggota', 'kop_anggota.desa', 'kop_anggota.no_telp', 'kop_anggota.simpok', 'kop_anggota.simwa', 'kop_anggota.simsuk', 'kc.nama_cabang', 'kr.nama_rembug', 'kc.kode_cabang', 'kr.kode_rembug', 'kop_anggota.no_anggota', 'kop_anggota.no_ktp')
             ->orderBy('kc.kode_cabang', 'ASC')
             ->orderBy('kr.kode_rembug', 'ASC')
             ->orderBy('kop_anggota.no_anggota', 'ASC');

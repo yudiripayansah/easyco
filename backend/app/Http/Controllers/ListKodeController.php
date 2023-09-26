@@ -246,4 +246,83 @@ class ListKodeController extends Controller
 
         return $response;
     }
+
+    function get_report_setup(Request $request)
+    {
+        $kode = $request->kode;
+
+        $param = array('nama_kode' => 'report_code');
+
+        $get = KopListKode::where($param)->orderBy('kode_value', 'ASC')->get();
+
+        if ($get->count() > 0) {
+            $data = array();
+
+            if ($kode == 0) {
+                foreach ($get as $gt) {
+                    if ($gt->kode_value == 10 or $gt->kode_value == 11) {
+                        $url_pdf = 'https://easycop.kopikoding.com/report/print_balance_sheet_pdf/';
+                        $url_xls = 'https://easycop.kopikoding.com/report/print_balance_sheet_xls/';
+                    } elseif ($gt->kode_value == 20 or $gt->kode_value == 21) {
+                        $url_pdf = 'https://easycop.kopikoding.com/report/print_profit_loss_pdf/';
+                        $url_xls = 'https://easycop.kopikoding.com/report/print_profit_loss_xls/';
+                    }
+
+                    $data[] = array(
+                        'kode_value' => $gt->kode_value,
+                        'kode_display' => $gt->kode_display,
+                        'url_pdf' => $url_pdf,
+                        'url_xls' => $url_xls
+                    );
+                }
+
+                $data[] = array(
+                    'kode_value' => 30,
+                    'kode_display' => 'Trial Balance',
+                    'url_pdf' => 'https://easycop.kopikoding.com/report/print_trial_balance_pdf/',
+                    'url_xls' => 'https://easycop.kopikoding.com/report/print_trial_balance_xls/'
+                );
+            } else {
+                foreach ($get as $gt) {
+                    if ($gt->kode_value == 10 or $gt->kode_value == 11) {
+                        $url_pdf = 'https://easycop.kopikoding.com/report/print_balance_sheet_current_pdf/';
+                        $url_xls = 'https://easycop.kopikoding.com/report/print_balance_sheet_current_xls/';
+                    } elseif ($gt->kode_value == 20 or $gt->kode_value == 21) {
+                        $url_pdf = 'https://easycop.kopikoding.com/report/print_profit_loss_current_pdf/';
+                        $url_xls = 'https://easycop.kopikoding.com/report/print_profit_loss_current_xls/';
+                    }
+
+                    $data[] = array(
+                        'kode_value' => $gt->kode_value,
+                        'kode_display' => $gt->kode_display,
+                        'url_pdf' => $url_pdf,
+                        'url_xls' => $url_xls
+                    );
+                }
+
+                $data[] = array(
+                    'kode_value' => 30,
+                    'kode_display' => 'Trial Balance',
+                    'url_pdf' => 'https://easycop.kopikoding.com/report/print_trial_balance_current_pdf/',
+                    'url_xls' => 'https://easycop.kopikoding.com/report/print_trial_balance_current_xls/'
+                );
+            }
+
+            $res = array(
+                'status' => true,
+                'data' => $data,
+                'msg' => null
+            );
+        } else {
+            $res = array(
+                'status' => false,
+                'data' => null,
+                'msg' => 'Data tidak ditemukan'
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
 }

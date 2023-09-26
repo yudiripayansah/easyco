@@ -45,8 +45,9 @@ class AnggotaController extends Controller
     function rembug(Request $request)
     {
         $kode_cabang = $request->kode_cabang;
+        $kode_petugas = $request->kode_petugas;
 
-        $show = KopAnggota::rembug($kode_cabang);
+        $show = KopAnggota::rembug($kode_cabang, $kode_petugas);
 
         $data = array();
 
@@ -220,6 +221,7 @@ class AnggotaController extends Controller
         $total = 0;
         $totalPage = 1;
         $rembug = '~';
+        $petugas = 0;
         $status = '~';
         $from = NULL;
         $to = NULL;
@@ -255,6 +257,10 @@ class AnggotaController extends Controller
 
         if ($request->rembug) {
             $rembug = $request->rembug;
+        }
+
+        if ($request->petugas) {
+            $petugas = $request->petugas;
         }
 
         if ($request->status) {
@@ -297,6 +303,10 @@ class AnggotaController extends Controller
             $read->where('kop_anggota.kode_rembug', $rembug);
         }
 
+        if ($petugas && $petugas != 0) {
+            $read->where('kop_rembug.kode_petugas', $petugas);
+        }
+
         if ($status && $status != '~') {
             $read->where('kop_anggota.status', $status);
         }
@@ -318,14 +328,26 @@ class AnggotaController extends Controller
         }
 
         if ($search || $cabang || $rembug || ($from && $to)) {
-            $total = KopAnggota::orderBy($sortBy, $sortDir);
+            $total = KopAnggota::join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang')
+                ->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', 'kop_anggota.kode_rembug')
+                ->leftjoin('kop_pengajuan', function ($join) {
+                    $join->on('kop_pengajuan.no_anggota', 'kop_anggota.no_anggota')->where('kop_pengajuan.status_pengajuan', 1);
+                })
+                ->leftjoin('kop_pembiayaan', function ($join) {
+                    $join->on('kop_pembiayaan.no_pengajuan', 'kop_pengajuan.no_pengajuan')->where('kop_pembiayaan.status_rekening', 1);
+                })
+                ->orderBy($sortBy, $sortDir);
 
             if ($cabang != '00000') {
                 $total->where('kop_anggota.kode_cabang', $cabang);
             }
 
             if ($rembug && $rembug != '~') {
-                $total->where('kop_anggota.status', $rembug);
+                $total->where('kop_anggota.kode_rembug', $rembug);
+            }
+
+            if ($petugas && $petugas != 0) {
+                $total->where('kop_rembug.kode_petugas', $petugas);
             }
 
             if ($search) {
