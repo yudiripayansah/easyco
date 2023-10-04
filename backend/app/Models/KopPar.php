@@ -61,4 +61,22 @@ class KopPar extends Model
 
         return $show;
     }
+
+    function get_par($kode_cabang, $tanggal_hitung, $type)
+    {
+        $show = KopPar::select(DB::raw('SUM(saldo_pokok) AS saldo'))
+            ->where('tanggal_hitung', $tanggal_hitung);
+
+        if ($type == 0) {
+            $show->whereIn('kategori_par', [2, 3, 4, 5]);
+        }
+
+        if ($kode_cabang <> '00000') {
+            $show->where('kode_cabang', $kode_cabang);
+        }
+
+        $show = $show->first();
+
+        return $show;
+    }
 }

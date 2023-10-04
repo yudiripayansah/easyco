@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\KopAnggota;
 use App\Models\KopAnggotaUk;
 use App\Models\KopLembaga;
+use App\Models\KopPar;
 use App\Models\KopPembiayaan;
 use App\Models\KopTabungan;
 use App\Models\KopUser;
@@ -25,10 +26,21 @@ class AnggotaController extends Controller
         $outstanding = KopPembiayaan::get_saldo_outstanding($cabang);
         $tabungan = KopTabungan::get_saldo_tabungan($cabang);
 
+        if ($cabang <> '00000') {
+            $tanggal = KopPar::select(DB::raw('MAX(tanggal_hitung) AS tanggal_hitung'))->where('kode_cabang', $cabang)->first();
+        } else {
+            $tanggal = KopPar::select(DB::raw('MAX(tanggal_hitung) AS tanggal_hitung'))->first();
+        }
+
+        $par = KopPar::get_par($cabang, $tanggal->tanggal_hitung, 0);
+        $par_all = KopPar::get_par($cabang, $tanggal->tanggal_hitung, 1);
+        $saldo_par = ($par->saldo / $par_all->saldo) * 100;
+
         $data = array(
             'jumlah_anggota' => $anggota->jumlah_anggota,
             'saldo_outstanding' => (int) $outstanding->saldo_outstanding,
-            'saldo_tabungan' => (int) $tabungan->saldo_tabungan
+            'saldo_tabungan' => (int) $tabungan->saldo_tabungan,
+            'persentase_par' => number_format($saldo_par, 2, '.', ',')
         );
 
         $res = array(

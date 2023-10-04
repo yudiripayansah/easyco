@@ -144,45 +144,78 @@ class KopAnggota extends Model
 
     function report_list($kode_cabang, $kode_petugas, $kode_rembug, $from_date, $thru_date)
     {
-        $show = KopAnggota::select('kop_anggota.nama_anggota', 'kop_anggota.no_anggota', 'kop_anggota.no_ktp', 'kop_anggota.desa', 'kop_anggota.no_telp', 'kop_anggota.simpok', 'kop_anggota.simwa', 'kop_anggota.simsuk', 'kc.nama_cabang', 'kr.nama_rembug', DB::raw('SUM(COALESCE(kp.saldo_pokok+kp.saldo_margin,0)) AS saldo_outstanding'), DB::raw('SUM(COALESCE(kt.saldo,0)) AS taber'))
-            ->join('kop_cabang AS kc', 'kc.kode_cabang', '=', 'kop_anggota.kode_cabang')
-            ->leftjoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'kop_anggota.kode_rembug')
-            ->leftjoin('kop_pengajuan AS kpg', function ($join) {
-                $join->on('kpg.no_anggota', 'kop_anggota.no_anggota')->where('kpg.status_pengajuan', 1);
-            })
-            ->leftjoin('kop_pembiayaan AS kp', function ($join) {
-                $join->on('kp.no_pengajuan', 'kpg.no_pengajuan')->where('kp.status_rekening', 1);
-            })
-            ->leftjoin('kop_tabungan AS kt', function ($join) {
-                $join->on('kt.no_anggota', 'kop_anggota.no_anggota')
-                    ->where('kt.status_rekening', 1)
-                    ->where('kt.flag_taber', 1)
-                    ->where('kt.saldo', '>', 0);
-            })
-            ->where('kop_anggota.status', 1);
+        $param = array();
 
-        if ($kode_cabang <> '~') {
-            $show->where('kc.kode_cabang', $kode_cabang);
+        $statement = "SELECT
+        ka.nama_anggota,
+        ka.no_anggota,
+        ka.no_ktp,
+        ka.desa,
+        ka.no_telp,
+        ka.simpok,
+        ka.simwa,
+        ka.simsuk,
+        kc.nama_cabang,
+        kr.nama_rembug,
+        COALESCE(a.saldo_pokok,0) AS saldo_pokok,
+        COALESCE(a.saldo_margin,0) AS saldo_margin,
+        COALESCE(b.saldo_taber,0) AS saldo_taber,
+        COALESCE(c.saldo_tab_5,0) AS saldo_tab_5
+        FROM kop_anggota AS ka
+        JOIN kop_cabang AS kc ON kc.kode_cabang = ka.kode_cabang
+        LEFT JOIN kop_rembug AS kr ON kr.kode_rembug = ka.kode_rembug
+        LEFT JOIN (
+            SELECT
+            kpg.no_anggota,
+            SUM(kp.saldo_pokok) AS saldo_pokok,
+            SUM(kp.saldo_margin) AS saldo_margin
+            FROM kop_pengajuan AS kpg
+            JOIN kop_pembiayaan AS kp ON kp.no_pengajuan = kpg.no_pengajuan
+            WHERE kpg.status_pengajuan = 1 AND kp.status_rekening = 1
+            GROUP BY 1
+        ) AS a ON a.no_anggota = ka.no_anggota
+        LEFT JOIN (
+            SELECT
+            no_anggota,
+            SUM(saldo) AS saldo_taber
+            FROM kop_tabungan
+            WHERE status_rekening = 1 AND flag_taber = 1 AND kode_produk <> '099'
+            GROUP BY 1
+        ) AS b ON b.no_anggota = ka.no_anggota
+        LEFT JOIN (
+            SELECT
+            no_anggota,
+            SUM(saldo) AS saldo_tab_5
+            FROM kop_tabungan
+            WHERE status_rekening = 1 AND kode_produk = '099'
+            GROUP BY 1
+        ) AS c ON c.no_anggota = ka.no_anggota
+        WHERE ka.status = 1 ";
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $statement .= "AND kc.kode_cabang = ? ";
+            $param[] = $kode_cabang;
         }
 
-        if ($kode_petugas <> '~') {
-            $show->where('kr.kode_petugas', $kode_petugas);
+        if ($kode_petugas <> '~' and $kode_petugas <> '00000' and !empty($kode_petugas) and $kode_petugas <> null) {
+            $statement .= "AND kr.kode_petugas = ? ";
+            $param[] = $kode_petugas;
         }
 
-        if ($kode_rembug <> '~') {
-            $show->where('kr.kode_rembug', $kode_rembug);
+        if ($kode_rembug <> '~' and $kode_rembug <> '00000' and !empty($kode_rembug) and $kode_rembug <> null) {
+            $statement .= "AND kr.kode_rembug = ? ";
+            $param[] = $kode_rembug;
         }
 
-        if ($from_date <> '~' and $thru_date <> '~') {
-            $show->whereBetween('kop_anggota.tgl_gabung', [$from_date, $thru_date]);
+        if (!empty($from_date) and !empty($from_date)) {
+            $statement .= "AND ka.tgl_gabung BETWEEN ? AND ? ";
+            $param[] = $from_date;
+            $param[] = $thru_date;
         }
 
-        $show->groupBy('kop_anggota.nama_anggota', 'kop_anggota.desa', 'kop_anggota.no_telp', 'kop_anggota.simpok', 'kop_anggota.simwa', 'kop_anggota.simsuk', 'kc.nama_cabang', 'kr.nama_rembug', 'kc.kode_cabang', 'kr.kode_rembug', 'kop_anggota.no_anggota', 'kop_anggota.no_ktp')
-            ->orderBy('kc.kode_cabang', 'ASC')
-            ->orderBy('kr.kode_rembug', 'ASC')
-            ->orderBy('kop_anggota.no_anggota', 'ASC');
+        $statement .= "ORDER BY kc.kode_cabang, kr.kode_rembug, ka.no_anggota";
 
-        $show = $show->get();
+        $show = DB::select($statement, $param);
 
         return $show;
     }

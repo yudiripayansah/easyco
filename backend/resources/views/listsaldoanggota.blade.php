@@ -2,34 +2,39 @@
     <thead>
         @if($format == 'excel')
         <tr>
-            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="13">KSPPS MITRA SEJAHTERA RAYA INDONESIA</th>
+            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="15">KSPPS MITRA SEJAHTERA RAYA INDONESIA</th>
         </tr>
         <tr>
-            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="13">{{ $cabang }}</th>
+            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="15">{{ $cabang }}</th>
         </tr>
         <tr>
-            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="13">LAPORAN LIST SALDO ANGGOTA</th>
+            <th style="font-weight: bold; text-align: center; font-size: 12px;" colspan="15">LAPORAN LIST SALDO ANGGOTA</th>
         </tr>
         <tr>
             <th colspan="13">&nbsp;</th>
         </tr>
         <tr>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle" rowspan="2">No</th>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle" rowspan="2">Kantor</th>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle" rowspan="2">ID Anggota</th>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle" rowspan="2">NIK</th>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle" rowspan="2">Nama</th>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle" rowspan="2">Majlis</th>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle" rowspan="2">Desa</th>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle" rowspan="2">No. Telp</th>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000;" colspan="5">Saldo</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle;" rowspan="3">No</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle;" rowspan="3">Kantor</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle;" rowspan="3">ID Anggota</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle;" rowspan="3">NIK</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle;" rowspan="3">Nama</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle;" rowspan="3">Majelis</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle;" rowspan="3">Desa</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle;" rowspan="3">No. Telp</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000;" colspan="7">Saldo</th>
         </tr>
         <tr>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Simpok</th>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Simwa</th>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Sukarela</th>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Taber</th>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Pembiayaan</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle;" rowspan="2">Simpok</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle;" rowspan="2">Simwa</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle;" rowspan="2">Sukarela</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle;" rowspan="2">Taber</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000; vertical-align: middle;" rowspan="2">Tab 5%</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000;" colspan="2">Pembiayaan</th>
+        </tr>
+        <tr>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Pokok</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000;">Margin</th>
         </tr>
         @else
         <tr>
@@ -38,14 +43,16 @@
             <th>ID Anggota</th>
             <th>NIK</th>
             <th>Nama</th>
-            <th>Majlis</th>
+            <th>Majelis</th>
             <th>Desa</th>
             <th>No. Telp</th>
             <th>Saldo Simpok</th>
             <th>Saldo Simwa</th>
             <th>Saldo Sukarela</th>
             <th>Saldo Taber</th>
-            <th>Saldo Pembiayaan</th>
+            <th>Saldo Tab 5%</th>
+            <th>Saldo Pokok</th>
+            <th>Saldo Margin</th>
         </tr>
         @endif
     </thead>
@@ -63,9 +70,11 @@
             <td style="border: 1px solid #000;">'{{ $saldo->no_telp }}</td>
             <td style="border: 1px solid #000;">{{ $saldo->simpok }}</td>
             <td style="border: 1px solid #000;">{{ $saldo->simwa }}</td>
-            <td style="border: 1px solid #000;">{{ (int) $saldo->simsuk }}</td>
-            <td style="border: 1px solid #000;">{{ $saldo->taber }}</td>
-            <td style="border: 1px solid #000;">{{ $saldo->saldo_outstanding }}</td>
+            <td style="border: 1px solid #000;">{{ $saldo->simsuk }}</td>
+            <td style="border: 1px solid #000;">{{ $saldo->saldo_taber }}</td>
+            <td style="border: 1px solid #000;">{{ $saldo->saldo_tab_5 }}</td>
+            <td style="border: 1px solid #000;">{{ $saldo->saldo_pokok }}</td>
+            <td style="border: 1px solid #000;">{{ $saldo->saldo_margin }}</td>
         </tr>
         @endforeach
     </tbody>
