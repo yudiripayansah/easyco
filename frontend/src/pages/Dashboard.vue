@@ -42,7 +42,7 @@
             <inline-svg src="media/svg/icons/Communication/Urgent-mail.svg" />
           </span>
           <router-link to="/hasil-test-antigen" class="text-warning font-weight-bold font-size-h6 mt-2">
-            <h2><b>{{dashboard.par}}</b></h2>
+            <h2><b>{{dashboard.persentase_par}} %</b></h2>
             <h4>PAR</h4>
           </router-link>
         </div>

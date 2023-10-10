@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\KopAnggota;
 use App\Models\KopKartuAngsuran;
+use App\Models\KopKasPetugas;
 use App\Models\KopLembaga;
+use App\Models\KopPelunasan;
 use App\Models\KopPembiayaan;
 use App\Models\KopTabungan;
 use App\Models\KopTrxAnggota;
@@ -115,6 +117,9 @@ class TrxRembug extends Controller
         $show = KopTrxAnggota::where($param)->get();
         $trx_rembug = KopTrxRembug::where($param)->first();
 
+        $param_petugas = array('kode_petugas' => $trx_rembug['kode_petugas']);
+        $kas_petugas = KopKasPetugas::where($param_petugas)->first();
+
         foreach ($show as $sh) {
             $id = $sh['id'];
             $no_anggota = $sh['no_anggota'];
@@ -207,18 +212,50 @@ class TrxRembug extends Controller
                     $get->counter_angsuran = $pembiayaan['counter_angsuran'] + $freq;
                     $get->saldo_pokok = $pembiayaan['saldo_pokok'] - $amount;
                     $get->jtempo_angsuran_next = date('Y-m-d', strtotime($pembiayaan['jtempo_angsuran_next'] . ' + ' . $freq . ' WEEKS'));
+
                     $get->save();
 
-                    $param_angsuran = array(
-                        'no_rekening' => $no_rekening,
-                        'tgl_angsuran' => $pembiayaan['jtempo_angsuran_next']
-                    );
+                    $param_angsuran1 = array('no_rekening' => $no_rekening);
+                    $counter1 = $pembiayaan['counter_angsuran'] + 1;
+                    $counter2 = $pembiayaan['counter_angsuran'] + $freq;
 
-                    $angsuran = KopKartuAngsuran::where($param_angsuran)->first();
-                    $get2 = KopKartuAngsuran::find($angsuran['id']);
-                    $get2->flag_bayar = 1;
-                    $get2->tgl_bayar = $trx_date;
-                    $get2->save();
+                    $angsuran = KopKartuAngsuran::where($param_angsuran1)->whereBetween('angsuran_ke', [$counter1, $counter2])->get();
+
+                    foreach ($angsuran as $angs) {
+                        $get2 = KopKartuAngsuran::find($angs['id']);
+                        $get2->flag_bayar = 1;
+                        $get2->tgl_bayar = $trx_date;
+                        $get2->save();
+                    }
+
+                    // PELUNASAN
+                    if (($pembiayaan['counter_angsuran'] + $freq) >= $pembiayaan['jangka_waktu']) {
+                        // INSERT kop_pelunasan
+                        $data = array(
+                            'id_trx_rembug' => $id_trx_rembug,
+                            'no_rekening' => $no_rekening,
+                            'saldo_pokok' => $pembiayaan['saldo_pokok'],
+                            'saldo_margin' => $pembiayaan['saldo_margin'],
+                            'saldo_catab' => $pembiayaan['saldo_catab'],
+                            'saldo_minggon' => $pembiayaan['saldo_margin'],
+                            'potongan_margin' => 0,
+                            'flag_catab' => 1,
+                            'status_pelunasan' => 1,
+                            'tanggal_pelunasan' => $trx_date,
+                            'jenis_pembayaran' => 0,
+                            'kode_kas_petugas' => $kas_petugas['kode_kas_petugas'],
+                            'created_by' => $trx_rembug['created_by']
+                        );
+
+                        KopPelunasan::create($data);
+
+                        // UPDATE DATA MASTER
+                        $get3 = KopPembiayaan::find($pembiayaan['id']);
+                        $get3->status_rekening = 2;
+                        $get3->saldo_pokok = 0;
+
+                        $get3->save();
+                    }
                 }
             }
 
@@ -228,6 +265,15 @@ class TrxRembug extends Controller
                     $get = KopPembiayaan::find($pembiayaan['id']);
                     $get->saldo_margin = $pembiayaan['saldo_margin'] - $amount;
                     $get->save();
+
+                    // PELUNASAN
+                    if (($pembiayaan['counter_angsuran'] + $freq) >= $pembiayaan['jangka_waktu']) {
+                        // UPDATE DATA MASTER
+                        $get2 = KopPembiayaan::find($pembiayaan['id']);
+                        $get2->saldo_margin = 0;
+
+                        $get2->save();
+                    }
                 }
             }
 
@@ -239,7 +285,7 @@ class TrxRembug extends Controller
                     $get->save();
 
                     $get = KopAnggota::find($anggota['id']);
-                    $simwa = $pembiayaan['angsuran_catab'] + $amount;
+                    $simwa = $anggota['simwa'] + $amount;
                     $get->simwa = $simwa;
                     $get->save();
                 }

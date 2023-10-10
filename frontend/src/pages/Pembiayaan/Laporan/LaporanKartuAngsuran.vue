@@ -3,97 +3,16 @@
     <h1 class="mb-5">{{ $route.name }}</h1>
     <b-card>
       <b-row no-gutters>
-        <b-col cols="9" class="mb-5">
+        <b-col cols="10" class="mb-5">
           <b-row class="no-gutters">
             <b-col cols="12">
-                <multiselect
-                  label="text"
-                  v-model="paging.no_rekening"
-                  :options="opt.no_rekening"
-                  @select="setRekening()"
-                />
-            </b-col>
-            <b-col cols="2" class="mt-3">
-              <b>Plafon</b>
-            </b-col>
-            <b-col cols="4" class="mt-3">
-              {{ thousand(rekening.pokok) }}
-            </b-col>
-            <b-col cols="2" class="mt-3">
-              <b>Nama</b>
-            </b-col>
-            <b-col cols="4" class="mt-3">
-              {{ rekening.nama_anggota }}
-            </b-col>
-            <b-col cols="2" class="mt-3">
-              <b>Margin</b>
-            </b-col>
-            <b-col cols="4" class="mt-3">
-              {{ thousand(rekening.margin) }}
-            </b-col>
-            <b-col cols="2" class="mt-3">
-              <b>Majelis</b>
-            </b-col>
-            <b-col cols="4" class="mt-3">
-              {{ rekening.nama_rembug }}
-            </b-col>
-            <b-col cols="2" class="mt-3">
-              <b>Jangka Waktu</b>
-            </b-col>
-            <b-col cols="4" class="mt-3">
-              {{ rekening.jangka_waktu }}
-            </b-col>
-            <b-col cols="2" class="mt-3">
-              <b>Desa</b>
-            </b-col>
-            <b-col cols="4" class="mt-3">
-              {{ rekening.nama_desa }}
-            </b-col>
-            <b-col cols="2" class="mt-3">
-              <b>Angsuran Pokok</b>
-            </b-col>
-            <b-col cols="4" class="mt-3">
-              {{ thousand(rekening.angsuran_pokok) }}
-            </b-col>
-            <b-col cols="2" class="mt-3">
-              <b>Produk</b>
-            </b-col>
-            <b-col cols="4" class="mt-3">
-              {{ rekening.nama_produk }}
-            </b-col>
-            <b-col cols="2" class="mt-3">
-              <b>Angsuran Margin</b>
-            </b-col>
-            <b-col cols="4" class="mt-3">
-              {{ thousand(rekening.angsuran_margin) }}
-            </b-col>
-            <b-col cols="2" class="mt-3">
-              <b>Tanggal</b>
-            </b-col>
-            <b-col cols="4" class="mt-3">
-              {{ dateFormatId(rekening.tanggal_akad) }}
-            </b-col>
-            <b-col cols="2" class="mt-3">
-              <b>Total Angsuran</b>
-            </b-col>
-            <b-col cols="4" class="mt-3">
-              {{ thousand(Number(rekening.angsuran_pokok) + Number(rekening.angsuran_margin)) }}
-            </b-col>
-            <b-col cols="2" class="mt-3">
-              <b>Mulai Angsuran</b>
-            </b-col>
-            <b-col cols="4" class="mt-3">
-              {{ dateFormatId(rekening.tanggal_mulai_angsur) }}
+              <multiselect label="text" v-model="paging.no_rekening" :options="opt.no_rekening" @select="setRekening()" />
             </b-col>
           </b-row>
         </b-col>
-        <b-col cols="3" class="d-flex justify-content-end align-items-start">
+        <b-col cols="2" class="d-flex justify-content-end align-items-start">
           <b-button-group>
-            <b-button
-              text="Button"
-              variant="danger"
-              @click="$bvModal.show('modal-pdf')"
-            >
+            <b-button text="Button" variant="danger" @click="$bvModal.show('modal-pdf')">
               PDF
             </b-button>
             <b-button text="Button" variant="success" @click="exportXls()">
@@ -101,68 +20,138 @@
             </b-button>
           </b-button-group>
         </b-col>
-        <b-col cols="12">
-          <b-table
-            responsive
-            bordered
-            outlined
-            small
-            striped
-            hover
-            :fields="table.fields"
-            :items="table.items"
-            show-empty
-            :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'"
-          >
-            <template #cell(no)="item">
-              {{ item.index + 1 }}
-            </template>
-            <template #cell(angsuran_pokok)="item">
-              {{ thousand(item.item.angsuran_pokok) }}
-            </template>
-            <template #cell(angsuran_margin)="item">
-              {{ thousand(item.item.angsuran_margin) }}
-            </template>
-            <template #cell(saldo_pokok)="item">
-              {{ thousand(item.item.saldo_pokok) }}
-            </template>
-            <template #cell(saldo_margin)="item">
-              {{ thousand(item.item.saldo_margin) }}
-            </template>
-            <template #cell(jumlah)="item">
-              {{ thousand(item.item.jumlah) }}
-            </template>
-            <template #cell(trx_date)="item">
-              {{ dateFormatId(item.item.trx_date) }}
-            </template>
-            <template #cell(tgl_bayar)="item">
-              {{ dateFormatId(item.item.tgl_bayar) }}
-            </template>
-          </b-table>
-        </b-col>
-        <b-col cols="12" class="justify-content-end d-flex">
-          <b-pagination
-            v-model="paging.page"
-            :total-rows="table.totalRows"
-            :per-page="paging.perPage"
-          >
-          </b-pagination>
-        </b-col>
+        <b-overlay :show="showOverlay">
+          <b-col cols="12" class="mb-5">
+            <b-row class="no-gutters">
+              <b-col cols="2" class="mt-3">
+                <b>Nama</b>
+              </b-col>
+              <b-col cols="4" class="mt-3">
+                {{ rekening.nama_anggota }}
+              </b-col>
+              <b-col cols="2" class="mt-3">
+                <b>Plafon</b>
+              </b-col>
+              <b-col cols="4" class="mt-3">
+                {{ thousand(rekening.pokok) }}
+              </b-col>
+              <b-col cols="2" class="mt-3">
+                <b>Majelis</b>
+              </b-col>
+              <b-col cols="4" class="mt-3">
+                {{ rekening.nama_rembug }}
+              </b-col>
+              <b-col cols="2" class="mt-3">
+                <b>Margin</b>
+              </b-col>
+              <b-col cols="4" class="mt-3">
+                {{ thousand(rekening.margin) }}
+              </b-col>
+              <b-col cols="2" class="mt-3">
+                <b>Desa</b>
+              </b-col>
+              <b-col cols="4" class="mt-3">
+                {{ rekening.nama_desa }}
+              </b-col>
+              <b-col cols="2" class="mt-3">
+                <b>Jangka Waktu</b>
+              </b-col>
+              <b-col cols="4" class="mt-3">
+                {{ rekening.jangka_waktu }}
+              </b-col>
+              <b-col cols="2" class="mt-3">
+                <b>Produk</b>
+              </b-col>
+              <b-col cols="4" class="mt-3">
+                {{ rekening.nama_produk }}
+              </b-col>
+              <b-col cols="2" class="mt-3">
+                <b>Angsuran Pokok</b>
+              </b-col>
+              <b-col cols="4" class="mt-3">
+                {{ thousand(rekening.angsuran_pokok) }}
+              </b-col>
+              <b-col cols="2" class="mt-3">
+                <b>Tanggal</b>
+              </b-col>
+              <b-col cols="4" class="mt-3">
+                {{ dateFormatId(rekening.tanggal_akad) }}
+              </b-col>
+              <b-col cols="2" class="mt-3">
+                <b>Angsuran Margin</b>
+              </b-col>
+              <b-col cols="4" class="mt-3">
+                {{ thousand(rekening.angsuran_margin) }}
+              </b-col>
+              <b-col cols="2" class="mt-3">
+                <b>Tanggal Jatuh Tempo</b>
+              </b-col>
+              <b-col cols="4" class="mt-3">
+                {{ dateFormatId(rekening.tanggal_jtempo) }}
+              </b-col>
+              <b-col cols="2" class="mt-3">
+                <b>Angsuran Minggon</b>
+              </b-col>
+              <b-col cols="4" class="mt-3">
+                {{ thousand(rekening.angsuran_catab) }}
+              </b-col>
+              <b-col cols="2" class="mt-3">
+                <b>Mulai Angsuran</b>
+              </b-col>
+              <b-col cols="4" class="mt-3">
+                {{ dateFormatId(rekening.tanggal_mulai_angsur) }}
+              </b-col>
+              <b-col cols="2" class="mt-3">
+                <b>Total Angsuran</b>
+              </b-col>
+              <b-col cols="4" class="mt-3">
+                {{ thousand(Number(rekening.angsuran_pokok) + Number(rekening.angsuran_margin)) }}
+              </b-col>
+            </b-row>
+          </b-col>
+          <b-col cols="12">
+            <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items" show-empty
+              :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
+              <template #cell(no)="item">
+                {{ item.index + 1 }}
+              </template>
+              <template #cell(angsuran_pokok)="item">
+                {{ thousand(item.item.angsuran_pokok) }}
+              </template>
+              <template #cell(angsuran_margin)="item">
+                {{ thousand(item.item.angsuran_margin) }}
+              </template>
+              <template #cell(saldo_pokok)="item">
+                {{ thousand(item.item.saldo_pokok) }}
+              </template>
+              <template #cell(saldo_margin)="item">
+                {{ thousand(item.item.saldo_margin) }}
+              </template>
+              <template #cell(jumlah)="item">
+                {{ thousand(item.item.jumlah) }}
+              </template>
+              <template #cell(trx_date)="item">
+                {{ dateFormatId(item.item.trx_date) }}
+              </template>
+              <template #cell(tgl_bayar)="item">
+                {{ dateFormatId(item.item.tgl_bayar) }}
+              </template>
+            </b-table>
+          </b-col>
+          <b-col cols="12" class="justify-content-end d-flex">
+            <b-pagination v-model="paging.page" :total-rows="table.totalRows" :per-page="paging.perPage">
+            </b-pagination>
+          </b-col>
+        </b-overlay>
       </b-row>
     </b-card>
-    <b-modal
-      title="PREVIEW LAPORAN KARTU ANGSURAN"
-      id="modal-pdf"
-      hide-footer
-      size="xl"
-      centered
-    >
+    <b-modal title="PREVIEW LAPORAN KARTU ANGSURAN" id="modal-pdf" hide-footer size="xl" centered>
       <div id="table-print" class="p-5">
         <h5 class="text-center">
           KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
         </h5>
         <h5 class="text-center">LAPORAN KARTU ANGSURAN</h5>
-        <b-col cols="9" class="mb-5">
+        <b-col cols="9">
           <b-row class="no-gutters">
             <b-col cols="2" class="mt-3">
               <b>No Rekening</b>
@@ -170,13 +159,10 @@
             <b-col cols="10" class="mt-3">
               {{ paging.no_rekening.value }}
             </b-col>
-            
-            <b-col cols="2" class="mt-3">
-              <b>Plafon</b>
-            </b-col>
-            <b-col cols="4" class="mt-3">
-              {{ thousand(rekening.pokok) }}
-            </b-col>
+          </b-row>
+        </b-col>
+        <b-col cols="12" class="mb-5">
+          <b-row class="no-gutters">
             <b-col cols="2" class="mt-3">
               <b>Nama</b>
             </b-col>
@@ -184,10 +170,10 @@
               {{ rekening.nama_anggota }}
             </b-col>
             <b-col cols="2" class="mt-3">
-              <b>Margin</b>
+              <b>Plafon</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ thousand(rekening.margin) }}
+              {{ thousand(rekening.pokok) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Majelis</b>
@@ -196,10 +182,10 @@
               {{ rekening.nama_rembug }}
             </b-col>
             <b-col cols="2" class="mt-3">
-              <b>Jangka Waktu</b>
+              <b>Margin</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ rekening.jangka_waktu }}
+              {{ thousand(rekening.margin) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Desa</b>
@@ -208,10 +194,10 @@
               {{ rekening.nama_desa }}
             </b-col>
             <b-col cols="2" class="mt-3">
-              <b>Angsuran Pokok</b>
+              <b>Jangka Waktu</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ thousand(rekening.angsuran_pokok) }}
+              {{ rekening.jangka_waktu }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Produk</b>
@@ -220,10 +206,10 @@
               {{ rekening.nama_produk }}
             </b-col>
             <b-col cols="2" class="mt-3">
-              <b>Angsuran Margin</b>
+              <b>Angsuran Pokok</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ thousand(rekening.angsuran_margin) }}
+              {{ thousand(rekening.angsuran_pokok) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Tanggal</b>
@@ -232,10 +218,22 @@
               {{ dateFormatId(rekening.tanggal_akad) }}
             </b-col>
             <b-col cols="2" class="mt-3">
-              <b>Total Angsuran</b>
+              <b>Angsuran Margin</b>
             </b-col>
             <b-col cols="4" class="mt-3">
-              {{ thousand(Number(rekening.angsuran_pokok) + Number(rekening.angsuran_margin)) }}
+              {{ thousand(rekening.angsuran_margin) }}
+            </b-col>
+            <b-col cols="2" class="mt-3">
+              <b>Tanggal Jatuh Tempo</b>
+            </b-col>
+            <b-col cols="4" class="mt-3">
+              {{ thousand(rekening.tanggal_jtempo) }}
+            </b-col>
+            <b-col cols="2" class="mt-3">
+              <b>Angsuran Minggon</b>
+            </b-col>
+            <b-col cols="4" class="mt-3">
+              {{ thousand(rekening.angsuran_catab) }}
             </b-col>
             <b-col cols="2" class="mt-3">
               <b>Mulai Angsuran</b>
@@ -243,20 +241,16 @@
             <b-col cols="4" class="mt-3">
               {{ dateFormatId(rekening.tanggal_mulai_angsur) }}
             </b-col>
+            <b-col cols="2" class="mt-3">
+              <b>Total Angsuran</b>
+            </b-col>
+            <b-col cols="4" class="mt-3">
+              {{ thousand(Number(rekening.angsuran_pokok) + Number(rekening.angsuran_margin)) }}
+            </b-col>
           </b-row>
         </b-col>
-        <b-table
-          responsive
-          bordered
-          outlined
-          small
-          striped
-          hover
-          :fields="table.fields"
-          :items="table.items"
-          show-empty
-          :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'"
-        >
+        <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items" show-empty
+          :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
           <template #cell(no)="item">
             {{ item.index + 1 }}
           </template>
@@ -284,28 +278,13 @@
         </b-table>
       </div>
       <b-row>
-        <b-col
-          cols="12"
-          sm="12"
-          class="d-flex justify-content-end border-top pt-5"
-        >
-          <b-button variant="secondary" @click="$bvModal.hide('modal-pdf')"
-            >Cancel
+        <b-col cols="12" sm="12" class="d-flex justify-content-end border-top pt-5">
+          <b-button variant="secondary" @click="$bvModal.hide('modal-pdf')">Cancel
           </b-button>
-          <b-button
-            variant="danger"
-            type="button"
-            class="ml-3"
-            @click="doPrintPdf()"
-          >
+          <b-button variant="danger" type="button" class="ml-3" @click="doPrintPdf()">
             Cetak PDF
           </b-button>
-          <b-button
-            variant="warning"
-            type="button"
-            class="ml-3"
-            @click="doSavePdf()"
-          >
+          <b-button variant="warning" type="button" class="ml-3" @click="doSavePdf()">
             Simpan PDF
           </b-button>
         </b-col>
@@ -411,7 +390,8 @@ export default {
         cabang: [],
         no_rekening: [],
       },
-      rekening: Object
+      rekening: Object,
+      showOverlay: false,
     };
   },
   computed: {
@@ -458,6 +438,7 @@ export default {
       });
     },
     async exportXls() {
+      this.showOverlay = true;
       let payload = `no_rekening=${this.paging.no_rekening.value}`;
       let req = await easycoApi.kartuAngsuranExcel(payload);
       console.log(req.data);
@@ -468,8 +449,10 @@ export default {
       link.setAttribute("download", fileName);
       document.body.appendChild(link);
       link.click();
+      this.showOverlay = false;
     },
     async doGetNorek() {
+      this.showOverlay = true;
       let payload = {
         perPage: "~",
         page: 1,
@@ -493,21 +476,26 @@ export default {
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        this.showOverlay = false;
       }
     },
     async setRekening() {
+      this.showOverlay = true;
       let payload = {
         no_rekening: this.paging.no_rekening.value,
       }
       try {
         let req = await easycoApi.kartuAngsuran(payload, this.user.token);
         let { data, status, msg } = req.data
-        if(status) {
+        if (status) {
           this.rekening = data[0]
           this.table.items = this.rekening.detail
         }
       } catch (error) {
-        
+        console.error(error);
+      } finally {
+        this.showOverlay = false;
       }
     }
   },
