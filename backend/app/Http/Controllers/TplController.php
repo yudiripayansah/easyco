@@ -417,7 +417,6 @@ class TplController extends Controller
         $dana_kebajikan = $request->dana_kebajikan;
         $dana_gotongroyong = $request->dana_gotongroyong;
         $blokir_angsuran = $request->blokir_angsuran;
-        $tab_sukarela = $request->tab_sukarela;
 
         $count = count($no_rekening_tabungan);
 
@@ -683,6 +682,69 @@ class TplController extends Controller
             */
         }
 
+        // ANGGOTA KELUAR
+        $param3 = array(
+            'no_anggota' => $no_anggota,
+            'status_mutasi' => 1
+        );
+        $keluar = KopAnggotaMutasi::where($param3)->first();
+        //$count_keluar = $keluar->count();
+
+        if ($keluar) {
+            if ($keluar->saldo_tab_berencana > 0) {
+                $data_trx_anggota[] = array(
+                    'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                    'id_trx_rembug' => $uuid,
+                    'no_anggota' => $no_anggota,
+                    'no_rekening' => null,
+                    'trx_date' => $trx_date,
+                    'amount' => $keluar->saldo_tab_berencana,
+                    'flag_debet_credit' => 'D',
+                    'trx_type' => '43',
+                    'description' => 'Pinbuk Tabungan ke Sukarela',
+                    'created_by' => $kode_petugas
+                );
+            }
+
+            if ($keluar->saldo_simpok > 0) {
+                $data_trx_anggota[] = array(
+                    'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                    'id_trx_rembug' => $uuid,
+                    'no_anggota' => $no_anggota,
+                    'no_rekening' => null,
+                    'trx_date' => $trx_date,
+                    'amount' => $keluar->saldo_simpok,
+                    'flag_debet_credit' => 'D',
+                    'trx_type' => '41',
+                    'description' => 'Pinbuk Simpok ke Sukarela',
+                    'created_by' => $kode_petugas
+                );
+            }
+
+            if ($keluar->saldo_simwa > 0) {
+                $data_trx_anggota[] = array(
+                    'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
+                    'id_trx_rembug' => $uuid,
+                    'no_anggota' => $no_anggota,
+                    'no_rekening' => null,
+                    'trx_date' => $trx_date,
+                    'amount' => $keluar->saldo_simwa,
+                    'flag_debet_credit' => 'D',
+                    'trx_type' => '44',
+                    'description' => 'Pinbuk Simwa 5% - Sukarela',
+                    'created_by' => $kode_petugas
+                );
+            }
+        }
+
+        /*
+        echo '<pre>';
+        echo $count_keluar;
+        print_r($data_trx_anggota);
+        echo '</pre>';
+        die;
+        */
+
         $validate = KopTrxRembug::validateAdd($data_trx_rembug);
         $validate2 = KopTrxAnggota::validateAdd($data_trx_anggota);
 
@@ -939,7 +1001,7 @@ class TplController extends Controller
             $no_rekening = $request->no_rekening;
         }
 
-        $read = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'ka.nama_anggota', 'kr.nama_rembug', 'kd.nama_desa', 'kpp.nama_produk', 'kop_pembiayaan.tanggal_akad', 'kop_pembiayaan.tanggal_mulai_angsur', 'kop_pembiayaan.pokok', 'kop_pembiayaan.margin', 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.periode_jangka_waktu', 'kop_pembiayaan.angsuran_pokok', 'kop_pembiayaan.angsuran_margin')
+        $read = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'ka.nama_anggota', 'kr.nama_rembug', 'kd.nama_desa', 'kpp.nama_produk', 'kop_pembiayaan.tanggal_akad', 'kop_pembiayaan.tanggal_mulai_angsur', 'kop_pembiayaan.tanggal_jtempo', 'kop_pembiayaan.pokok', 'kop_pembiayaan.margin', 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.periode_jangka_waktu', 'kop_pembiayaan.angsuran_pokok', 'kop_pembiayaan.angsuran_margin', 'kop_pembiayaan.angsuran_catab')
             ->join('kop_pengajuan AS kpg', 'kpg.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
             ->join('kop_anggota AS ka', 'ka.no_anggota', 'kpg.no_anggota')
             ->join('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
@@ -962,11 +1024,12 @@ class TplController extends Controller
                     'trx_date' => $cd->tgl_angsuran,
                     'tgl_bayar' => $cd->tgl_bayar,
                     'angsuran_ke' => $cd->angsuran_ke,
-                    'jumlah' => ($cd->angsuran_pokok + $cd->angsuran_margin),
-                    'angsuran_pokok' => $cd->angsuran_pokok,
-                    'angsuran_margin' => $cd->angsuran_margin,
-                    'saldo_pokok' => $cd->saldo_pokok,
-                    'saldo_margin' => $cd->saldo_margin,
+                    'jumlah' => ($cd->angsuran_pokok + $cd->angsuran_margin + $cd->angsuran_catab),
+                    'angsuran_pokok' => (int) $cd->angsuran_pokok,
+                    'angsuran_margin' => (int) $cd->angsuran_margin,
+                    'angsuran_catab' => (int) $cd->angsuran_catab,
+                    'saldo_pokok' => (int) $cd->saldo_pokok,
+                    'saldo_margin' => (int) $cd->saldo_margin,
                     'petugas' => $cd->nama_pgw
                 );
             }

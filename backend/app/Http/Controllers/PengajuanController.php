@@ -132,7 +132,7 @@ class PengajuanController extends Controller
         try {
             if ($fileKtp) {
                 $name_ktp = 'ktp_' . $request->no_anggota . '.png';
-                $path_ktp = 'document/';
+                $path_ktp = 'public/document/';
 
                 //Storage::disk('public')->put($path_ktp, file_get_contents($fileKtp));
                 $fileKtp->storeAs($path_ktp, $name_ktp);
@@ -144,7 +144,7 @@ class PengajuanController extends Controller
 
             if ($fileKk) {
                 $name_kk = 'kk_' . $request->no_anggota . '.png';
-                $path_kk = 'document/';
+                $path_kk = 'public/document/';
 
                 //Storage::disk('public')->put($path_kk, file_get_contents($fileKk));
                 $fileKk->storeAs($path_kk, $name_kk);
@@ -156,7 +156,7 @@ class PengajuanController extends Controller
 
             if ($filePendukung) {
                 $name_pendukung = 'pendukung_' . $request->no_anggota . '.png';
-                $path_pendukung = 'document/';
+                $path_pendukung = 'public/document/';
 
                 //Storage::disk('public')->put($path_pendukung, file_get_contents($filePendukung));
                 $filePendukung->storeAs($path_pendukung, $name_pendukung);

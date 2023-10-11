@@ -1170,8 +1170,8 @@ class LaporanController extends Controller
 
         if ($jenis_tabungan == 1) {
             // Tabungan Sukarela
-            $get_credit = KopTrxAnggota::get_credit_member($no_anggota, 13, $from_date);
-            $get_debet = KopTrxAnggota::get_debet_member($no_anggota, 22, $from_date);
+            $get_credit = KopTrxAnggota::get_credit_member($no_anggota, [13], $from_date);
+            $get_debet = KopTrxAnggota::get_debet_member($no_anggota, [22], $from_date);
 
             $credit = (isset($get_credit->amount) ? $get_credit->amount : 0);
             $debet = (isset($get_debet->amount) ? $get_debet->amount : 0);
@@ -1194,7 +1194,7 @@ class LaporanController extends Controller
             $get_history = KopTrxAnggota::get_history_savingplan($no_rekening, $from_date, $thru_date);
         } else {
             // Simpanan Wajib / Minggon
-            $get_credit = KopTrxAnggota::get_credit_member($no_anggota, 12, $from_date);
+            $get_credit = KopTrxAnggota::get_credit_member($no_anggota, [12, 34], $from_date);
             $get_debet = 0;
 
             $credit = (isset($get_credit->amount) ? $get_credit->amount : 0);
@@ -1203,7 +1203,7 @@ class LaporanController extends Controller
             $saldo_awal = $credit - $debet;
             $saldo_akhir = $saldo_awal;
 
-            $get_history = KopTrxAnggota::get_history_member($no_anggota, [12], $from_date, $thru_date);
+            $get_history = KopTrxAnggota::get_history_member($no_anggota, [12, 34], $from_date, $thru_date);
         }
 
         $data = array();
