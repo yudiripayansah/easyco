@@ -110,8 +110,8 @@
             </b-row>
           </b-col>
           <b-col cols="12">
-            <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items" show-empty
-              :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
+            <b-table responsive bordered outlined small striped hover :fields="table.fields" :items="table.items"
+              show-empty :emptyText="table.loading ? 'Memuat data...' : 'Tidak ada data'">
               <template #cell(no)="item">
                 {{ item.index + 1 }}
               </template>
@@ -126,6 +126,9 @@
               </template>
               <template #cell(saldo_margin)="item">
                 {{ thousand(item.item.saldo_margin) }}
+              </template>
+              <template #cell(angsuran_catab)="item">
+                {{ thousand(item.item.angsuran_catab) }}
               </template>
               <template #cell(jumlah)="item">
                 {{ thousand(item.item.jumlah) }}
@@ -266,6 +269,9 @@
           <template #cell(saldo_margin)="item">
             {{ thousand(item.item.saldo_margin) }}
           </template>
+          <template #cell(angsuran_catab)="item">
+            {{ thousand(item.item.angsuran_catab) }}
+          </template>
           <template #cell(jumlah)="item">
             {{ thousand(item.item.jumlah) }}
           </template>
@@ -345,6 +351,13 @@ export default {
             key: "angsuran_margin",
             sortable: true,
             label: "Margin",
+            thClass: "text-center",
+            tdClass: "text-right",
+          },
+          {
+            key: "angsuran_catab",
+            sortable: true,
+            label: "Minggon",
             thClass: "text-center",
             tdClass: "text-right",
           },
