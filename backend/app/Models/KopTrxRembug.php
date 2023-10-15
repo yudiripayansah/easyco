@@ -134,6 +134,7 @@ class KopTrxRembug extends Model
             ->join('kop_trx_anggota AS kta', 'kta.id_trx_rembug', 'kop_trx_rembug.id_trx_rembug')
             ->where('kop_trx_rembug.id_trx_rembug', $id_trx_rembug)
             ->where('kta.flag_debet_credit', $flag)
+            ->whereNotIN('kta.trx_type', [41, 44])
             ->first();
 
         return $show;

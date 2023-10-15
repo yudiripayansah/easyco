@@ -277,6 +277,7 @@ Route::prefix('laporan')->group(function () {
     Route::post('/pelunasan', [LaporanController::class, 'list_pelunasan']);
     Route::post('/saldo_tabungan', [LaporanController::class, 'list_saldo_tabungan']);
     Route::post('/buka_tabungan', [LaporanController::class, 'list_buka_tabungan']);
+    Route::post('/saldo_kas_petugas', [LaporanController::class, 'list_saldo_kas_petugas']);
 
     Route::prefix('excel')->group(function () {
       Route::get('/anggota_masuk', [LaporanController::class, 'list_excel_anggota_masuk']);
@@ -296,6 +297,7 @@ Route::prefix('laporan')->group(function () {
       Route::get('/pelunasan', [LaporanController::class, 'list_excel_pelunasan']);
       Route::get('/saldo_tabungan', [LaporanController::class, 'list_excel_saldo_tabungan']);
       Route::get('/buka_tabungan', [LaporanController::class, 'list_excel_buka_tabungan']);
+      Route::get('/saldo_kas_petugas', [LaporanController::class, 'list_excel_saldo_kas_petugas']);
     });
 
     Route::prefix('csv')->group(function () {
@@ -314,6 +316,7 @@ Route::prefix('laporan')->group(function () {
       Route::get('/pelunasan', [LaporanController::class, 'list_csv_pelunasan']);
       Route::get('/saldo_tabungan', [LaporanController::class, 'list_csv_saldo_tabungan']);
       Route::get('/buka_tabungan', [LaporanController::class, 'list_csv_buka_tabungan']);
+      Route::get('/saldo_kas_petugas', [LaporanController::class, 'list_csv_saldo_kas_petugas']);
     });
 
     Route::prefix('pdf')->group(function () {
