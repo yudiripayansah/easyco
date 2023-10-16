@@ -286,13 +286,25 @@
             <b-form-group label="Simpanan Wajib">
               <b-input :value="form.data.tabungan_persen" disabled />
             </b-form-group>
+            <b-form-group label="Sukarela">
+              <b-input v-model="form.data.tab_sukarela" type="number"/>
+            </b-form-group>
+            <b-form-group label="Tiar">
+              <b-input v-model="form.data.blokir_angsuran" type="number"/>
+            </b-form-group>
+            <b-form-group label="Dana Gotong Royong">
+              <b-input v-model="form.data.dana_gotongroyong" type="number"/>
+            </b-form-group>
             <b-form-group label="Total">
               <b-input
                 :value="
                   Number(form.data.biaya_administrasi) +
                   Number(form.data.biaya_asuransi_jiwa) +
                   Number(form.data.dana_kebajikan) +
-                  Number(form.data.tabungan_persen)
+                  Number(form.data.tabungan_persen) +
+                  Number(form.data.tab_sukarela) +
+                  Number(form.data.blokir_angsuran) +
+                  Number(form.data.dana_gotongroyong)
                 "
                 disabled
               />
