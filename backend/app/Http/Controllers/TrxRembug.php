@@ -582,6 +582,7 @@ class TrxRembug extends Controller
             $data['debit_credit'] = 'C';
         }
 
+        $data['voucher_date'] = date('Y-m-d', strtotime(str_replace('/', '-', $request->voucher_date)));
         $data['trx_date'] = date('Y-m-d');
         $data['created_at'] = date('Y-m-d H:i:s');
 
