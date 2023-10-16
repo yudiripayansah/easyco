@@ -931,7 +931,8 @@ export default {
         let req = await easycoApi.regisAkadReadDetail(id, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
-          this.form.data = { ...data.get, ...data.get2 };
+          this.form.data = { ...data.get, ...data.get2[0] };
+          this.pengajuan = {...data.get2[0]}
           this.doGetRembug();
           this.$bvModal.show("modal-form");
         } else {
