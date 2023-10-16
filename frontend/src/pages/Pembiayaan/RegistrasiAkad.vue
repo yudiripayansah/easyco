@@ -9,7 +9,7 @@
         >
           <b-button
             variant="success"
-            @click="$bvModal.show('modal-form')"
+            @click="$bvModal.show('modal-form');doClearForm();"
             v-b-tooltip.hover
             title="Tambah Data Baru"
           >
@@ -128,10 +128,11 @@
                 v-model="form.data.kode_rembug"
                 :options="opt.rembug"
                 @change="doGetAnggota(form.data.kode_rembug)"
+                :disabled="form.data.id"
               />
             </b-form-group>
           </b-col>
-          <b-col cols="12" sm="4">
+          <b-col cols="12" sm="4" v-show="!form.data.id">
             <b-form-group label="Nama">
               <b-select
                 v-model="form.data.no_anggota"
@@ -140,7 +141,7 @@
               />
             </b-form-group>
           </b-col>
-          <b-col cols="12" sm="4">
+          <b-col cols="12" :sm="(form.data.id) ? 8 :4">
             <b-form-group label="Nama Anggota">
               <b-input v-model="pengajuan.nama_anggota" disabled />
             </b-form-group>
@@ -933,6 +934,10 @@ export default {
         if (status) {
           this.form.data = { ...data.get, ...data.get2[0] };
           this.pengajuan = {...data.get2[0]}
+          this.pengajuan.pembiayaan_ke = this.pengajuan.pengajuan_ke
+          this.pengajuan.no_pengajuan = this.form.data.no_pengajuan
+          this.pengajuan.peruntukan = this.form.data.peruntukan
+          this.pengajuan.jumlah_pengajuan = this.form.data.pokok
           this.doGetRembug();
           this.$bvModal.show("modal-form");
         } else {
