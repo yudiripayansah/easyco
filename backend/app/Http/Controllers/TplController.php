@@ -114,10 +114,10 @@ class TplController extends Controller
         $kode_rembug = $request->kode_rembug;
         $today = $request->today;
 
-        if ($today == '~') {
+        if ($today == '~' or $today == '' or empty($today)) {
             $trx_date = date('Y-m-d');
         } else {
-            $trx_date = $today;
+            $trx_date = date('Y-m-d', strtotime(str_replace('/', '-', $today)));
         }
 
         $read = KopAnggota::tpl_trx_member($kode_rembug, $trx_date);

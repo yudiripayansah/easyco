@@ -78,4 +78,9 @@ class KopTrxKasPetugas extends Model
 
         return $show;
     }
+
+    function fn_saldo_kas($kode_cabang, $tanggal, $created_by)
+    {
+        DB::select("SELECT fn_insert_report_kas_petugas('" . $kode_cabang . "','" . $tanggal . "','" . $created_by . "')");
+    }
 }

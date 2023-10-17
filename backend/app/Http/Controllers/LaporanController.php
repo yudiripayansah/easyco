@@ -15,6 +15,7 @@ use App\Exports\ListPengajuanExport;
 use App\Exports\ListRegisAkadExport;
 use App\Exports\ListPencairanExport;
 use App\Exports\ListSaldoAnggotaExport;
+use App\Exports\ListSaldoKasPetugasExport;
 use App\Exports\ListSaldoOutstandingExport;
 use App\Exports\ListSaldoTabunganExport;
 use App\Exports\StatementTabunganExport;
@@ -22,6 +23,7 @@ use App\Exports\TransaksiMajelisExport;
 use App\Models\KopAnggota;
 use App\Models\KopAnggotaMutasi;
 use App\Models\KopCabang;
+use App\Models\KopKasPetugasTemporary;
 use App\Models\KopPegawai;
 use App\Models\KopPelunasan;
 use App\Models\KopPembiayaan;
@@ -31,6 +33,7 @@ use App\Models\KopTabungan;
 use App\Models\KopTrxAnggota;
 use App\Models\KopTrxGl;
 use App\Models\KopTrxGlDetail;
+use App\Models\KopTrxKasPetugas;
 use App\Models\KopTrxRembug;
 use Illuminate\Http\Request;
 
@@ -1642,13 +1645,6 @@ class LaporanController extends Controller
             $cabang = 'SEMUA CABANG';
         }
 
-        if ($kode_produk <> '~' and $kode_produk <> '00000' and !empty($kode_produk) and $kode_produk <> null) {
-            $product = KopPrdTabungan::where('kode_produk', $kode_produk)->first();
-            $tabungan = $product->nama_produk;
-        } else {
-            $tabungan = 'SEMUA PRODUK';
-        }
-
         if ($request->from_date) {
             $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
         } else {
@@ -1680,13 +1676,6 @@ class LaporanController extends Controller
             $cabang = 'SEMUA CABANG';
         }
 
-        if ($kode_produk <> '~' and $kode_produk <> '00000' and !empty($kode_produk) and $kode_produk <> null) {
-            $product = KopPrdTabungan::where('kode_produk', $kode_produk)->first();
-            $tabungan = $product->nama_produk;
-        } else {
-            $tabungan = 'SEMUA PRODUK';
-        }
-
         if ($request->from_date) {
             $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
         } else {
@@ -1702,5 +1691,114 @@ class LaporanController extends Controller
         $list = new ListBukaTabunganExport($kode_cabang, $kode_produk, $from_date, $thru_date, 'csv');
 
         return $list->download('LAPORAN_BUKA_TABUNGAN_' . $cabang . '_' . $from_date . '_' . $thru_date . '.csv');
+    }
+
+    function list_saldo_kas_petugas(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $tanggal = $request->tanggal;
+        $created_by = substr(md5(rand()), 0, 30);
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($tanggal <> '~' and !empty($tanggal) and $tanggal <> null) {
+            $tanggal = date('Y-m-d', strtotime(str_replace('/', '-', $tanggal)));
+        } else {
+            $tanggal = date('Y-m-d');
+        }
+
+        KopTrxKasPetugas::fn_saldo_kas($kode_cabang, $tanggal, $created_by);
+
+        $show = KopKasPetugasTemporary::get_cash_history($kode_cabang, $tanggal, $created_by);
+
+        $data = array();
+
+        $total_saldo_awal = 0;
+        $total_saldo_akhir = 0;
+
+        foreach ($show as $sh) {
+            $data[] = array(
+                'kode_kas_petugas' => $sh->kode_kas_petugas,
+                'nama_kas_petugas' => $sh->nama_kas_petugas,
+                'saldo_awal' => (int) $sh->saldo_awal,
+                'mutasi_debet' => (int) $sh->mutasi_debet,
+                'mutasi_credit' => (int) $sh->mutasi_credit,
+                'saldo_akhir' => (int) $sh->saldo_akhir
+            );
+
+            $total_saldo_awal += $sh->saldo_awal;
+            $total_saldo_akhir += $sh->saldo_akhir;
+        }
+
+        $get = KopKasPetugasTemporary::where('created_by', $created_by)->first();
+        if ($get) {
+            KopKasPetugasTemporary::find($get->id)->forceDelete();
+        }
+
+        $res = array(
+            'status' => true,
+            'nama_cabang' => $cabang,
+            'tanggal' => $tanggal,
+            'total_saldo_awal' => $total_saldo_awal,
+            'total_saldo_akhir' => $total_saldo_akhir,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function list_excel_saldo_kas_petugas(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $tanggal = $request->tanggal;
+        $created_by = substr(md5(rand()), 0, 30);
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($tanggal <> '~' and !empty($tanggal) and $tanggal <> null) {
+            $tanggal = date('Y-m-d', strtotime(str_replace('/', '-', $tanggal)));
+        } else {
+            $tanggal = date('Y-m-d');
+        }
+
+        $list = new ListSaldoKasPetugasExport($kode_cabang, $tanggal, $created_by, 'excel');
+
+        return $list->download('LAPORAN_SALDO_KAS_PETUGAS_' . $cabang . '_' . $tanggal . '.xlsx');
+    }
+
+    function list_csv_saldo_kas_petugas(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $tanggal = $request->tanggal;
+        $created_by = substr(md5(rand()), 0, 30);
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($tanggal <> '~' and !empty($tanggal) and $tanggal <> null) {
+            $tanggal = date('Y-m-d', strtotime(str_replace('/', '-', $tanggal)));
+        } else {
+            $tanggal = date('Y-m-d');
+        }
+
+        $list = new ListSaldoKasPetugasExport($kode_cabang, $tanggal, $created_by, 'csv');
+
+        return $list->download('LAPORAN_SALDO_KAS_PETUGAS_' . $cabang . '_' . $tanggal . '.csv');
     }
 }
