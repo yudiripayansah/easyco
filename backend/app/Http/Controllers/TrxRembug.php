@@ -262,6 +262,7 @@ class TrxRembug extends Controller
             // SETORAN ANGSURAN MARGIN
             if ($trx_type == 33) {
                 if ($amount > 0) {
+                    $freq = round($amount / $pembiayaan['angsuran_margin']);
                     $get = KopPembiayaan::find($pembiayaan['id']);
                     $get->saldo_margin = $pembiayaan['saldo_margin'] - $amount;
                     $get->save();
