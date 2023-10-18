@@ -531,7 +531,7 @@ export default {
                     ];
                     data.map((item) => {
                         this.opt.no_anggota.push({
-                            value: Number(item.no_anggota),
+                            value: item.no_anggota,
                             text: item.nama_anggota,
                             data: item,
                         });
@@ -573,7 +573,7 @@ export default {
                     data.map((item) => {
                         console.log({ item });
                         this.opt.no_rekening.push({
-                            value: Number(item.no_rekening),
+                            value: item.no_rekening,
                             text: item.no_rekening,
                             data: item,
                         });
