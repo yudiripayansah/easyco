@@ -115,9 +115,24 @@ class KopTrxAnggota extends Model
         return $show;
     }
 
+    function get_pinbuk_member($no_anggota, $jenis_trx, $from_date)
+    {
+        $show = KopTrxAnggota::select(DB::raw('COALESCE(SUM(kop_trx_anggota.amount),0) AS amount'))
+            ->join('kop_list_kode AS klk', 'klk.kode_value', 'kop_trx_anggota.trx_type')
+            ->where('kop_trx_anggota.no_anggota', $no_anggota)
+            ->whereIn('klk.kode_value', $jenis_trx)
+            ->where('klk.nama_kode', 'transaksi_anggota')
+            ->where('kop_trx_anggota.flag_debet_credit', 'D')
+            ->where('kop_trx_anggota.trx_date', '<', $from_date)
+            ->groupBy('kop_trx_anggota.no_anggota')
+            ->first();
+
+        return $show;
+    }
+
     function get_history_savingplan($no_rekening, $from_date, $thru_date)
     {
-        $show = KopTrxAnggota::select('trx_date', DB::raw('COALESCE(amount,0) AS amount'), 'flag_debet_credit', 'description')
+        $show = KopTrxAnggota::select('trx_date', DB::raw('COALESCE(amount,0) AS amount'), 'flag_debet_credit', 'description', 'trx_type')
             ->where('no_rekening', $no_rekening)
             ->where('amount', '>', 0)
             ->where('trx_type', 21)
@@ -130,7 +145,7 @@ class KopTrxAnggota extends Model
 
     function get_history_member($no_anggota, $jenis_trx, $from_date, $thru_date)
     {
-        $show = KopTrxAnggota::select('kop_trx_anggota.trx_date', DB::raw('COALESCE(kop_trx_anggota.amount,0) AS amount'), 'kop_trx_anggota.flag_debet_credit', 'kop_trx_anggota.description')
+        $show = KopTrxAnggota::select('kop_trx_anggota.trx_date', DB::raw('COALESCE(kop_trx_anggota.amount,0) AS amount'), 'kop_trx_anggota.flag_debet_credit', 'kop_trx_anggota.description', 'kop_trx_anggota.trx_type')
             ->join('kop_list_kode AS klk', 'klk.kode_value', 'kop_trx_anggota.trx_type')
             ->where('kop_trx_anggota.no_anggota', $no_anggota)
             ->where('kop_trx_anggota.amount', '>', 0)

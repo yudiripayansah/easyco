@@ -43,18 +43,16 @@
         @endif
     </thead>
     <tbody>
-        @php $no = 1 @endphp
-        @foreach($statementtabungan as $tabungan)
-        @if ($no == 1)
         <tr>
-            <td style="border: 1px solid #000;">{{ $no++ }}</td>
+            <td style="border: 1px solid #000;">-</td>
             <td style="border: 1px solid #000;">-</td>
             <td style="border: 1px solid #000;">Saldo Awal</td>
             <td style="border: 1px solid #000;">-</td>
             <td style="border: 1px solid #000;">-</td>
             <td style="border: 1px solid #000;">{{ $saldo_awal }}</td>
         </tr>
-        @else
+        @php $no = 1 @endphp
+        @foreach($statementtabungan as $tabungan)
         <tr>
             <td style="border: 1px solid #000;">{{ $no++ }}</td>
             <td style="border: 1px solid #000;">{{ $tabungan['trx_date'] }}</td>
@@ -63,7 +61,6 @@
             <td style="border: 1px solid #000;">{{ $tabungan['setor'] }}</td>
             <td style="border: 1px solid #000;">{{ $tabungan['saldo_akhir'] }}</td>
         </tr>
-        @endif
         @endforeach
     </tbody>
 </table>
