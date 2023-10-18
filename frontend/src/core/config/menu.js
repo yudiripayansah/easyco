@@ -281,7 +281,12 @@ const menu = [
             target: 'jurnal-transaksi',
             label: ' Jurnal Transaksi',
             component: import('@/pages/Transaksi/Laporan/LaporanTransaksiJurnal.vue'),
-          }
+          },
+          {
+            target: 'saldo-kas-petugas',
+            label: ' Saldo Kas Petugas',
+            component: import('@/pages/Transaksi/Laporan/LaporanSaldoKasPetugas.vue'),
+          },
         ]
       },
     ]
