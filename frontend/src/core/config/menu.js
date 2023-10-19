@@ -172,6 +172,11 @@ const menu = [
             component: import('@/pages/Pembiayaan/Laporan/PengajuanPembiayaan.vue'),
           },
           {
+            target: 'rekap-pengajuan-pembiayaan',
+            label: 'Rekap Pengajuan Pembiayaan',
+            component: import('@/pages/Pembiayaan/Laporan/LaporanRekapPengajuanPembiayaan.vue'),
+          },
+          {
             target: 'registrasi-akad',
             label: 'Registrasi Akad',
             component: import('@/pages/Pembiayaan/Laporan/LaporanRegistrasiAkad.vue'),

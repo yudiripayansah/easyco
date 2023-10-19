@@ -12,15 +12,27 @@
                 </b-input-group>
               </b-col>
               <b-col>
-                <b-input-group prepend="Tanggal">
-                  <b-form-datepicker v-model="paging.tanggal" />
+                <b-input-group prepend="Rekap By">
+                  <b-form-select v-model="paging.rekap_by" :options="opt.rekap_by" />
+                </b-input-group>
+              </b-col>
+            </div>
+            <div class="row">
+              <b-col>
+                <b-input-group prepend="Dari Tanggal">
+                  <b-form-datepicker v-model="paging.from_date" />
+                </b-input-group>
+              </b-col>
+              <b-col>
+                <b-input-group prepend="Sampai Tanggal">
+                  <b-form-datepicker v-model="paging.thru_date" />
                 </b-input-group>
               </b-col>
             </div>
           </b-col>
           <b-col cols="2" class="d-flex justify-content-end align-items-start">
             <b-button-group>
-              <b-button text="Button" variant="danger" @click="$bvModal.show('modal-pdf'); doGetReport();">PDF</b-button>
+              <b-button text="Button" variant="danger" @click="$bvModal.show('modal-pdf');">PDF</b-button>
               <b-button text="Button" variant="success" @click="exportXls()">XLS</b-button>
               <b-button text="Button" variant="warning" @click="exportCsv()">CSV</b-button>
             </b-button-group>
@@ -38,26 +50,6 @@
             <b-pagination v-model="paging.currentPage" :total-rows="table.totalRows" :per-page="paging.perPage"
               aria-controls="my-table"></b-pagination>
           </b-col>
-          <b-col md="3" offset-md="9">
-            <table class="table table-bordered table-hover">
-              <thead>
-                <tr>
-                  <th scope="col" class="bold">Keterangan</th>
-                  <th scope="col" class="bold">Saldo</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td scope="row" class="col-md-5">Total Saldo Awal</td>
-                  <td class="text-right">{{ total_saldo_awal }}</td>
-                </tr>
-                <tr>
-                  <td scope="row">Total Saldo Akhir</td>
-                  <td class="text-right">{{ total_saldo_akhir }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </b-col>
         </b-row>
       </b-card>
     </b-overlay>
@@ -68,8 +60,10 @@
           KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
         </h5>
         <h5 class="text-center">SALDO KAS PETUGAS</h5>
-        <h5 class="text-center" v-show="paging.nama_cabang">Cabang: {{ paging.nama_cabang }}</h5>
-        <h5 class="text-center" v-show="paging.tanggal">Tanggal: {{ this.dateFormatId(paging.tanggal) }}</h5>
+        <h5 class="text-center" v-show="nama_cabang">Cabang: {{ nama_cabang }}</h5>
+        <h5 class="text-center" v-show="rekap_by_nama">Rekap By: {{ rekap_by_nama }}</h5>
+        <h6 class="text-center mb-5 pb-5" v-show="paging.from_date && paging.thru_date">Tanggal
+          {{ dateFormatId(paging.from_date) }} s.d {{ dateFormatId(paging.thru_date) }}</h6>
         <div class="table-responsive">
           <table class="table table-bordered table-striped">
             <thead>
@@ -86,12 +80,11 @@
             <tbody v-if="table && table.items && table.items.length > 0">
               <tr v-for="(table, tableIndex) in table.items" :key="`table-${tableIndex}`">
                 <td class="text-center">{{ tableIndex + 1 }}</td>
-                <td class="text-center">{{ table.kode_kas_petugas }}</td>
-                <td class="text-left">{{ table.nama_kas_petugas }}</td>
-                <td class="text-right">{{ table.saldo_awal }}</td>
-                <td class="text-right">{{ table.mutasi_debet }}</td>
-                <td class="text-right">{{ table.mutasi_credit }}</td>
-                <td class="text-right">{{ table.saldo_akhir }}</td>
+                <td class="text-left">{{ table.keterangan }}</td>
+                <td class="text-right">{{ table.jumlah_anggota }}</td>
+                <td class="text-right">{{ table.nominal }}</td>
+                <td class="text-right">{{ table.persen_jumlah }}</td>
+                <td class="text-right">{{ table.persen_nominal }}</td>
               </tr>
             </tbody>
             <tbody v-else>
@@ -139,46 +132,39 @@ export default {
             tdClass: "text-center",
           },
           {
-            key: "kode_kas_petugas",
+            key: "keterangan",
             sortable: true,
-            label: "Kode Petugas",
-            thClass: "text-center",
-            tdClass: "text-center",
-          },
-          {
-            key: "nama_kas_petugas",
-            sortable: true,
-            label: "Nama Petugas",
+            label: "Keterangan",
             thClass: "text-center",
             tdClass: "text-left",
           },
           {
-            key: "saldo_awal",
+            key: "jumlah_anggota",
             sortable: true,
-            label: "Saldo Awal",
+            label: "Jumlah Anggota",
+            thClass: "text-center",
+            tdClass: "text-center",
+          },
+          {
+            key: "nominal",
+            sortable: true,
+            label: "Nominal",
             thClass: "text-center",
             tdClass: "text-right",
           },
           {
-            key: "mutasi_debet",
+            key: "persen_jumlah",
             sortable: true,
-            label: "Mutasi Debet",
+            label: "Persen Jumlah",
             thClass: "text-center",
-            tdClass: "text-right",
+            tdClass: "text-center",
           },
           {
-            key: "mutasi_credit",
+            key: "persen_nominal",
             sortable: true,
-            label: "Mutasi Credit",
+            label: "Persen Nominal",
             thClass: "text-center",
-            tdClass: "text-right",
-          },
-          {
-            key: "saldo_akhir",
-            sortable: true,
-            label: "Saldo Akhir",
-            thClass: "text-center",
-            tdClass: "text-right",
+            tdClass: "text-center",
           },
         ],
         items: [],
@@ -194,7 +180,9 @@ export default {
         search: "",
         status: "~",
         kode_cabang: '',
-        tanggal: '',
+        rekap_by: '',
+        from_date: '',
+        thru_date: '',
       },
       opt: {
         kode_cabang: [
@@ -202,11 +190,17 @@ export default {
             value: '',
             text: "All",
           },
+        ],
+        rekap_by: [
+          {
+            value: '',
+            text: "All",
+          },
         ]
       },
+      nama_cabang: '',
+      rekap_by_nama: '',
       showOverlay: false,
-      total_saldo_awal: 0,
-      total_saldo_akhir: 0,
     };
   },
   computed: {
@@ -223,14 +217,18 @@ export default {
   mounted() {
     this.doGet();
     this.doGetCabang();
+    this.doGetRekapBy();
   },
   methods: {
     ...helper,
     getFileName() {
       const singleObjKodeCabang = this.opt.kode_cabang.find(item => item.value == this.paging.kode_cabang);
+      const singleObjRekapBy = this.opt.rekap_by.find(item => item.value == this.paging.rekap_by);
+
       let fileName = "SALDO KAS PETUGAS_";
       fileName += `Cabang-${(singleObjKodeCabang?.value != null ? singleObjKodeCabang?.text : '')}_`;
-      fileName += `Tanggal-${this.paging.tanggal}`;
+      fileName += `Rekap By-${(singleObjRekapBy?.value != null ? singleObjRekapBy?.text : '')}_`;
+      fileName += `Dari ${this.dateFormatId(this.paging.from_date)} Sampai ${this.dateFormatId(this.paging.thru_date)}`;
       return fileName;
     },
     doPrintPdf() {
@@ -270,7 +268,7 @@ export default {
     async exportXls() {
       this.showOverlay = true;
       const payload = `kode_cabang=${this.paging.kode_cabang}&tanggal=${this.paging.tanggal}`;
-      const req = await easycoApi.listReportSaldoKasPetugasExportToXLSX(payload);
+      const req = await easycoApi.listReportRekapPengajuanExportToXLSX(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
       const fileName = `${this.getFileName()}.xlsx`;
@@ -283,7 +281,7 @@ export default {
     async exportCsv() {
       this.showOverlay = true;
       const payload = `kode_cabang=${this.paging.kode_cabang}&tanggal=${this.paging.tanggal}`;
-      const req = await easycoApi.listReportSaldoKasPetugasExportToCSV(payload);
+      const req = await easycoApi.listReportRekapPengajuanExportToCSV(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
       const fileName = `${this.getFileName()}.csv`;
@@ -322,14 +320,42 @@ export default {
         console.error(error);
       }
     },
+    async doGetRekapBy() {
+      let payload = '';
+      try {
+        let req = await easycoApi.listReportRekapBy(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.rekap_by = [
+            {
+              value: '',
+              text: "All",
+            },
+          ];
+          data.map((item) => {
+            this.opt.rekap_by.push({
+              value: item.kode_value,
+              text: item.kode_display,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
     async doGet() {
       this.showOverlay = true;
+
+      const singleObjKodeCabang = this.opt.kode_cabang.find(item => item.value == this.paging.kode_cabang);
+      const singleObjRekapBy = this.opt.rekap_by.find(item => item.value == this.paging.rekap_by);
+      this.nama_cabang = singleObjKodeCabang.text;
+      this.rekap_by_nama = singleObjRekapBy.text;
 
       let payload = this.paging;
       payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
       this.table.loading = true;
       try {
-        let req = await easycoApi.listReportSaldoKasPetugas(payload, this.user.token);
+        let req = await easycoApi.listReportRekapPengajuan(payload, this.user.token);
         const {
           data,
           status,
@@ -338,26 +364,21 @@ export default {
           // totalPage,
           // perPage,
           // page,
-          total_saldo_awal = 0,
-          total_saldo_akhir = 0,
         } = req.data;
         if (status) {
 
           if (data && data.length > 0) {
             data.forEach(item => {
-              item.saldo_awal = this.numberFormat(item.saldo_awal, 0);
-              item.mutasi_debet = this.numberFormat(item.mutasi_debet, 0);
-              item.mutasi_credit = this.numberFormat(item.mutasi_credit, 0);
-              item.saldo_akhir = this.numberFormat(item.saldo_akhir, 0);
+              item.jumlah_anggota = this.numberFormat(item.jumlah_anggota, 0);
+              item.nominal = this.numberFormat(item.nominal, 0);
+              item.persen_jumlah = this.numberFormat(item.persen_jumlah, 0);
+              item.persen_nominal = this.numberFormat(item.persen_nominal, 0);
             });
           }
 
           this.table.items = data;
           this.table.totalRows = data.length;
           // this.paging.perPage = Number(perPage);
-
-          this.total_saldo_awal = this.numberFormat(total_saldo_awal, 0);
-          this.total_saldo_akhir = this.numberFormat(total_saldo_akhir, 0);
         } else {
           this.notify("danger", "Error", msg);
         }
