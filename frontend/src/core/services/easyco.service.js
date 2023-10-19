@@ -6,6 +6,8 @@ import laporanKeuanganBulanLalu from "./laporanKeuanganBulanLalu.service";
 import laporanPelunasanPembiayaan from "./laporanPelunasanPembiayaan.service";
 import laporanSaldoTabungan from "./laporanSaldoTabungan.service";
 import laporanPembukaanRekeningTabungan from "./laporanPembukaanRekeningTabungan.service";
+import transaksiLaporanSaldoKasPetugas from "./transaksiLaporanSaldoKasPetugas.service";
+import pembiayaanLaporanRekapPengajuanPembiayaan from "./pembiayaanLaporanRekapPengajuanPembiayaan.service";
 
 const easycoApi = {
   login(payload) {
@@ -1546,6 +1548,7 @@ const easycoApi = {
   ...laporanPelunasanPembiayaan,
   ...laporanSaldoTabungan,
   ...laporanPembukaanRekeningTabungan,
-
+  ...transaksiLaporanSaldoKasPetugas,
+  ...pembiayaanLaporanRekapPengajuanPembiayaan,
 };
 export default easycoApi;
