@@ -27,7 +27,19 @@ class ListAnggotaKeluarExport implements FromView
     {
         $format = $this->format;
 
-        if ($this->kode_rembug == 'null') {
+        if ($this->kode_cabang <> '~' and $this->kode_cabang <> '00000' and !empty($this->kode_cabang) and $this->kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $this->kode_cabang)->first();
+
+            if ($branch <> '00000') {
+                $cabang = $branch->nama_cabang;
+            } else {
+                $cabang = 'SEMUA CABANG';
+            }
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($this->kode_rembug <> '~' and $this->kode_rembug <> '00000' and !empty($this->kode_rembug) and $this->kode_rembug <> null) {
             $kode_rembug = '00000';
         } else {
             $kode_rembug = $this->kode_rembug;
@@ -46,18 +58,6 @@ class ListAnggotaKeluarExport implements FromView
         }
 
         $show = KopAnggotaMutasi::get_anggota_keluar($this->kode_cabang, $kode_rembug, $from_date, $thru_date);
-
-        if ($this->kode_cabang <> '00000') {
-            $branch = KopCabang::where('kode_cabang', $this->kode_cabang)->first();
-
-            if ($branch <> '00000') {
-                $cabang = $branch->nama_cabang;
-            } else {
-                $cabang = 'SEMUA CABANG';
-            }
-        } else {
-            $cabang = 'SEMUA CABANG';
-        }
 
         foreach ($show as $item) {
             $item->penarikan_sukarela = $item->setoran_tambahan + $item->penarikan_sukarela;

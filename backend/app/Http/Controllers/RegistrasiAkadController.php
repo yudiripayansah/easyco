@@ -475,7 +475,7 @@ class RegistrasiAkadController extends Controller
         if ($stat == 2) {
             if ($from && $to) {
                 $read->whereBetween('kop_pembiayaan.tanggal_akad', [$from, $to]);
-                $read->where('kop_pembiayaan.ttd_pencairan', null);
+                //$read->where('kop_pembiayaan.ttd_pencairan', null);
             }
         } else {
             if ($from && $to) {
@@ -531,11 +531,11 @@ class RegistrasiAkadController extends Controller
 
             if ($stat == 2) {
                 if ($from && $to) {
-                    $read->whereBetween('kop_pembiayaan.tanggal_akad', [$from, $to]);
+                    $total->whereBetween('kop_pembiayaan.tanggal_akad', [$from, $to]);
                 }
             } else {
                 if ($from && $to) {
-                    $read->whereBetween('kop_pembiayaan.tanggal_registrasi', [$from, $to]);
+                    $total->whereBetween('kop_pembiayaan.tanggal_registrasi', [$from, $to]);
                 }
             }
 

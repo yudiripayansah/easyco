@@ -172,11 +172,11 @@ class KopAnggotaMutasi extends Model
             ->join('kop_pegawai AS kp', 'kp.kode_pgw', 'kop_anggota_mutasi.kode_petugas')
             ->where('kop_anggota_mutasi.status_mutasi', 1);
 
-        if ($kode_cabang != '00000') {
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
             $show->where('ka.kode_cabang', $kode_cabang);
         }
 
-        if ($kode_rembug != '00000') {
+        if ($kode_rembug <> '~' and $kode_rembug <> '00000' and !empty($kode_rembug) and $kode_rembug <> null) {
             $show->where('ka.kode_rembug', $kode_rembug);
         }
 

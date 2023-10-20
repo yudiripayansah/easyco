@@ -6,6 +6,8 @@ import laporanKeuanganBulanLalu from "./laporanKeuanganBulanLalu.service";
 import laporanPelunasanPembiayaan from "./laporanPelunasanPembiayaan.service";
 import laporanSaldoTabungan from "./laporanSaldoTabungan.service";
 import laporanPembukaanRekeningTabungan from "./laporanPembukaanRekeningTabungan.service";
+import transaksiLaporanSaldoKasPetugas from "./transaksiLaporanSaldoKasPetugas.service";
+import pembiayaanLaporanRekapPengajuanPembiayaan from "./pembiayaanLaporanRekapPengajuanPembiayaan.service";
 
 const easycoApi = {
   login(payload) {
@@ -1321,9 +1323,16 @@ const easycoApi = {
     };
     return axios.post(url, payload, config);
   },
+  trxKasPetugas(payload, token) {
+    let url = "trx_rembug/proses_kas_petugas";
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
   // LAPORAN PDF
-
-
   laporanBukuBesar(payload, token) {
     let url = "laporan/list/pdf/gl_inquiry";
     let config = {
@@ -1539,6 +1548,7 @@ const easycoApi = {
   ...laporanPelunasanPembiayaan,
   ...laporanSaldoTabungan,
   ...laporanPembukaanRekeningTabungan,
-
+  ...transaksiLaporanSaldoKasPetugas,
+  ...pembiayaanLaporanRekapPengajuanPembiayaan,
 };
 export default easycoApi;

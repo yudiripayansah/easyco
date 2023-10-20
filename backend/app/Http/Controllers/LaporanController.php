@@ -8,22 +8,32 @@ use App\Exports\KartuAngsuranExport;
 use App\Exports\KasPetugasExport;
 use App\Exports\ListAnggotaKeluarExport;
 use App\Exports\ListAnggotaMasukExport;
+use App\Exports\ListBukaTabunganExport;
+use App\Exports\ListKolektibilitasExport;
+use App\Exports\ListPelunasanExport;
 use App\Exports\ListPengajuanExport;
 use App\Exports\ListRegisAkadExport;
 use App\Exports\ListPencairanExport;
 use App\Exports\ListSaldoAnggotaExport;
+use App\Exports\ListSaldoKasPetugasExport;
 use App\Exports\ListSaldoOutstandingExport;
+use App\Exports\ListSaldoTabunganExport;
 use App\Exports\StatementTabunganExport;
 use App\Exports\TransaksiMajelisExport;
 use App\Models\KopAnggota;
 use App\Models\KopAnggotaMutasi;
 use App\Models\KopCabang;
+use App\Models\KopKasPetugasTemporary;
+use App\Models\KopPegawai;
+use App\Models\KopPelunasan;
 use App\Models\KopPembiayaan;
+use App\Models\KopPrdTabungan;
 use App\Models\KopRembug;
 use App\Models\KopTabungan;
 use App\Models\KopTrxAnggota;
 use App\Models\KopTrxGl;
 use App\Models\KopTrxGlDetail;
+use App\Models\KopTrxKasPetugas;
 use App\Models\KopTrxRembug;
 use Illuminate\Http\Request;
 
@@ -199,7 +209,7 @@ class LaporanController extends Controller
 
     function list_excel_saldo_anggota(Request $request)
     {
-        $list = new ListSaldoAnggotaExport($request->kode_cabang, $request->kode_rembug, $request->from_date, $request->thru_date, 'excel');
+        $list = new ListSaldoAnggotaExport($request->kode_cabang, $request->kode_petugas, $request->kode_rembug, $request->from_date, $request->thru_date, 'excel');
 
         if ($request->kode_cabang <> '~') {
             $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
@@ -208,19 +218,19 @@ class LaporanController extends Controller
             $cabang = 'SEMUA_CABANG';
         }
 
-        if ($request->kode_rembug <> '~') {
-            $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
-            $rembug = str_replace(' ', '_', $cm->nama_rembug);
+        if ($request->kode_petugas <> '~') {
+            $fa = KopPegawai::where('kode_pgw', $request->kode_petugas)->first();
+            $petugas = str_replace(' ', '_', $fa->nama_pgw);
         } else {
-            $rembug = 'SEMUA_REMBUG';
+            $petugas = 'SEMUA_PETUGAS';
         }
 
-        return $list->download('LAPORAN_SALDO_ANGGOTA_' . $cabang . '_' . $rembug . '.xlsx');
+        return $list->download('LAPORAN_SALDO_ANGGOTA_' . $cabang . '_' . $petugas . '.xlsx');
     }
 
     function list_csv_saldo_anggota(Request $request)
     {
-        $list = new ListSaldoAnggotaExport($request->kode_cabang, $request->kode_rembug, $request->from_date, $request->thru_date, 'csv');
+        $list = new ListSaldoAnggotaExport($request->kode_cabang, $request->kode_petugas, $request->kode_rembug, $request->from_date, $request->thru_date, 'csv');
 
         if ($request->kode_cabang <> '~') {
             $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
@@ -229,14 +239,14 @@ class LaporanController extends Controller
             $cabang = 'SEMUA_CABANG';
         }
 
-        if ($request->kode_rembug <> '~') {
-            $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
-            $rembug = str_replace(' ', '_', $cm->nama_rembug);
+        if ($request->kode_petugas <> '~') {
+            $fa = KopPegawai::where('kode_pgw', $request->kode_petugas)->first();
+            $petugas = str_replace(' ', '_', $fa->nama_pgw);
         } else {
-            $rembug = 'SEMUA_REMBUG';
+            $petugas = 'SEMUA_CABANG';
         }
 
-        return $list->download('LAPORAN_SALDO_ANGGOTA_' . $cabang . '_' . $rembug . '.csv');
+        return $list->download('LAPORAN_SALDO_ANGGOTA_' . $cabang . '_' . $petugas . '.csv');
     }
 
     function list_excel_saldo_outstanding(Request $request)
@@ -403,7 +413,7 @@ class LaporanController extends Controller
                     $status_rekening = 'Registrasi';
                 } else if ($pembiayaan['status_rekening'] == 1) {
                     $status_rekening = 'Aktif';
-                } else if ($pembiayaan['status_rekening'] == 1) {
+                } else if ($pembiayaan['status_rekening'] == 2) {
                     $status_rekening = 'Lunas';
                 } else {
                     $status_rekening = 'Verifikasi Anggota Keluar';
@@ -929,6 +939,20 @@ class LaporanController extends Controller
         $kode_cabang = $request->kode_cabang;
         $kode_rembug = $request->kode_rembug;
 
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($kode_rembug <> '~' and $kode_rembug <> '00000' and !empty($kode_rembug) and $kode_rembug <> null) {
+            $cm = KopRembug::where('kode_rembug', $kode_rembug)->first();
+            $rembug = $cm->nama_rembug;
+        } else {
+            $rembug = 'SEMUA MAJLIS';
+        }
+
         if ($request->from_date) {
             $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
         } else {
@@ -939,18 +963,6 @@ class LaporanController extends Controller
             $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
         } else {
             $thru_date = date('Y-m-d');
-        }
-
-        if ($kode_cabang <> '~') {
-            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
-
-            if ($branch <> '00000') {
-                $cabang = $branch->nama_cabang;
-            } else {
-                $cabang = 'SEMUA CABANG';
-            }
-        } else {
-            $cabang = 'SEMUA CABANG';
         }
 
         $show = KopAnggotaMutasi::get_anggota_keluar($kode_cabang, $kode_rembug, $from_date, $thru_date);
@@ -1036,36 +1048,22 @@ class LaporanController extends Controller
 
     function list_excel_anggota_keluar(Request $request)
     {
-        $list = new ListAnggotaKeluarExport($request->kode_cabang, $request->kode_rembug, $request->from_date, $request->thru_date, 'excel');
-
-        if ($request->kode_cabang <> '00000') {
-            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
-            $cabang = str_replace(' ', '_', $branch->nama_cabang);
-        } else {
-            $cabang = 'SEMUA_CABANG';
-        }
-
-        return $list->download('LAPORAN_ANGGOTA_KELUAR_' . $cabang . '_' . $request->from_date . '_' . $request->thru_date . '.xlsx');
-    }
-
-    function list_csv_anggota_keluar(Request $request)
-    {
-        $list = new ListAnggotaKeluarExport($request->kode_cabang, $request->kode_rembug, $request->from_date, $request->thru_date, 'csv');
-
-        if ($request->kode_cabang <> '00000') {
-            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
-            $cabang = str_replace(' ', '_', $branch->nama_cabang);
-        } else {
-            $cabang = 'SEMUA_CABANG';
-        }
-
-        return $list->download('LAPORAN_ANGGOTA_KELUAR_' . $cabang . '_' . $request->from_date . '_' . $request->thru_date . '.csv');
-    }
-
-    function list_pdf_pelunasan(Request $request)
-    {
         $kode_cabang = $request->kode_cabang;
         $kode_rembug = $request->kode_rembug;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($kode_rembug <> '~' and $kode_rembug <> '00000' and !empty($kode_rembug) and $kode_rembug <> null) {
+            $cm = KopRembug::where('kode_rembug', $kode_rembug)->first();
+            $rembug = $cm->nama_rembug;
+        } else {
+            $rembug = 'SEMUA MAJLIS';
+        }
 
         if ($request->from_date) {
             $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
@@ -1079,97 +1077,85 @@ class LaporanController extends Controller
             $thru_date = date('Y-m-d');
         }
 
-        if ($kode_cabang <> '~') {
-            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+        $list = new ListAnggotaKeluarExport($kode_cabang, $kode_rembug, $from_date, $thru_date, 'excel');
 
-            if ($branch <> '00000') {
-                $cabang = $branch->nama_cabang;
-            } else {
-                $cabang = 'SEMUA CABANG';
-            }
+        return $list->download('LAPORAN_ANGGOTA_KELUAR_' . $cabang . '_' . $from_date . '_' . $thru_date . '.xlsx');
+    }
+
+    function list_csv_anggota_keluar(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $kode_rembug = $request->kode_rembug;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
         } else {
             $cabang = 'SEMUA CABANG';
         }
 
-        $show = KopAnggotaMutasi::get_pelunasan($kode_cabang, $kode_rembug, $from_date, $thru_date);
-
-        $data = array();
-
-        foreach ($show as $sh) {
-            if ($sh['alasan_mutasi'] == 1) {
-                $alasan = 'Meninggal';
-            } else if ($sh['alasan_mutasi'] == 2) {
-                $alasan = 'Karakter';
-            } else if ($sh['alasan_mutasi'] == 3) {
-                $alasan = 'Pindah Lembaga Lain';
-            } else if ($sh['alasan_mutasi'] == 4) {
-                $alasan = 'Tidak diijinkan Pasangan';
-            } else if ($sh['alasan_mutasi'] == 5) {
-                $alasan = 'Simpanan Kurang';
-            } else if ($sh['alasan_mutasi'] == 6) {
-                $alasan = 'Kondisi Keluarga';
-            } else if ($sh['alasan_mutasi'] == 7) {
-                $alasan = 'Pindah Alamat';
-            } else if ($sh['alasan_mutasi'] == 8) {
-                $alasan = 'Tidak Setuju Keputusan Lembaga';
-            } else if ($sh['alasan_mutasi'] == 9) {
-                $alasan = 'Usia / Jompo';
-            } else if ($sh['alasan_mutasi'] == 10) {
-                $alasan = 'Sakit';
-            } else if ($sh['alasan_mutasi'] == 11) {
-                $alasan = 'Kumpulan Bubar';
-            } else if ($sh['alasan_mutasi'] == 12) {
-                $alasan = 'Tidak Punya Waktu';
-            } else if ($sh['alasan_mutasi'] == 13) {
-                $alasan = 'Kerja';
-            } else if ($sh['alasan_mutasi'] == 14) {
-                $alasan = 'Cerai';
-            } else if ($sh['alasan_mutasi'] == 15) {
-                $alasan = 'Pembiayaan Bermasalah';
-            } else if ($sh['alasan_mutasi'] == 16) {
-                $alasan = 'Usaha Sudah Berkembang';
-            } else if ($sh['alasan_mutasi'] == 17) {
-                $alasan = 'Tidak Mau Kumpulan';
-            } else if ($sh['alasan_mutasi'] == 18) {
-                $alasan = 'Batal Pembiayaan (Anggota baru)';
-            } else {
-                $alasan = 'Migrasi Anggota Individu';
-            }
-
-            $data[] = array(
-                'nama_cabang' => $sh['nama_cabang'],
-                'nama_rembug' => $sh['nama_rembug'],
-                'no_anggota' => $sh['no_anggota'],
-                'nama_anggota' => $sh['nama_anggota'],
-                'alasan_mutasi' => $alasan,
-                'keterangan_mutasi' => $sh['keterangan_mutasi'],
-                'tanggal_mutasi' => date('d/m/Y', strtotime(str_replace('-', '/', $sh['tanggal_mutasi']))),
-                'saldo_pokok' => (int) $sh['saldo_pokok'],
-                'saldo_margin' => (int) $sh['saldo_margin'],
-                'saldo_catab' => (int) $sh['saldo_catab'],
-                'saldo_minggon' => (int) $sh['saldo_minggon'],
-                'saldo_sukarela' => (int) $sh['saldo_sukarela'],
-                'saldo_tab_berencana' => (int) $sh['saldo_tab_berencana'],
-                'saldo_deposito' => (int) $sh['saldo_deposito'],
-                'saldo_simpok' => (int) $sh['saldo_simpok'],
-                'saldo_simwa' => (int) $sh['saldo_simwa'],
-                'bonus_bagihasil' => (int) $sh['bonus_bagihasil'],
-                'penarikan_sukarela' => (int) ($sh['setoran_tambahan'] + $sh['penarikan_sukarela']),
-                'nama_petugas' => $sh['nama_pgw']
-            );
+        if ($kode_rembug <> '~' and $kode_rembug <> '00000' and !empty($kode_rembug) and $kode_rembug <> null) {
+            $cm = KopRembug::where('kode_rembug', $kode_rembug)->first();
+            $rembug = $cm->nama_rembug;
+        } else {
+            $rembug = 'SEMUA MAJLIS';
         }
 
-        $res = array(
-            'status' => true,
-            'nama_cabang' => $cabang,
-            'from_date' => $from_date,
-            'thru_date' => $thru_date,
-            'data' => $data
-        );
+        if ($request->from_date) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
 
-        $response = response()->json($res, 200);
+        if ($request->thru_date) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
 
-        return $response;
+        $list = new ListAnggotaKeluarExport($kode_cabang, $kode_rembug, $from_date, $thru_date, 'csv');
+
+        return $list->download('LAPORAN_ANGGOTA_KELUAR_' . $cabang . '_' . $from_date . '_' . $thru_date . '.csv');
+    }
+
+    function list_excel_kolektibilitas(Request $request)
+    {
+        $list = new ListKolektibilitasExport($request->kode_cabang, $request->tanggal_hitung, 'excel');
+
+        if ($request->kode_cabang <> '00000') {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = str_replace(' ', '_', $branch->nama_cabang);
+        } else {
+            $cabang = 'SEMUA_CABANG';
+        }
+
+        if ($request->tanggal_hitung) {
+            $tanggal_hitung = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_hitung)));
+        } else {
+            $tanggal_hitung = date('Y-m-d');
+        }
+
+        return $list->download('LAPORAN_KOLEKTIBILITAS_' . $cabang . '_' . $tanggal_hitung . '.xlsx');
+    }
+
+    function list_csv_kolektibilitas(Request $request)
+    {
+        $list = new ListKolektibilitasExport($request->kode_cabang, $request->tanggal_hitung, 'csv');
+
+        if ($request->kode_cabang <> '00000') {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = str_replace(' ', '_', $branch->nama_cabang);
+        } else {
+            $cabang = 'SEMUA_CABANG';
+        }
+
+        if ($request->tanggal_hitung) {
+            $tanggal_hitung = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_hitung)));
+        } else {
+            $tanggal_hitung = date('Y-m-d');
+        }
+
+        return $list->download('LAPORAN_KOLEKTIBILITAS_' . $cabang . '_' . $tanggal_hitung . '.csv');
     }
 
     function statement_tabungan(Request $request)
@@ -1187,8 +1173,8 @@ class LaporanController extends Controller
 
         if ($jenis_tabungan == 1) {
             // Tabungan Sukarela
-            $get_credit = KopTrxAnggota::get_credit_member($no_anggota, 13, $from_date);
-            $get_debet = KopTrxAnggota::get_debet_member($no_anggota, 22, $from_date);
+            $get_credit = KopTrxAnggota::get_credit_member($no_anggota, [13], $from_date);
+            $get_debet = KopTrxAnggota::get_debet_member($no_anggota, [22], $from_date);
 
             $credit = (isset($get_credit->amount) ? $get_credit->amount : 0);
             $debet = (isset($get_debet->amount) ? $get_debet->amount : 0);
@@ -1211,7 +1197,7 @@ class LaporanController extends Controller
             $get_history = KopTrxAnggota::get_history_savingplan($no_rekening, $from_date, $thru_date);
         } else {
             // Simpanan Wajib / Minggon
-            $get_credit = KopTrxAnggota::get_credit_member($no_anggota, 12, $from_date);
+            $get_credit = KopTrxAnggota::get_credit_member($no_anggota, [12, 34], $from_date);
             $get_debet = 0;
 
             $credit = (isset($get_credit->amount) ? $get_credit->amount : 0);
@@ -1220,7 +1206,7 @@ class LaporanController extends Controller
             $saldo_awal = $credit - $debet;
             $saldo_akhir = $saldo_awal;
 
-            $get_history = KopTrxAnggota::get_history_member($no_anggota, [12], $from_date, $thru_date);
+            $get_history = KopTrxAnggota::get_history_member($no_anggota, [12, 34], $from_date, $thru_date);
         }
 
         $data = array();
@@ -1284,5 +1270,535 @@ class LaporanController extends Controller
         $list = new StatementTabunganExport($request->no_anggota, $request->jenis_tabungan, $request->no_rekening, $request->from_date, $request->thru_date, 'csv');
 
         return $list->download('LAPORAN_STATEMENT_TABUNGAN_' . $request->no_anggota . '_' . $from_date . '_' . $thru_date . '.csv');
+    }
+
+    function list_pelunasan(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $kode_petugas = $request->kode_petugas;
+        $kode_rembug = $request->kode_rembug;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($kode_petugas <> '~' and $kode_petugas <> '00000' and !empty($kode_petugas) and $kode_petugas <> null) {
+            $fa = KopPegawai::where('kode_pgw', $kode_petugas)->first();
+            $petugas = $fa->nama_pgw;
+        } else {
+            $petugas = 'SEMUA PETUGAS';
+        }
+
+        if ($kode_rembug <> '~' and $kode_rembug <> '00000' and !empty($kode_rembug) and $kode_rembug <> null) {
+            $cm = KopRembug::where('kode_rembug', $kode_rembug)->first();
+            $rembug = $cm->nama_rembug;
+        } else {
+            $rembug = 'SEMUA MAJLIS';
+        }
+
+        if ($request->from_date) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
+
+        if ($request->thru_date) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
+
+        $show = KopPelunasan::get_pelunasan($kode_cabang, $kode_petugas, $kode_rembug, $from_date, $thru_date);
+
+        $data = array();
+
+        foreach ($show as $sh) {
+            if ($sh['periode_jangka_waktu'] == 0) {
+                $periode = 'Hari';
+            } else if ($sh['periode_jangka_waktu'] == 1) {
+                $periode = 'Minggu';
+            } else if ($sh['periode_jangka_waktu'] == 2) {
+                $periode = 'Bulan';
+            } else {
+                $periode = 'Tempo';
+            }
+
+            $data[] = array(
+                'tanggal_pelunasan' => date('d/m/Y', strtotime(str_replace('-', '/', $sh['tanggal_pelunasan']))),
+                'no_rekening' => $sh['no_rekening'],
+                'nama_anggota' => $sh['nama_anggota'],
+                'nama_rembug' => $sh['nama_rembug'],
+                'pokok' => (int) $sh['pokok'],
+                'margin' => (int) $sh['margin'],
+                'jangka_waktu' => $sh['jangka_waktu'],
+                'periode_jangka_waktu' => $periode,
+                'tanggal_jtempo' => date('d/m/Y', strtotime(str_replace('-', '/', $sh['tanggal_jtempo']))),
+                'counter_angsuran' => $sh['counter_angsuran'],
+                'saldo_pokok' => (int) $sh['saldo_pokok'],
+                'saldo_margin' => (int) $sh['saldo_margin'],
+                'saldo_catab' => (int) $sh['saldo_catab'],
+                'potongan_margin' => (int) $sh['potongan_margin'],
+                'nama_pgw' => $sh['nama_pgw']
+            );
+        }
+
+        $res = array(
+            'status' => true,
+            'nama_cabang' => $cabang,
+            'nama_petugas' => $petugas,
+            'nama_rembug' => $rembug,
+            'from_date' => $from_date,
+            'thru_date' => $thru_date,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function list_excel_pelunasan(Request $request)
+    {
+        if ($request->kode_cabang <> '~' and $request->kode_cabang <> '00000' and !empty($request->kode_cabang) and $request->kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($request->kode_petugas <> '~' and $request->kode_petugas <> '00000' and !empty($request->kode_petugas) and $request->kode_petugas <> null) {
+            $fa = KopPegawai::where('kode_pgw', $request->kode_petugas)->first();
+            $petugas = $fa->nama_pgw;
+        } else {
+            $petugas = 'SEMUA PETUGAS';
+        }
+
+        if ($request->kode_rembug <> '~' and $request->kode_rembug <> '00000' and !empty($request->kode_rembug) and $request->kode_rembug <> null) {
+            $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
+            $rembug = $cm->nama_rembug;
+        } else {
+            $rembug = 'SEMUA MAJLIS';
+        }
+
+        if ($request->from_date) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
+
+        if ($request->thru_date) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
+
+        $list = new ListPelunasanExport($request->kode_cabang, $request->kode_petugas, $request->kode_rembug, $from_date, $thru_date, 'excel');
+
+        return $list->download('LAPORAN_PELUNASAN_' . $cabang . '_' . $petugas . '_' . $from_date . '_' . $thru_date . '.xlsx');
+    }
+
+    function list_csv_pelunasan(Request $request)
+    {
+        if ($request->kode_cabang <> '~' and $request->kode_cabang <> '00000' and !empty($request->kode_cabang) and $request->kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($request->kode_petugas <> '~' and $request->kode_petugas <> '00000' and !empty($request->kode_petugas) and $request->kode_petugas <> null) {
+            $fa = KopPegawai::where('kode_pgw', $request->kode_petugas)->first();
+            $petugas = $fa->nama_pgw;
+        } else {
+            $petugas = 'SEMUA PETUGAS';
+        }
+
+        if ($request->kode_rembug <> '~' and $request->kode_rembug <> '00000' and !empty($request->kode_rembug) and $request->kode_rembug <> null) {
+            $cm = KopRembug::where('kode_rembug', $request->kode_rembug)->first();
+            $rembug = $cm->nama_rembug;
+        } else {
+            $rembug = 'SEMUA MAJLIS';
+        }
+
+        if ($request->from_date) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
+
+        if ($request->thru_date) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
+
+        $list = new ListPelunasanExport($request->kode_cabang, $request->kode_petugas, $request->kode_rembug, $from_date, $thru_date, 'csv');
+
+        return $list->download('LAPORAN_PELUNASAN_' . $cabang . '_' . $petugas . '_' . $from_date . '_' . $thru_date . '.csv');
+    }
+
+    function list_saldo_tabungan(Request $request)
+    {
+        $page = $request->page;
+        $perPage = $request->perPage;
+        $kode_cabang = $request->kode_cabang;
+        $kode_produk = $request->kode_produk;
+
+        if ($page) {
+            $page = $request->page;
+        } else {
+            $page = 1;
+        }
+
+        if ($perPage) {
+            $perPage = $request->perPage;
+        } else {
+            $perPage = '~';
+        }
+
+        if ($page > 1) {
+            $offset = ($page - 1) * $perPage;
+        } else {
+            $offset = 0;
+        }
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($kode_produk <> '~' and $kode_produk <> '00000' and !empty($kode_produk) and $kode_produk <> null) {
+            $product = KopPrdTabungan::where('kode_produk', $kode_produk)->first();
+            $tabungan = $product->nama_produk;
+        } else {
+            $tabungan = 'SEMUA PRODUK';
+        }
+
+        $show = KopTabungan::get_report_tabungan($kode_cabang, $kode_produk, $perPage, $offset, 1);
+        $total = KopTabungan::get_report_tabungan($kode_cabang, $kode_produk, $perPage, $offset, 0)->count();
+
+        if ($perPage != '~') {
+            $totalPage = ceil($total / $perPage);
+        } else {
+            $totalPage = 1;
+        }
+
+        $data = array();
+
+        foreach ($show as $sh) {
+            $data[] = array(
+                'no_rekening' => $sh->no_rekening,
+                'nama_rembug' => $sh->nama_rembug,
+                'nama_pgw' => $sh->nama_pgw,
+                'no_anggota' => $sh->no_anggota,
+                'nama_anggota' => $sh->nama_anggota,
+                'nama_produk' => $sh->nama_produk,
+                'saldo' => (int) $sh->saldo
+            );
+        }
+
+        $res = array(
+            'status' => true,
+            'nama_cabang' => $cabang,
+            'nama_produk' => $tabungan,
+            'page' => $page,
+            'perPage' => $perPage,
+            'total' => $total,
+            'totalPage' => $totalPage,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function list_excel_saldo_tabungan(Request $request)
+    {
+        if ($request->kode_cabang <> '~' and $request->kode_cabang <> '00000' and !empty($request->kode_cabang) and $request->kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($request->kode_produk <> '~' and $request->kode_produk <> '00000' and !empty($request->kode_produk) and $request->kode_produk <> null) {
+            $product = KopPrdTabungan::where('kode_produk', $request->kode_produk)->first();
+            $tabungan = $product->nama_produk;
+        } else {
+            $tabungan = 'SEMUA PRODUK';
+        }
+
+        $list = new ListSaldoTabunganExport($request->kode_cabang, $request->kode_produk, 'excel');
+
+        return $list->download('LAPORAN_PELUNASAN_' . $cabang . '_' . $tabungan . '.xlsx');
+    }
+
+    function list_csv_saldo_tabungan(Request $request)
+    {
+        if ($request->kode_cabang <> '~' and $request->kode_cabang <> '00000' and !empty($request->kode_cabang) and $request->kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $request->kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($request->kode_produk <> '~' and $request->kode_produk <> '00000' and !empty($request->kode_produk) and $request->kode_produk <> null) {
+            $product = KopPrdTabungan::where('kode_produk', $request->kode_produk)->first();
+            $tabungan = $product->nama_produk;
+        } else {
+            $tabungan = 'SEMUA PRODUK';
+        }
+
+        $list = new ListSaldoTabunganExport($request->kode_cabang, $request->kode_produk, 'csv');
+
+        return $list->download('LAPORAN_PELUNASAN_' . $cabang . '_' . $tabungan . '.csv');
+    }
+
+    function list_buka_tabungan(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $kode_produk = $request->kode_produk;
+        $from_date = $request->from_date;
+        $thru_date = $request->thru_date;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($kode_produk <> '~' and $kode_produk <> '00000' and !empty($kode_produk) and $kode_produk <> null) {
+            $product = KopPrdTabungan::where('kode_produk', $kode_produk)->first();
+            $tabungan = $product->nama_produk;
+        } else {
+            $tabungan = 'SEMUA PRODUK';
+        }
+
+        if ($request->from_date) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
+
+        if ($request->thru_date) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
+
+        $show = KopTabungan::get_report_buka_tabungan($kode_cabang, $kode_produk, $from_date, $thru_date);
+
+        $data = array();
+
+        foreach ($show as $sh) {
+            if ($sh->periode_setoran == 0) {
+                $periode = 'Hari';
+            } elseif ($sh->periode_setoran == 1) {
+                $periode = 'Minggu';
+            } else {
+                $periode = 'Bulan';
+            }
+
+            $data[] = array(
+                'nama_cabang' => $sh->nama_cabang,
+                'tanggal_buka' => date('d/m/Y', strtotime(str_replace('-', '/', $sh->tanggal_buka))),
+                'no_rekening' => $sh->no_rekening,
+                'nama_anggota' => $sh->nama_anggota,
+                'nama_produk' => $sh->nama_produk,
+                'jangka_waktu' => $sh->jangka_waktu . ' ' . $periode,
+                'saldo' => (int) $sh->saldo
+            );
+        }
+
+        $res = array(
+            'status' => true,
+            'nama_cabang' => $cabang,
+            'nama_produk' => $tabungan,
+            'from_date' => $from_date,
+            'thru_date' => $thru_date,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function list_excel_buka_tabungan(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $kode_produk = $request->kode_produk;
+        $from_date = $request->from_date;
+        $thru_date = $request->thru_date;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($request->from_date) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
+
+        if ($request->thru_date) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
+
+        $list = new ListBukaTabunganExport($kode_cabang, $kode_produk, $from_date, $thru_date, 'excel');
+
+        return $list->download('LAPORAN_BUKA_TABUNGAN_' . $cabang . '_' . $from_date . '_' . $thru_date . '.xlsx');
+    }
+
+    function list_csv_buka_tabungan(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $kode_produk = $request->kode_produk;
+        $from_date = $request->from_date;
+        $thru_date = $request->thru_date;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($request->from_date) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
+
+        if ($request->thru_date) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
+
+        $list = new ListBukaTabunganExport($kode_cabang, $kode_produk, $from_date, $thru_date, 'csv');
+
+        return $list->download('LAPORAN_BUKA_TABUNGAN_' . $cabang . '_' . $from_date . '_' . $thru_date . '.csv');
+    }
+
+    function list_saldo_kas_petugas(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $tanggal = $request->tanggal;
+        $created_by = substr(md5(rand()), 0, 30);
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($tanggal <> '~' and !empty($tanggal) and $tanggal <> null) {
+            $tanggal = date('Y-m-d', strtotime(str_replace('/', '-', $tanggal)));
+        } else {
+            $tanggal = date('Y-m-d');
+        }
+
+        KopTrxKasPetugas::fn_saldo_kas($kode_cabang, $tanggal, $created_by);
+
+        $show = KopKasPetugasTemporary::get_cash_history($kode_cabang, $tanggal, $created_by);
+
+        $data = array();
+
+        $total_saldo_awal = 0;
+        $total_saldo_akhir = 0;
+
+        foreach ($show as $sh) {
+            $data[] = array(
+                'kode_kas_petugas' => $sh->kode_kas_petugas,
+                'nama_kas_petugas' => $sh->nama_kas_petugas,
+                'saldo_awal' => (int) $sh->saldo_awal,
+                'mutasi_debet' => (int) $sh->mutasi_debet,
+                'mutasi_credit' => (int) $sh->mutasi_credit,
+                'saldo_akhir' => (int) $sh->saldo_akhir
+            );
+
+            $total_saldo_awal += $sh->saldo_awal;
+            $total_saldo_akhir += $sh->saldo_akhir;
+        }
+
+        $get = KopKasPetugasTemporary::where('created_by', $created_by)->first();
+        if ($get) {
+            KopKasPetugasTemporary::find($get->id)->forceDelete();
+        }
+
+        $res = array(
+            'status' => true,
+            'nama_cabang' => $cabang,
+            'tanggal' => $tanggal,
+            'total_saldo_awal' => $total_saldo_awal,
+            'total_saldo_akhir' => $total_saldo_akhir,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function list_excel_saldo_kas_petugas(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $tanggal = $request->tanggal;
+        $created_by = substr(md5(rand()), 0, 30);
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($tanggal <> '~' and !empty($tanggal) and $tanggal <> null) {
+            $tanggal = date('Y-m-d', strtotime(str_replace('/', '-', $tanggal)));
+        } else {
+            $tanggal = date('Y-m-d');
+        }
+
+        $list = new ListSaldoKasPetugasExport($kode_cabang, $tanggal, $created_by, 'excel');
+
+        return $list->download('LAPORAN_SALDO_KAS_PETUGAS_' . $cabang . '_' . $tanggal . '.xlsx');
+    }
+
+    function list_csv_saldo_kas_petugas(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $tanggal = $request->tanggal;
+        $created_by = substr(md5(rand()), 0, 30);
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($tanggal <> '~' and !empty($tanggal) and $tanggal <> null) {
+            $tanggal = date('Y-m-d', strtotime(str_replace('/', '-', $tanggal)));
+        } else {
+            $tanggal = date('Y-m-d');
+        }
+
+        $list = new ListSaldoKasPetugasExport($kode_cabang, $tanggal, $created_by, 'csv');
+
+        return $list->download('LAPORAN_SALDO_KAS_PETUGAS_' . $cabang . '_' . $tanggal . '.csv');
     }
 }

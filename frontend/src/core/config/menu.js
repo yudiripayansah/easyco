@@ -34,7 +34,7 @@ const menu = [
         children: [
           {
             target: 'registrasi-anggota',
-            label: 'Laporan Registrasi Anggota',
+            label: 'Registrasi Anggota',
             component: import('@/pages/Keanggotaan/Laporan/RegistrasiAnggota.vue'),
           },
           {
@@ -85,7 +85,7 @@ const menu = [
         children: [
           {
             target: 'pembukaan-rekening-tabungan',
-            label: 'Laporan Pembukaan Rekening Tabungan',
+            label: 'Pembukaan Rekening Tabungan',
             component: import('@/pages/Tabungan/Laporan/PembukaanTabungan.vue'),
           },
           {
@@ -100,7 +100,7 @@ const menu = [
           },
           {
             target: 'penutupan-rekening-tabungan',
-            label: 'Laporan Penutupan Rekening Tabungan',
+            label: 'Penutupan Rekening Tabungan',
             component: import('@/pages/Dummy.vue'),
           },
         ],
@@ -168,17 +168,22 @@ const menu = [
         children: [
           {
             target: 'pengajuan-pembiayaan',
-            label: 'Laporan Pengajuan Pembiayaan',
+            label: 'Pengajuan Pembiayaan',
             component: import('@/pages/Pembiayaan/Laporan/PengajuanPembiayaan.vue'),
           },
           {
+            target: 'rekap-pengajuan-pembiayaan',
+            label: 'Rekap Pengajuan Pembiayaan',
+            component: import('@/pages/Pembiayaan/Laporan/LaporanRekapPengajuanPembiayaan.vue'),
+          },
+          {
             target: 'registrasi-akad',
-            label: 'Laporan Registrasi Akad',
+            label: 'Registrasi Akad',
             component: import('@/pages/Pembiayaan/Laporan/LaporanRegistrasiAkad.vue'),
           },
           {
             target: 'pencairan',
-            label: 'Laporan Pencairan Pembiayaan',
+            label: 'Pencairan Pembiayaan',
             component: import('@/pages/Pembiayaan/Laporan/LaporanPencairanPembiayaan.vue'),
           },
           {
@@ -188,12 +193,12 @@ const menu = [
           },
           {
             target: 'list-outstanding',
-            label: 'Laporan Outstanding',
+            label: 'Outstanding',
             component: import('@/pages/Pembiayaan/Laporan/LaporanOutstanding.vue'),
           },
           {
             target: 'list-penerimaan-angsuran',
-            label: 'Laporan Penerimaaan Angsuran',
+            label: 'Penerimaaan Angsuran',
             component: import('@/pages/Pembiayaan/Laporan/LaporanPenerimaanAngsuran.vue'),
           },
           {
@@ -269,19 +274,24 @@ const menu = [
         children: [
           {
             target: 'list-transaksi-rembug',
-            label: 'Laporan List Transaksi Majelis',
+            label: 'List Transaksi Majelis',
             component: import('@/pages/Transaksi/Laporan/LaporanListTransaksiMajelis'),
           },
           {
             target: 'transaksi-kas-petugas',
-            label: 'Laporan Transaksi Kas Petugas',
+            label: 'Transaksi Kas Petugas',
             component: import('@/pages/Transaksi/Laporan/LaporanTransaksiKasPetugas'),
           },
           {
             target: 'jurnal-transaksi',
-            label: ' Laporan Jurnal Transaksi',
+            label: ' Jurnal Transaksi',
             component: import('@/pages/Transaksi/Laporan/LaporanTransaksiJurnal.vue'),
-          }
+          },
+          {
+            target: 'saldo-kas-petugas',
+            label: ' Saldo Kas Petugas',
+            component: import('@/pages/Transaksi/Laporan/LaporanSaldoKasPetugas.vue'),
+          },
         ]
       },
     ]
@@ -295,17 +305,17 @@ const menu = [
     children: [
       {
         target: 'laporan-cash-flow',
-        label: 'Laporan Cash Flow',
+        label: 'Cash Flow',
         component: import('@/pages/Dummy.vue'),
       },
       {
         target: 'laporan-jurnal-transaksi',
-        label: 'Laporan Jurnal Transaksi',
+        label: 'Jurnal Transaksi',
         component: import('@/pages/Transaksi/Laporan/LaporanTransaksiJurnal.vue'), //import('@/pages/Dummy.vue'),
       },
       {
         target: 'laporan-buku-besar',
-        label: 'Laporan Buku Besar',
+        label: 'Buku Besar',
         component: import('@/pages/Keuangan/LaporanBukuBesar.vue'),
       },
       // {
@@ -325,12 +335,12 @@ const menu = [
       // },
       {
         target: 'laporan-keuangan-bulan-lalu',
-        label: 'Laporan Keuangan Bulan Lalu',
+        label: 'Keuangan Bulan Lalu',
         component: import('@/pages/Keuangan/LaporanKeuanganBulanLalu.vue'),
       },
       {
         target: 'laporan-keuangan-bulan-berjalan',
-        label: 'Laporan Keuangan Bulan Berjalan',
+        label: 'Keuangan Bulan Berjalan',
         component: import('@/pages/Keuangan/LaporanKeuanganBulanBerjalan.vue'),
       },
     ]

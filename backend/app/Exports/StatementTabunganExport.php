@@ -44,8 +44,8 @@ class StatementTabunganExport implements FromView
 
         if ($this->jenis_tabungan == 1) {
             // Tabungan Sukarela
-            $get_credit = KopTrxAnggota::get_credit_member($this->no_anggota, 13, $from_date);
-            $get_debet = KopTrxAnggota::get_debet_member($this->no_anggota, 22, $from_date);
+            $get_credit = KopTrxAnggota::get_credit_member($this->no_anggota, [13], $from_date);
+            $get_debet = KopTrxAnggota::get_debet_member($this->no_anggota, [22], $from_date);
 
             $credit = (isset($get_credit->amount) ? $get_credit->amount : 0);
             $debet = (isset($get_debet->amount) ? $get_debet->amount : 0);
@@ -68,7 +68,7 @@ class StatementTabunganExport implements FromView
             $show = KopTrxAnggota::get_history_savingplan($this->no_rekening, $from_date, $thru_date);
         } else {
             // Simpanan Wajib / Minggon
-            $get_credit = KopTrxAnggota::get_credit_member($this->no_anggota, 12, $from_date);
+            $get_credit = KopTrxAnggota::get_credit_member($this->no_anggota, [12, 34], $from_date);
             $get_debet = 0;
 
             $credit = (isset($get_credit->amount) ? $get_credit->amount : 0);
@@ -77,7 +77,7 @@ class StatementTabunganExport implements FromView
             $saldo_awal = $credit - $debet;
             $saldo_akhir = $saldo_awal;
 
-            $show = KopTrxAnggota::get_history_member($this->no_anggota, [12], $from_date, $thru_date);
+            $show = KopTrxAnggota::get_history_member($this->no_anggota, [12, 34], $from_date, $thru_date);
         }
 
         $data = array();

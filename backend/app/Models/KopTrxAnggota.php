@@ -54,6 +54,7 @@ class KopTrxAnggota extends Model
             ->where('no_anggota', $no_anggota)
             ->where('trx_date', $trx_date)
             ->where('flag_debet_credit', 'C')
+            ->whereNotIN('trx_type', [41, 44])
             ->where('verified_by', null)
             ->get();
 
@@ -66,6 +67,7 @@ class KopTrxAnggota extends Model
             ->where('no_anggota', $no_anggota)
             ->where('trx_date', $trx_date)
             ->where('flag_debet_credit', 'D')
+            ->whereNotIN('trx_type', [41, 44])
             ->where('verified_by', null)
             ->get();
 
@@ -88,7 +90,7 @@ class KopTrxAnggota extends Model
         $show = KopTrxAnggota::select(DB::raw('COALESCE(SUM(kop_trx_anggota.amount),0) AS amount'))
             ->join('kop_list_kode AS klk', 'klk.kode_value', 'kop_trx_anggota.trx_type')
             ->where('kop_trx_anggota.no_anggota', $no_anggota)
-            ->where('klk.kode_value', $jenis_trx)
+            ->whereIn('klk.kode_value', $jenis_trx)
             ->where('klk.nama_kode', 'transaksi_anggota')
             ->where('kop_trx_anggota.flag_debet_credit', 'C')
             ->where('kop_trx_anggota.trx_date', '<', $from_date)
@@ -103,7 +105,7 @@ class KopTrxAnggota extends Model
         $show = KopTrxAnggota::select(DB::raw('COALESCE(SUM(kop_trx_anggota.amount),0) AS amount'))
             ->join('kop_list_kode AS klk', 'klk.kode_value', 'kop_trx_anggota.trx_type')
             ->where('kop_trx_anggota.no_anggota', $no_anggota)
-            ->where('klk.kode_value', $jenis_trx)
+            ->whereIn('klk.kode_value', $jenis_trx)
             ->where('klk.nama_kode', 'transaksi_anggota')
             ->where('kop_trx_anggota.flag_debet_credit', 'D')
             ->where('kop_trx_anggota.trx_date', '<', $from_date)

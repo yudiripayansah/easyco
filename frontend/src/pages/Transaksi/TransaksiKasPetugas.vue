@@ -322,7 +322,7 @@ export default {
       paging: {
         page: 1,
         perPage: 10,
-        status: 1
+        status: 1,
       },
       remove: {
         data: {},
@@ -402,12 +402,12 @@ export default {
       return $dirty ? !$error : null;
     },
     async doGet() {
-      let payload = this.paging
+      let payload = this.paging;
       try {
         let req = await easycoApi.getTrxKasPetugas(payload, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
-          this.table.items = data
+          this.table.items = data;
         }
       } catch (error) {
         console.error(error);
@@ -561,4 +561,3 @@ export default {
   },
 };
 </script>
-  
