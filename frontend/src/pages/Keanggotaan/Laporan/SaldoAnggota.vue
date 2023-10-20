@@ -165,14 +165,16 @@
               <th rowspan="2">Nama Cabang</th>
               <th rowspan="2">Desa</th>
               <th rowspan="2">No Telp</th>
-              <th colspan="5">Saldo</th>
+              <th colspan="7">Saldo</th>
             </tr>
             <tr class="text-center">
               <th>Simpok</th>
               <th>Minggon</th>
               <th>Sukarela</th>
-              <th>Taber & Tab 5%</th>
-              <th>Pembiayaan</th>
+              <th>Taber</th>
+              <th>Tab 5%</th>
+              <th>Pembiayaan Pokok</th>
+              <th>Pembiayaan margin</th>
             </tr>
           </thead>
           <tbody v-if="report.items.length > 0">
@@ -190,6 +192,8 @@
               <td class="text-right">Rp {{ thousand(report.simpok) }}</td>
               <td class="text-right">Rp {{ thousand(report.simwa) }}</td>
               <td class="text-right">Rp {{ thousand(report.simsuk) }}</td>
+              <td class="text-right">Rp {{ thousand(0) }}</td>
+              <td class="text-right">Rp {{ thousand(0) }}</td>
               <td class="text-right">Rp {{ thousand(0) }}</td>
               <td class="text-right">Rp {{ thousand(0) }}</td>
             </tr>
