@@ -67,7 +67,7 @@ class KopTrxAnggota extends Model
             ->where('no_anggota', $no_anggota)
             ->where('trx_date', $trx_date)
             ->where('flag_debet_credit', 'D')
-            ->whereNotIN('trx_type', [41, 44])
+            ->whereNotIN('trx_type', [41, 42, 43, 44])
             ->where('verified_by', null)
             ->get();
 
