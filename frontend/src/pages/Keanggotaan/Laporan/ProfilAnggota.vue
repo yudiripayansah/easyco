@@ -21,39 +21,39 @@
             </b-col>
           </div>
           <div class="row">
-            <b-col cols="12">
+            <!-- <b-col cols="6">
               <b-input-group prepend="Nama Anggota" class="mb-3">
                 <b-form-input v-model="profil.nama_anggota" />
-              </b-input-group>
-            </b-col>
-            <b-col cols="12">
+              </b-input-group> 
+            </b-col> -->
+            <b-col cols="6">
               <b-input-group prepend="No Anggota" class="mb-3">
                 <b-form-input v-model="profil.no_anggota" />
               </b-input-group>
             </b-col>
-            <b-col cols="12">
-              <b-input-group prepend="No KTP" class="mb-3">
-                <b-form-input v-model="profil.no_ktp" />
-              </b-input-group>
-            </b-col>
-            <b-col cols="12">
-              <b-input-group prepend="Alamat" class="mb-3">
-                <b-form-textarea v-model="profil.alamat" />
-              </b-input-group>
-            </b-col>
-            <b-col cols="12">
+            <b-col cols="6">
               <b-input-group prepend="Simpanan Pokok" class="mb-3">
                 <b-form-input v-model="profil.simpok" readonly />
               </b-input-group>
             </b-col>
-            <b-col cols="12">
-              <b-input-group prepend="Simpanan Sukarela" class="mb-3">
-                <b-form-input v-model="profil.simsuk" readonly />
+            <b-col cols="6">
+              <b-input-group prepend="No KTP" class="mb-3">
+                <b-form-input v-model="profil.no_ktp" />
               </b-input-group>
             </b-col>
-            <b-col cols="12">
+            <b-col cols="6">
               <b-input-group prepend="Simpanan Wajib" class="mb-3">
                 <b-form-input v-model="profil.simwa" readonly />
+              </b-input-group>
+            </b-col>
+            <b-col cols="6">
+              <b-input-group prepend="Alamat" class="mb-3">
+                <b-form-textarea v-model="profil.alamat" />
+              </b-input-group>
+            </b-col>
+            <b-col cols="6">
+              <b-input-group prepend="Simpanan Sukarela" class="mb-3">
+                <b-form-input v-model="profil.simsuk" readonly />
               </b-input-group>
             </b-col>
           </div>
