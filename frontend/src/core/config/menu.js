@@ -203,8 +203,13 @@ const menu = [
           },
           {
             target: 'list-outstanding',
-            label: 'Outstanding',
+            label: 'List Outstanding',
             component: import('@/pages/Pembiayaan/Laporan/LaporanOutstanding.vue'),
+          },
+          {
+            target: 'rekap-outstanding-piutang',
+            label: 'Rekap Outstanding Piutang',
+            component: import('@/pages/Pembiayaan/Laporan/RekapOutstandingPiutang.vue'),
           },
           {
             target: 'list-penerimaan-angsuran',
