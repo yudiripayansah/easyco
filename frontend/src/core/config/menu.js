@@ -188,8 +188,13 @@ const menu = [
           },
           {
             target: 'pencairan',
-            label: 'Pencairan Pembiayaan',
+            label: 'List Pencairan Pembiayaan',
             component: import('@/pages/Pembiayaan/Laporan/LaporanPencairanPembiayaan.vue'),
+          },
+          {
+            target: 'rekap-pencairan-pembiayaan',
+            label: 'Rekap Pencairan Pembiayaan',
+            component: import('@/pages/Pembiayaan/Laporan/RekapPencairanPembiayaan.vue'),
           },
           {
             target: 'kartu-angsuran',
