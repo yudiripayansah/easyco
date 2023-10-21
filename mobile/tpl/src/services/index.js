@@ -21,14 +21,6 @@ const infoMember = (payload, token) => {
   }
   return Axios.post('/tpl/information/member', payload, config)
 }
-const infoMemberDroping = (payload, token) => {
-  let config = {
-    headers: {
-      'Token': token
-    }
-  }
-  return Axios.post('/tpl/information/member_droping', payload, config)
-}
 const transSetoranDeposit = (payload, token) => {
   let config = {
     headers: {
@@ -133,7 +125,6 @@ export default {
   authLogin,
   infoRembug,
   infoMember,
-  infoMemberDroping,
   transSetoranDeposit,
   transSetoranProses,
   anggotaCreate,
