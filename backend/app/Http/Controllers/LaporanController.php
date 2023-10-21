@@ -18,6 +18,7 @@ use App\Exports\ListSaldoAnggotaExport;
 use App\Exports\ListSaldoKasPetugasExport;
 use App\Exports\ListSaldoOutstandingExport;
 use App\Exports\ListSaldoTabunganExport;
+use App\Exports\RekapOutstandingExport;
 use App\Exports\RekapPencairanExport;
 use App\Exports\RekapPengajuanExport;
 use App\Exports\RekapSaldoAnggotaExport;
@@ -2195,5 +2196,103 @@ class LaporanController extends Controller
         $list = new RekapPencairanExport($kode_cabang, $rekap_by, $from_date, $thru_date, 'csv');
 
         return $list->download('LAPORAN_REKAP_PENCAIRAN_' . $cabang . '_' . $from_date . '_' . $thru_date . '.csv');
+    }
+
+    function rekap_outstanding(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        $show = KopPembiayaan::rekap_outstanding($kode_cabang, $rekap_by);
+
+        $data = array();
+
+        $sum_anggota = 0;
+        $sum_saldo_pokok = 0;
+
+        foreach ($show as $sw) {
+            $sum_anggota += $sw->jumlah_anggota;
+            $sum_saldo_pokok += $sw->saldo_pokok;
+        }
+
+        $total_anggota = 0;
+        $total_saldo_pokok = 0;
+        $total_saldo_margin = 0;
+        $total_saldo_catab = 0;
+
+        foreach ($show as $sh) {
+            $persen_jumlah = ($sh->jumlah_anggota / $sum_anggota) * 100;
+            $persen_nominal = ($sh->saldo_pokok / $sum_saldo_pokok) * 100;
+
+            $total_anggota += $sh->jumlah_anggota;
+            $total_saldo_pokok += $sh->saldo_pokok;
+            $total_saldo_margin += $sh->saldo_margin;
+            $total_saldo_catab += $sh->saldo_catab;
+
+            $data[] = array(
+                'keterangan' => $sh->keterangan,
+                'jumlah_anggota' => $sh->jumlah_anggota,
+                'saldo_pokok' => (int) $sh->saldo_pokok,
+                'saldo_margin' => (int) $sh->saldo_margin,
+                'saldo_catab' => (int) $sh->saldo_catab,
+                'persen_jumlah' => (int) $persen_jumlah,
+                'persen_nominal' => (int) $persen_nominal
+            );
+        }
+
+        $res = array(
+            'status' => true,
+            'nama_cabang' => $cabang,
+            'total_anggota' => $total_anggota,
+            'total_saldo_pokok' => $total_saldo_pokok,
+            'total_saldo_margin' => $total_saldo_margin,
+            'total_saldo_catab' => $total_saldo_catab,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function rekap_excel_outstanding(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        $list = new RekapOutstandingExport($kode_cabang, $rekap_by, 'excel');
+
+        return $list->download('LAPORAN_REKAP_OUTSTANDING_' . $cabang . '.xlsx');
+    }
+
+    function rekap_csv_outstanding(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        $list = new RekapOutstandingExport($kode_cabang, $rekap_by, 'csv');
+
+        return $list->download('LAPORAN_REKAP_OUTSTANDING_' . $cabang . '.csv');
     }
 }
