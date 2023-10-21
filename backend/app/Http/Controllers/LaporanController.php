@@ -18,6 +18,8 @@ use App\Exports\ListSaldoAnggotaExport;
 use App\Exports\ListSaldoKasPetugasExport;
 use App\Exports\ListSaldoOutstandingExport;
 use App\Exports\ListSaldoTabunganExport;
+use App\Exports\RekapPengajuanExport;
+use App\Exports\RekapSaldoAnggotaExport;
 use App\Exports\StatementTabunganExport;
 use App\Exports\TransaksiMajelisExport;
 use App\Models\KopAnggota;
@@ -27,6 +29,7 @@ use App\Models\KopKasPetugasTemporary;
 use App\Models\KopPegawai;
 use App\Models\KopPelunasan;
 use App\Models\KopPembiayaan;
+use App\Models\KopPengajuan;
 use App\Models\KopPrdTabungan;
 use App\Models\KopRembug;
 use App\Models\KopTabungan;
@@ -1171,51 +1174,77 @@ class LaporanController extends Controller
 
         $nama = KopAnggota::get_profile($no_anggota);
 
+        $data = array();
+
         if ($jenis_tabungan == 1) {
             // Tabungan Sukarela
             $get_credit = KopTrxAnggota::get_credit_member($no_anggota, [13], $from_date);
             $get_debet = KopTrxAnggota::get_debet_member($no_anggota, [22], $from_date);
+            $get_pinbuk = KopTrxAnggota::get_pinbuk_member($no_anggota, [41, 42, 43, 44], $from_date);
 
             $credit = (isset($get_credit->amount) ? $get_credit->amount : 0);
             $debet = (isset($get_debet->amount) ? $get_debet->amount : 0);
+            $pinbuk = (isset($get_pinbuk->amount) ? $get_pinbuk->amount : 0);
 
-            $saldo_awal = $credit - $debet;
+            $saldo_awal = ($credit + $pinbuk) - $debet;
             $saldo_akhir = $saldo_awal;
 
-            $get_history = KopTrxAnggota::get_history_member($no_anggota, [13, 22], $from_date, $thru_date);
+            $get_history = KopTrxAnggota::get_history_member($no_anggota, [13, 22, 41, 42, 43, 44], $from_date, $thru_date);
         } elseif ($jenis_tabungan == 2) {
             // Tabungan Berencana
             $get_credit = KopTrxAnggota::get_history_dc_member($no_rekening, 'C', $from_date);
             $get_debet = KopTrxAnggota::get_history_dc_member($no_rekening, 'D', $from_date);
+            $get_pinbuk = KopTrxAnggota::get_pinbuk_member($no_anggota, [43, 44], $from_date);
 
             $credit = (isset($get_credit->amount) ? $get_credit->amount : 0);
             $debet = (isset($get_debet->amount) ? $get_debet->amount : 0);
+            $pinbuk = (isset($get_pinbuk->amount) ? $get_pinbuk->amount : 0);
 
-            $saldo_awal = $credit - $debet;
+            $saldo_awal = $credit - ($debet + $pinbuk);
             $saldo_akhir = $saldo_awal;
 
             $get_history = KopTrxAnggota::get_history_savingplan($no_rekening, $from_date, $thru_date);
+            $get_history_pinbuk = KopTrxAnggota::get_history_member($no_anggota, [43, 44], $from_date, $thru_date);
+
+            for ($j = 0; $j < count($get_history_pinbuk); $j++) {
+                $saldo_akhir += 0 - $get_history_pinbuk[$j]->amount;
+
+                $data[] = array(
+                    'trx_date' => $get_history_pinbuk[$j]->trx_date,
+                    'setor' => 0,
+                    'tarik' => (int) $get_history_pinbuk[$j]->amount,
+                    'saldo_akhir' => (int) $saldo_akhir,
+                    'keterangan' => $get_history_pinbuk[$j]->description
+                );
+            }
         } else {
             // Simpanan Wajib / Minggon
             $get_credit = KopTrxAnggota::get_credit_member($no_anggota, [12, 34], $from_date);
             $get_debet = 0;
+            $get_pinbuk = KopTrxAnggota::get_pinbuk_member($no_anggota, [42], $from_date);
 
             $credit = (isset($get_credit->amount) ? $get_credit->amount : 0);
             $debet = 0;
+            $pinbuk = (isset($get_pinbuk->amount) ? $get_pinbuk->amount : 0);
 
-            $saldo_awal = $credit - $debet;
+            $saldo_awal = ($credit) - ($debet + $pinbuk);
             $saldo_akhir = $saldo_awal;
 
-            $get_history = KopTrxAnggota::get_history_member($no_anggota, [12, 34], $from_date, $thru_date);
+            $get_history = KopTrxAnggota::get_history_member($no_anggota, [12, 34, 42], $from_date, $thru_date);
         }
-
-        $data = array();
 
         for ($i = 0; $i < count($get_history); $i++) {
             $trx_date = $get_history[$i]->trx_date;
             $amount = $get_history[$i]->amount;
             $flag_debet_credit = $get_history[$i]->flag_debet_credit;
             $description = $get_history[$i]->description;
+            $trx_type = $get_history[$i]->trx_type;
+
+            if ($jenis_tabungan == 1) {
+                if ($trx_type == 41 or $trx_type == 42 or $trx_type == 43 or $trx_type == 44) {
+                    $flag_debet_credit = 'C';
+                }
+            }
 
             if ($flag_debet_credit == 'C') {
                 $history_credit = $amount;
@@ -1800,5 +1829,236 @@ class LaporanController extends Controller
         $list = new ListSaldoKasPetugasExport($kode_cabang, $tanggal, $created_by, 'csv');
 
         return $list->download('LAPORAN_SALDO_KAS_PETUGAS_' . $cabang . '_' . $tanggal . '.csv');
+    }
+
+    function rekap_saldo_anggota(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        $show = KopAnggota::rekap_saldo_anggota($kode_cabang, $rekap_by);
+
+        $data = array();
+
+        $total_anggota = 0;
+        $total_simwa = 0;
+        $total_simpok = 0;
+        $total_simsuk = 0;
+        $total_saldo_pokok = 0;
+        $total_saldo_margin = 0;
+        $total_saldo_catab = 0;
+
+        foreach ($show as $sh) {
+            $total_anggota += $sh->jumlah_anggota;
+            $total_simwa += $sh->simwa;
+            $total_simpok += $sh->simpok;
+            $total_simsuk += $sh->simsuk;
+            $total_saldo_pokok += $sh->saldo_pokok;
+            $total_saldo_margin += $sh->saldo_margin;
+            $total_saldo_catab += $sh->saldo_catab;
+
+            $data[] = array(
+                'keterangan' => $sh->keterangan,
+                'jumlah_anggota' => (int) $sh->jumlah_anggota,
+                'simwa' => (int) $sh->simwa,
+                'simpok' => (int) $sh->simpok,
+                'simsuk' => (int) $sh->simsuk,
+                'saldo_pokok' => (int) $sh->saldo_pokok,
+                'saldo_margin' => (int) $sh->saldo_margin,
+                'saldo_catab' => (int) $sh->saldo_catab
+            );
+        }
+
+        $res = array(
+            'status' => true,
+            'nama_cabang' => $cabang,
+            'total_anggota' => $total_anggota,
+            'total_simwa' => $total_simwa,
+            'total_simpok' => $total_simpok,
+            'total_simsuk' => $total_simsuk,
+            'total_saldo_pokok' => $total_saldo_pokok,
+            'total_saldo_margin' => $total_saldo_margin,
+            'total_saldo_catab' => $total_saldo_catab,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function rekap_excel_saldo_anggota(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        $list = new RekapSaldoAnggotaExport($kode_cabang, $rekap_by, 'excel');
+
+        return $list->download('LAPORAN_REKAP_SALDO_ANGGOTA_' . $cabang . '.xlsx');
+    }
+
+    function rekap_csv_saldo_anggota(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        $list = new RekapSaldoAnggotaExport($kode_cabang, $rekap_by, 'csv');
+
+        return $list->download('LAPORAN_REKAP_SALDO_ANGGOTA_' . $cabang . '.csv');
+    }
+
+    function rekap_pengajuan(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+        $from_date = $request->from_date;
+        $thru_date = $request->thru_date;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($from_date <> '~' and !empty($from_date) and $from_date <> null) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
+
+        if ($thru_date <> '~' and !empty($thru_date) and $thru_date <> null) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
+
+        $show = KopPengajuan::rekap_pengajuan($kode_cabang, $rekap_by, $from_date, $thru_date);
+
+        $data = array();
+
+        $sum_anggota = 0;
+        $sum_pokok = 0;
+
+        foreach ($show as $sw) {
+            $sum_anggota += $sw->jumlah_anggota;
+            $sum_pokok += $sw->nominal;
+        }
+
+        $total_anggota = 0;
+        $total_pokok = 0;
+
+        foreach ($show as $sh) {
+            $persen_jumlah = ($sh->jumlah_anggota / $sum_anggota) * 100;
+            $persen_nominal = ($sh->nominal / $sum_pokok) * 100;
+
+            $total_anggota += $sh->jumlah_anggota;
+            $total_pokok += $sh->nominal;
+
+            $data[] = array(
+                'keterangan' => $sh->keterangan,
+                'jumlah_anggota' => $sh->jumlah_anggota,
+                'nominal' => (int) $sh->nominal,
+                'persen_jumlah' => (int) $persen_jumlah,
+                'persen_nominal' => (int) $persen_nominal
+            );
+        }
+
+        $res = array(
+            'status' => true,
+            'nama_cabang' => $cabang,
+            'from_date' => $from_date,
+            'thru_date' => $thru_date,
+            'total_anggota' => $total_anggota,
+            'total_pokok' => $total_pokok,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function rekap_excel_pengajuan(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+        $from_date = $request->from_date;
+        $thru_date = $request->thru_date;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($from_date <> '~' and !empty($from_date) and $from_date <> null) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
+
+        if ($thru_date <> '~' and !empty($thru_date) and $thru_date <> null) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
+
+        $list = new RekapPengajuanExport($kode_cabang, $rekap_by, $from_date, $thru_date, 'excel');
+
+        return $list->download('LAPORAN_REKAP_PENGAJUAN_' . $cabang . '_' . $from_date . '_' . $thru_date . '.xlsx');
+    }
+
+    function rekap_csv_pengajuan(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+        $from_date = $request->from_date;
+        $thru_date = $request->thru_date;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($from_date <> '~' and !empty($from_date) and $from_date <> null) {
+            $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $from_date)));
+        } else {
+            $from_date = date('Y-m-d');
+        }
+
+        if ($thru_date <> '~' and !empty($thru_date) and $thru_date <> null) {
+            $thru_date = date('Y-m-d', strtotime(str_replace('/', '-', $thru_date)));
+        } else {
+            $thru_date = date('Y-m-d');
+        }
+
+        $list = new RekapPengajuanExport($kode_cabang, $rekap_by, $from_date, $thru_date, 'csv');
+
+        return $list->download('LAPORAN_REKAP_PENGAJUAN_' . $cabang . '_' . $from_date . '_' . $thru_date . '.csv');
     }
 }

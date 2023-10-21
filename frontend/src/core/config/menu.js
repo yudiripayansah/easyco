@@ -44,8 +44,13 @@ const menu = [
           },
           {
             target: 'saldo-anggota',
-            label: 'Saldo Anggota',
+            label: 'List Saldo Anggota',
             component: import('@/pages/Keanggotaan/Laporan/SaldoAnggota.vue'),
+          },
+          {
+            target: 'rekap-saldo-anggota',
+            label: 'Rekap Saldo Anggota',
+            component: import('@/pages/Keanggotaan/Laporan/RekapSaldoAnggota.vue'),
           },
           {
             target: 'anggota-keluar',

@@ -278,6 +278,7 @@ Route::prefix('laporan')->group(function () {
     Route::post('/saldo_tabungan', [LaporanController::class, 'list_saldo_tabungan']);
     Route::post('/buka_tabungan', [LaporanController::class, 'list_buka_tabungan']);
     Route::post('/saldo_kas_petugas', [LaporanController::class, 'list_saldo_kas_petugas']);
+    Route::get('/get_rekap_by', [ListKodeController::class, 'get_rekap_by']);
 
     Route::prefix('excel')->group(function () {
       Route::get('/anggota_masuk', [LaporanController::class, 'list_excel_anggota_masuk']);
@@ -330,7 +331,18 @@ Route::prefix('laporan')->group(function () {
   });
 
   Route::prefix('rekap')->group(function () {
-    //
+    Route::post('/saldo_anggota', [LaporanController::class, 'rekap_saldo_anggota']);
+    Route::post('/pengajuan', [LaporanController::class, 'rekap_pengajuan']);
+
+    Route::prefix('excel')->group(function () {
+      Route::get('/saldo_anggota', [LaporanController::class, 'rekap_excel_saldo_anggota']);
+      Route::get('/pengajuan', [LaporanController::class, 'rekap_excel_pengajuan']);
+    });
+
+    Route::prefix('csv')->group(function () {
+      Route::get('/saldo_anggota', [LaporanController::class, 'rekap_csv_saldo_anggota']);
+      Route::get('/pengajuan', [LaporanController::class, 'rekap_csv_pengajuan']);
+    });
   });
 });
 
