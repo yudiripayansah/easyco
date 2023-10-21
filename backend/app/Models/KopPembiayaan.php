@@ -356,4 +356,79 @@ class KopPembiayaan extends Model
 
         return $show;
     }
+
+    function rekap_pencairan($kode_cabang, $rekap_by, $from_date, $thru_date)
+    {
+        $show = KopPembiayaan::join('kop_pengajuan AS kpg', 'kpg.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kpg.no_anggota')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'ka.kode_cabang')
+            ->where('kop_pembiayaan.status_droping', 1);
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $show->where('kc.kode_cabang', $kode_cabang);
+        }
+
+        if ($rekap_by == 1) {
+            // CABANG
+            $show->select(DB::raw('kc.nama_cabang AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pembiayaan.pokok),0) AS nominal'))
+                ->groupBy('kc.nama_cabang')
+                ->orderBy('kc.nama_cabang');
+        } elseif ($rekap_by == 2) {
+            // PETUGAS
+            $show->select(DB::raw('kp.nama_pgw AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pembiayaan.pokok),0) AS nominal'))
+                ->join('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+                ->join('kop_pegawai AS kp', 'kp.kode_pgw', 'kr.kode_petugas')
+                ->groupBy('kp.nama_pgw')
+                ->orderBy('kp.nama_pgw');
+        } else {
+            // MAJELIS
+            $show->select(DB::raw('kr.nama_rembug AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pembiayaan.pokok),0) AS nominal'))
+                ->join('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+                ->groupBy('kr.nama_rembug')
+                ->orderBy('kr.nama_rembug');
+        }
+
+        $show->whereBetween('kop_pembiayaan.tanggal_akad', [$from_date, $thru_date]);
+
+        $show = $show->get();
+
+        return $show;
+    }
+
+    function rekap_outstanding($kode_cabang, $rekap_by)
+    {
+        $show = KopPembiayaan::join('kop_pengajuan AS kpg', 'kpg.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kpg.no_anggota')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'ka.kode_cabang')
+            ->where('kop_pembiayaan.status_droping', 1)
+            ->where('kop_pembiayaan.status_rekening', 1);
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $show->where('kc.kode_cabang', $kode_cabang);
+        }
+
+        if ($rekap_by == 1) {
+            // CABANG
+            $show->select(DB::raw('kc.nama_cabang AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_pokok),0) AS saldo_pokok'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_margin),0) AS saldo_margin'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_catab),0) AS saldo_catab'))
+                ->groupBy('kc.nama_cabang')
+                ->orderBy('kc.nama_cabang');
+        } elseif ($rekap_by == 2) {
+            // PETUGAS
+            $show->select(DB::raw('kp.nama_pgw AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_pokok),0) AS saldo_pokok'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_margin),0) AS saldo_margin'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_catab),0) AS saldo_catab'))
+                ->join('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+                ->join('kop_pegawai AS kp', 'kp.kode_pgw', 'kr.kode_petugas')
+                ->groupBy('kp.nama_pgw')
+                ->orderBy('kp.nama_pgw');
+        } else {
+            // MAJELIS
+            $show->select(DB::raw('kr.nama_rembug AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_pokok),0) AS saldo_pokok'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_margin),0) AS saldo_margin'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_catab),0) AS saldo_catab'))
+                ->join('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+                ->groupBy('kr.nama_rembug')
+                ->orderBy('kr.nama_rembug');
+        }
+
+        $show = $show->get();
+
+        return $show;
+    }
 }
