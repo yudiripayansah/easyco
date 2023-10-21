@@ -54,20 +54,16 @@
             <table class="table table-bordered table-hover">
               <thead>
                 <tr>
-                  <th scope="col" class="bold">Keterangan</th>
-                  <th scope="col" class="bold">Saldo</th>
+                  <th v-for="tableSummary in tableSummary.fields" :key="tableSummary.key" :class="tableSummary.thClass">{{
+                    tableSummary.label }}</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td scope="row" class="col-md-5">Total Anggota</td>
-                  <td class="text-right">{{ total_anggota }}</td>
+              <tbody v-if="tableSummary && tableSummary.items && tableSummary.items.length > 0">
+                <tr v-for="(tableSummary, tableSummaryIndex) in tableSummary.items"
+                  :key="`tableSummary-${tableSummaryIndex}`">
+                  <td class="text-left">{{ tableSummary.text }}</td>
+                  <td class="text-right">{{ tableSummary.value }}</td>
                 </tr>
-                <tr>
-                  <td scope="row">Total Pokok</td>
-                  <td class="text-right">{{ total_pokok }}</td>
-                </tr>
-              </tbody>
               </tbody>
             </table>
           </b-col>
@@ -121,18 +117,15 @@
           <table class="table table-bordered table-hover">
             <thead>
               <tr>
-                <th scope="col" class="bold">Keterangan</th>
-                <th scope="col" class="bold">Saldo</th>
+                <th v-for="tableSummary in tableSummary.fields" :key="tableSummary.key" :class="tableSummary.thClass">
+                  {{ tableSummary.label }}</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td scope="row" class="col-md-5">Total Anggota</td>
-                <td class="text-right">{{ total_anggota }}</td>
-              </tr>
-              <tr>
-                <td scope="row">Total Pokok</td>
-                <td class="text-right">{{ total_pokok }}</td>
+            <tbody v-if="tableSummary && tableSummary.items && tableSummary.items.length > 0">
+              <tr v-for="(tableSummary, tableSummaryIndex) in tableSummary.items"
+                :key="`tableSummary-${tableSummaryIndex}`">
+                <td class="text-left">{{ tableSummary.text }}</td>
+                <td class="text-right">{{ tableSummary.value }}</td>
               </tr>
             </tbody>
           </table>
@@ -214,6 +207,25 @@ export default {
         loading: false,
         totalRows: 0,
       },
+      tableSummary: {
+        fields: [
+          {
+            key: "keterangan",
+            sortable: false,
+            label: "Keterangan",
+            thClass: "text-center w-5p",
+            tdClass: "text-center",
+          },
+          {
+            key: "saldo",
+            sortable: false,
+            label: "Saldo",
+            thClass: "text-center w-5p",
+            tdClass: "text-center",
+          },
+        ],
+        items: []
+      },
       paging: {
         currentPage: 1,
         page: 1,
@@ -243,8 +255,6 @@ export default {
       },
       nama_cabang: "",
       rekap_by_nama: "",
-      total_anggota: 0,
-      total_pokok: 0,
       showOverlay: false,
     };
   },
@@ -428,8 +438,16 @@ export default {
           this.table.items = data;
           this.table.totalRows = data.length;
 
-          this.total_anggota = this.numberFormat(total_anggota, 0);
-          this.total_pokok = this.numberFormat(total_pokok, 0);
+          this.tableSummary.items = [
+            {
+              text: "Total Anggota",
+              value: this.numberFormat(total_anggota, 0),
+            },
+            {
+              text: "Total Pokok",
+              value: this.numberFormat(total_pokok, 0),
+            },
+          ];
         } else {
           this.notify("danger", "Error", msg);
         }

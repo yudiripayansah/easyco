@@ -255,10 +255,6 @@ export default {
       },
       nama_cabang: "",
       rekap_by_nama: "",
-      total_anggota: 0,
-      total_saldo_pokok: 0,
-      total_saldo_margin: 0,
-      total_saldo_catab: 0,
       showOverlay: false,
     };
   },
@@ -438,11 +434,6 @@ export default {
 
           this.table.items = data;
           this.table.totalRows = data.length;
-
-          this.total_anggota = this.numberFormat(total_anggota, 0);
-          this.total_saldo_pokok = this.numberFormat(total_saldo_pokok, 0);
-          this.total_saldo_margin = this.numberFormat(total_saldo_margin, 0);
-          this.total_saldo_catab = this.numberFormat(total_saldo_catab, 0);
 
           this.tableSummary.items = [
             {
