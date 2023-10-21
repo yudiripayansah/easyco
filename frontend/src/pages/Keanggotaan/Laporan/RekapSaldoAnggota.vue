@@ -42,38 +42,15 @@
             <table class="table table-bordered table-hover">
               <thead>
                 <tr>
-                  <th scope="col" class="bold">Keterangan</th>
-                  <th scope="col" class="bold">Saldo</th>
+                  <th v-for="tableSummary in tableSummary.fields" :key="tableSummary.key" :class="tableSummary.thClass">{{
+                    tableSummary.label }}</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td scope="row" class="col-md-5">Total Anggota</td>
-                  <td class="text-right">{{ total_anggota }}</td>
-                </tr>
-                <tr>
-                  <td scope="row">Total SIMWA</td>
-                  <td class="text-right">{{ total_simwa }}</td>
-                </tr>
-                <tr>
-                  <td scope="row">Total SIMPOK</td>
-                  <td class="text-right">{{ total_simpok }}</td>
-                </tr>
-                <tr>
-                  <td scope="row">Total SIMSUK</td>
-                  <td class="text-right">{{ total_simsuk }}</td>
-                </tr>
-                <tr>
-                  <td scope="row">Total Saldo Pokok</td>
-                  <td class="text-right">{{ total_saldo_pokok }}</td>
-                </tr>
-                <tr>
-                  <td scope="row">Total Saldo Margin</td>
-                  <td class="text-right">{{ total_saldo_margin }}</td>
-                </tr>
-                <tr>
-                  <td scope="row">Total Saldo Catab</td>
-                  <td class="text-right">{{ total_saldo_catab }}</td>
+              <tbody v-if="tableSummary && tableSummary.items && tableSummary.items.length > 0">
+                <tr v-for="(tableSummary, tableSummaryIndex) in tableSummary.items"
+                  :key="`tableSummary-${tableSummaryIndex}`">
+                  <td class="text-left">{{ tableSummary.text }}</td>
+                  <td class="text-right">{{ tableSummary.value }}</td>
                 </tr>
               </tbody>
             </table>
@@ -129,38 +106,15 @@
           <table class="table table-bordered table-hover">
             <thead>
               <tr>
-                <th scope="col" class="bold">Keterangan</th>
-                <th scope="col" class="bold">Saldo</th>
+                <th v-for="tableSummary in tableSummary.fields" :key="tableSummary.key" :class="tableSummary.thClass">{{
+                  tableSummary.label }}</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td scope="row" class="col-md-5">Total Anggota</td>
-                <td class="text-right">{{ total_anggota }}</td>
-              </tr>
-              <tr>
-                <td scope="row">Total SIMWA</td>
-                <td class="text-right">{{ total_simwa }}</td>
-              </tr>
-              <tr>
-                <td scope="row">Total SIMPOK</td>
-                <td class="text-right">{{ total_simpok }}</td>
-              </tr>
-              <tr>
-                <td scope="row">Total SIMSUK</td>
-                <td class="text-right">{{ total_simsuk }}</td>
-              </tr>
-              <tr>
-                <td scope="row">Total Saldo Pokok</td>
-                <td class="text-right">{{ total_saldo_pokok }}</td>
-              </tr>
-              <tr>
-                <td scope="row">Total Saldo Margin</td>
-                <td class="text-right">{{ total_saldo_margin }}</td>
-              </tr>
-              <tr>
-                <td scope="row">Total Saldo Catab</td>
-                <td class="text-right">{{ total_saldo_catab }}</td>
+            <tbody v-if="tableSummary && tableSummary.items && tableSummary.items.length > 0">
+              <tr v-for="(tableSummary, tableSummaryIndex) in tableSummary.items"
+                :key="`tableSummary-${tableSummaryIndex}`">
+                <td class="text-left">{{ tableSummary.text }}</td>
+                <td class="text-right">{{ tableSummary.value }}</td>
               </tr>
             </tbody>
           </table>
@@ -263,6 +217,25 @@ export default {
         loading: false,
         totalRows: 0,
       },
+      tableSummary: {
+        fields: [
+          {
+            key: "keterangan",
+            sortable: false,
+            label: "Keterangan",
+            thClass: "text-center w-5p",
+            tdClass: "text-center",
+          },
+          {
+            key: "saldo",
+            sortable: false,
+            label: "Saldo",
+            thClass: "text-center w-5p",
+            tdClass: "text-center",
+          },
+        ],
+        items: []
+      },
       paging: {
         currentPage: 1,
         page: 1,
@@ -363,7 +336,7 @@ export default {
     },
     async exportXls() {
       this.showOverlay = true;
-      const payload = `kode_cabang=${this.paging.kode_cabang}&tanggal=${this.paging.tanggal}`;
+      const payload = `kode_cabang=${this.paging.kode_cabang}&rekap_by=${this.paging.rekap_by}`;
       const req = await easycoApi.laporanRekapSaldoAnggotaExportToXLSX(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
@@ -376,7 +349,7 @@ export default {
     },
     async exportCsv() {
       this.showOverlay = true;
-      const payload = `kode_cabang=${this.paging.kode_cabang}&tanggal=${this.paging.tanggal}`;
+      const payload = `kode_cabang=${this.paging.kode_cabang}&rekap_by=${this.paging.rekap_by}`;
       const req = await easycoApi.laporanRekapSaldoAnggotaExportToCSV(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
@@ -481,13 +454,36 @@ export default {
           this.table.items = data;
           this.table.totalRows = data.length;
 
-          this.total_anggota = this.numberFormat(total_anggota, 0);
-          this.total_simwa = this.numberFormat(total_simwa, 0);
-          this.total_simpok = this.numberFormat(total_simpok, 0);
-          this.total_simsuk = this.numberFormat(total_simsuk, 0);
-          this.total_saldo_pokok = this.numberFormat(total_saldo_pokok, 0);
-          this.total_saldo_margin = this.numberFormat(total_saldo_margin, 0);
-          this.total_saldo_catab = this.numberFormat(total_saldo_catab, 0);
+          this.tableSummary.items = [
+            {
+              text: "Total Anggota",
+              value: this.numberFormat(total_anggota, 0),
+            },
+            {
+              text: "Total SIMWA",
+              value: this.numberFormat(total_simwa, 0),
+            },
+            {
+              text: "Total SIMPOK",
+              value: this.numberFormat(total_simpok, 0),
+            },
+            {
+              text: "Total SIMSUK",
+              value: this.numberFormat(total_simsuk, 0),
+            },
+            {
+              text: "Total Saldo Pokok",
+              value: this.numberFormat(total_saldo_pokok, 0),
+            },
+            {
+              text: "Total Saldo Margin",
+              value: this.numberFormat(total_saldo_margin, 0),
+            },
+            {
+              text: "Total Saldo Catab",
+              value: this.numberFormat(total_saldo_catab, 0),
+            }
+          ];
         } else {
           this.notify("danger", "Error", msg);
         }
