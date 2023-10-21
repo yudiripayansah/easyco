@@ -175,7 +175,7 @@ class KopPengajuan extends Model
         return $show;
     }
 
-    function report_recap($kode_cabang, $rekap_by, $from_date, $thru_date)
+    function rekap_pengajuan($kode_cabang, $rekap_by, $from_date, $thru_date)
     {
         $show = KopPengajuan::join('kop_anggota AS ka', 'ka.no_anggota', 'kop_pengajuan.no_anggota')
             ->join('kop_cabang AS kc', 'kc.kode_cabang', 'ka.kode_cabang');

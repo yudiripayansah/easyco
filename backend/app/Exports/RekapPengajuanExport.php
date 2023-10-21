@@ -27,7 +27,7 @@ class RekapPengajuanExport implements FromView
     {
         $format = $this->format;
 
-        $show = KopPengajuan::report_recap($this->kode_cabang, $this->rekap_by, $this->from_date, $this->thru_date);
+        $show = KopPengajuan::rekap_pengajuan($this->kode_cabang, $this->rekap_by, $this->from_date, $this->thru_date);
 
         if ($this->kode_cabang <> '~' and $this->kode_cabang <> '00000' and !empty($this->kode_cabang) and $this->kode_cabang <> null) {
             $branch = KopCabang::where('kode_cabang', $this->kode_cabang)->first();

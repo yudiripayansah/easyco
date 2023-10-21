@@ -19,6 +19,7 @@ use App\Exports\ListSaldoKasPetugasExport;
 use App\Exports\ListSaldoOutstandingExport;
 use App\Exports\ListSaldoTabunganExport;
 use App\Exports\RekapPengajuanExport;
+use App\Exports\RekapSaldoAnggotaExport;
 use App\Exports\StatementTabunganExport;
 use App\Exports\TransaksiMajelisExport;
 use App\Models\KopAnggota;
@@ -1830,6 +1831,103 @@ class LaporanController extends Controller
         return $list->download('LAPORAN_SALDO_KAS_PETUGAS_' . $cabang . '_' . $tanggal . '.csv');
     }
 
+    function rekap_saldo_anggota(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        $show = KopAnggota::rekap_saldo_anggota($kode_cabang, $rekap_by);
+
+        $data = array();
+
+        $total_anggota = 0;
+        $total_simwa = 0;
+        $total_simpok = 0;
+        $total_simsuk = 0;
+        $total_saldo_pokok = 0;
+        $total_saldo_margin = 0;
+        $total_saldo_catab = 0;
+
+        foreach ($show as $sh) {
+            $total_anggota += $sh->jumlah_anggota;
+            $total_simwa += $sh->simwa;
+            $total_simpok += $sh->simpok;
+            $total_simsuk += $sh->simsuk;
+            $total_saldo_pokok += $sh->saldo_pokok;
+            $total_saldo_margin += $sh->saldo_margin;
+            $total_saldo_catab += $sh->saldo_catab;
+
+            $data[] = array(
+                'keterangan' => $sh->keterangan,
+                'jumlah_anggota' => (int) $sh->jumlah_anggota,
+                'simwa' => (int) $sh->simwa,
+                'simpok' => (int) $sh->simpok,
+                'simsuk' => (int) $sh->simsuk,
+                'saldo_pokok' => (int) $sh->saldo_pokok,
+                'saldo_margin' => (int) $sh->saldo_margin,
+                'saldo_catab' => (int) $sh->saldo_catab
+            );
+        }
+
+        $res = array(
+            'status' => true,
+            'nama_cabang' => $cabang,
+            'total_anggota' => $total_anggota,
+            'total_simwa' => $total_simwa,
+            'total_simpok' => $total_simpok,
+            'total_simsuk' => $total_simsuk,
+            'total_saldo_pokok' => $total_saldo_pokok,
+            'total_saldo_margin' => $total_saldo_margin,
+            'total_saldo_catab' => $total_saldo_catab,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function rekap_excel_saldo_anggota(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        $list = new RekapSaldoAnggotaExport($kode_cabang, $rekap_by, 'excel');
+
+        return $list->download('LAPORAN_REKAP_SALDO_ANGGOTA_' . $cabang . '.xlsx');
+    }
+
+    function rekap_csv_saldo_anggota(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        $list = new RekapSaldoAnggotaExport($kode_cabang, $rekap_by, 'csv');
+
+        return $list->download('LAPORAN_REKAP_SALDO_ANGGOTA_' . $cabang . '.csv');
+    }
+
     function rekap_pengajuan(Request $request)
     {
         $kode_cabang = $request->kode_cabang;
@@ -1856,7 +1954,7 @@ class LaporanController extends Controller
             $thru_date = date('Y-m-d');
         }
 
-        $show = KopPengajuan::report_recap($kode_cabang, $rekap_by, $from_date, $thru_date);
+        $show = KopPengajuan::rekap_pengajuan($kode_cabang, $rekap_by, $from_date, $thru_date);
 
         $data = array();
 
@@ -1892,6 +1990,8 @@ class LaporanController extends Controller
             'nama_cabang' => $cabang,
             'from_date' => $from_date,
             'thru_date' => $thru_date,
+            'total_anggota' => $total_anggota,
+            'total_pokok' => $total_pokok,
             'data' => $data
         );
 

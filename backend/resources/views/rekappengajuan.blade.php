@@ -23,7 +23,7 @@
         </tr>
         <tr>
             <th style="text-align: center; font-weight: bold; border: 1px solid #000;" valign="middle" rowspan="2">No</th>
-            <th style="text-align: center; font-weight: bold; border: 1px solid #000;" valign="middle" rowspan="2">Kantor</th>
+            <th style="text-align: center; font-weight: bold; border: 1px solid #000;" valign="middle" rowspan="2">Keterangan</th>
             <th style="text-align: center; font-weight: bold; border: 1px solid #000;" valign="middle" rowspan="2">Jumlah</th>
             <th style="text-align: center; font-weight: bold; border: 1px solid #000;" valign="middle" rowspan="2">Nominal</th>
             <th style="text-align: center; font-weight: bold; border: 1px solid #000;" colspan="2">Persentase</th>
@@ -35,7 +35,7 @@
         @else
         <tr>
             <th>No</th>
-            <th>Kantor</th>
+            <th>Keterangan</th>
             <th>Jumlah</th>
             <th>Nominal</th>
             <th>Persentase Jumlah</th>

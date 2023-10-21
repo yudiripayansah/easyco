@@ -331,13 +331,16 @@ Route::prefix('laporan')->group(function () {
   });
 
   Route::prefix('rekap')->group(function () {
+    Route::post('/saldo_anggota', [LaporanController::class, 'rekap_saldo_anggota']);
     Route::post('/pengajuan', [LaporanController::class, 'rekap_pengajuan']);
 
     Route::prefix('excel')->group(function () {
+      Route::get('/saldo_anggota', [LaporanController::class, 'rekap_excel_saldo_anggota']);
       Route::get('/pengajuan', [LaporanController::class, 'rekap_excel_pengajuan']);
     });
 
     Route::prefix('csv')->group(function () {
+      Route::get('/saldo_anggota', [LaporanController::class, 'rekap_csv_saldo_anggota']);
       Route::get('/pengajuan', [LaporanController::class, 'rekap_csv_pengajuan']);
     });
   });
