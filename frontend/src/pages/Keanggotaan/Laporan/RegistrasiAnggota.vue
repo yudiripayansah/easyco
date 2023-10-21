@@ -5,17 +5,30 @@
       <b-row no-gutters>
         <b-col cols="8" class="mb-5">
           <div class="row">
-            <b-col cols="12">
+            <b-col cols="4">
               <b-input-group prepend="Cabang" class="mb-3">
                 <b-form-select v-model="paging.cabang" :options="opt.cabang" />
               </b-input-group>
             </b-col>
-            <b-col>
+            <b-col cols="4">
+              <b-input-group prepend="Majelis" class="mb-3">
+                <b-form-select v-model="paging.rembug" :options="opt.rembug" />
+              </b-input-group>
+            </b-col>
+            <b-col cols="4">
+              <b-input-group prepend="Petugas" class="mb-3">
+                <b-form-select
+                  v-model="paging.petugas"
+                  :options="opt.petugas"
+                />
+              </b-input-group>
+            </b-col>
+            <b-col cols="6">
               <b-input-group prepend="Dari Tanggal">
                 <b-form-datepicker v-model="paging.from" />
               </b-input-group>
             </b-col>
-            <b-col>
+            <b-col cols="6">
               <b-input-group prepend="Sampai Tanggal">
                 <b-form-datepicker v-model="paging.to" />
               </b-input-group>
@@ -283,11 +296,15 @@ export default {
         search: "",
         status: "~",
         cabang: 0,
+        rembug: 0,
+        petugas: 0,
         from: null,
         to: null,
       },
       opt: {
         cabang: [],
+        petugas: [],
+        rembug: [],
       },
     };
   },
@@ -305,6 +322,7 @@ export default {
   mounted() {
     this.doGet();
     this.doGetCabang();
+    this.doGetPetugas();
   },
   methods: {
     ...helper,
