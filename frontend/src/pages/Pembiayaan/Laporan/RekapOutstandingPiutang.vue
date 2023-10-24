@@ -59,12 +59,12 @@
       </b-card>
     </b-overlay>
 
-    <b-modal title="PREVIEW REKAP SALDO ANGGOTA" id="modal-pdf" hide-footer size="xl" centered>
+    <b-modal title="PREVIEW REKAP OUTSTANDING PIUTANG" id="modal-pdf" hide-footer size="xl" centered>
       <div id="table-print" class="p-5">
         <h5 class="text-center">
           KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
         </h5>
-        <h5 class="text-center">REKAP SALDO ANGGOTA</h5>
+        <h5 class="text-center">REKAP OUTSTANDING PIUTANG</h5>
         <h5 class="text-center" v-show="nama_cabang">Cabang: {{ nama_cabang }}</h5>
         <h5 class="text-center" v-show="rekap_by_nama">Rekap By: {{ rekap_by_nama }}</h5>
         <b-col cols="12">
@@ -86,12 +86,11 @@
                   <td class="text-center">{{ tableIndex + 1 }}</td>
                   <td class="text-left">{{ table.keterangan }}</td>
                   <td class="text-right">{{ table.jumlah_anggota }}</td>
-                  <td class="text-right">{{ table.simwa }}</td>
-                  <td class="text-right">{{ table.simpok }}</td>
-                  <td class="text-right">{{ table.simsuk }}</td>
                   <td class="text-right">{{ table.saldo_pokok }}</td>
                   <td class="text-right">{{ table.saldo_margin }}</td>
                   <td class="text-right">{{ table.saldo_catab }}</td>
+                  <td class="text-right">{{ table.persen_jumlah }}</td>
+                  <td class="text-right">{{ table.persen_nominal }}</td>
                 </tr>
               </tbody>
               <tbody v-else>
@@ -106,8 +105,8 @@
           <table class="table table-bordered table-hover">
             <thead>
               <tr>
-                <th v-for="tableSummary in tableSummary.fields" :key="tableSummary.key" :class="tableSummary.thClass">{{
-                  tableSummary.label }}</th>
+                <th v-for="tableSummary in tableSummary.fields" :key="tableSummary.key" :class="tableSummary.thClass">
+                  {{ tableSummary.label }}</th>
               </tr>
             </thead>
             <tbody v-if="tableSummary && tableSummary.items && tableSummary.items.length > 0">
@@ -143,7 +142,7 @@ import { mapGetters } from "vuex";
 import easycoApi from "@/core/services/easyco.service";
 
 export default {
-  name: "RekapSaldoAnggota",
+  name: "RekapOutstandingPiutang",
   components: {},
   data() {
     return {
@@ -171,44 +170,37 @@ export default {
             tdClass: "text-right",
           },
           {
-            key: "simwa",
-            sortable: true,
-            label: "SIMWA",
-            thClass: "text-center",
-            tdClass: "text-right",
-          },
-          {
-            key: "simpok",
-            sortable: true,
-            label: "SIMPOK",
-            thClass: "text-center",
-            tdClass: "text-right",
-          },
-          {
-            key: "simsuk",
-            sortable: true,
-            label: "SIMSUK",
-            thClass: "text-center",
-            tdClass: "text-right",
-          },
-          {
             key: "saldo_pokok",
             sortable: true,
-            label: "SALDO POKOK",
+            label: "Saldo Pokok",
             thClass: "text-center",
             tdClass: "text-right",
           },
           {
             key: "saldo_margin",
             sortable: true,
-            label: "SALDO MARGIN",
+            label: "Saldo Margin",
             thClass: "text-center",
             tdClass: "text-right",
           },
           {
             key: "saldo_catab",
             sortable: true,
-            label: "SALDO CATAB",
+            label: "Saldo Catab",
+            thClass: "text-center",
+            tdClass: "text-right",
+          },
+          {
+            key: "persen_jumlah",
+            sortable: true,
+            label: "Persen Jumlah",
+            thClass: "text-center",
+            tdClass: "text-right",
+          },
+          {
+            key: "persen_nominal",
+            sortable: true,
+            label: "Persen Nominal",
             thClass: "text-center",
             tdClass: "text-right",
           },
@@ -263,13 +255,6 @@ export default {
       },
       nama_cabang: "",
       rekap_by_nama: "",
-      total_anggota: 0,
-      total_simwa: 0,
-      total_simpok: 0,
-      total_simsuk: 0,
-      total_saldo_pokok: 0,
-      total_saldo_margin: 0,
-      total_saldo_catab: 0,
       showOverlay: false,
     };
   },
@@ -295,7 +280,7 @@ export default {
       const singleObjKodeCabang = this.opt.kode_cabang.find(item => item.value == this.paging.kode_cabang);
       const singleObjRekapBy = this.opt.rekap_by.find(item => item.value == this.paging.rekap_by);
 
-      let fileName = "REKAP SALDO ANGGOTA_";
+      let fileName = "REKAP OUTSTANDING PIUTANG_";
       fileName += `Cabang-${(singleObjKodeCabang?.value != null ? singleObjKodeCabang?.text : '')}_`;
       fileName += `Rekap By-${(singleObjRekapBy?.value != null ? singleObjRekapBy?.text : '')}_`;
       return fileName;
@@ -337,7 +322,7 @@ export default {
     async exportXls() {
       this.showOverlay = true;
       const payload = `kode_cabang=${this.paging.kode_cabang}&rekap_by=${this.paging.rekap_by}`;
-      const req = await easycoApi.laporanRekapSaldoAnggotaExportToXLSX(payload);
+      const req = await easycoApi.pembiayaanLaporanRekapOutstandingPiutangExportToXLSX(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
       const fileName = `${this.getFileName()}.xlsx`;
@@ -350,7 +335,7 @@ export default {
     async exportCsv() {
       this.showOverlay = true;
       const payload = `kode_cabang=${this.paging.kode_cabang}&rekap_by=${this.paging.rekap_by}`;
-      const req = await easycoApi.laporanRekapSaldoAnggotaExportToCSV(payload);
+      const req = await easycoApi.pembiayaanLaporanRekapOutstandingPiutangExportToCSV(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
       const fileName = `${this.getFileName()}.csv`;
@@ -424,15 +409,12 @@ export default {
       payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
       this.table.loading = true;
       try {
-        let req = await easycoApi.laporanRekapSaldoAnggota(payload, this.user.token);
+        let req = await easycoApi.pembiayaanLaporanRekapOutstandingPiutang(payload, this.user.token);
         const {
           data,
           status,
           msg = '',
           total_anggota,
-          total_simwa,
-          total_simpok,
-          total_simsuk,
           total_saldo_pokok,
           total_saldo_margin,
           total_saldo_catab,
@@ -442,12 +424,11 @@ export default {
           if (data && data.length > 0) {
             data.forEach(item => {
               item.jumlah_anggota = this.numberFormat(item.jumlah_anggota, 0);
-              item.simwa = this.numberFormat(item.simwa, 0);
-              item.simpok = this.numberFormat(item.simpok, 0);
-              item.simsuk = this.numberFormat(item.simsuk, 0);
               item.saldo_pokok = this.numberFormat(item.saldo_pokok, 0);
               item.saldo_margin = this.numberFormat(item.saldo_margin, 0);
               item.saldo_catab = this.numberFormat(item.saldo_catab, 0);
+              item.persen_jumlah = this.numberFormat(item.persen_jumlah, 0);
+              item.persen_nominal = this.numberFormat(item.persen_nominal, 0);
             });
           }
 
@@ -460,18 +441,6 @@ export default {
               value: this.numberFormat(total_anggota, 0),
             },
             {
-              text: "Total SIMWA",
-              value: this.numberFormat(total_simwa, 0),
-            },
-            {
-              text: "Total SIMPOK",
-              value: this.numberFormat(total_simpok, 0),
-            },
-            {
-              text: "Total SIMSUK",
-              value: this.numberFormat(total_simsuk, 0),
-            },
-            {
               text: "Total Saldo Pokok",
               value: this.numberFormat(total_saldo_pokok, 0),
             },
@@ -482,8 +451,8 @@ export default {
             {
               text: "Total Saldo Catab",
               value: this.numberFormat(total_saldo_catab, 0),
-            }
-          ];
+            },
+          ]
         } else {
           this.notify("danger", "Error", msg);
         }

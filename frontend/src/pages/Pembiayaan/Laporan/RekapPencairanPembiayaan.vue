@@ -17,6 +17,18 @@
                 </b-input-group>
               </b-col>
             </div>
+            <div class="row">
+              <b-col>
+                <b-input-group prepend="Dari Tanggal">
+                  <b-form-datepicker v-model="paging.from_date" />
+                </b-input-group>
+              </b-col>
+              <b-col>
+                <b-input-group prepend="Sampai Tanggal">
+                  <b-form-datepicker v-model="paging.thru_date" />
+                </b-input-group>
+              </b-col>
+            </div>
           </b-col>
           <b-col cols="2" class="d-flex justify-content-end align-items-start">
             <b-button-group>
@@ -59,14 +71,16 @@
       </b-card>
     </b-overlay>
 
-    <b-modal title="PREVIEW REKAP SALDO ANGGOTA" id="modal-pdf" hide-footer size="xl" centered>
+    <b-modal title="PREVIEW REKAP PENCAIRAN PEMBIAYAAN" id="modal-pdf" hide-footer size="xl" centered>
       <div id="table-print" class="p-5">
         <h5 class="text-center">
           KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
         </h5>
-        <h5 class="text-center">REKAP SALDO ANGGOTA</h5>
+        <h5 class="text-center">REKAP PENCAIRAN PEMBIAYAAN</h5>
         <h5 class="text-center" v-show="nama_cabang">Cabang: {{ nama_cabang }}</h5>
         <h5 class="text-center" v-show="rekap_by_nama">Rekap By: {{ rekap_by_nama }}</h5>
+        <h6 class="text-center mb-5 pb-5" v-show="paging.from_date && paging.thru_date">Tanggal {{
+          dateFormatId(paging.from_date) }} s.d {{ dateFormatId(paging.thru_date) }}</h6>
         <b-col cols="12">
           <div class="table-responsive">
             <table class="table table-bordered table-striped">
@@ -86,12 +100,9 @@
                   <td class="text-center">{{ tableIndex + 1 }}</td>
                   <td class="text-left">{{ table.keterangan }}</td>
                   <td class="text-right">{{ table.jumlah_anggota }}</td>
-                  <td class="text-right">{{ table.simwa }}</td>
-                  <td class="text-right">{{ table.simpok }}</td>
-                  <td class="text-right">{{ table.simsuk }}</td>
-                  <td class="text-right">{{ table.saldo_pokok }}</td>
-                  <td class="text-right">{{ table.saldo_margin }}</td>
-                  <td class="text-right">{{ table.saldo_catab }}</td>
+                  <td class="text-right">{{ table.nominal }}</td>
+                  <td class="text-right">{{ table.persen_jumlah }}</td>
+                  <td class="text-right">{{ table.persen_nominal }}</td>
                 </tr>
               </tbody>
               <tbody v-else>
@@ -106,8 +117,8 @@
           <table class="table table-bordered table-hover">
             <thead>
               <tr>
-                <th v-for="tableSummary in tableSummary.fields" :key="tableSummary.key" :class="tableSummary.thClass">{{
-                  tableSummary.label }}</th>
+                <th v-for="tableSummary in tableSummary.fields" :key="tableSummary.key" :class="tableSummary.thClass">
+                  {{ tableSummary.label }}</th>
               </tr>
             </thead>
             <tbody v-if="tableSummary && tableSummary.items && tableSummary.items.length > 0">
@@ -135,7 +146,7 @@
     </b-modal>
   </div>
 </template>
-    
+
 <script>
 import helper from "@/core/helper";
 import html2pdf from "html2pdf.js";
@@ -143,7 +154,7 @@ import { mapGetters } from "vuex";
 import easycoApi from "@/core/services/easyco.service";
 
 export default {
-  name: "RekapSaldoAnggota",
+  name: "RekapPencairanPembiayaan",
   components: {},
   data() {
     return {
@@ -171,44 +182,23 @@ export default {
             tdClass: "text-right",
           },
           {
-            key: "simwa",
+            key: "nominal",
             sortable: true,
-            label: "SIMWA",
+            label: "NOMINAL",
             thClass: "text-center",
             tdClass: "text-right",
           },
           {
-            key: "simpok",
+            key: "persen_jumlah",
             sortable: true,
-            label: "SIMPOK",
+            label: "Persen Jumlah",
             thClass: "text-center",
             tdClass: "text-right",
           },
           {
-            key: "simsuk",
+            key: "persen_nominal",
             sortable: true,
-            label: "SIMSUK",
-            thClass: "text-center",
-            tdClass: "text-right",
-          },
-          {
-            key: "saldo_pokok",
-            sortable: true,
-            label: "SALDO POKOK",
-            thClass: "text-center",
-            tdClass: "text-right",
-          },
-          {
-            key: "saldo_margin",
-            sortable: true,
-            label: "SALDO MARGIN",
-            thClass: "text-center",
-            tdClass: "text-right",
-          },
-          {
-            key: "saldo_catab",
-            sortable: true,
-            label: "SALDO CATAB",
+            label: "Persen Nominal",
             thClass: "text-center",
             tdClass: "text-right",
           },
@@ -246,6 +236,8 @@ export default {
         status: "~",
         kode_cabang: '',
         rekap_by: '',
+        from_date: '',
+        thru_date: '',
       },
       opt: {
         kode_cabang: [
@@ -263,13 +255,6 @@ export default {
       },
       nama_cabang: "",
       rekap_by_nama: "",
-      total_anggota: 0,
-      total_simwa: 0,
-      total_simpok: 0,
-      total_simsuk: 0,
-      total_saldo_pokok: 0,
-      total_saldo_margin: 0,
-      total_saldo_catab: 0,
       showOverlay: false,
     };
   },
@@ -294,10 +279,13 @@ export default {
     getFileName() {
       const singleObjKodeCabang = this.opt.kode_cabang.find(item => item.value == this.paging.kode_cabang);
       const singleObjRekapBy = this.opt.rekap_by.find(item => item.value == this.paging.rekap_by);
+      const fromDate = (this.paging.from_date == "" || this.paging.from_date == null ? "" : this.dateFormatId(this.paging.from_date));
+      const thruDate = (this.paging.thru_date == "" || this.paging.thru_date == null ? "" : this.dateFormatId(this.paging.thru_date));
 
-      let fileName = "REKAP SALDO ANGGOTA_";
+      let fileName = "REKAP PENCAIRAN PEMBIAYAAN_";
       fileName += `Cabang-${(singleObjKodeCabang?.value != null ? singleObjKodeCabang?.text : '')}_`;
       fileName += `Rekap By-${(singleObjRekapBy?.value != null ? singleObjRekapBy?.text : '')}_`;
+      fileName += `Dari ${fromDate} Sampai ${thruDate}`;
       return fileName;
     },
     doPrintPdf() {
@@ -336,8 +324,10 @@ export default {
     },
     async exportXls() {
       this.showOverlay = true;
-      const payload = `kode_cabang=${this.paging.kode_cabang}&rekap_by=${this.paging.rekap_by}`;
-      const req = await easycoApi.laporanRekapSaldoAnggotaExportToXLSX(payload);
+      const kodeCabang = (this.paging.kode_cabang == "" || this.paging.kode_cabang == null ? 0 : this.paging.kode_cabang);
+      const rekapBy = (this.paging.rekap_by == "" || this.paging.rekap_by == null ? 0 : this.paging.rekap_by);
+      const payload = `kode_cabang=${kodeCabang}&rekap_by=${rekapBy}&from_date=${this.paging.from_date}&thru_date=${this.paging.thru_date}`;
+      const req = await easycoApi.laporanPembiayaanRekapPencairanPembiayaanExportToXLSX(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
       const fileName = `${this.getFileName()}.xlsx`;
@@ -349,8 +339,10 @@ export default {
     },
     async exportCsv() {
       this.showOverlay = true;
-      const payload = `kode_cabang=${this.paging.kode_cabang}&rekap_by=${this.paging.rekap_by}`;
-      const req = await easycoApi.laporanRekapSaldoAnggotaExportToCSV(payload);
+      const kodeCabang = (this.paging.kode_cabang == "" || this.paging.kode_cabang == null ? 0 : this.paging.kode_cabang);
+      const rekapBy = (this.paging.rekap_by == "" || this.paging.rekap_by == null ? 0 : this.paging.rekap_by);
+      const payload = `kode_cabang=${kodeCabang}&rekap_by=${rekapBy}&from_date=${this.paging.from_date}&thru_date=${this.paging.thru_date}`;
+      const req = await easycoApi.laporanPembiayaanRekapPencairanPembiayaanExportToCSV(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
       const fileName = `${this.getFileName()}.csv`;
@@ -424,30 +416,22 @@ export default {
       payload.sortDir = payload.sortDesc ? "DESC" : "ASC";
       this.table.loading = true;
       try {
-        let req = await easycoApi.laporanRekapSaldoAnggota(payload, this.user.token);
+        let req = await easycoApi.laporanPembiayaanRekapPencairanPembiayaan(payload, this.user.token);
         const {
           data,
           status,
           msg = '',
           total_anggota,
-          total_simwa,
-          total_simpok,
-          total_simsuk,
-          total_saldo_pokok,
-          total_saldo_margin,
-          total_saldo_catab,
+          total_pokok,
         } = req.data;
         if (status) {
 
           if (data && data.length > 0) {
             data.forEach(item => {
               item.jumlah_anggota = this.numberFormat(item.jumlah_anggota, 0);
-              item.simwa = this.numberFormat(item.simwa, 0);
-              item.simpok = this.numberFormat(item.simpok, 0);
-              item.simsuk = this.numberFormat(item.simsuk, 0);
-              item.saldo_pokok = this.numberFormat(item.saldo_pokok, 0);
-              item.saldo_margin = this.numberFormat(item.saldo_margin, 0);
-              item.saldo_catab = this.numberFormat(item.saldo_catab, 0);
+              item.nominal = this.numberFormat(item.nominal, 0);
+              item.persen_jumlah = this.numberFormat(item.persen_jumlah, 0);
+              item.persen_nominal = this.numberFormat(item.persen_nominal, 0);
             });
           }
 
@@ -460,29 +444,9 @@ export default {
               value: this.numberFormat(total_anggota, 0),
             },
             {
-              text: "Total SIMWA",
-              value: this.numberFormat(total_simwa, 0),
+              text: "Total Pokok",
+              value: this.numberFormat(total_pokok, 0),
             },
-            {
-              text: "Total SIMPOK",
-              value: this.numberFormat(total_simpok, 0),
-            },
-            {
-              text: "Total SIMSUK",
-              value: this.numberFormat(total_simsuk, 0),
-            },
-            {
-              text: "Total Saldo Pokok",
-              value: this.numberFormat(total_saldo_pokok, 0),
-            },
-            {
-              text: "Total Saldo Margin",
-              value: this.numberFormat(total_saldo_margin, 0),
-            },
-            {
-              text: "Total Saldo Catab",
-              value: this.numberFormat(total_saldo_catab, 0),
-            }
           ];
         } else {
           this.notify("danger", "Error", msg);
