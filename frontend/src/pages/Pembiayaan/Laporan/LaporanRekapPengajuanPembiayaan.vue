@@ -59,7 +59,7 @@
         <h5 class="text-center">
           KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
         </h5>
-        <h5 class="text-center">SALDO KAS PETUGAS</h5>
+        <h5 class="text-center">Rekap Pengajuan Pembiayaan </h5>
         <h5 class="text-center" v-show="nama_cabang">Cabang: {{ nama_cabang }}</h5>
         <h5 class="text-center" v-show="rekap_by_nama">Rekap By: {{ rekap_by_nama }}</h5>
         <h6 class="text-center mb-5 pb-5" v-show="paging.from_date && paging.thru_date">Tanggal
