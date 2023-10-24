@@ -225,7 +225,7 @@ export default {
       const singleObjKodeCabang = this.opt.kode_cabang.find(item => item.value == this.paging.kode_cabang);
       const singleObjRekapBy = this.opt.rekap_by.find(item => item.value == this.paging.rekap_by);
 
-      let fileName = "SALDO KAS PETUGAS_";
+      let fileName = "REKAP PENGAJUAN PEMBIAYAAN_";
       fileName += `Cabang-${(singleObjKodeCabang?.value != null ? singleObjKodeCabang?.text : '')}_`;
       fileName += `Rekap By-${(singleObjRekapBy?.value != null ? singleObjRekapBy?.text : '')}_`;
       fileName += `Dari ${this.dateFormatId(this.paging.from_date)} Sampai ${this.dateFormatId(this.paging.thru_date)}`;
