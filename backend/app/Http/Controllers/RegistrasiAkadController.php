@@ -768,7 +768,7 @@ class RegistrasiAkadController extends Controller
                 'periode_setoran' => 0,
                 'jangka_waktu' => 0,
                 'no_rekening' => $no_rekening,
-                'flag_taber' => 0,
+                'flag_taber' => 1,
                 'tanggal_buka' => date('Y-m-d'),
                 'created_by' => 'SYSTEM'
             );
@@ -783,7 +783,7 @@ class RegistrasiAkadController extends Controller
                 'periode_setoran' => 0,
                 'jangka_waktu' => 0,
                 'no_rekening' => $no_rekening,
-                'flag_taber' => 0,
+                'flag_taber' => 1,
                 'tanggal_buka' => date('Y-m-d'),
                 'created_by' => 'SYSTEM'
             );

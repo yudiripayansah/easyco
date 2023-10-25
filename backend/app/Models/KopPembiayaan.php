@@ -333,7 +333,7 @@ class KopPembiayaan extends Model
             ->join('kop_pengajuan AS kpg', 'kpg.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
             ->join('kop_anggota AS ka', 'ka.no_anggota', 'kpg.no_anggota')
             ->where('ka.kode_rembug', $kode_rembug)
-            ->where('kop_pembiayaan.status_rekening', 1)
+            ->where('kop_pembiayaan.status_rekening', 0)
             ->where('kop_pembiayaan.status_droping', 0)
             ->get();
 
