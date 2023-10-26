@@ -267,7 +267,7 @@ export default {
     },
     async exportXls() {
       this.showOverlay = true;
-      const payload = `kode_cabang=${this.paging.kode_cabang}&tanggal=${this.paging.tanggal}`;
+      const payload = `kode_cabang=${this.paging.kode_cabang}&rekap_by=${this.paging.rekap_by}&from_date=${this.paging.from_date}&thru_date=${this.paging.thru_date}`;
       const req = await easycoApi.listReportRekapPengajuanExportToXLSX(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
@@ -280,7 +280,7 @@ export default {
     },
     async exportCsv() {
       this.showOverlay = true;
-      const payload = `kode_cabang=${this.paging.kode_cabang}&tanggal=${this.paging.tanggal}`;
+      const payload = `kode_cabang=${this.paging.kode_cabang}&rekap_by=${this.paging.rekap_by}&from_date=${this.paging.from_date}&thru_date=${this.paging.thru_date}`;
       const req = await easycoApi.listReportRekapPengajuanExportToCSV(payload);
       const url = window.URL.createObjectURL(new Blob([req.data]));
       const link = document.createElement("a");
