@@ -90,7 +90,7 @@
               <tr v-for="(table, tableIndex) in table.items" :key="`table-${tableIndex}`">
                 <td class="text-center">{{ tableIndex + 1 }}</td>
                 <td class="text-left">{{ table.keterangan }}</td>
-                <td class="text-right">{{ table.jumlah_anggota }}</td>
+                <td class="text-center">{{ table.jumlah_anggota }}</td>
                 <td class="text-right">Rp. {{ table.nominal }}</td>
                 <td class="text-right">{{ table.persen_jumlah }} %</td>
                 <td class="text-right">{{ table.persen_nominal }} %</td>
