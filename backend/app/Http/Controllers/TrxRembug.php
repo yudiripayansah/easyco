@@ -658,4 +658,37 @@ class TrxRembug extends Controller
 
         return $response;
     }
+
+    function proses_pinbuk_simsuk(Request $request)
+    {
+        $no_rekening = $request->no_rekening;
+        $amount = (int) $request->amount;
+        $trx_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->trx_date)));
+
+        DB::beginTransaction();
+
+        try {
+            KopTrxRembug::proses_pinbuk($no_rekening, $amount, $trx_date);
+
+            $res = array(
+                'status' => TRUE,
+                'data' => NULL,
+                'msg' => 'Berhasil!'
+            );
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            $res = array(
+                'status' => FALSE,
+                'data' => $request->all(),
+                'msg' => $e->getMessage()
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
 }
