@@ -292,4 +292,9 @@ class KopTrxRembug extends Model
 
         return $show;
     }
+
+    function proses_pinbuk($no_rekening, $amount, $trx_date)
+    {
+        DB::select("SELECT fn_pinbuk_tab_ke_simsuk('" . $no_rekening . "','" . $amount . "','" . $trx_date . "')");
+    }
 }
