@@ -115,9 +115,9 @@
               <td>{{ reportIndex + 1 }}</td>
               <td>{{ report.voucher_date }}</td>
               <td>{{ report.keterangan }}</td>
-              <td>{{ report.debit_credit == "D" ? report.jumlah_trx : 0 }}</td>
-              <td>{{ report.debit_credit == "C" ? report.jumlah_trx : 0 }}</td>
-              <td>{{ report.saldo }}</td>
+              <td class="text-right">{{ numberFormat(report.debit_credit == "D" ? report.jumlah_trx : 0) }}</td>
+              <td class="text-right">{{ numberFormat(report.debit_credit == "C" ? report.jumlah_trx : 0) }}</td>
+              <td class="text-right">{{ numberFormat(report.saldo) }}</td>
             </tr>
           </tbody>
           <tbody v-else>
@@ -196,21 +196,21 @@ export default {
             sortable: false,
             label: "Debit",
             thClass: "text-center",
-            tdClass: "",
+            tdClass: "text-right",
           },
           {
             key: "kredit",
             sortable: false,
             label: "Kredit",
             thClass: "text-center",
-            tdClass: "",
+            tdClass: "text-right",
           },
           {
             key: "saldo",
             sortable: false,
             label: "Saldo",
             thClass: "text-center",
-            tdClass: "",
+            tdClass: "text-right",
           },
         ],
         items: [],
@@ -283,6 +283,9 @@ export default {
       opt: {
         petugas: [],
       },
+      debit: 0,
+      kredit: 0,
+      saldo: 0,
     };
   },
   computed: {
@@ -408,6 +411,12 @@ export default {
         let req = await easycoApi.getTrxKasPetugas(payload, this.user.token);
         let { data, status, msg, total } = req.data;
         if (status) {
+          if (data && data.length > 0) {
+            data.forEach(item => {
+              item.jumlah_trx = this.numberFormat(item.jumlah_trx, 0);
+              item.saldo = this.numberFormat(item.saldo, 0);
+            });
+          }
           this.table.items = data;
           this.table.totalRows = total;
         } else {

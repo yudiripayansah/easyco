@@ -44,6 +44,15 @@
               <template #cell(no)="item">
                 {{ item.index + 1 }}
               </template>
+              <template #cell(nominal)="table">
+              Rp. {{ table.item.nominal }}
+            </template>
+            <template #cell(persen_jumlah)="table">
+              {{ table.item.persen_jumlah }} %
+            </template>
+            <template #cell(persen_nominal)="table">
+              {{ table.item.persen_nominal }} %
+            </template>
             </b-table>
           </b-col>
           <b-col cols="12" class="justify-content-end d-flex">
@@ -59,7 +68,7 @@
         <h5 class="text-center">
           KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
         </h5>
-        <h5 class="text-center">SALDO KAS PETUGAS</h5>
+        <h5 class="text-center">REKAP PENGAJUAN PEMBIAYAAN</h5>
         <h5 class="text-center" v-show="nama_cabang">Cabang: {{ nama_cabang }}</h5>
         <h5 class="text-center" v-show="rekap_by_nama">Rekap By: {{ rekap_by_nama }}</h5>
         <h6 class="text-center mb-5 pb-5" v-show="paging.from_date && paging.thru_date">Tanggal
@@ -81,10 +90,10 @@
               <tr v-for="(table, tableIndex) in table.items" :key="`table-${tableIndex}`">
                 <td class="text-center">{{ tableIndex + 1 }}</td>
                 <td class="text-left">{{ table.keterangan }}</td>
-                <td class="text-right">{{ table.jumlah_anggota }}</td>
-                <td class="text-right">{{ table.nominal }}</td>
-                <td class="text-right">{{ table.persen_jumlah }}</td>
-                <td class="text-right">{{ table.persen_nominal }}</td>
+                <td class="text-center">{{ table.jumlah_anggota }}</td>
+                <td class="text-right">Rp. {{ table.nominal }}</td>
+                <td class="text-right">{{ table.persen_jumlah }} %</td>
+                <td class="text-right">{{ table.persen_nominal }} %</td>
               </tr>
             </tbody>
             <tbody v-else>
@@ -225,7 +234,7 @@ export default {
       const singleObjKodeCabang = this.opt.kode_cabang.find(item => item.value == this.paging.kode_cabang);
       const singleObjRekapBy = this.opt.rekap_by.find(item => item.value == this.paging.rekap_by);
 
-      let fileName = "SALDO KAS PETUGAS_";
+      let fileName = "REKAP PENGAJUAN PEMBIAYAAN_";
       fileName += `Cabang-${(singleObjKodeCabang?.value != null ? singleObjKodeCabang?.text : '')}_`;
       fileName += `Rekap By-${(singleObjRekapBy?.value != null ? singleObjRekapBy?.text : '')}_`;
       fileName += `Dari ${this.dateFormatId(this.paging.from_date)} Sampai ${this.dateFormatId(this.paging.thru_date)}`;
@@ -371,8 +380,8 @@ export default {
             data.forEach(item => {
               item.jumlah_anggota = this.numberFormat(item.jumlah_anggota, 0);
               item.nominal = this.numberFormat(item.nominal, 0);
-              item.persen_jumlah = this.numberFormat(item.persen_jumlah, 0);
-              item.persen_nominal = this.numberFormat(item.persen_nominal, 0);
+              item.persen_jumlah = this.numberFormat(item.persen_jumlah, 2);
+              item.persen_nominal = this.numberFormat(item.persen_nominal, 2);
             });
           }
 
