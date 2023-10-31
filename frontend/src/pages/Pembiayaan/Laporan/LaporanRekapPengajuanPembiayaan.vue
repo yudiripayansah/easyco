@@ -63,7 +63,7 @@
       </b-card>
     </b-overlay>
 
-    <b-modal title="PREVIEW SALDO KAS PETUGAS" id="modal-pdf" hide-footer size="xl" centered>
+    <b-modal title="PREVIEW REKAP PENGAJUAN PEMBIAYAAN" id="modal-pdf" hide-footer size="xl" centered>
       <div id="table-print" class="p-5">
         <h5 class="text-center">
           KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
