@@ -42,10 +42,10 @@
               Rp. {{ table.item.saldo_catab }}
             </template>
             <template #cell(persen_jumlah)="table">
-              {{ table.item.persen_jumlah }} %
+              {{ (table.item.persen_jumlah * 10).toFixed(2) }}%
             </template>
             <template #cell(persen_nominal)="table">
-              {{ table.item.persen_nominal }} %
+              {{ (table.item.persen_nominal * 10).toFixed(2) }}%
             </template>
             </b-table>
           </b-col>
@@ -104,8 +104,8 @@
                   <td class="text-right">Rp. {{ table.saldo_pokok }}</td>
                   <td class="text-right">Rp. {{ table.saldo_margin }}</td>
                   <td class="text-right">Rp. {{ table.saldo_catab }}</td>
-                  <td class="text-right">{{ table.persen_jumlah }} %</td>
-                  <td class="text-right">{{ table.persen_nominal }} %</td>
+                  <td class="text-right">{{ (table.persen_jumlah * 10).toFixed(2) }}%</td>
+                  <td class="text-right">{{ (table.persen_nominal * 10).toFixed(2) }}%</td>
                 </tr>
               </tbody>
               <tbody v-else>
@@ -442,8 +442,8 @@ export default {
               item.saldo_pokok = this.numberFormat(item.saldo_pokok, 0);
               item.saldo_margin = this.numberFormat(item.saldo_margin, 0);
               item.saldo_catab = this.numberFormat(item.saldo_catab, 0);
-              item.persen_jumlah = this.numberFormat(item.persen_jumlah, 2);
-              item.persen_nominal = this.numberFormat(item.persen_nominal, 2);
+              item.persen_jumlah = this.numberFormat(item.persen_jumlah, 0);
+              item.persen_nominal = this.numberFormat(item.persen_nominal, 0);
             });
           }
 
