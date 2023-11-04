@@ -42,10 +42,10 @@
               Rp. {{ table.item.saldo_catab }}
             </template>
             <template #cell(persen_jumlah)="table">
-              {{ table.item.persen_jumlah }} %
+              {{ table.item.persen_jumlah }}%
             </template>
             <template #cell(persen_nominal)="table">
-              {{ table.item.persen_nominal }} %
+              {{ table.item.persen_nominal }}%
             </template>
             </b-table>
           </b-col>
@@ -104,8 +104,8 @@
                   <td class="text-right">Rp. {{ table.saldo_pokok }}</td>
                   <td class="text-right">Rp. {{ table.saldo_margin }}</td>
                   <td class="text-right">Rp. {{ table.saldo_catab }}</td>
-                  <td class="text-right">{{ table.persen_jumlah }} %</td>
-                  <td class="text-right">{{ table.persen_nominal }} %</td>
+                  <td class="text-right">{{ table.persen_jumlah }}%</td>
+                  <td class="text-right">{{ table.persen_nominal }}%</td>
                 </tr>
               </tbody>
               <tbody v-else>
@@ -181,8 +181,8 @@ export default {
             key: "jumlah_anggota",
             sortable: true,
             label: "Jumlah Anggota",
-            thClass: "text-center",
-            tdClass: "text-center",
+            thClass: "text-center w-15p",
+            tdClass: "text-center w-15p",
           },
           {
             key: "saldo_pokok",
@@ -208,14 +208,14 @@ export default {
           {
             key: "persen_jumlah",
             sortable: true,
-            label: "Persen Jumlah",
+            label: "% Jumlah",
             thClass: "text-center",
             tdClass: "text-right",
           },
           {
             key: "persen_nominal",
             sortable: true,
-            label: "Persen Nominal",
+            label: "% Nominal",
             thClass: "text-center",
             tdClass: "text-right",
           },
@@ -442,8 +442,8 @@ export default {
               item.saldo_pokok = this.numberFormat(item.saldo_pokok, 0);
               item.saldo_margin = this.numberFormat(item.saldo_margin, 0);
               item.saldo_catab = this.numberFormat(item.saldo_catab, 0);
-              item.persen_jumlah = this.numberFormat(item.persen_jumlah, 2);
-              item.persen_nominal = this.numberFormat(item.persen_nominal, 2);
+              item.persen_jumlah = item.persen_jumlah;
+              item.persen_nominal = item.persen_nominal;
             });
           }
 

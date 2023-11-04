@@ -48,10 +48,10 @@
               Rp. {{ table.item.nominal }}
             </template>
             <template #cell(persen_jumlah)="table">
-              {{ table.item.persen_jumlah }} %
+              {{ table.item.persen_jumlah }}%
             </template>
             <template #cell(persen_nominal)="table">
-              {{ table.item.persen_nominal }} %
+              {{ table.item.persen_nominal }}%
             </template>
             </b-table>
           </b-col>
@@ -110,8 +110,8 @@
                   <td class="text-left">{{ table.keterangan }}</td>
                   <td class="text-center">{{ table.jumlah_anggota }}</td>
                   <td class="text-right">Rp. {{ table.nominal }}</td>
-                  <td class="text-right">{{ table.persen_jumlah }} %</td>
-                  <td class="text-right">{{ table.persen_nominal }} %</td>
+                  <td class="text-right">{{ table.persen_jumlah }}%</td>
+                  <td class="text-right">{{ table.persen_nominal }}%</td>
                 </tr>
               </tbody>
               <tbody v-else>
@@ -187,7 +187,7 @@ export default {
             key: "jumlah_anggota",
             sortable: true,
             label: "Jumlah Anggota",
-            thClass: "text-center",
+            thClass: "text-center w-15p",
             tdClass: "text-center",
           },
           {
@@ -200,14 +200,14 @@ export default {
           {
             key: "persen_jumlah",
             sortable: true,
-            label: "Persen Jumlah",
+            label: "% Jumlah",
             thClass: "text-center",
             tdClass: "text-right",
           },
           {
             key: "persen_nominal",
             sortable: true,
-            label: "Persen Nominal",
+            label: "% Nominal",
             thClass: "text-center",
             tdClass: "text-right",
           },
@@ -439,8 +439,8 @@ export default {
             data.forEach(item => {
               item.jumlah_anggota = this.numberFormat(item.jumlah_anggota, 0);
               item.nominal = this.numberFormat(item.nominal, 0);
-              item.persen_jumlah = this.numberFormat(item.persen_jumlah, 2);
-              item.persen_nominal = this.numberFormat(item.persen_nominal, 2);
+              item.persen_jumlah = item.persen_jumlah;
+              item.persen_nominal = item.persen_nominal;
             });
           }
 

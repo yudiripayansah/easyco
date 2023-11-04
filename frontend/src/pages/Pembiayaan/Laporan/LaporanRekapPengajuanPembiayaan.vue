@@ -48,10 +48,10 @@
               Rp. {{ table.item.nominal }}
             </template>
             <template #cell(persen_jumlah)="table">
-              {{ table.item.persen_jumlah }} %
+              {{ table.item.persen_jumlah }}%
             </template>
             <template #cell(persen_nominal)="table">
-              {{ table.item.persen_nominal }} %
+              {{ table.item.persen_nominal }}%
             </template>
             </b-table>
           </b-col>
@@ -59,11 +59,28 @@
             <b-pagination v-model="paging.currentPage" :total-rows="table.totalRows" :per-page="paging.perPage"
               aria-controls="my-table"></b-pagination>
           </b-col>
+          <b-col md="4" offset-md="8">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th v-for="tableSummary in tableSummary.fields" :key="tableSummary.key" :class="tableSummary.thClass">{{
+                    tableSummary.label }}</th>
+                </tr>
+              </thead>
+              <tbody v-if="tableSummary && tableSummary.items && tableSummary.items.length > 0">
+                <tr v-for="(tableSummary, tableSummaryIndex) in tableSummary.items"
+                  :key="`tableSummary-${tableSummaryIndex}`">
+                  <td class="text-left">{{ tableSummary.text }}</td>
+                  <td class="text-right">{{ tableSummary.value }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </b-col>
         </b-row>
       </b-card>
     </b-overlay>
 
-    <b-modal title="PREVIEW SALDO KAS PETUGAS" id="modal-pdf" hide-footer size="xl" centered>
+    <b-modal title="PREVIEW REKAP PENGAJUAN PEMBIAYAAN" id="modal-pdf" hide-footer size="xl" centered>
       <div id="table-print" class="p-5">
         <h5 class="text-center">
           KSPPS MITRA SEJAHTERA RAYA INDONESIA ( MSI )
@@ -92,8 +109,8 @@
                 <td class="text-left">{{ table.keterangan }}</td>
                 <td class="text-center">{{ table.jumlah_anggota }}</td>
                 <td class="text-right">Rp. {{ table.nominal }}</td>
-                <td class="text-right">{{ table.persen_jumlah }} %</td>
-                <td class="text-right">{{ table.persen_nominal }} %</td>
+                <td class="text-right">{{ table.persen_jumlah }}%</td>
+                <td class="text-right">{{ table.persen_nominal }}%</td>
               </tr>
             </tbody>
             <tbody v-else>
@@ -103,6 +120,23 @@
             </tbody>
           </table>
         </div>
+        <b-col md="4" offset-md="8">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th v-for="tableSummary in tableSummary.fields" :key="tableSummary.key" :class="tableSummary.thClass">
+                  {{ tableSummary.label }}</th>
+              </tr>
+            </thead>
+            <tbody v-if="tableSummary && tableSummary.items && tableSummary.items.length > 0">
+              <tr v-for="(tableSummary, tableSummaryIndex) in tableSummary.items"
+                :key="`tableSummary-${tableSummaryIndex}`">
+                <td class="text-left">{{ tableSummary.text }}</td>
+                <td class="text-right">{{ tableSummary.value }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </b-col>
       </div>
       <b-row>
         <b-col cols="12" sm="12" class="d-flex justify-content-end border-top pt-5">
@@ -151,7 +185,7 @@ export default {
             key: "jumlah_anggota",
             sortable: true,
             label: "Jumlah Anggota",
-            thClass: "text-center",
+            thClass: "text-center w-15p",
             tdClass: "text-center",
           },
           {
@@ -164,14 +198,14 @@ export default {
           {
             key: "persen_jumlah",
             sortable: true,
-            label: "Persen Jumlah",
+            label: "% Jumlah",
             thClass: "text-center",
             tdClass: "text-center",
           },
           {
             key: "persen_nominal",
             sortable: true,
-            label: "Persen Nominal",
+            label: "% Nominal",
             thClass: "text-center",
             tdClass: "text-center",
           },
@@ -179,6 +213,25 @@ export default {
         items: [],
         loading: false,
         totalRows: 0,
+      },
+      tableSummary: {
+        fields: [
+          {
+            key: "keterangan",
+            sortable: false,
+            label: "Keterangan",
+            thClass: "text-center w-5p",
+            tdClass: "text-center",
+          },
+          {
+            key: "saldo",
+            sortable: false,
+            label: "Saldo",
+            thClass: "text-center w-5p",
+            tdClass: "text-center",
+          },
+        ],
+        items: []
       },
       paging: {
         currentPage: 1,
@@ -250,7 +303,7 @@ export default {
         jsPDF: {
           unit: "in",
           format: "a4",
-          orientation: "landscape",
+          orientation: "portrait",
         },
       };
       html2pdf()
@@ -270,7 +323,7 @@ export default {
         jsPDF: {
           unit: "in",
           format: "a4",
-          orientation: "landscape",
+          orientation: "portrait",
         },
       });
     },
@@ -369,6 +422,8 @@ export default {
           data,
           status,
           msg,
+          total_anggota,
+          total_pokok,
           // total,
           // totalPage,
           // perPage,
@@ -380,14 +435,24 @@ export default {
             data.forEach(item => {
               item.jumlah_anggota = this.numberFormat(item.jumlah_anggota, 0);
               item.nominal = this.numberFormat(item.nominal, 0);
-              item.persen_jumlah = this.numberFormat(item.persen_jumlah, 2);
-              item.persen_nominal = this.numberFormat(item.persen_nominal, 2);
+              item.persen_jumlah = item.persen_jumlah;
+              item.persen_nominal = item.persen_nominal;
             });
           }
 
           this.table.items = data;
           this.table.totalRows = data.length;
           // this.paging.perPage = Number(perPage);
+          this.tableSummary.items = [
+            {
+              text: "Total Anggota",
+              value: this.numberFormat(total_anggota, 0),
+            },
+            {
+              text: "Total Pokok",
+              value: this.numberFormat(total_pokok, 0),
+            },
+          ];
         } else {
           this.notify("danger", "Error", msg);
         }
