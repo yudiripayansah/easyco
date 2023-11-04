@@ -11,6 +11,7 @@ import pembiayaanLaporanRekapPengajuanPembiayaan from "./pembiayaanLaporanRekapP
 import keanggotaanLaporanRekapSaldoAnggota from "./keanggotaanLaporanRekapSaldoAnggota.service";
 import pembiayaanLaporanRekapPencairanPembiayaan from "./pembiayaanLaporanRekapPencairanPembiayaan.service";
 import pembiayaanLaporanRekapOutstandingPiutang from "./pembiayaanLaporanRekapOutstandingPiutang.service";
+import tabunganPinBukSaldoTabunganSukarela from "./tabunganPinBukSaldoTabunganSukarela.service";
 
 const easycoApi = {
   login(payload) {
@@ -1556,5 +1557,6 @@ const easycoApi = {
   ...keanggotaanLaporanRekapSaldoAnggota,
   ...pembiayaanLaporanRekapPencairanPembiayaan,
   ...pembiayaanLaporanRekapOutstandingPiutang,
+  ...tabunganPinBukSaldoTabunganSukarela,
 };
 export default easycoApi;

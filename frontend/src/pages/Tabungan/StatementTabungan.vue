@@ -541,7 +541,7 @@ export default {
                 }
             } catch (error) {
                 console.error(error);
-                this.notify("danger", "Login Error", error);
+                this.notify("danger", "Get Anggota", error);
             }
         },
         async doGetRekening() {
@@ -583,7 +583,7 @@ export default {
                 }
             } catch (error) {
                 console.error(error);
-                this.notify("danger", "Login Error", error);
+                this.notify("danger", "Get Rekening", error);
             }
         },
         async doGet() {
