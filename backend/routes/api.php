@@ -365,6 +365,7 @@ Route::prefix('trx_rembug')->middleware('checkToken')->group(function () {
   Route::post('/reject', [TrxRembug::class, 'reject']);
   Route::post('/read_trx_kas_petugas', [TrxRembug::class, 'read_trx_kas_petugas']);
   Route::post('/proses_kas_petugas', [TrxRembug::class, 'proses_kas_petugas']);
+  Route::post('/proses_pinbuk_simsuk', [TrxRembug::class, 'proses_pinbuk_simsuk']);
 });
 /* END BACK OFFICE */
 

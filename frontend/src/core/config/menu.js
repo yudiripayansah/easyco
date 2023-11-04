@@ -79,6 +79,11 @@ const menu = [
       //   component: import('@/pages/Dummy.vue'),
       // },
       {
+        target: 'pinbuk-saldo-tabungan-sukarela',
+        label: 'Pinbuk Saldo Tabungan ke Sukarela',
+        component: import('@/pages/Tabungan/TabunganPinBukSaldoTabunganSukarela.vue'),
+      },
+      {
         target: 'verifikasi-pencairan-tabungan',
         label: 'Verifikasi Pencairan Tabungan',
         component: import('@/pages/Tabungan/VerifikasiPencairanTabungan.vue'),
