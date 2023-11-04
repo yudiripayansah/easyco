@@ -6,23 +6,29 @@
         <b-col cols="8" class="mb-5">
           <div class="row">
             <b-col cols="4">
-              <b-input-group prepend="Cabang" class="mb-3">
-                <b-form-select v-model="paging.cabang" :options="opt.cabang" />
-              </b-input-group>
-            </b-col>
-            <b-col cols="4">
-              <b-input-group prepend="Majelis" class="mb-3">
-                <b-form-select v-model="paging.rembug" :options="opt.rembug" />
-              </b-input-group>
-            </b-col>
-            <b-col cols="4">
-              <b-input-group prepend="Petugas" class="mb-3">
-                <b-form-select
-                  v-model="paging.petugas"
-                  :options="opt.petugas"
-                />
-              </b-input-group>
-            </b-col>
+                  <b-input-group prepend="Cabang" class="mb-3">
+                    <b-form-select
+                      v-model="paging.cabang"
+                      :options="opt.cabang"
+                    />
+                  </b-input-group>
+                </b-col>
+                <b-col cols="4">
+                  <b-input-group prepend="Petugas" class="mb-3">
+                    <b-form-select
+                      v-model="paging.petugas"
+                      :options="opt.petugas"
+                    />
+                  </b-input-group>
+                </b-col>
+                <b-col cols="4">
+                  <b-input-group prepend="Majelis" class="mb-3">
+                    <b-form-select
+                      v-model="paging.rembug"
+                      :options="opt.rembug"
+                    />
+                  </b-input-group>
+                </b-col>
             <b-col cols="6">
               <b-input-group prepend="Dari Tanggal">
                 <b-form-datepicker v-model="paging.from" />
@@ -284,7 +290,9 @@ export default {
         items: [],
         loading: false,
         totalRows: 0,
-        cabang: null,
+        cabang: 0,
+        petugas: 0,
+        rembug: 0,
         from: null,
         to: null,
       },
@@ -295,9 +303,9 @@ export default {
         sortBy: "kop_anggota.id",
         search: "",
         status: "~",
-        cabang: 0,
-        rembug: 0,
-        petugas: 0,
+        cabang: null,
+        petugas: null,
+        rembug: null,
         from: null,
         to: null,
       },
@@ -323,6 +331,7 @@ export default {
     this.doGet();
     this.doGetCabang();
     this.doGetPetugas();
+    this.doGetRembug();
   },
   methods: {
     ...helper,
@@ -436,6 +445,54 @@ export default {
             this.opt.cabang.push({
               value: item.kode_cabang,
               text: item.nama_cabang,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doGetPetugas() {
+      let payload = null;
+      try {
+        let req = await easycoApi.petugasRead(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.petugas = [
+            {
+              value: null,
+              text: "All",
+            },
+          ];
+          data.map((item) => {
+            this.opt.petugas.push({
+              value: Number(item.kode_petugas),
+              text: item.nama_kas_petugas,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doGetRembug() {
+      let payload = {
+        kode_cabang: this.user.kode_cabang,
+      };
+      try {
+        let req = await easycoApi.anggotaRembug(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.rembug = [
+            {
+              value: null,
+              text: "All",
+            },
+          ];
+          data.map((item) => {
+            this.opt.rembug.push({
+              value: Number(item.kode_rembug),
+              text: item.nama_rembug,
             });
           });
         }
