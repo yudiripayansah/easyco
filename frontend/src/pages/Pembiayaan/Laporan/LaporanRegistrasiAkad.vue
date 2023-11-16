@@ -5,11 +5,30 @@
       <b-row no-gutters>
         <b-col cols="8" class="mb-5">
           <div class="row">
-            <b-col cols="12">
-              <b-input-group prepend="Cabang" class="mb-3">
-                <b-form-select v-model="paging.cabang" :options="opt.cabang" />
-              </b-input-group>
-            </b-col>
+            <b-col cols="4">
+                  <b-input-group prepend="Cabang" class="mb-3">
+                    <b-form-select
+                      v-model="paging.cabang"
+                      :options="opt.cabang"
+                    />
+                  </b-input-group>
+                </b-col>
+                <b-col cols="4">
+                  <b-input-group prepend="Petugas" class="mb-3">
+                    <b-form-select
+                      v-model="paging.petugas"
+                      :options="opt.petugas"
+                    />
+                  </b-input-group>
+                </b-col>
+                <b-col cols="4">
+                  <b-input-group prepend="Majelis" class="mb-3">
+                    <b-form-select
+                      v-model="paging.rembug"
+                      :options="opt.rembug"
+                    />
+                  </b-input-group>
+                </b-col>
             <b-col>
               <b-input-group prepend="Dari Tanggal">
                 <b-form-datepicker
@@ -109,6 +128,8 @@
         </h5>
         <h5 class="text-center">LAPORAN REGISTRASI AKAD PEMBIAYAAN</h5>
         <h5 class="text-center" v-show="report.cabang">{{ report.cabang }}</h5>
+        <h5 class="text-center" v-show="report.petugas">{{ report.petugas }}</h5>
+        <h5 class="text-center" v-show="report.rembug">{{ report.rembug }}</h5>
         <h6 class="text-center mb-5 pb-5" v-show="report.from && report.to">
           Tanggal {{ dateFormatId(report.from) }} s.d
           {{ dateFormatId(report.to) }}
@@ -335,7 +356,9 @@ export default {
         items: [],
         loading: false,
         totalRows: 0,
-        cabang: null,
+        cabang: 0,
+        petugas: 0,
+        rembug: 0,
         from: null,
         to: null,
       },
@@ -346,11 +369,15 @@ export default {
         sortBy: "kop_pembiayaan.tanggal_registrasi",
         search: "",
         cabang: null,
+        petugas: null,
+        rembug: null,
         from: null,
         to: null,
       },
       opt: {
         cabang: [],
+        petugas: [],
+        rembug: [],
       },
     };
   },
@@ -368,6 +395,8 @@ export default {
   mounted() {
     this.doGet();
     this.doGetCabang();
+    this.doGetPetugas();
+    this.doGetRembug();
     this.doGetReport();
   },
   methods: {
@@ -406,6 +435,8 @@ export default {
       let filename = "LAPORAN REGISTRASI AKAD";
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
+        filename += ` - Petugas ${this.report.petugas}`;
+        filename += ` - Majelis ${this.report.rembug}`;
       }
       if (this.report.from && this.report.to) {
         filename += ` - Dari ${this.dateFormatId(
@@ -497,7 +528,55 @@ export default {
           data.map((item) => {
             this.opt.cabang.push({
               value: item.kode_cabang,
-              text: item.nama_cabang,
+              text:`${item.kode_cabang} - ${item.nama_cabang}`,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doGetPetugas() {
+      let payload = null;
+      try {
+        let req = await easycoApi.petugasRead(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.petugas = [
+            {
+              value: null,
+              text: "All",
+            },
+          ];
+          data.map((item) => {
+            this.opt.petugas.push({
+              value: Number(item.kode_petugas),
+              text: `${item.kode_petugas} - ${item.nama_kas_petugas}`,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doGetRembug() {
+      let payload = {
+        kode_cabang: this.user.kode_cabang,
+      };
+      try {
+        let req = await easycoApi.anggotaRembug(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.rembug = [
+            {
+              value: null,
+              text: "All",
+            },
+          ];
+          data.map((item) => {
+            this.opt.rembug.push({
+              value: Number(item.kode_rembug),
+              text: item.nama_rembug,
             });
           });
         }

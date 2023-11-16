@@ -645,7 +645,7 @@ export default {
           data.map((item) => {
             this.opt.cabang.push({
               value: item.kode_cabang,
-              text: item.nama_cabang,
+              text: `${item.kode_cabang} - ${item.nama_cabang}`,
             });
           });
         }
@@ -661,15 +661,14 @@ export default {
         if (status) {
           this.opt.petugas = [
             {
-              value: [],
-              text: "Pilih Kantor Cabang",
-              disabled: true,
+              value: null,
+              text: "All",
             },
           ];
           data.map((item) => {
             this.opt.petugas.push({
               value: Number(item.kode_petugas),
-              text: item.nama_kas_petugas,
+              text: `${item.kode_petugas} - ${item.nama_kas_petugas}`,
             });
           });
         }
@@ -678,7 +677,6 @@ export default {
       }
     },
     async doGetRembug() {
-      this.opt.rembug = [];
       let payload = {
         kode_cabang: this.user.kode_cabang,
       };
