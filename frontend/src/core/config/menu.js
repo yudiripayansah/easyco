@@ -231,6 +231,11 @@ const menu = [
             label: 'PAR/ Kolektibilitas',
             component: import('@/pages/Pembiayaan/Laporan/LaporanKolektibilitas.vue'),
           },
+          {
+            target: 'rekapitulasi-par',
+            label: 'Rekap PAR/NPL',
+            component: import('@/pages/Pembiayaan/Laporan/LaporanRekapPar.vue'),
+          },
         ],
       },
     ]
