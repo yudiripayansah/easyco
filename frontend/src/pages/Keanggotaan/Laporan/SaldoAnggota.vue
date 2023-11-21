@@ -18,7 +18,7 @@
               <b-input-group prepend="Petugas" class="mb-3">
                 <b-form-select
                   v-model="paging.petugas"
-                  :options="opt.petugas" @change="doGetMajelis()"
+                  :options="opt.petugas" @change="doGetRembug()"
                 />
               </b-input-group>
             </b-col>
@@ -358,7 +358,9 @@ export default {
         items: [],
         loading: false,
         totalRows: 0,
-        cabang: null,
+        cabang: 0,
+        petugas: 0,
+        rembug: 0,
         from: null,
         to: null,
       },
@@ -369,9 +371,9 @@ export default {
         sortBy: "kop_anggota.id",
         search: "",
         status: "~",
-        cabang: 0,
-        rembug: 0,
-        petugas: 0
+        cabang: null,
+        petugas: null,
+        rembug: null,
       },
       opt: {
         cabang: [],
@@ -395,25 +397,25 @@ export default {
     this.doGet();
     this.doGetCabang();
     this.doGetPetugas();
-    this.doGetMajelis();
+    this.doGetRembug();
   },
   methods: {
     ...helper,
-    async doGetMajelis() {
+    async doGetRembug() {
       this.opt.rembug = [];
       let payload = {
-        perPage: "~",
         page: 1,
-        sortBy: "id",
-        sortDir: "ASC",
+        perPage: "~",
+        sortBy: "kode_rembug",
         search: "",
+        sortyDir: "ASC",
         kode_cabang: this.paging.cabang,
       };
       try {
-        let req = await easycoApi.rembugRead(payload, this.user.token);
+        let req = await easycoApi.anggotaRembug(payload, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
-          this.opt.majelis = [
+          this.opt.rembug = [
             {
               value: 0,
               text: "All",
@@ -421,7 +423,7 @@ export default {
           ];
           data.map((item) => {
             this.opt.rembug.push({
-              value: item.kode_rembug,
+              value: Number(item.kode_rembug),
               text: item.nama_rembug,
             });
           });
