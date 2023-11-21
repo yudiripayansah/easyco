@@ -10,21 +10,21 @@
                 <b-form-select
                   v-model="paging.cabang"
                   :options="opt.cabang"
-                  @change="doGetMajelis()"
+                  @change="doGetPetugas()"
                 />
-              </b-input-group>
-            </b-col>
-            <b-col cols="4">
-              <b-input-group prepend="Majelis" class="mb-3">
-                <b-form-select v-model="paging.rembug" :options="opt.rembug" />
               </b-input-group>
             </b-col>
             <b-col cols="4">
               <b-input-group prepend="Petugas" class="mb-3">
                 <b-form-select
                   v-model="paging.petugas"
-                  :options="opt.petugas"
+                  :options="opt.petugas" @change="doGetMajelis()"
                 />
+              </b-input-group>
+            </b-col>
+            <b-col cols="4">
+              <b-input-group prepend="Majelis" class="mb-3">
+                <b-form-select v-model="paging.rembug" :options="opt.rembug" />
               </b-input-group>
             </b-col>
             <!-- <b-col>
@@ -395,6 +395,7 @@ export default {
     this.doGet();
     this.doGetCabang();
     this.doGetPetugas();
+    this.doGetMajelis();
   },
   methods: {
     ...helper,
@@ -403,7 +404,7 @@ export default {
       let payload = {
         perPage: "~",
         page: 1,
-        sortBy: "kode_rembug",
+        sortBy: "id",
         sortDir: "ASC",
         search: "",
         kode_cabang: this.paging.cabang,
@@ -430,21 +431,29 @@ export default {
       }
     },
     async doGetPetugas() {
-      let payload = null;
+      this.opt.petugas = [];
+      let payload = {
+        page: 1,
+        perPage: "~",
+        sortBy: "kode_pgw",
+        search: "",
+        sortyDir: "ASC",
+        kode_cabang: this.paging.cabang,
+      };
       try {
-        let req = await easycoApi.petugasRead(payload, this.user.token);
-        let { data, status, msg } = req.data;
+        let req = await easycoApi.pegawaiRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
         if (status) {
-          this.opt.petugas = [
-            {
+          this.opt.petugas = [{
               value: 0,
               text: "All",
             },
+
           ];
           data.map((item) => {
             this.opt.petugas.push({
-              value: Number(item.kode_petugas),
-              text: `${item.kode_petugas} - ${item.nama_kas_petugas}`,
+              value: item.kode_pgw,
+              text: `${item.kode_pgw} - ${item.nama_pgw}`,
             });
           });
         }
@@ -543,6 +552,7 @@ export default {
       }
     },
     async doGetCabang() {
+      this.opt.cabang = [];
       let payload = {
         perPage: "~",
         page: 1,
