@@ -1,5 +1,5 @@
 import axios from "axios";
-axios.defaults.baseURL = "https://easyco.kopikoding.com/api/api/";
+axios.defaults.baseURL = "https://easyco.kopsyahmsi.com/api/api/";
 
 /**
  * BEGIN
