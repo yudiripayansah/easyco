@@ -1,5 +1,5 @@
 import axios from "axios";
-axios.defaults.baseURL = "https://easyco.kopikoding.com/api/api/";
+axios.defaults.baseURL = "https://easyco.kopsyahmsi.com/api/api/";
 
 /**
  * BEGIN
@@ -35,5 +35,14 @@ export default {
             responseType: 'blob'
         };
         return axios.get(url, config);
-    }
+    },
+    listTanggalPAR(payload, token) {
+        const url = "laporan/list/get_par_date";
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        return axios.post(url, payload, config);
+    },
 };
