@@ -513,7 +513,7 @@ export default {
     this.doGet();
     this.doGetCabang();
     this.doGetPetugas();
-    this.doGetRembug();
+    this.doGetMajelis();
   },
   methods: {
     ...helper,
@@ -685,9 +685,16 @@ export default {
         console.error(error);
       }
     },
-    async doGetRembug() {
+    async doGetMajelis() {
+      this.opt.rembug = [];
       let payload = {
-        kode_cabang: this.user.kode_cabang,
+        page: 1,
+        perPage: "~",
+        sortBy: "kode_rembug",
+        search: "",
+        sortyDir: "ASC",
+        kode_cabang: this.paging.cabang,
+        kode_petugas: this.paging.petugas
       };
       try {
         let req = await easycoApi.anggotaRembug(payload, this.user.token);
@@ -695,7 +702,7 @@ export default {
         if (status) {
           this.opt.rembug = [
             {
-              value: null,
+              value: 0,
               text: "All",
             },
           ];

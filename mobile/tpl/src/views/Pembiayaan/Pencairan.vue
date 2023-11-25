@@ -96,7 +96,7 @@ export default {
       opt: {
         rembug: [],
         anggota: [],
-        pembiayaan: []
+        pembiayaan: [],
       },
       alert: {
         show: false,
@@ -147,7 +147,7 @@ export default {
       payload.append('kode_rembug', this.form.data.kode_rembug)
       this.opt.anggota = []
       try {
-        let req = await services.infoMember(payload, this.user.token)
+        let req = await services.infoMemberDroping(payload, this.user.token)
         if(req.status === 200) {
           req.data.data.map((item) => {
             this.opt.anggota.push({

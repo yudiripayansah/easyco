@@ -103,7 +103,7 @@
                   label="Peruntukan"
                   hide-details
                   :items="opt.peruntukan"
-                  v-model="form.data.peruntukan"
+                  v-model="form.data.peruntukan" @change="getPeruntukan()"
                 />
               </v-col>
               <v-col cols="12">
@@ -286,16 +286,6 @@ export default {
           { value: 0, text: "Kelompok" },
           { value: 1, text: "Individu" },
         ],
-        peruntukan: [
-          { value: 1, text: "Modal kerja" },
-          { value: 2, text: "Investasi" },
-          { value: 3, text: "Pendidikan" },
-          { value: 4, text: "Perumahan" },
-          { value: 5, text: "Kesehatan" },
-          { value: 6, text: "Aset" },
-          { value: 9, text: "Lain-Lain" },
-          { value: 7, text: "Air bersih & Sanitasi" },
-        ],
         sumber_pengembalian: [
           { value: 0, text: "Sumber Usaha" },
           { value: 1, text: "Non Usaha" },],
@@ -316,6 +306,7 @@ export default {
         ],
         rembug: [],
         anggota: [],
+        peruntukan:[],
       },
       step: 1,
       rembug: null,
@@ -406,6 +397,27 @@ export default {
         }
       }
     },
+    async getPeruntukan() {
+      let payload = {
+        nama_kode: 'peruntukan'
+      };
+      try {
+        let req = await services.listkodeRead(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        console.log(data);
+        if (status) {
+          this.opt.peruntukan = [];
+          data.map((item) => {
+            this.opt.peruntukan.push({
+              value: item.kode_value,
+              text: item.kode_display,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
     async doSave() {
       console.log('save')
       let payload = new FormData();
@@ -478,6 +490,7 @@ export default {
   },
   mounted() {
     this.getRembug();
+    this.getPeruntukan();
     this.form.data.tanggal_pengajuan = this.getDate()
   },
 };
