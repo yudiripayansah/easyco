@@ -35,5 +35,14 @@ export default {
             responseType: 'blob'
         };
         return axios.get(url, config);
-    }
+    },
+    listTanggalPAR(payload, token) {
+        const url = "laporan/list/get_par_date";
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        return axios.post(url, payload, config);
+    },
 };
