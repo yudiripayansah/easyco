@@ -66,13 +66,13 @@
             ">
               PDF
             </b-button>
-            <export-excel class="btn btn-success" :data="report.items" :fields="report.field_excel" worksheet="Sheet 1"
+             <!--<export-excel class="btn btn-success" :data="report.items" :fields="report.field_excel" worksheet="Sheet 1"
               name="Profil_Anggota.xls">
               XLS
             </export-excel>
             <b-button text="Button" variant="warning" @click="csvExport(report.items)">
               CSV
-            </b-button>
+            </b-button>-->
           </b-button-group>
         </b-col>
         <b-col cols="12">
@@ -124,48 +124,89 @@
           Tanggal {{ dateFormatId(report.from) }} s.d
           {{ dateFormatId(report.to) }}
         </h6>
-        <table class="table table-bordered table-striped">
-          <thead>
-            <tr class="text-center">
-              <th rowspan="2">No</th>
-              <th rowspan="2">No Anggota</th>
-              <th rowspan="2">Nama Anggota</th>
-              <th rowspan="2">Nama Majelis</th>
-              <th rowspan="2">Nama Cabang</th>
-              <th rowspan="2">Desa</th>
-              <th rowspan="2">No Telp</th>
-              <th colspan="5">Saldo</th>
-            </tr>
-            <tr class="text-center">
-              <th>Simpok</th>
-              <th>Simwa</th>
-              <th>Sukarela</th>
-              <th>Taber</th>
-              <th>Pembiayaan</th>
-            </tr>
-          </thead>
-          <tbody v-if="report.items.length > 0">
-            <tr v-for="(report, reportIndex) in report.items" :key="`report-${reportIndex}`">
-              <td>{{ reportIndex + 1 }}</td>
-              <td>{{ report.no_anggota }}</td>
-              <td>{{ report.nama_anggota }}</td>
-              <td>{{ report.nama_rembug }}</td>
-              <td>{{ report.nama_cabang }}</td>
-              <td>{{ report.desa }}</td>
-              <td>{{ report.no_telp }}</td>
-              <td class="text-right">Rp {{ thousand(report.simpok) }}</td>
-              <td class="text-right">Rp {{ thousand(report.simwa) }}</td>
-              <td class="text-right">Rp {{ thousand(report.simsuk) }}</td>
-              <td class="text-right">Rp {{ thousand(0) }}</td>
-              <td class="text-right">Rp {{ thousand(0) }}</td>
-            </tr>
-          </tbody>
-          <tbody v-else>
-            <tr class="text-center">
-              <td colspan="12">There's no data to display...</td>
-            </tr>
-          </tbody>
-        </table>
+        <b-col cols="8" class="mb-5">
+          <div class="row">
+            <b-col cols="12">
+              <b-input-group prepend="Cabang" class="mb-3">
+                <b-form-select v-model="paging.cabang" :options="opt.cabang" @change="doGetMajelis()" />
+              </b-input-group>
+            </b-col>
+            <b-col>
+              <b-input-group prepend="Majelis">
+                <b-form-select v-model="paging.majelis" :options="opt.majelis" @change="doGetAnggota()" />
+              </b-input-group>
+            </b-col>
+            <b-col>
+              <b-input-group prepend="Anggota">
+                <b-form-select v-model="paging.anggota" :options="opt.anggota" @change="doGet()" /> </b-input-group><br />
+            </b-col>
+          </div>
+          <div class="row">
+            <!-- <b-col cols="6">
+              <b-input-group prepend="Nama Anggota" class="mb-3">
+                <b-form-input v-model="profil.nama_anggota" />
+              </b-input-group> 
+            </b-col> -->
+            <b-col cols="6">
+              <b-input-group prepend="No Anggota" class="mb-3">
+                <b-form-input v-model="profil.no_anggota" readonly />
+              </b-input-group>
+            </b-col>
+            <b-col cols="6">
+              <b-input-group prepend="Simpanan Pokok" class="mb-3">
+                <b-form-input v-model="profil.simpok" readonly />
+              </b-input-group>
+            </b-col>
+            <b-col cols="6">
+              <b-input-group prepend="No KTP" class="mb-3">
+                <b-form-input v-model="profil.no_ktp" readonly />
+              </b-input-group>
+            </b-col>
+            <b-col cols="6">
+              <b-input-group prepend="Simpanan Wajib" class="mb-3">
+                <b-form-input v-model="profil.simwa" readonly />
+              </b-input-group>
+            </b-col>
+            <b-col cols="6">
+              <b-input-group prepend="Alamat" class="mb-3">
+                <b-form-textarea v-model="profil.alamat" readonly />
+              </b-input-group>
+            </b-col>
+            <b-col cols="6">
+              <b-input-group prepend="Simpanan Sukarela" class="mb-3">
+                <b-form-input v-model="profil.simsuk" readonly />
+              </b-input-group>
+            </b-col>
+          </div>
+        </b-col>
+        <b-col cols="12">
+          <h1 class="text-center">Tabungan Berencana</h1>
+          <b-table responsive bordered outlined small striped hover :fields="table_1.fields" :items="table_1.items"
+            show-empty :emptyText="table_1.loading ? 'Memuat data...' : 'Tidak ada data'">
+            <template #cell(no)="item">
+              {{ item.index + 1 }}
+            </template>
+            <template #cell(action)="item">
+              <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item, false)">
+                Lihat statement
+              </b-button>
+            </template>
+          </b-table>
+        </b-col>
+        <b-col cols="12">
+          <h1 class="text-center">Pembiayaan</h1>
+          <b-table responsive bordered outlined small striped hover :fields="table_2.fields" :items="table_2.items"
+            show-empty :emptyText="table_2.loading ? 'Memuat data...' : 'Tidak ada data'">
+            <template #cell(no)="item">
+              {{ item.index + 1 }}
+            </template>
+            <template #cell(action)="item">
+              <b-button variant="success" size="xs" class="mx-1" @click="doUpdate(item, false)">
+                Lihat statement
+              </b-button>
+            </template>
+          </b-table>
+        </b-col>
       </div>
       <b-row>
         <b-col cols="12" sm="12" class="d-flex justify-content-end border-top pt-5">

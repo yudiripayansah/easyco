@@ -1,6 +1,6 @@
 import axios from 'axios';
 const Axios = axios.create({
-  baseURL: 'https://easyco.kopikoding.com/api/api/'
+  baseURL: 'https://easyco.kopsyahmsi.com/api/api/'
 })
 const authLogin = (payload) => {
   return Axios.post('/authenticate/login', payload)

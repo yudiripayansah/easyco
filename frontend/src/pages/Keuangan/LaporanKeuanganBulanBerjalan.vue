@@ -63,7 +63,7 @@ export default {
 			opt: {
 				kode_cabang: [
 					{
-						value: '',
+						value: 0,
 						text: "All",
 					},
 				],
@@ -127,7 +127,7 @@ export default {
 				if (status) {
 					this.opt.kode_cabang = [
 						{
-							value: '',
+							value: 0,
 							text: "All",
 						},
 					];
