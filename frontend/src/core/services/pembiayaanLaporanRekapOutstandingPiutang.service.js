@@ -7,33 +7,33 @@ axios.defaults.baseURL = "https://easyco.kopsyahmsi.com/api/api/";
  * @date 2023-10-21
  */
 export default {
-    pembiayaanLaporanRekapOutstandingPiutang(payload, token) {
-        const url = "laporan/rekap/outstanding";
-        const config = {
-            headers: {
-                token: token,
-            },
-        };
-        return axios.post(url, payload, config);
-    },
-    pembiayaanLaporanRekapOutstandingPiutangExportToXLSX(payload, token) {
-        const url = "laporan/rekap/excel/outstanding?" + payload;
-        const config = {
-            headers: {
-                token: token,
-            },
-            responseType: 'blob'
-        };
-        return axios.get(url, config);
-    },
-    pembiayaanLaporanRekapOutstandingPiutangExportToCSV(payload, token) {
-        const url = "laporan/rekap/csv/outstanding?" + payload;
-        const config = {
-            headers: {
-                token: token,
-            },
-            responseType: 'blob'
-        };
-        return axios.get(url, config);
-    }
+  pembiayaanLaporanRekapOutstandingPiutang(payload, token) {
+    const url = "laporan/rekap/outstanding";
+    const config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  pembiayaanLaporanRekapOutstandingPiutangExportToXLSX(payload, token) {
+    const url = "laporan/rekap/excel/outstanding?" + payload;
+    const config = {
+      headers: {
+        token: token,
+      },
+      responseType: "blob",
+    };
+    return axios.get(url, config);
+  },
+  pembiayaanLaporanRekapOutstandingPiutangExportToCSV(payload, token) {
+    const url = "laporan/rekap/csv/outstanding?" + payload;
+    const config = {
+      headers: {
+        token: token,
+      },
+      responseType: "blob",
+    };
+    return axios.get(url, config);
+  },
 };

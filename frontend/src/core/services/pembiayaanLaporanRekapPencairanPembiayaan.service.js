@@ -7,33 +7,33 @@ axios.defaults.baseURL = "https://easyco.kopsyahmsi.com/api/api/";
  * @date 2023-10-21
  */
 export default {
-    laporanPembiayaanRekapPencairanPembiayaan(payload, token) {
-        const url = "laporan/rekap/pencairan";
-        const config = {
-            headers: {
-                token: token,
-            },
-        };
-        return axios.post(url, payload, config);
-    },
-    laporanPembiayaanRekapPencairanPembiayaanExportToXLSX(payload, token) {
-        const url = "laporan/rekap/excel/pencairan?" + payload;
-        const config = {
-            headers: {
-                token: token,
-            },
-            responseType: 'blob'
-        };
-        return axios.get(url, config);
-    },
-    laporanPembiayaanRekapPencairanPembiayaanExportToCSV(payload, token) {
-        const url = "laporan/rekap/csv/pencairan?" + payload;
-        const config = {
-            headers: {
-                token: token,
-            },
-            responseType: 'blob'
-        };
-        return axios.get(url, config);
-    }
+  laporanPembiayaanRekapPencairanPembiayaan(payload, token) {
+    const url = "laporan/rekap/pencairan";
+    const config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.post(url, payload, config);
+  },
+  laporanPembiayaanRekapPencairanPembiayaanExportToXLSX(payload, token) {
+    const url = "laporan/rekap/excel/pencairan?" + payload;
+    const config = {
+      headers: {
+        token: token,
+      },
+      responseType: "blob",
+    };
+    return axios.get(url, config);
+  },
+  laporanPembiayaanRekapPencairanPembiayaanExportToCSV(payload, token) {
+    const url = "laporan/rekap/csv/pencairan?" + payload;
+    const config = {
+      headers: {
+        token: token,
+      },
+      responseType: "blob",
+    };
+    return axios.get(url, config);
+  },
 };
