@@ -573,6 +573,7 @@ export default {
         search: "",
         sortyDir: "ASC",
         kode_cabang: this.paging.cabang,
+        kode_petugas: this.paging.petugas,
       };
       try {
         let req = await easycoApi.anggotaRembug(payload, this.user.token);
