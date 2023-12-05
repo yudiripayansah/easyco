@@ -28,7 +28,7 @@
                   <b-input-group prepend="Cabang" class="mb-3">
                     <b-form-select
                       v-model="paging.cabang"
-                      :options="opt.cabang"
+                      :options="opt.cabang" @change="doGetPetugas()"
                     />
                   </b-input-group>
                 </b-col>
@@ -105,7 +105,7 @@
         <b-row>
           <b-col cols="4">
             <b-form-group label="cabang">
-              <b-select v-model="form.data.cabang" :options="opt.cabang" />
+              <b-select v-model="form.data.cabang" :options="opt.cabang" @change="doGetPetugas()" />
             </b-form-group>
           </b-col>
           <b-col cols="4">
@@ -414,6 +414,7 @@ export default {
       }
     },
     async doGetCabang() {
+      this.opt.cabang = [];
       let payload = {
         perPage: "~",
         page: 1,
@@ -425,11 +426,16 @@ export default {
         let req = await easycoApi.cabangRead(payload, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
-          this.opt.cabang = [];
+          this.opt.cabang = [{
+              value: 0,
+              text: "All",
+            },
+
+          ];
           data.map((item) => {
             this.opt.cabang.push({
               value: item.kode_cabang,
-              text: item.nama_cabang,
+              text: `${item.kode_cabang} - ${item.nama_cabang}`,
             });
           });
         }
@@ -444,16 +450,22 @@ export default {
         sortBy: "kode_kas_petugas",
         sortDir: "ASC",
         search: "",
+        kode_cabang: this.paging.cabang,
       };
       try {
         let req = await easycoApi.kodeKasPetugas(payload, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
-          this.opt.petugas = [];
+          this.opt.petugas = [{
+              value: 0,
+              text: "All",
+            },
+
+          ];
           data.map((item) => {
             this.opt.petugas.push({
               value: item.kode_kas_petugas,
-              text: item.nama_kas_petugas,
+              text: `${item.kode_kas_petugas} - ${item.nama_kas_petugas}`,
             });
           });
         }
@@ -469,6 +481,7 @@ export default {
         sortBy: "kode_kas_petugas",
         sortDir: "ASC",
         search: "",
+        kode_cabang: this.paging.cabang,
       };
       try {
         let req = await easycoApi.kodeKasPetugas(payload, this.user.token);
