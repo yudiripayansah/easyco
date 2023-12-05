@@ -113,68 +113,62 @@ const easycoApi = {
   },
 
   anggotaExcel(payload, token) {
-    let url =
-      "laporan/list/excel/anggota_masuk?" + payload;
+    let url = "laporan/list/excel/anggota_masuk?" + payload;
     let config = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
   saldoAnggotaExcel(payload, token) {
-    let url =
-      "laporan/list/excel/saldo_anggota?" + payload;
+    let url = "laporan/list/excel/saldo_anggota?" + payload;
     let config = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
   pengajuanPembiayaanExcel(payload, token) {
-    let url =
-      "laporan/list/excel/pengajuan?" + payload;
+    let url = "laporan/list/excel/pengajuan?" + payload;
     let config = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
   pencairanPembiayaanExcel(payload, token) {
-    let url =
-      "laporan/list/excel/pencairan?" + payload;
+    let url = "laporan/list/excel/pencairan?" + payload;
     let config = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
   outstandingPembiayaanExcel(payload, token) {
-    let url =
-      "laporan/list/excel/saldo_outstanding?" + payload;
+    let url = "laporan/list/excel/saldo_outstanding?" + payload;
     let config = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
   registrasiAkadExcel(payload, token) {
-    let url =
-      "laporan/list/excel/regis_akad?" + payload;
+    let url = "laporan/list/excel/regis_akad?" + payload;
     let config = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
@@ -184,7 +178,7 @@ const easycoApi = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
@@ -194,7 +188,7 @@ const easycoApi = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
@@ -204,7 +198,7 @@ const easycoApi = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
@@ -214,7 +208,7 @@ const easycoApi = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
@@ -224,86 +218,79 @@ const easycoApi = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
 
   // laporan csv
   bukuBesarCsv(payload, token) {
-    let url =
-      "laporan/list/csv/gl_inquiry?" + payload;
+    let url = "laporan/list/csv/gl_inquiry?" + payload;
     let config = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
   anggotaCsv(payload, token) {
-    let url =
-      "laporan/list/csv/anggota_masuk?" + payload;
+    let url = "laporan/list/csv/anggota_masuk?" + payload;
     let config = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
   saldoAnggotaCsv(payload, token) {
-    let url =
-      "laporan/list/csv/saldo_anggota?" + payload;
+    let url = "laporan/list/csv/saldo_anggota?" + payload;
     let config = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
   pengajuanPembiayaanCsv(payload, token) {
-    let url =
-      "laporan/list/csv/pengajuan?" + payload;
+    let url = "laporan/list/csv/pengajuan?" + payload;
     let config = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
   pencairanPembiayaanCsv(payload, token) {
-    let url =
-      "laporan/list/csv/pencairan?" + payload;
+    let url = "laporan/list/csv/pencairan?" + payload;
     let config = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
   outstandingPembiayaanCsv(payload, token) {
-    let url =
-      "laporan/list/csv/saldo_outstanding?" + payload;
+    let url = "laporan/list/csv/saldo_outstanding?" + payload;
     let config = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
   registrasiAkadCsv(payload, token) {
-    let url =
-      "laporan/list/csv/regis_akad?" + payload;
+    let url = "laporan/list/csv/regis_akad?" + payload;
     let config = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
@@ -313,7 +300,7 @@ const easycoApi = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
@@ -323,7 +310,7 @@ const easycoApi = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
@@ -1298,7 +1285,6 @@ const easycoApi = {
     return axios.post(url, payload, config);
   },
 
-
   // GET KODE CABANG
   getKodeCabang(payload, token) {
     let url = "cabang/read";
@@ -1433,8 +1419,7 @@ const easycoApi = {
   },
 
   approveAnggotaKeluar(payload, token) {
-    let url =
-      "anggotamutasi/approve?" + payload;
+    let url = "anggotamutasi/approve?" + payload;
     let config = {
       headers: {
         token: token,
@@ -1444,8 +1429,7 @@ const easycoApi = {
   },
 
   rejectAnggotaKeluar(payload, token) {
-    let url =
-      "anggotamutasi/reject?" + payload;
+    let url = "anggotamutasi/reject?" + payload;
     let config = {
       headers: {
         token: token,
@@ -1533,7 +1517,7 @@ const easycoApi = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
@@ -1543,7 +1527,7 @@ const easycoApi = {
       headers: {
         token: token,
       },
-      responseType: 'blob'
+      responseType: "blob",
     };
     return axios.get(url, config);
   },
