@@ -14,13 +14,13 @@
               <b-input-group prepend="Petugas" class="mb-3">
                 <b-form-select
                   v-model="paging.petugas"
-                  :options="opt.petugas"
+                  :options="opt.petugas" @change="doGetRembug()"
                 />
               </b-input-group>
             </b-col>
             <b-col cols="4">
               <b-input-group prepend="Majelis" class="mb-3">
-                <b-form-select v-model="paging.rembug" :options="opt.rembug" @change="doGetRembug()" />
+                <b-form-select v-model="paging.rembug" :options="opt.rembug" />
               </b-input-group>
             </b-col>
             <b-col cols="6">
@@ -133,6 +133,8 @@
         </h5>
         <h5 class="text-center">LAPORAN PENERIMAAN ANGSURAN PEMBIAYAAN</h5>
         <h5 class="text-center" v-show="report.cabang">{{ report.cabang }}</h5>
+        <h5 class="text-center" v-show="report.petugas">{{ report.petugas }}</h5>
+        <h5 class="text-center" v-show="report.rembug">{{ report.rembug }}</h5>
         <h6 class="text-center mb-5 pb-5" v-show="report.from && report.to">
           Tanggal {{ dateFormatId(report.from) }} s.d
           {{ dateFormatId(report.to) }}
@@ -370,9 +372,9 @@ export default {
         items: [],
         loading: false,
         totalRows: 0,
-        cabang: null,
-        petugas: null,
-        rembug: null,
+        cabang: 0,
+        petugas: 0,
+        rembug: 0,
         from: null,
         to: null,
       },
@@ -382,6 +384,7 @@ export default {
         sortDesc: true,
         sortBy: "kop_trx_anggota.trx_anggota",
         search: "",
+        status: "~",
         cabang: null,
         petugas: null,
         rembug: null,
@@ -418,6 +421,8 @@ export default {
       let filename = "LAPORAN PENERIMAAN ANGSURAN PEMBIAYAAN";
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
+        filename += ` - Petugas ${this.report.petugas}`;
+        filename += ` - Majelis ${this.report.rembug}`;
       }
       if (this.report.from && this.report.to) {
         filename += ` - Dari ${this.dateFormatId(
@@ -448,6 +453,8 @@ export default {
       let filename = "LAPORAN PENERIMAAN ANGSURAN PEMBIAYAAN";
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
+        filename += ` - Petugas ${this.report.petugas}`;
+        filename += ` - Majelis ${this.report.rembug}`;
       }
       if (this.report.from && this.report.to) {
         filename += ` - Dari ${this.dateFormatId(
@@ -563,6 +570,7 @@ export default {
         search: "",
         sortyDir: "ASC",
         kode_cabang: this.paging.cabang,
+        kode_petugas: this.paging.petugas,
       };
       try {
         let req = await easycoApi.anggotaRembug(payload, this.user.token);
