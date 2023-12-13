@@ -8,7 +8,17 @@
                         <div class="row mb-3">
                             <b-col>
                                 <b-input-group prepend="Cabang">
-                                    <b-form-select v-model="paging.kode_cabang" :options="opt.kode_cabang" />
+                                    <b-form-select v-model="paging.kode_cabang" :options="opt.kode_cabang" @change="doGetPetugas()" />
+                                </b-input-group>
+                            </b-col>
+                            <b-col>
+                                <b-input-group prepend="Petugas">
+                                    <b-form-select v-model="paging.kode_pgw" :options="opt.kode_pgw" @change="doGetRembug()" />
+                                </b-input-group>
+                            </b-col>
+                            <b-col>
+                                <b-input-group prepend="Majelis">
+                                    <b-form-select v-model="paging.kode_rembug" :options="opt.kode_rembug" />
                                 </b-input-group>
                             </b-col>
                             <b-col>
@@ -239,12 +249,28 @@ export default {
                 search: "",
                 status: "~",
                 kode_cabang: '',
+                kode_pgw: '',
+                kode_rembug: '',
                 kode_produk: '',
                 nama_cabang: '',
+                nama_pgw: '',
+                nama_rembug: '',
                 nama_produk: '',
             },
             opt: {
                 kode_cabang: [
+                    {
+                        value: '',
+                        text: "All",
+                    },
+                ],
+                kode_pgw: [
+                    {
+                        value: '',
+                        text: "All",
+                    },
+                ],
+                kode_rembug: [
                     {
                         value: '',
                         text: "All",
@@ -274,6 +300,8 @@ export default {
     mounted() {
         this.doGet();
         this.doGetCabang();
+        this.doGetPetugas();
+        this.doGetRembug();
         this.doGetProduk();
     },
     methods: {
@@ -348,6 +376,7 @@ export default {
             this.showOverlay = false;
         },
         async doGetCabang() {
+            this.opt.kode_cabang = [];
             let payload = {
                 perPage: "~",
                 page: 1,
@@ -369,6 +398,69 @@ export default {
                         this.opt.kode_cabang.push({
                             value: item.kode_cabang,
                             text: `${item.kode_cabang} - ${item.nama_cabang}`,
+                        });
+                    });
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async doGetPetugas() {
+            this.opt.kode_pgw = [];
+            let payload = {
+                perPage: "~",
+                page: 1,
+                sortBy: "nama_pgw",
+                sortDir: "ASC",
+                search: "",
+                kode_cabang: this.paging.kode_cabang,
+            };
+            try {
+                let req = await easycoApi.pegawaiRead(payload, this.user.token);
+                let { data, status, msg } = req.data;
+                if (status) {
+                    this.opt.kode_pgw = [
+                        {
+                            value:'',
+                            text: "All",
+                        },
+                    ];
+                    data.map((item) => {
+                        this.opt.kode_pgw.push({
+                            value: item.kode_pgw,
+                            text: `${item.kode_pgw} - ${item.nama_pgw}`,
+                        });
+                    });
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async doGetRembug() {
+            this.opt.kode_rembug = [];
+            let payload = {
+                perPage: "~",
+                page: 1,
+                sortBy: "kode_rembug",
+                sortDir: "ASC",
+                search: "",
+                kode_cabang: this.paging.kode_cabang,
+                kode_pgw: this.paging.kode_pgw,
+            };
+            try {
+                let req = await easycoApi.anggotaRembug(payload, this.user.token);
+                let { data, status, msg } = req.data;
+                if (status) {
+                    this.opt.kode_rembug = [
+                        {
+                            value: '',
+                            text: "All",
+                        },
+                    ];
+                    data.map((item) => {
+                        this.opt.kode_rembug.push({
+                            value: item.kode_rembug,
+                            text: `${item.kode_rembug} - ${item.nama_rembug}`,
                         });
                     });
                 }
