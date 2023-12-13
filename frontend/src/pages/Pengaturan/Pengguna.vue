@@ -266,13 +266,13 @@ export default {
           this.opt.cabang = [
             {
               value: 0,
-              text: "Induk",
+              text: "Pilih Cabang",
             },
           ];
           data.map((item) => {
             this.opt.cabang.push({
               value: item.kode_cabang,
-              text: item.nama_cabang,
+              text: `${item.kode_cabang} - ${item.nama_cabang}`,
             });
           });
         }
