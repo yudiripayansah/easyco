@@ -19,6 +19,7 @@ use App\Exports\ListSaldoKasPetugasExport;
 use App\Exports\ListSaldoOutstandingExport;
 use App\Exports\ListSaldoTabunganExport;
 use App\Exports\RekapOutstandingExport;
+use App\Exports\RekapParExport;
 use App\Exports\RekapPencairanExport;
 use App\Exports\RekapPengajuanExport;
 use App\Exports\RekapSaldoAnggotaExport;
@@ -28,6 +29,7 @@ use App\Models\KopAnggota;
 use App\Models\KopAnggotaMutasi;
 use App\Models\KopCabang;
 use App\Models\KopKasPetugasTemporary;
+use App\Models\KopPar;
 use App\Models\KopPegawai;
 use App\Models\KopPelunasan;
 use App\Models\KopPembiayaan;
@@ -1972,8 +1974,8 @@ class LaporanController extends Controller
         $total_pokok = 0;
 
         foreach ($show as $sh) {
-            $persen_jumlah = ($sh->jumlah_anggota / $sum_anggota) * 100;
-            $persen_nominal = ($sh->nominal / $sum_pokok) * 100;
+            $persen_jumlah = number_format(($sh->jumlah_anggota / $sum_anggota) * 100, 2, ',', '.');
+            $persen_nominal = number_format(($sh->nominal / $sum_pokok) * 100, 2, ',', '.');
 
             $total_anggota += $sh->jumlah_anggota;
             $total_pokok += $sh->nominal;
@@ -1982,8 +1984,8 @@ class LaporanController extends Controller
                 'keterangan' => $sh->keterangan,
                 'jumlah_anggota' => $sh->jumlah_anggota,
                 'nominal' => (int) $sh->nominal,
-                'persen_jumlah' => (int) $persen_jumlah,
-                'persen_nominal' => (int) $persen_nominal
+                'persen_jumlah' => $persen_jumlah,
+                'persen_nominal' => $persen_nominal
             );
         }
 
@@ -2106,8 +2108,8 @@ class LaporanController extends Controller
         $total_pokok = 0;
 
         foreach ($show as $sh) {
-            $persen_jumlah = ($sh->jumlah_anggota / $sum_anggota) * 100;
-            $persen_nominal = ($sh->nominal / $sum_pokok) * 100;
+            $persen_jumlah = number_format(($sh->jumlah_anggota / $sum_anggota) * 100, 2, ',', '.');
+            $persen_nominal = number_format(($sh->nominal / $sum_pokok) * 100, 2, ',', '.');
 
             $total_anggota += $sh->jumlah_anggota;
             $total_pokok += $sh->nominal;
@@ -2116,8 +2118,8 @@ class LaporanController extends Controller
                 'keterangan' => $sh->keterangan,
                 'jumlah_anggota' => $sh->jumlah_anggota,
                 'nominal' => (int) $sh->nominal,
-                'persen_jumlah' => (int) $persen_jumlah,
-                'persen_nominal' => (int) $persen_nominal
+                'persen_jumlah' => $persen_jumlah,
+                'persen_nominal' => $persen_nominal
             );
         }
 
@@ -2228,8 +2230,8 @@ class LaporanController extends Controller
         $total_saldo_catab = 0;
 
         foreach ($show as $sh) {
-            $persen_jumlah = ($sh->jumlah_anggota / $sum_anggota) * 100;
-            $persen_nominal = ($sh->saldo_pokok / $sum_saldo_pokok) * 100;
+            $persen_jumlah = number_format(($sh->jumlah_anggota / $sum_anggota) * 100, 2, ',', '.');
+            $persen_nominal = number_format(($sh->saldo_pokok / $sum_saldo_pokok) * 100, 2, ',', '.');
 
             $total_anggota += $sh->jumlah_anggota;
             $total_saldo_pokok += $sh->saldo_pokok;
@@ -2242,8 +2244,8 @@ class LaporanController extends Controller
                 'saldo_pokok' => (int) $sh->saldo_pokok,
                 'saldo_margin' => (int) $sh->saldo_margin,
                 'saldo_catab' => (int) $sh->saldo_catab,
-                'persen_jumlah' => (int) $persen_jumlah,
-                'persen_nominal' => (int) $persen_nominal
+                'persen_jumlah' => $persen_jumlah,
+                'persen_nominal' => $persen_nominal
             );
         }
 
@@ -2294,5 +2296,167 @@ class LaporanController extends Controller
         $list = new RekapOutstandingExport($kode_cabang, $rekap_by, 'csv');
 
         return $list->download('LAPORAN_REKAP_OUTSTANDING_' . $cabang . '.csv');
+    }
+
+    function rekap_par(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+        $tanggal = $request->tanggal;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($tanggal <> '~' and !empty($tanggal) and $tanggal <> null) {
+            $tanggal = date('Y-m-d', strtotime(str_replace('/', '-', $tanggal)));
+        } else {
+            $tanggal = date('Y-m-d');
+        }
+
+        $show = KopPar::rekap_par($kode_cabang, $rekap_by, $tanggal);
+
+        $data = array();
+
+        $total_jumlah_1 = 0;
+        $total_saldo_pokok_1 = 0;
+        $total_cpp_1 = 0;
+        $total_jumlah_2 = 0;
+        $total_saldo_pokok_2 = 0;
+        $total_cpp_2 = 0;
+        $total_jumlah_3 = 0;
+        $total_saldo_pokok_3 = 0;
+        $total_cpp_3 = 0;
+        $total_jumlah_4 = 0;
+        $total_saldo_pokok_4 = 0;
+        $total_cpp_4 = 0;
+        $total_jumlah_5 = 0;
+        $total_saldo_pokok_5 = 0;
+        $total_cpp_5 = 0;
+        $total_jumlah_6 = 0;
+        $total_saldo_pokok_6 = 0;
+        $total_cpp_6 = 0;
+
+        foreach ($show as $sh) {
+            $total_jumlah_1 += $sh->jumlah_1;
+            $total_saldo_pokok_1 += $sh->saldo_pokok_1;
+            $total_cpp_1 += $sh->cpp_1;
+            $total_jumlah_2 += $sh->jumlah_2;
+            $total_saldo_pokok_2 += $sh->saldo_pokok_2;
+            $total_cpp_2 += $sh->cpp_2;
+            $total_jumlah_3 += $sh->jumlah_3;
+            $total_saldo_pokok_3 += $sh->saldo_pokok_3;
+            $total_cpp_3 += $sh->cpp_3;
+            $total_jumlah_4 += $sh->jumlah_4;
+            $total_saldo_pokok_4 += $sh->saldo_pokok_4;
+            $total_cpp_4 += $sh->cpp_4;
+            $total_jumlah_5 += $sh->jumlah_5;
+            $total_saldo_pokok_5 += $sh->saldo_pokok_5;
+            $total_cpp_5 += $sh->cpp_5;
+            $total_jumlah_6 += $sh->jumlah_6;
+            $total_saldo_pokok_6 += $sh->saldo_pokok_6;
+            $total_cpp_6 += $sh->cpp_6;
+
+            $data[] = array(
+                'keterangan' => $sh->keterangan,
+                'jumlah_1' => $sh->jumlah_1,
+                'saldo_pokok_1' => (int) $sh->saldo_pokok_1,
+                'cpp_1' => (int) $sh->cpp_1,
+                'jumlah_2' => $sh->jumlah_2,
+                'saldo_pokok_2' => (int) $sh->saldo_pokok_2,
+                'cpp_2' => (int) $sh->cpp_2,
+                'jumlah_3' => $sh->jumlah_3,
+                'saldo_pokok_3' => (int) $sh->saldo_pokok_3,
+                'cpp_3' => (int) $sh->cpp_3,
+                'jumlah_4' => $sh->jumlah_4,
+                'saldo_pokok_4' => (int) $sh->saldo_pokok_4,
+                'cpp_4' => (int) $sh->cpp_4,
+                'jumlah_5' => $sh->jumlah_5,
+                'saldo_pokok_5' => (int) $sh->saldo_pokok_5,
+                'cpp_5' => (int) $sh->cpp_5,
+                'jumlah_6' => $sh->jumlah_6,
+                'saldo_pokok_6' => (int) $sh->saldo_pokok_6,
+                'cpp_6' => (int) $sh->cpp_6
+            );
+        }
+
+        $res = array(
+            'status' => true,
+            'nama_cabang' => $cabang,
+            'total_jumlah_1' => $total_jumlah_1,
+            'total_saldo_pokok_1' => $total_saldo_pokok_1,
+            'total_cpp_1' => $total_cpp_1,
+            'total_jumlah_2' => $total_jumlah_2,
+            'total_saldo_pokok_2' => $total_saldo_pokok_2,
+            'total_cpp_2' => $total_cpp_2,
+            'total_jumlah_3' => $total_jumlah_3,
+            'total_saldo_pokok_3' => $total_saldo_pokok_3,
+            'total_cpp_3' => $total_cpp_3,
+            'total_jumlah_4' => $total_jumlah_4,
+            'total_saldo_pokok_4' => $total_saldo_pokok_4,
+            'total_cpp_4' => $total_cpp_4,
+            'total_jumlah_5' => $total_jumlah_5,
+            'total_saldo_pokok_5' => $total_saldo_pokok_5,
+            'total_cpp_5' => $total_cpp_5,
+            'total_jumlah_6' => $total_jumlah_6,
+            'total_saldo_pokok_6' => $total_saldo_pokok_6,
+            'total_cpp_6' => $total_cpp_6,
+            'data' => $data
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function rekap_excel_par(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+        $tanggal = $request->tanggal;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($tanggal <> '~' and !empty($tanggal) and $tanggal <> null) {
+            $tanggal = date('Y-m-d', strtotime(str_replace('/', '-', $tanggal)));
+        } else {
+            $tanggal = date('Y-m-d');
+        }
+
+        $list = new RekapParExport($kode_cabang, $rekap_by, $tanggal, 'excel');
+
+        return $list->download('LAPORAN_REKAP_PAR_' . $cabang . '.xlsx');
+    }
+
+    function rekap_csv_par(Request $request)
+    {
+        $kode_cabang = $request->kode_cabang;
+        $rekap_by = $request->rekap_by;
+        $tanggal = $request->tanggal;
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $branch = KopCabang::where('kode_cabang', $kode_cabang)->first();
+            $cabang = $branch->nama_cabang;
+        } else {
+            $cabang = 'SEMUA CABANG';
+        }
+
+        if ($tanggal <> '~' and !empty($tanggal) and $tanggal <> null) {
+            $tanggal = date('Y-m-d', strtotime(str_replace('/', '-', $tanggal)));
+        } else {
+            $tanggal = date('Y-m-d');
+        }
+
+        $list = new RekapParExport($kode_cabang, $rekap_by, $tanggal, 'csv');
+
+        return $list->download('LAPORAN_REKAP_PAR_' . $cabang . '.csv');
     }
 }

@@ -148,7 +148,7 @@ class KopTrxRembug extends Model
         ka.no_anggota,
         ka.nama_anggota,
         COALESCE(CAST(ROUND(a.frek) AS INTEGER),0) AS frek,
-        COALESCE(b.angsuran::INTEGER,0) AS angsuran,
+        COALESCE((i.angsuran_pokok+j.angsuran_margin+k.angsuran_catab)::INTEGER,0) AS angsuran,
         COALESCE(c.setoran_sukarela::INTEGER,0) AS setoran_sukarela,
         COALESCE(d.setoran_simpok::INTEGER,0) AS setoran_simpok,
         COALESCE(e.setoran_taber::INTEGER,0) AS setoran_taber,
@@ -170,18 +170,9 @@ class KopTrxRembug extends Model
             FROM kop_trx_anggota AS kta
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
             JOIN kop_pembiayaan AS kp ON kp.no_rekening = kta.no_rekening
-            WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '32'
+            WHERE ktr.id_trx_rembug = ? AND (kta.trx_type = '32' OR kta.trx_type IN(SELECT kdtrx_angspokok FROM kop_prd_pembiayaan WHERE kode_produk IN(SELECT kode_produk FROM kop_pembiayaan WHERE status_rekening = '1' AND no_anggota = kta.no_anggota)))
             GROUP BY kta.no_anggota,kp.angsuran_pokok
         ) AS a ON a.no_anggota = ka.no_anggota
-        LEFT JOIN (
-            SELECT
-            kta.no_anggota,
-            SUM(kta.amount) AS angsuran
-            FROM kop_trx_anggota AS kta
-            JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
-            WHERE ktr.id_trx_rembug = ? AND kta.trx_type IN('32','33','34')
-            GROUP BY 1
-        ) AS b ON b.no_anggota = ka.no_anggota
         LEFT JOIN (
             SELECT
             kta.no_anggota,
@@ -237,7 +228,7 @@ class KopTrxRembug extends Model
             SUM(kta.amount) AS angsuran_pokok
             FROM kop_trx_anggota AS kta
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
-            WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '32'
+            WHERE ktr.id_trx_rembug = ? AND (kta.trx_type = '32' OR kta.trx_type IN(SELECT kdtrx_angspokok FROM kop_prd_pembiayaan WHERE kode_produk IN(SELECT kode_produk FROM kop_pembiayaan WHERE status_rekening = '1' AND no_anggota = kta.no_anggota)))
             GROUP BY 1
         ) AS i ON i.no_anggota = ka.no_anggota
         LEFT JOIN (
@@ -246,7 +237,7 @@ class KopTrxRembug extends Model
             SUM(kta.amount) AS angsuran_margin
             FROM kop_trx_anggota AS kta
             JOIN kop_trx_rembug AS ktr ON ktr.id_trx_rembug = kta.id_trx_rembug
-            WHERE ktr.id_trx_rembug = ? AND kta.trx_type = '33'
+            WHERE ktr.id_trx_rembug = ? AND (kta.trx_type = '33' OR kta.trx_type IN(SELECT kdtrx_angsmargin FROM kop_prd_pembiayaan WHERE kode_produk IN(SELECT kode_produk FROM kop_pembiayaan WHERE status_rekening = '1' AND no_anggota = kta.no_anggota)))
             GROUP BY 1
         ) AS j ON j.no_anggota = ka.no_anggota
         LEFT JOIN (
@@ -278,7 +269,7 @@ class KopTrxRembug extends Model
         ) AS m ON m.no_anggota = ka.no_anggota
         WHERE h.id_trx_rembug = ? AND ka.status <> 2";
 
-        $show = DB::select($statement, [$id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug]);
+        $show = DB::select($statement, [$id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug, $id_trx_rembug]);
 
         return $show;
     }

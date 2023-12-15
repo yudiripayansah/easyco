@@ -223,9 +223,10 @@ class KopPembiayaan extends Model
 
     function tpl_deposit($no_anggota)
     {
-        $show = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'kop_pembiayaan.angsuran_pokok', 'kop_pembiayaan.angsuran_margin', 'kop_pembiayaan.angsuran_catab', DB::raw('COALESCE((kop_pembiayaan.angsuran_pokok+kop_pembiayaan.angsuran_margin+kop_pembiayaan.angsuran_catab),0) AS angsuran'), 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.counter_angsuran')
-            ->join('kop_pengajuan AS kpp', 'kpp.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')
-            ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kpp.no_anggota')
+        $show = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'kop_pembiayaan.angsuran_pokok', 'kop_pembiayaan.angsuran_margin', 'kop_pembiayaan.angsuran_catab', DB::raw('COALESCE((kop_pembiayaan.angsuran_pokok+kop_pembiayaan.angsuran_margin+kop_pembiayaan.angsuran_catab),0) AS angsuran'), 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.counter_angsuran', 'prd.kdtrx_angspokok', 'prd.kdtrx_angsmargin')
+            ->join('kop_pengajuan AS kpp', 'kpp.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kpp.no_anggota')
+            ->join('kop_prd_pembiayaan AS prd', 'prd.kode_produk', 'kop_pembiayaan.kode_produk')
             ->where('kop_pembiayaan.status_rekening', 1)
             ->where('kop_pembiayaan.status_droping', 1)
             ->where('ka.no_anggota', $no_anggota)
@@ -249,9 +250,10 @@ class KopPembiayaan extends Model
 
     function tpl_droping($no_anggota)
     {
-        $show = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'kop_pembiayaan.pokok', 'kop_pembiayaan.biaya_administrasi', 'kop_pembiayaan.biaya_asuransi_jiwa', 'kop_pembiayaan.biaya_asuransi_jaminan', 'kop_pembiayaan.biaya_notaris', 'kop_pembiayaan.tabungan_persen', 'kop_pembiayaan.dana_kebajikan', 'kop_pembiayaan.dana_gotongroyong', 'kop_pembiayaan.blokir_angsuran', 'kop_pembiayaan.tab_sukarela')
-            ->join('kop_pengajuan AS kpp', 'kpp.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')
-            ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kpp.no_anggota')
+        $show = KopPembiayaan::select('kop_pembiayaan.kode_produk', 'kop_pembiayaan.no_rekening', 'kop_pembiayaan.pokok', 'kop_pembiayaan.biaya_administrasi', 'kop_pembiayaan.biaya_asuransi_jiwa', 'kop_pembiayaan.biaya_asuransi_jaminan', 'kop_pembiayaan.biaya_notaris', 'kop_pembiayaan.tabungan_persen', 'kop_pembiayaan.dana_kebajikan', 'kop_pembiayaan.dana_gotongroyong', 'kop_pembiayaan.blokir_angsuran', 'kop_pembiayaan.tab_sukarela', 'prd.kdtrx_pencairan')
+            ->join('kop_pengajuan AS kpp', 'kpp.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kpp.no_anggota')
+            ->join('kop_prd_pembiayaan AS prd', 'prd.kode_produk', 'kop_pembiayaan.kode_produk')
             ->where('kop_pembiayaan.status_rekening', 0)
             ->where('kop_pembiayaan.status_droping', 1)
             ->where('ka.no_anggota', $no_anggota)

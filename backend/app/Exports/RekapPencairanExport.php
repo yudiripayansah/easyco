@@ -53,8 +53,8 @@ class RekapPencairanExport implements FromView
         $total_pokok = 0;
 
         foreach ($show as $item) {
-            $item->persen_jumlah = ($item->jumlah_anggota / $sum_anggota) * 100;
-            $item->persen_nominal = ($item->nominal / $sum_pokok) * 100;
+            $item->persen_jumlah = number_format(($item->jumlah_anggota / $sum_anggota) * 100, 2, ',', '.');
+            $item->persen_nominal = number_format(($item->nominal / $sum_pokok) * 100, 2, ',', '.');
 
             $total_anggota += $item->jumlah_anggota;
             $total_pokok += $item->nominal;

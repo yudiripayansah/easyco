@@ -310,4 +310,28 @@ class TabunganController extends Controller
 
         return $response;
     }
+
+    function get_detail_saving(Request $request)
+    {
+        $no_rekening = $request->no_rekening;
+
+        $get = KopTabungan::get_detail_saving($no_rekening);
+
+        $data = array(
+            'no_rekening' => $get['no_rekening'],
+            'nama_anggota' => $get['nama_anggota'],
+            'nama_produk' => $get['nama_produk'],
+            'saldo' => (int) $get['saldo']
+        );
+
+        $res = array(
+            'status' => TRUE,
+            'data' => $data,
+            'msg' => 'Berhasil!'
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
 }
