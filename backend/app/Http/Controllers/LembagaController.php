@@ -107,7 +107,10 @@ class LembagaController extends Controller
                 'gl_simpok' => $rd->gl_simpok,
                 'gl_simwa' => $rd->gl_simwa,
                 'gl_simsuk' => $rd->gl_simsuk,
-                'tagline_kop' => $rd->tagline_kop
+                'tagline_kop' => $rd->tagline_kop,
+                'periode_awal' => $rd->periode_awal,
+                'periode_akhir' => $rd->periode_akhir,
+                'adm' => $rd->adm
             );
         }
 

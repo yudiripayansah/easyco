@@ -268,16 +268,17 @@ Route::prefix('general_ledger')->middleware('checkToken')->group(function () {
 Route::prefix('laporan')->group(function () {
   Route::prefix('list')->group(function () {
     Route::post('/transaksi_majelis', [TrxRembug::class, 'transaksi_majelis']);
-    Route::get('/get_closing_date', [ClosingGlController::class, 'get_closing_date']);
     Route::post('/get_par_date', [ParController::class, 'get_par_date']);
     Route::post('/get_kolektibilitas', [ParController::class, 'get_kolektibilitas']);
     Route::post('/anggota_keluar', [LaporanController::class, 'anggota_keluar']);
     Route::post('/statement_tabungan', [LaporanController::class, 'statement_tabungan']);
-    Route::get('/get_report_setup', [ListKodeController::class, 'get_report_setup']);
     Route::post('/pelunasan', [LaporanController::class, 'list_pelunasan']);
     Route::post('/saldo_tabungan', [LaporanController::class, 'list_saldo_tabungan']);
     Route::post('/buka_tabungan', [LaporanController::class, 'list_buka_tabungan']);
     Route::post('/saldo_kas_petugas', [LaporanController::class, 'list_saldo_kas_petugas']);
+    Route::post('/get_detail_saving', [TabunganController::class, 'get_detail_saving']);
+    Route::get('/get_closing_date', [ClosingGlController::class, 'get_closing_date']);
+    Route::get('/get_report_setup', [ListKodeController::class, 'get_report_setup']);
     Route::get('/get_rekap_by', [ListKodeController::class, 'get_rekap_by']);
 
     Route::prefix('excel')->group(function () {
@@ -335,12 +336,14 @@ Route::prefix('laporan')->group(function () {
     Route::post('/pengajuan', [LaporanController::class, 'rekap_pengajuan']);
     Route::post('/pencairan', [LaporanController::class, 'rekap_pencairan']);
     Route::post('/outstanding', [LaporanController::class, 'rekap_outstanding']);
+    Route::post('/par', [LaporanController::class, 'rekap_par']);
 
     Route::prefix('excel')->group(function () {
       Route::get('/saldo_anggota', [LaporanController::class, 'rekap_excel_saldo_anggota']);
       Route::get('/pengajuan', [LaporanController::class, 'rekap_excel_pengajuan']);
       Route::get('/pencairan', [LaporanController::class, 'rekap_excel_pencairan']);
       Route::get('/outstanding', [LaporanController::class, 'rekap_excel_outstanding']);
+      Route::get('/par', [LaporanController::class, 'rekap_excel_par']);
     });
 
     Route::prefix('csv')->group(function () {
@@ -348,6 +351,7 @@ Route::prefix('laporan')->group(function () {
       Route::get('/pengajuan', [LaporanController::class, 'rekap_csv_pengajuan']);
       Route::get('/pencairan', [LaporanController::class, 'rekap_csv_pencairan']);
       Route::get('/outstanding', [LaporanController::class, 'rekap_csv_outstanding']);
+      Route::get('/par', [LaporanController::class, 'rekap_csv_par']);
     });
   });
 });

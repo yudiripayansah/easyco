@@ -53,8 +53,8 @@ class RekapOutstandingExport implements FromView
         $total_saldo_catab = 0;
 
         foreach ($show as $item) {
-            $item->persen_jumlah = ($item->jumlah_anggota / $sum_anggota) * 100;
-            $item->persen_nominal = ($item->saldo_pokok / $sum_saldo_pokok) * 100;
+            $item->persen_jumlah = number_format(($item->jumlah_anggota / $sum_anggota) * 100, 2, ',', '.');
+            $item->persen_nominal = number_format(($item->saldo_pokok / $sum_saldo_pokok) * 100, 2, ',', '.');
 
             $total_anggota += $item->jumlah_anggota;
             $total_saldo_pokok += $item->saldo_pokok;

@@ -80,11 +80,12 @@ class KopKasPetugas extends Model
         return $res;
     }
 
-    function read($search, $sortBy, $sortDir, $offset, $perPage, $cabang)
+    function read($search, $sortBy, $sortDir, $offset, $perPage, $cabang, $jenis_kas_petugas)
     {
         $show = KopKasPetugas::orderBy($sortBy, $sortDir)
             ->join('kop_pegawai AS kp', 'kp.kode_pgw', 'kop_kas_petugas.kode_petugas')
-            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'kp.kode_cabang');
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'kp.kode_cabang')
+            ->where('jenis_kas_petugas', $jenis_kas_petugas);
 
         if ($cabang <> '00000') {
             $show->where('kc.kode_cabang', $cabang);
@@ -103,5 +104,10 @@ class KopKasPetugas extends Model
         $show = $show->get();
 
         return $show;
+    }
+
+    function buat_jurnal($kode_kas_petugas, $jenis_trx, $voucher_date, $jumlah_trx)
+    {
+        DB::select("SELECT fn_insert_jurnal_trx_kas_petugas('" . $kode_kas_petugas . "','" . $jenis_trx . "','" . $voucher_date . "','" . $jumlah_trx . "')");
     }
 }

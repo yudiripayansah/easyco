@@ -201,4 +201,15 @@ class KopTabungan extends Model
 
         return $show;
     }
+
+    function get_detail_saving($no_rekening)
+    {
+        $show = KopTabungan::select('kop_tabungan.no_rekening', 'ka.nama_anggota', 'kpt.nama_produk', 'kop_tabungan.saldo', 'kpt.kdtrx_setortunai', 'kpt.kdtrx_tariktunai', 'kpt.kdtrx_pinbukdebit', 'kpt.kdtrx_pinbukcredit')
+            ->join('kop_prd_tabungan AS kpt', 'kpt.kode_produk', 'kop_tabungan.kode_produk')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kop_tabungan.no_anggota')
+            ->where('kop_tabungan.no_rekening', $no_rekening)
+            ->first();
+
+        return $show;
+    }
 }

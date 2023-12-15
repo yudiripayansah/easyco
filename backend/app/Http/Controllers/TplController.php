@@ -212,6 +212,8 @@ class TplController extends Controller
         $angsuran_pokok = (isset($getFinancing->angsuran_pokok) ? $getFinancing->angsuran_pokok : 0);
         $angsuran_margin = (isset($getFinancing->angsuran_margin) ? $getFinancing->angsuran_margin : 0);
         $angsuran_catab = (isset($getFinancing->angsuran_catab) ? $getFinancing->angsuran_catab : 0);
+        $kdtrx_angspokok = (isset($getFinancing->kdtrx_angspokok) ? $getFinancing->kdtrx_angspokok : 0);
+        $kdtrx_angsmargin = (isset($getFinancing->kdtrx_angsmargin) ? $getFinancing->kdtrx_angsmargin : 0);
 
         if ($getAnggota['status'] == 1) {
             $freq = (isset($getFinancing->angsuran) ? 1 : 0);
@@ -343,12 +345,12 @@ class TplController extends Controller
                 'amount' => (int)$angsuran,
                 'detail' => [
                     [
-                        'id' => '32',
+                        'id' => $kdtrx_angspokok,
                         'nama' => 'angsuran pokok',
                         'amount' => (int)$angsuran_pokok
                     ],
                     [
-                        'id' => '33',
+                        'id' => $kdtrx_angsmargin,
                         'nama' => 'angsuran margin',
                         'amount' => (int)$angsuran_margin
                     ],
@@ -546,6 +548,7 @@ class TplController extends Controller
         // SETORAN TABER
         for ($i = 0; $i < $count; $i++) {
             if ($amount_tabungan[$i] > 0) {
+                $getSaving = KopTabungan::get_detail_saving($no_rekening_tabungan[$i]);
                 $data_trx_anggota[] = array(
                     'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
                     'id_trx_rembug' => $uuid,
@@ -554,7 +557,7 @@ class TplController extends Controller
                     'trx_date' => $trx_date,
                     'amount' => $amount_tabungan[$i],
                     'flag_debet_credit' => 'C',
-                    'trx_type' => '21',
+                    'trx_type' => $getSaving->kdtrx_setortunai,
                     'description' => 'Setoran Tabungan',
                     'created_by' => $kode_petugas
                 );
@@ -563,6 +566,7 @@ class TplController extends Controller
 
         // PENCAIRAN PEMBIAYAAN
         if ($pokok > 0) {
+            $getDroping = KopPembiayaan::tpl_droping($no_anggota)->first();
             $data_trx_anggota[] = array(
                 'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
                 'id_trx_rembug' => $uuid,
@@ -571,7 +575,7 @@ class TplController extends Controller
                 'trx_date' => $trx_date,
                 'amount' => $pokok,
                 'flag_debet_credit' => 'D',
-                'trx_type' => '31',
+                'trx_type' => $getDroping->kdtrx_pencairan,
                 'description' => 'Terima Pencairan Pembiayaan',
                 'created_by' => $kode_petugas
             );
@@ -604,6 +608,7 @@ class TplController extends Controller
 
             if ($tabungan_persen > 0) {
                 $getRekeningTabungan = KopTabungan::get_rekening_tabungan($no_anggota, '099');
+                $getCodeSaving = KopTabungan::get_detail_saving($getRekeningTabungan->no_rekening);
                 $data_trx_anggota[] = array(
                     'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
                     'id_trx_rembug' => $uuid,
@@ -612,7 +617,7 @@ class TplController extends Controller
                     'trx_date' => $trx_date,
                     'amount' => $tabungan_persen,
                     'flag_debet_credit' => 'C',
-                    'trx_type' => '21',
+                    'trx_type' => $getCodeSaving->kdtrx_setortunai,
                     'description' => 'Setoran Tabungan',
                     'created_by' => $kode_petugas
                 );
@@ -650,6 +655,7 @@ class TplController extends Controller
 
             if ($blokir_angsuran > 0) {
                 $getRekeningTiar = KopTabungan::get_rekening_tabungan($no_anggota, '003');
+                $getCodeSaving = KopTabungan::get_detail_saving($getRekeningTiar->no_rekening);
                 $data_trx_anggota[] = array(
                     'id_trx_anggota' => collect(DB::select('SELECT uuid() AS id_trx_anggota'))->first()->id_trx_anggota,
                     'id_trx_rembug' => $uuid,
@@ -658,7 +664,7 @@ class TplController extends Controller
                     'trx_date' => $trx_date,
                     'amount' => $blokir_angsuran,
                     'flag_debet_credit' => 'C',
-                    'trx_type' => '21',
+                    'trx_type' => $getCodeSaving->kdtrx_setortunai,
                     'description' => 'Setoran Tabungan Tiar',
                     'created_by' => $kode_petugas
                 );

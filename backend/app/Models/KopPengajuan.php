@@ -93,22 +93,21 @@ class KopPengajuan extends Model
         return $res;
     }
 
-    function member($kode_cabang)
+    function member($kode_cabang, $kode_rembug)
     {
-        $param = array();
+        $show = KopAnggota::select('kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kop_anggota.no_ktp', 'kr.nama_rembug', DB::raw('COUNT(kp.*) AS pembiayaan_ke'))
+            ->leftJoin('kop_pengajuan AS kp', 'kp.no_anggota', 'kop_anggota.no_anggota')
+            ->join('kop_rembug AS kr', 'kr.kode_rembug', 'kop_anggota.kode_rembug')
+            ->where('kop_anggota.status', 1)
+            ->where('kr.kode_rembug', $kode_rembug);
 
         if ($kode_cabang <> '00000') {
-            $param['kc.kode_cabang'] = $kode_cabang;
+            $show->where('kop_anggota.kode_cabang', $kode_cabang);
         }
 
-        $param['ka.status'] = 1;
+        $show->groupBy('kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kop_anggota.no_ktp', 'kr.nama_rembug');
 
-        $show = DB::table('kop_anggota AS ka')
-            ->select('ka.no_anggota', 'ka.nama_anggota', 'ka.no_ktp', 'kr.nama_rembug')
-            ->join('kop_cabang AS kc', 'kc.kode_cabang', '=', 'ka.kode_cabang')
-            ->leftJoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'ka.kode_rembug')
-            ->where($param)
-            ->get();
+        $show = $show->get();
 
         return $show;
     }
