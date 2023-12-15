@@ -10,21 +10,21 @@
                 <b-form-select
                   v-model="paging.cabang"
                   :options="opt.cabang"
-                  @change="doGetMajelis()"
+                  @change="doGetPetugas()"
                 />
-              </b-input-group>
-            </b-col>
-            <b-col cols="4">
-              <b-input-group prepend="Majelis" class="mb-3">
-                <b-form-select v-model="paging.rembug" :options="opt.rembug" />
               </b-input-group>
             </b-col>
             <b-col cols="4">
               <b-input-group prepend="Petugas" class="mb-3">
                 <b-form-select
                   v-model="paging.petugas"
-                  :options="opt.petugas"
+                  :options="opt.petugas" @change="doGetRembug()"
                 />
+              </b-input-group>
+            </b-col>
+            <b-col cols="4">
+              <b-input-group prepend="Majelis" class="mb-3">
+                <b-form-select v-model="paging.rembug" :options="opt.rembug" />
               </b-input-group>
             </b-col>
             <!-- <b-col>
@@ -358,7 +358,9 @@ export default {
         items: [],
         loading: false,
         totalRows: 0,
-        cabang: null,
+        cabang: 0,
+        petugas: 0,
+        rembug: 0,
         from: null,
         to: null,
       },
@@ -369,9 +371,9 @@ export default {
         sortBy: "kop_anggota.id",
         search: "",
         status: "~",
-        cabang: 0,
-        rembug: 0,
-        petugas: 0
+        cabang: null,
+        petugas: null,
+        rembug: null,
       },
       opt: {
         cabang: [],
@@ -395,24 +397,26 @@ export default {
     this.doGet();
     this.doGetCabang();
     this.doGetPetugas();
+    this.doGetRembug();
   },
   methods: {
     ...helper,
-    async doGetMajelis() {
+    async doGetRembug() {
       this.opt.rembug = [];
       let payload = {
-        perPage: "~",
         page: 1,
+        perPage: "~",
         sortBy: "kode_rembug",
-        sortDir: "ASC",
         search: "",
+        sortyDir: "ASC",
         kode_cabang: this.paging.cabang,
+        kode_petugas: this.paging.petugas,
       };
       try {
-        let req = await easycoApi.rembugRead(payload, this.user.token);
+        let req = await easycoApi.anggotaRembug(payload, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
-          this.opt.majelis = [
+          this.opt.rembug = [
             {
               value: 0,
               text: "All",
@@ -420,7 +424,7 @@ export default {
           ];
           data.map((item) => {
             this.opt.rembug.push({
-              value: item.kode_rembug,
+              value: Number(item.kode_rembug),
               text: item.nama_rembug,
             });
           });
@@ -430,22 +434,29 @@ export default {
       }
     },
     async doGetPetugas() {
-      let payload = null;
+      this.opt.petugas = [];
+      let payload = {
+        page: 1,
+        perPage: "~",
+        sortBy: "kode_pgw",
+        search: "",
+        sortyDir: "ASC",
+        kode_cabang: this.paging.cabang,
+      };
       try {
-        let req = await easycoApi.petugasRead(payload, this.user.token);
-        let { data, status, msg } = req.data;
+        let req = await easycoApi.pegawaiRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
         if (status) {
-          this.opt.petugas = [
-            {
+          this.opt.petugas = [{
               value: 0,
               text: "All",
-              disabled: true,
             },
+
           ];
           data.map((item) => {
             this.opt.petugas.push({
-              value: Number(item.kode_petugas),
-              text: item.nama_kas_petugas,
+              value: item.kode_pgw,
+              text: `${item.kode_pgw} - ${item.nama_pgw}`,
             });
           });
         }
@@ -544,6 +555,7 @@ export default {
       }
     },
     async doGetCabang() {
+      this.opt.cabang = [];
       let payload = {
         perPage: "~",
         page: 1,
@@ -564,7 +576,7 @@ export default {
           data.map((item) => {
             this.opt.cabang.push({
               value: item.kode_cabang,
-              text: item.nama_cabang,
+              text: `${item.kode_cabang} - ${item.nama_cabang}`,
             });
           });
         }

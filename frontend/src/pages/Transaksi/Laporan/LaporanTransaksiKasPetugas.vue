@@ -394,7 +394,7 @@ export default {
           data.map((item) => {
             this.opt.petugas.push({
               value: item.kode_kas_petugas,
-              text: item.nama_kas_petugas,
+              text: `${item.kode_petugas} - ${item.nama_kas_petugas}`,
             });
           });
         }

@@ -546,7 +546,7 @@ export default {
 					data.map((item) => {
 						this.opt.kode_cabang.push({
 							value: item.kode_cabang,
-							text: item.nama_cabang,
+							text: `${item.kode_cabang} - ${item.nama_cabang}`,
 						});
 					});
 				}
@@ -585,7 +585,7 @@ export default {
 					data.map((item) => {
 						this.opt.kode_petugas.push({
 							value: item.kode_pgw,
-							text: item.nama_pgw,
+							text: `${item.kode_pgw} - ${item.nama_pgw}`,
 						});
 					});
 				}

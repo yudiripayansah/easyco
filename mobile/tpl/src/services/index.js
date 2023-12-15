@@ -21,6 +21,14 @@ const infoMember = (payload, token) => {
   }
   return Axios.post('/tpl/information/member', payload, config)
 }
+const infoMemberDroping = (payload, token) => {
+  let config = {
+    headers: {
+      'Token': token
+    }
+  }
+  return Axios.post('/tpl/information/member_droping', payload, config)
+}
 const transSetoranDeposit = (payload, token) => {
   let config = {
     headers: {
@@ -121,10 +129,20 @@ const saldoAnggota = (payload, token) => {
   }
   return Axios.get('/anggotamutasi/saldo_anggota?'+payload, config);
 }
+const listkodeRead = (payload, token) => {
+  let url = "listkode/read";
+  let config = {
+    headers: {
+      token: token,
+    },
+  };
+  return Axios.post(url, payload, config);
+}
 export default {
   authLogin,
   infoRembug,
   infoMember,
+  infoMemberDroping,
   transSetoranDeposit,
   transSetoranProses,
   anggotaCreate,
@@ -136,5 +154,6 @@ export default {
   rekeningTabunganAnggota,
   tutupTabunganAnggota,
   readRekeningPembiayaan,
-  prosesPenciran
+  prosesPenciran,
+  listkodeRead
 }

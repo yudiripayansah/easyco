@@ -80,7 +80,7 @@
                                     : 'Tidak ada data'
                             "
                         >
-                            <template #thead-top="table">
+                            <template>
                                 <b-tr>
                                     <b-th colspan="2"
                                         ><span class="sr-only"></span

@@ -63,7 +63,7 @@ export default {
 			opt: {
 				kode_cabang: [
 					{
-						value: '',
+						value: 0,
 						text: "All",
 					},
 				],
@@ -128,14 +128,14 @@ export default {
 				if (status) {
 					this.opt.kode_cabang = [
 						{
-							value: '',
+							value: 0,
 							text: "All",
 						},
 					];
 					data.map((item) => {
 						this.opt.kode_cabang.push({
 							value: item.kode_cabang,
-							text: item.nama_cabang,
+							text:`${item.kode_cabang} - ${item.nama_cabang}`,
 						});
 					});
 				}
