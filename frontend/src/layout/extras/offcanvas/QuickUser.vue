@@ -15,7 +15,7 @@
             {{ user.periode_akhir }}
           </div>
 
-        <span class="text-muted font-weight-bold font-size-base d-none d-md-inline mr-3">
+        <span class="text-muted font-weight-bold font-size-base d-none d-md-inline mr-1">
           Hi,
         </span>
 
