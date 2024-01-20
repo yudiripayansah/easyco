@@ -1,19 +1,21 @@
 <template>
   <div class="topbar-item">
-    <div
-      class="btn btn-icon w-auto btn-clean d-flex align-items-center btn-lg px-2"
-      id="kt_quick_user_toggle"
-    >
-      <span
-        class="text-muted font-weight-bold font-size-base d-none d-md-inline mr-1"
-      >
-        Hi,
-      </span>
-      <span
-        class="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-3"
-      >
-        {{ user.nama_user }}
-      </span>
+    <div class="row">
+      <div class="btn btn-icon w-auto btn-clean d-flex align-items-center btn-lg px-2" id="kt_quick_user_toggle">
+
+        <div class="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-3">
+          {{ user.periode_awal }}
+        </div>
+
+        <span class="text-muted font-weight-bold font-size-base d-none d-md-inline mr-1">
+          Hi,
+        </span>
+        
+        <span class="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-3">
+          {{ user.nama_user }}
+        </span>
+
+      </div>
     </div>
     <b-button variant="danger" @click="onLogout()"><i class="fas fa-sign-out-alt"></i> Keluar</b-button>
   </div>
