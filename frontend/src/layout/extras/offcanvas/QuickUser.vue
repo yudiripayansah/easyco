@@ -7,11 +7,19 @@
           {{ user.periode_awal }}
         </div>
 
-        <span class="text-muted font-weight-bold font-size-base d-none d-md-inline mr-1">
+        <div class="text-muted font-weight-bolder font-size-base d-none d-md-inline mr-3">
+            s.d
+          </div>
+
+          <div class="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-3">
+            {{ user.periode_akhir }}
+          </div>
+
+        <span class="text-muted font-weight-bold font-size-base d-none d-md-inline mr-3">
           Hi,
         </span>
-        
-        <span class="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-3">
+
+        <span class="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-5">
           {{ user.nama_user }}
         </span>
 
