@@ -16,11 +16,13 @@ class PengajuanController extends Controller
     {
         $token = $request->header('token');
 
+        $kode_rembug = $request->kode_rembug;
+
         $param = array('token' => $token);
 
         $get = KopUser::where($param)->first();
 
-        $show = KopPengajuan::member($get->kode_cabang);
+        $show = KopPengajuan::member($get->kode_cabang, $kode_rembug);
 
         $data = array();
 
@@ -29,12 +31,14 @@ class PengajuanController extends Controller
             $nama_anggota = $sh->nama_anggota;
             $no_ktp = $sh->no_ktp;
             $nama_rembug = $sh->nama_rembug;
+            $pembiayaan_ke = $sh->pembiayaan_ke;
 
             $data[] = array(
                 'no_anggota' => $no_anggota,
                 'nama_anggota' => $nama_anggota,
                 'no_ktp' => $no_ktp,
-                'nama_rembug' => $nama_rembug
+                'nama_rembug' => $nama_rembug,
+                'pembiayaan_ke' => $pembiayaan_ke + 1
             );
         }
 
@@ -385,7 +389,9 @@ class PengajuanController extends Controller
         if ($search || $cabang || $jenis_pembiayaan || $petugas || $rembug || $status || ($from && $to)) {
             $total = KopPengajuan::orderBy($sortBy, $sortDir)
                 ->join('kop_anggota', 'kop_anggota.no_anggota', 'kop_pengajuan.no_anggota')
-                ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang');
+                ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang')
+                ->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', 'kop_anggota.kode_rembug')
+                ->join('kop_kas_petugas', 'kop_kas_petugas.kode_petugas', 'kop_rembug.kode_petugas');
 
             if ($search) {
                 $total->where('kop_pengajuan.no_anggota', 'LIKE', '%' . $search . '%')

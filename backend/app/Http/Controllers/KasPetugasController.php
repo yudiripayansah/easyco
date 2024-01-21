@@ -14,6 +14,8 @@ class KasPetugasController extends Controller
     {
         $data = $request->all();
 
+        $voucher_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->voucher_date)));
+
         $validate = KopKasPetugas::validateAdd($data);
 
         DB::beginTransaction();
@@ -21,6 +23,7 @@ class KasPetugasController extends Controller
         if ($validate['status'] === TRUE) {
             try {
                 $create = KopKasPetugas::create($data);
+                KopKasPetugas::buat_jurnal($request->kode_kas_petugas, $request->jenis_trx, $voucher_date, $request->jumlah_trx);
                 $find = KopKasPetugas::find($create->id);
 
                 $res = array(
@@ -93,7 +96,9 @@ class KasPetugasController extends Controller
             $offset = ($page - 1) * $perPage;
         }
 
-        $read = KopKasPetugas::read($search, $sortBy, $sortDir, $offset, $perPage, $cabang);
+        $jenis_kas_petugas = $request->jenis_kas_petugas;
+
+        $read = KopKasPetugas::read($search, $sortBy, $sortDir, $offset, $perPage, $cabang, $jenis_kas_petugas);
 
         $data = array();
 

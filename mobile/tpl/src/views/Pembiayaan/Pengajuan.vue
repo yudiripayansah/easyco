@@ -62,7 +62,6 @@
                   outlined
                   v-model="form.data.pengajuan_ke"
                   label="Pembiayaan Ke"
-                  disabled
                 />
               </v-col>
               <v-col cols="12">
