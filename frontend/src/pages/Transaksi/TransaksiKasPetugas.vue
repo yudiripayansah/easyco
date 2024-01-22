@@ -28,7 +28,7 @@
                   <b-input-group prepend="Cabang" class="mb-3">
                     <b-form-select
                       v-model="paging.cabang"
-                      :options="opt.cabang"
+                      :options="opt.cabang" @change="doGetPetugas()"
                     />
                   </b-input-group>
                 </b-col>
@@ -267,35 +267,35 @@ export default {
             tdClass: "text-center",
           },
           {
-            key: "tanggal",
+            key: "trx_date",
             sortable: true,
             label: "Tanggal",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "nama",
+            key: "nama_kas_petugas",
             sortable: true,
             label: "Nama",
             thClass: "text-center",
             tdClass: "",
           },
           {
-            key: "jenis_transaksi",
+            key: "jenis_trx",
             sortable: true,
             label: "Jenis Trx",
             thClass: "text-center",
             tdClass: "",
           },
+          //{
+            //key: "no_rek",
+            //sortable: true,
+            //label: "Nomer Rek",
+            //thClass: "text-center",
+            //tdClass: "",
+          //},
           {
-            key: "no_rek",
-            sortable: true,
-            label: "Nomer Rek",
-            thClass: "text-center",
-            tdClass: "",
-          },
-          {
-            key: "jumlah",
+            key: "jumlah_trx",
             sortable: true,
             label: "Jumlah",
             thClass: "text-center",
@@ -322,7 +322,7 @@ export default {
       paging: {
         page: 1,
         perPage: 10,
-        status: 1
+        status: 1,
       },
       remove: {
         data: {},
@@ -402,12 +402,12 @@ export default {
       return $dirty ? !$error : null;
     },
     async doGet() {
-      let payload = this.paging
+      let payload = this.paging;
       try {
         let req = await easycoApi.getTrxKasPetugas(payload, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
-          this.table.items = data
+          this.table.items = data;
         }
       } catch (error) {
         console.error(error);
@@ -429,7 +429,7 @@ export default {
           data.map((item) => {
             this.opt.cabang.push({
               value: item.kode_cabang,
-              text: item.nama_cabang,
+              text: `${item.kode_cabang} - ${item.nama_cabang}`,
             });
           });
         }
@@ -453,7 +453,7 @@ export default {
           data.map((item) => {
             this.opt.petugas.push({
               value: item.kode_kas_petugas,
-              text: item.nama_kas_petugas,
+              text: `${item.kode_kas_petugas} - ${item.nama_kas_petugas}`,
             });
           });
         }
@@ -561,4 +561,3 @@ export default {
   },
 };
 </script>
-  

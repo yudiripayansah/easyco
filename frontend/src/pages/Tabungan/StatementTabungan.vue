@@ -449,7 +449,7 @@ export default {
                     data.map((item) => {
                         this.opt.kode_cabang.push({
                             value: item.kode_cabang,
-                            text: item.nama_cabang,
+                            text: `${item.kode_cabang} - ${item.nama_cabang}`,
                         });
                     });
                 }
@@ -531,7 +531,7 @@ export default {
                     ];
                     data.map((item) => {
                         this.opt.no_anggota.push({
-                            value: Number(item.no_anggota),
+                            value: item.no_anggota,
                             text: item.nama_anggota,
                             data: item,
                         });
@@ -541,7 +541,7 @@ export default {
                 }
             } catch (error) {
                 console.error(error);
-                this.notify("danger", "Login Error", error);
+                this.notify("danger", "Get Anggota", error);
             }
         },
         async doGetRekening() {
@@ -573,7 +573,7 @@ export default {
                     data.map((item) => {
                         console.log({ item });
                         this.opt.no_rekening.push({
-                            value: Number(item.no_rekening),
+                            value: item.no_rekening,
                             text: item.no_rekening,
                             data: item,
                         });
@@ -583,7 +583,7 @@ export default {
                 }
             } catch (error) {
                 console.error(error);
-                this.notify("danger", "Login Error", error);
+                this.notify("danger", "Get Rekening", error);
             }
         },
         async doGet() {

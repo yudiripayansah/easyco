@@ -7,6 +7,7 @@ use App\Models\KopUser;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class PengajuanController extends Controller
@@ -15,11 +16,13 @@ class PengajuanController extends Controller
     {
         $token = $request->header('token');
 
+        $kode_rembug = $request->kode_rembug;
+
         $param = array('token' => $token);
 
         $get = KopUser::where($param)->first();
 
-        $show = KopPengajuan::member($get->kode_cabang);
+        $show = KopPengajuan::member($get->kode_cabang, $kode_rembug);
 
         $data = array();
 
@@ -28,12 +31,14 @@ class PengajuanController extends Controller
             $nama_anggota = $sh->nama_anggota;
             $no_ktp = $sh->no_ktp;
             $nama_rembug = $sh->nama_rembug;
+            $pembiayaan_ke = $sh->pembiayaan_ke;
 
             $data[] = array(
                 'no_anggota' => $no_anggota,
                 'nama_anggota' => $nama_anggota,
                 'no_ktp' => $no_ktp,
-                'nama_rembug' => $nama_rembug
+                'nama_rembug' => $nama_rembug,
+                'pembiayaan_ke' => $pembiayaan_ke + 1
             );
         }
 
@@ -112,109 +117,120 @@ class PengajuanController extends Controller
     {
         $data = $request->all();
 
-        $validate = KopPengajuan::validateAdd($data);
-
-        $fileKtp = $request->doc_ktp;
-        $fileKk = $request->doc_kk;
-        $filePendukung = $request->doc_pendukung;
+        $fileKtp = $request->file('doc_ktp');
+        $fileKk = $request->file('doc_kk');
+        $filePendukung = $request->file('doc_pendukung');
         $fileTtdAnggota = $request->ttd_anggota;
         $fileTtdSuami = $request->ttd_suami;
         $fileTtdKetuaMajelis = $request->ttd_ketua_majelis;
         $fileTtdTpl = $request->ttd_tpl;
 
-        if (empty($fileKtp)) {
-            $doc_ktp = NULL;
-        } else {
-            $name_ktp = 'ktp_' . $request->no_anggota . '.png';
-            $path_ktp = 'document/' . $name_ktp;
+        /*
+        Log::channel('custom')->info('info', [
+            'ktp' => $fileKtp->getClientOriginalName(),
+            'kk' => $fileKk->getClientOriginalName(),
+            'pendukung' => $filePendukung->getClientOriginalName()
+        ]);
+        */
 
-            Storage::disk('public')->put($path_ktp, file_get_contents($fileKtp));
+        try {
+            if ($fileKtp) {
+                $name_ktp = 'ktp_' . $request->no_anggota . '.png';
+                $path_ktp = 'public/document/';
 
-            $doc_ktp = $name_ktp;
-        }
+                //Storage::disk('public')->put($path_ktp, file_get_contents($fileKtp));
+                $fileKtp->storeAs($path_ktp, $name_ktp);
 
-        if (empty($fileKk)) {
-            $doc_kk = NULL;
-        } else {
-            $name_kk = 'kk_' . $request->no_anggota . '.png';
-            $path_kk = 'document/' . $name_kk;
+                $doc_ktp = $name_ktp;
+            } else {
+                $doc_ktp = NULL;
+            }
 
-            Storage::disk('public')->put($path_kk, file_get_contents($fileKk));
+            if ($fileKk) {
+                $name_kk = 'kk_' . $request->no_anggota . '.png';
+                $path_kk = 'public/document/';
 
-            $doc_kk = $name_kk;
-        }
+                //Storage::disk('public')->put($path_kk, file_get_contents($fileKk));
+                $fileKk->storeAs($path_kk, $name_kk);
 
-        if (empty($filePendukung)) {
-            $doc_pendukung = NULL;
-        } else {
-            $name_pendukung = 'pendukung_' . $request->no_anggota . '.png';
-            $path_pendukung = 'document/' . $name_pendukung;
+                $doc_kk = $name_kk;
+            } else {
+                $doc_kk = NULL;
+            }
 
-            Storage::disk('public')->put($path_pendukung, file_get_contents($filePendukung));
+            if ($filePendukung) {
+                $name_pendukung = 'pendukung_' . $request->no_anggota . '.png';
+                $path_pendukung = 'public/document/';
 
-            $doc_pendukung = $name_pendukung;
-        }
+                //Storage::disk('public')->put($path_pendukung, file_get_contents($filePendukung));
+                $filePendukung->storeAs($path_pendukung, $name_pendukung);
 
-        if (empty($fileTtdAnggota)) {
-            $ttd_anggota = NULL;
-        } else {
-            $name_ttd_anggota = 'ttd_anggota_' . $request->no_anggota . '.png';
-            $path_ttd_anggota = 'document/' . $name_ttd_anggota;
+                $doc_pendukung = $name_pendukung;
+            } else {
+                $doc_pendukung = NULL;
+            }
 
-            Storage::disk('public')->put($path_ttd_anggota, file_get_contents($fileTtdAnggota));
+            if ($fileTtdAnggota == 'undefined') {
+                $ttd_anggota = NULL;
+            } else {
+                $name_ttd_anggota = 'ttd_anggota_' . $request->no_anggota . '.png';
+                $path_ttd_anggota = 'document/' . $name_ttd_anggota;
 
-            $ttd_anggota = $name_ttd_anggota;
-        }
+                Storage::disk('public')->put($path_ttd_anggota, file_get_contents($fileTtdAnggota));
 
-        if (empty($fileTtdSuami)) {
-            $ttd_suami = NULL;
-        } else {
-            $name_ttd_suami = 'ttd_suami_' . $request->no_anggota . '.png';
-            $path_ttd_suami = 'document/' . $name_ttd_suami;
+                $ttd_anggota = $name_ttd_anggota;
+            }
 
-            Storage::disk('public')->put($path_ttd_suami, file_get_contents($fileTtdSuami));
+            if ($fileTtdSuami == 'undefined') {
+                $ttd_suami = NULL;
+            } else {
+                $name_ttd_suami = 'ttd_suami_' . $request->no_anggota . '.png';
+                $path_ttd_suami = 'document/' . $name_ttd_suami;
 
-            $ttd_suami = $name_ttd_suami;
-        }
+                Storage::disk('public')->put($path_ttd_suami, file_get_contents($fileTtdSuami));
 
-        if (empty($fileTtdKetuaMajelis)) {
-            $ttd_ketua_majelis = NULL;
-        } else {
-            $name_ttd_ketua_majelis = 'ttd_ketua_majelis_' . $request->no_anggota . '.png';
-            $path_ttd_ketua_majelis = 'document/' . $name_ttd_ketua_majelis;
+                $ttd_suami = $name_ttd_suami;
+            }
 
-            Storage::disk('public')->put($path_ttd_ketua_majelis, file_get_contents($fileTtdKetuaMajelis));
+            if ($fileTtdKetuaMajelis == 'undefined') {
+                $ttd_ketua_majelis = NULL;
+            } else {
+                $name_ttd_ketua_majelis = 'ttd_ketua_majelis_' . $request->no_anggota . '.png';
+                $path_ttd_ketua_majelis = 'document/' . $name_ttd_ketua_majelis;
 
-            $ttd_ketua_majelis = $name_ttd_ketua_majelis;
-        }
+                Storage::disk('public')->put($path_ttd_ketua_majelis, file_get_contents($fileTtdKetuaMajelis));
 
-        if (empty($fileTtdTpl)) {
-            $ttd_tpl = NULL;
-        } else {
-            $name_ttd_tpl = 'ttd_tpl_' . $request->no_anggota . '.png';
-            $path_ttd_tpl = 'document/' . $name_ttd_tpl;
+                $ttd_ketua_majelis = $name_ttd_ketua_majelis;
+            }
 
-            Storage::disk('public')->put($path_ttd_tpl, file_get_contents($fileTtdTpl));
+            if ($fileTtdTpl == 'undefined') {
+                $ttd_tpl = NULL;
+            } else {
+                $name_ttd_tpl = 'ttd_tpl_' . $request->no_anggota . '.png';
+                $path_ttd_tpl = 'document/' . $name_ttd_tpl;
 
-            $ttd_tpl = $name_ttd_tpl;
-        }
+                Storage::disk('public')->put($path_ttd_tpl, file_get_contents($fileTtdTpl));
 
-        $data['doc_ktp'] = $doc_ktp;
-        $data['doc_kk'] = $doc_kk;
-        $data['doc_pendukung'] = $doc_pendukung;
-        $data['ttd_anggota'] = $ttd_anggota;
-        $data['ttd_suami'] = $ttd_suami;
-        $data['ttd_ketua_majelis'] = $ttd_ketua_majelis;
-        $data['ttd_tpl'] = $ttd_tpl;
-        $data['tanggal_pengajuan'] = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_pengajuan)));
-        $data['rencana_droping'] = date('Y-m-d', strtotime(str_replace('/', '-', $request->rencana_droping)));
+                $ttd_tpl = $name_ttd_tpl;
+            }
 
-        $data['keterangan_peruntukan'] = strtoupper($request->keterangan_peruntukan);
+            $data['doc_ktp'] = $doc_ktp;
+            $data['doc_kk'] = $doc_kk;
+            $data['doc_pendukung'] = $doc_pendukung;
+            $data['ttd_anggota'] = $ttd_anggota;
+            $data['ttd_suami'] = $ttd_suami;
+            $data['ttd_ketua_majelis'] = $ttd_ketua_majelis;
+            $data['ttd_tpl'] = $ttd_tpl;
+            $data['tanggal_pengajuan'] = date('Y-m-d', strtotime(str_replace('/', '-', $request->tanggal_pengajuan)));
+            $data['rencana_droping'] = date('Y-m-d', strtotime(str_replace('/', '-', $request->rencana_droping)));
 
-        DB::beginTransaction();
+            $data['keterangan_peruntukan'] = strtoupper($request->keterangan_peruntukan);
 
-        if ($validate['status'] === TRUE) {
-            try {
+            $validate = KopPengajuan::validateAdd($data);
+
+            DB::beginTransaction();
+
+            if ($validate['status'] === TRUE) {
                 $create = KopPengajuan::create($data);
                 $find = KopPengajuan::find($create->id);
 
@@ -225,21 +241,19 @@ class PengajuanController extends Controller
                 );
 
                 DB::commit();
-            } catch (Exception $e) {
-                DB::rollBack();
-
+            } else {
                 $res = array(
                     'status' => FALSE,
                     'data' => $data,
-                    'msg' => $e->getMessage()
+                    'msg' => $validate['msg'],
+                    'error' => $validate['errors']
                 );
             }
-        } else {
+        } catch (Exception $rt) {
             $res = array(
                 'status' => FALSE,
                 'data' => $data,
-                'msg' => $validate['msg'],
-                'error' => $validate['errors']
+                'msg' => $rt->getMessage()
             );
         }
 
@@ -375,7 +389,9 @@ class PengajuanController extends Controller
         if ($search || $cabang || $jenis_pembiayaan || $petugas || $rembug || $status || ($from && $to)) {
             $total = KopPengajuan::orderBy($sortBy, $sortDir)
                 ->join('kop_anggota', 'kop_anggota.no_anggota', 'kop_pengajuan.no_anggota')
-                ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang');
+                ->join('kop_cabang', 'kop_cabang.kode_cabang', 'kop_anggota.kode_cabang')
+                ->leftjoin('kop_rembug', 'kop_rembug.kode_rembug', 'kop_anggota.kode_rembug')
+                ->join('kop_kas_petugas', 'kop_kas_petugas.kode_petugas', 'kop_rembug.kode_petugas');
 
             if ($search) {
                 $total->where('kop_pengajuan.no_anggota', 'LIKE', '%' . $search . '%')

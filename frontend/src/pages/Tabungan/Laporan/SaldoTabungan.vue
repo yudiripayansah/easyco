@@ -8,7 +8,17 @@
                         <div class="row mb-3">
                             <b-col>
                                 <b-input-group prepend="Cabang">
-                                    <b-form-select v-model="paging.kode_cabang" :options="opt.kode_cabang" />
+                                    <b-form-select v-model="paging.kode_cabang" :options="opt.kode_cabang" @change="doGetPetugas()" />
+                                </b-input-group>
+                            </b-col>
+                            <b-col>
+                                <b-input-group prepend="Petugas">
+                                    <b-form-select v-model="paging.petugas" :options="opt.petugas" @change="doGetRembug()" />
+                                </b-input-group>
+                            </b-col>
+                            <b-col>
+                                <b-input-group prepend="Majelis">
+                                    <b-form-select v-model="paging.rembug" :options="opt.rembug"/>
                                 </b-input-group>
                             </b-col>
                             <b-col>
@@ -229,6 +239,9 @@ export default {
                 items: [],
                 loading: false,
                 totalRows: 0,
+                kode_cabang: 0,
+                petugas: 0,
+                rembug: 0,
             },
             paging: {
                 currentPage: 1,
@@ -239,6 +252,8 @@ export default {
                 search: "",
                 status: "~",
                 kode_cabang: '',
+                petugas: null,
+                rembug: null,
                 kode_produk: '',
                 nama_cabang: '',
                 nama_produk: '',
@@ -250,6 +265,8 @@ export default {
                         text: "All",
                     },
                 ],
+                petugas: [],
+                rembug: [],
                 kode_produk: [
                     {
                         value: '',
@@ -274,6 +291,8 @@ export default {
     mounted() {
         this.doGet();
         this.doGetCabang();
+        this.doGetPetugas();
+        this.doGetRembug();
         this.doGetProduk();
     },
     methods: {
@@ -348,6 +367,7 @@ export default {
             this.showOverlay = false;
         },
         async doGetCabang() {
+            this.opt.cabang = [];
             let payload = {
                 perPage: "~",
                 page: 1,
@@ -368,7 +388,7 @@ export default {
                     data.map((item) => {
                         this.opt.kode_cabang.push({
                             value: item.kode_cabang,
-                            text: item.nama_cabang,
+                            text: `${item.kode_cabang} - ${item.nama_cabang}`,
                         });
                     });
                 }
@@ -376,6 +396,69 @@ export default {
                 console.error(error);
             }
         },
+        async doGetPetugas() {
+      this.opt.petugas = [];
+      let payload = {
+        page: 1,
+        perPage: "~",
+        sortBy: "kode_pgw",
+        search: "",
+        sortyDir: "ASC",
+        kode_cabang: this.paging.kode_cabang,
+      };
+      try {
+        let req = await easycoApi.pegawaiRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
+        if (status) {
+          this.opt.petugas = [{
+              value: 0,
+              text: "All",
+            },
+
+          ];
+          data.map((item) => {
+            this.opt.petugas.push({
+              value: item.kode_pgw,
+              text: `${item.kode_pgw} - ${item.nama_pgw}`,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doGetRembug() {
+      this.opt.rembug = [];
+      let payload = {
+        page: 1,
+        perPage: "~",
+        sortBy: "kode_rembug",
+        search: "",
+        sortyDir: "ASC",
+        kode_cabang: this.paging.kode_cabang,
+        kode_petugas: this.paging.petugas,
+      };
+      try {
+        let req = await easycoApi.anggotaRembug(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.rembug = [
+            {
+              value: 0,
+              text: "All",
+            },
+          ];
+          data.map((item) => {
+            this.opt.rembug.push({
+              value: Number(item.kode_rembug),
+              text: item.nama_rembug,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
         async doGetProduk() {
             let payload = {
                 perPage: "~",

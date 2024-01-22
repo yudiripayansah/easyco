@@ -34,7 +34,7 @@ const menu = [
         children: [
           {
             target: 'registrasi-anggota',
-            label: 'Laporan Registrasi Anggota',
+            label: 'Registrasi Anggota',
             component: import('@/pages/Keanggotaan/Laporan/RegistrasiAnggota.vue'),
           },
           {
@@ -44,8 +44,13 @@ const menu = [
           },
           {
             target: 'saldo-anggota',
-            label: 'Saldo Anggota',
+            label: 'List Saldo Anggota',
             component: import('@/pages/Keanggotaan/Laporan/SaldoAnggota.vue'),
+          },
+          {
+            target: 'rekap-saldo-anggota',
+            label: 'Rekap Saldo Anggota',
+            component: import('@/pages/Keanggotaan/Laporan/RekapSaldoAnggota.vue'),
           },
           {
             target: 'anggota-keluar',
@@ -74,6 +79,11 @@ const menu = [
       //   component: import('@/pages/Dummy.vue'),
       // },
       {
+        target: 'pinbuk-saldo-tabungan-sukarela',
+        label: 'Pinbuk Saldo Tabungan ke Sukarela',
+        component: import('@/pages/Tabungan/TabunganPinBukSaldoTabunganSukarela.vue'),
+      },
+      {
         target: 'verifikasi-pencairan-tabungan',
         label: 'Verifikasi Pencairan Tabungan',
         component: import('@/pages/Tabungan/VerifikasiPencairanTabungan.vue'),
@@ -85,7 +95,7 @@ const menu = [
         children: [
           {
             target: 'pembukaan-rekening-tabungan',
-            label: 'Laporan Pembukaan Rekening Tabungan',
+            label: 'Pembukaan Rekening Tabungan',
             component: import('@/pages/Tabungan/Laporan/PembukaanTabungan.vue'),
           },
           {
@@ -100,7 +110,7 @@ const menu = [
           },
           {
             target: 'penutupan-rekening-tabungan',
-            label: 'Laporan Penutupan Rekening Tabungan',
+            label: 'Penutupan Rekening Tabungan',
             component: import('@/pages/Dummy.vue'),
           },
         ],
@@ -168,18 +178,28 @@ const menu = [
         children: [
           {
             target: 'pengajuan-pembiayaan',
-            label: 'Laporan Pengajuan Pembiayaan',
+            label: 'Pengajuan Pembiayaan',
             component: import('@/pages/Pembiayaan/Laporan/PengajuanPembiayaan.vue'),
           },
           {
+            target: 'rekap-pengajuan-pembiayaan',
+            label: 'Rekap Pengajuan Pembiayaan',
+            component: import('@/pages/Pembiayaan/Laporan/LaporanRekapPengajuanPembiayaan.vue'),
+          },
+          {
             target: 'registrasi-akad',
-            label: 'Laporan Registrasi Akad',
+            label: 'Registrasi Akad',
             component: import('@/pages/Pembiayaan/Laporan/LaporanRegistrasiAkad.vue'),
           },
           {
             target: 'pencairan',
-            label: 'Laporan Pencairan Pembiayaan',
+            label: 'List Pencairan Pembiayaan',
             component: import('@/pages/Pembiayaan/Laporan/LaporanPencairanPembiayaan.vue'),
+          },
+          {
+            target: 'rekap-pencairan-pembiayaan',
+            label: 'Rekap Pencairan Pembiayaan',
+            component: import('@/pages/Pembiayaan/Laporan/RekapPencairanPembiayaan.vue'),
           },
           {
             target: 'kartu-angsuran',
@@ -188,12 +208,17 @@ const menu = [
           },
           {
             target: 'list-outstanding',
-            label: 'Laporan Outstanding',
+            label: 'List Outstanding',
             component: import('@/pages/Pembiayaan/Laporan/LaporanOutstanding.vue'),
           },
           {
+            target: 'rekap-outstanding-piutang',
+            label: 'Rekap Outstanding Piutang',
+            component: import('@/pages/Pembiayaan/Laporan/RekapOutstandingPiutang.vue'),
+          },
+          {
             target: 'list-penerimaan-angsuran',
-            label: 'Laporan Penerimaaan Angsuran',
+            label: 'Penerimaaan Angsuran',
             component: import('@/pages/Pembiayaan/Laporan/LaporanPenerimaanAngsuran.vue'),
           },
           {
@@ -205,6 +230,11 @@ const menu = [
             target: 'par-kolektibilitas',
             label: 'PAR/ Kolektibilitas',
             component: import('@/pages/Pembiayaan/Laporan/LaporanKolektibilitas.vue'),
+          },
+          {
+            target: 'rekapitulasi-par',
+            label: 'Rekap PAR/NPL',
+            component: import('@/pages/Pembiayaan/Laporan/LaporanRekapPar.vue'),
           },
         ],
       },
@@ -232,11 +262,11 @@ const menu = [
         label: 'Transaksi Kas Petugas',
         component: import('@/pages/Transaksi/TransaksiKasPetugas.vue'),
       },
-      {
-        target: 'verifikasi-transaksi-kas-petugas',
-        label: 'Verifikasi Transaksi Kas Petugas',
-        component: import('@/pages/Dummy.vue'),
-      },
+      //{
+      //  target: 'verifikasi-transaksi-kas-petugas',
+      //  label: 'Verifikasi Transaksi Kas Petugas',
+      //  component: import('@/pages/Dummy.vue'),
+      //}
       {
         target: 'transaksi-jurnal',
         label: 'Transaksi Jurnal Umum',
@@ -269,19 +299,24 @@ const menu = [
         children: [
           {
             target: 'list-transaksi-rembug',
-            label: 'Laporan List Transaksi Majelis',
+            label: 'List Transaksi Majelis',
             component: import('@/pages/Transaksi/Laporan/LaporanListTransaksiMajelis'),
           },
           {
             target: 'transaksi-kas-petugas',
-            label: 'Laporan Transaksi Kas Petugas',
+            label: 'Transaksi Kas Petugas',
             component: import('@/pages/Transaksi/Laporan/LaporanTransaksiKasPetugas'),
           },
           {
             target: 'jurnal-transaksi',
-            label: ' Laporan Jurnal Transaksi',
+            label: ' Jurnal Transaksi',
             component: import('@/pages/Transaksi/Laporan/LaporanTransaksiJurnal.vue'),
-          }
+          },
+          {
+            target: 'saldo-kas-petugas',
+            label: ' Saldo Kas Petugas',
+            component: import('@/pages/Transaksi/Laporan/LaporanSaldoKasPetugas.vue'),
+          },
         ]
       },
     ]
@@ -295,17 +330,17 @@ const menu = [
     children: [
       {
         target: 'laporan-cash-flow',
-        label: 'Laporan Cash Flow',
+        label: 'Cash Flow',
         component: import('@/pages/Dummy.vue'),
       },
       {
         target: 'laporan-jurnal-transaksi',
-        label: 'Laporan Jurnal Transaksi',
+        label: 'Jurnal Transaksi',
         component: import('@/pages/Transaksi/Laporan/LaporanTransaksiJurnal.vue'), //import('@/pages/Dummy.vue'),
       },
       {
         target: 'laporan-buku-besar',
-        label: 'Laporan Buku Besar',
+        label: 'Buku Besar',
         component: import('@/pages/Keuangan/LaporanBukuBesar.vue'),
       },
       // {
@@ -325,12 +360,12 @@ const menu = [
       // },
       {
         target: 'laporan-keuangan-bulan-lalu',
-        label: 'Laporan Keuangan Bulan Lalu',
+        label: 'Keuangan Bulan Lalu',
         component: import('@/pages/Keuangan/LaporanKeuanganBulanLalu.vue'),
       },
       {
         target: 'laporan-keuangan-bulan-berjalan',
-        label: 'Laporan Keuangan Bulan Berjalan',
+        label: 'Keuangan Bulan Berjalan',
         component: import('@/pages/Keuangan/LaporanKeuanganBulanBerjalan.vue'),
       },
     ]

@@ -223,9 +223,10 @@ class KopPembiayaan extends Model
 
     function tpl_deposit($no_anggota)
     {
-        $show = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'kop_pembiayaan.angsuran_pokok', 'kop_pembiayaan.angsuran_margin', 'kop_pembiayaan.angsuran_catab', DB::raw('COALESCE((kop_pembiayaan.angsuran_pokok+kop_pembiayaan.angsuran_margin+kop_pembiayaan.angsuran_catab),0) AS angsuran'), 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.counter_angsuran')
-            ->join('kop_pengajuan AS kpp', 'kpp.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')
-            ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kpp.no_anggota')
+        $show = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'kop_pembiayaan.angsuran_pokok', 'kop_pembiayaan.angsuran_margin', 'kop_pembiayaan.angsuran_catab', DB::raw('COALESCE((kop_pembiayaan.angsuran_pokok+kop_pembiayaan.angsuran_margin+kop_pembiayaan.angsuran_catab),0) AS angsuran'), 'kop_pembiayaan.jangka_waktu', 'kop_pembiayaan.counter_angsuran', 'prd.kdtrx_angspokok', 'prd.kdtrx_angsmargin')
+            ->join('kop_pengajuan AS kpp', 'kpp.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kpp.no_anggota')
+            ->join('kop_prd_pembiayaan AS prd', 'prd.kode_produk', 'kop_pembiayaan.kode_produk')
             ->where('kop_pembiayaan.status_rekening', 1)
             ->where('kop_pembiayaan.status_droping', 1)
             ->where('ka.no_anggota', $no_anggota)
@@ -249,9 +250,10 @@ class KopPembiayaan extends Model
 
     function tpl_droping($no_anggota)
     {
-        $show = KopPembiayaan::select('kop_pembiayaan.no_rekening', 'kop_pembiayaan.pokok', 'kop_pembiayaan.biaya_administrasi', 'kop_pembiayaan.biaya_asuransi_jiwa', 'kop_pembiayaan.biaya_asuransi_jaminan', 'kop_pembiayaan.biaya_notaris', 'kop_pembiayaan.tabungan_persen', 'kop_pembiayaan.dana_kebajikan', 'kop_pembiayaan.dana_gotongroyong', 'kop_pembiayaan.blokir_angsuran', 'kop_pembiayaan.tab_sukarela')
-            ->join('kop_pengajuan AS kpp', 'kpp.no_pengajuan', '=', 'kop_pembiayaan.no_pengajuan')
-            ->join('kop_anggota AS ka', 'ka.no_anggota', '=', 'kpp.no_anggota')
+        $show = KopPembiayaan::select('kop_pembiayaan.kode_produk', 'kop_pembiayaan.no_rekening', 'kop_pembiayaan.pokok', 'kop_pembiayaan.biaya_administrasi', 'kop_pembiayaan.biaya_asuransi_jiwa', 'kop_pembiayaan.biaya_asuransi_jaminan', 'kop_pembiayaan.biaya_notaris', 'kop_pembiayaan.tabungan_persen', 'kop_pembiayaan.dana_kebajikan', 'kop_pembiayaan.dana_gotongroyong', 'kop_pembiayaan.blokir_angsuran', 'kop_pembiayaan.tab_sukarela', 'prd.kdtrx_pencairan')
+            ->join('kop_pengajuan AS kpp', 'kpp.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kpp.no_anggota')
+            ->join('kop_prd_pembiayaan AS prd', 'prd.kode_produk', 'kop_pembiayaan.kode_produk')
             ->where('kop_pembiayaan.status_rekening', 0)
             ->where('kop_pembiayaan.status_droping', 1)
             ->where('ka.no_anggota', $no_anggota)
@@ -333,7 +335,7 @@ class KopPembiayaan extends Model
             ->join('kop_pengajuan AS kpg', 'kpg.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
             ->join('kop_anggota AS ka', 'ka.no_anggota', 'kpg.no_anggota')
             ->where('ka.kode_rembug', $kode_rembug)
-            ->where('kop_pembiayaan.status_rekening', 1)
+            ->where('kop_pembiayaan.status_rekening', 0)
             ->where('kop_pembiayaan.status_droping', 0)
             ->get();
 
@@ -353,6 +355,81 @@ class KopPembiayaan extends Model
             ->where('counter_angsuran', 0)
             ->where('no_rekening', $no_rekening)
             ->get();
+
+        return $show;
+    }
+
+    function rekap_pencairan($kode_cabang, $rekap_by, $from_date, $thru_date)
+    {
+        $show = KopPembiayaan::join('kop_pengajuan AS kpg', 'kpg.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kpg.no_anggota')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'ka.kode_cabang')
+            ->where('kop_pembiayaan.status_droping', 1);
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $show->where('kc.kode_cabang', $kode_cabang);
+        }
+
+        if ($rekap_by == 1) {
+            // CABANG
+            $show->select(DB::raw('kc.nama_cabang AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pembiayaan.pokok),0) AS nominal'))
+                ->groupBy('kc.nama_cabang')
+                ->orderBy('kc.nama_cabang');
+        } elseif ($rekap_by == 2) {
+            // PETUGAS
+            $show->select(DB::raw('kp.nama_pgw AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pembiayaan.pokok),0) AS nominal'))
+                ->join('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+                ->join('kop_pegawai AS kp', 'kp.kode_pgw', 'kr.kode_petugas')
+                ->groupBy('kp.nama_pgw')
+                ->orderBy('kp.nama_pgw');
+        } else {
+            // MAJELIS
+            $show->select(DB::raw('kr.nama_rembug AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pembiayaan.pokok),0) AS nominal'))
+                ->join('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+                ->groupBy('kr.nama_rembug')
+                ->orderBy('kr.nama_rembug');
+        }
+
+        $show->whereBetween('kop_pembiayaan.tanggal_akad', [$from_date, $thru_date]);
+
+        $show = $show->get();
+
+        return $show;
+    }
+
+    function rekap_outstanding($kode_cabang, $rekap_by)
+    {
+        $show = KopPembiayaan::join('kop_pengajuan AS kpg', 'kpg.no_pengajuan', 'kop_pembiayaan.no_pengajuan')
+            ->join('kop_anggota AS ka', 'ka.no_anggota', 'kpg.no_anggota')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'ka.kode_cabang')
+            ->where('kop_pembiayaan.status_droping', 1)
+            ->where('kop_pembiayaan.status_rekening', 1);
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $show->where('kc.kode_cabang', $kode_cabang);
+        }
+
+        if ($rekap_by == 1) {
+            // CABANG
+            $show->select(DB::raw('kc.nama_cabang AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_pokok),0) AS saldo_pokok'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_margin),0) AS saldo_margin'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_catab),0) AS saldo_catab'))
+                ->groupBy('kc.nama_cabang')
+                ->orderBy('kc.nama_cabang');
+        } elseif ($rekap_by == 2) {
+            // PETUGAS
+            $show->select(DB::raw('kp.nama_pgw AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_pokok),0) AS saldo_pokok'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_margin),0) AS saldo_margin'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_catab),0) AS saldo_catab'))
+                ->join('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+                ->join('kop_pegawai AS kp', 'kp.kode_pgw', 'kr.kode_petugas')
+                ->groupBy('kp.nama_pgw')
+                ->orderBy('kp.nama_pgw');
+        } else {
+            // MAJELIS
+            $show->select(DB::raw('kr.nama_rembug AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_pokok),0) AS saldo_pokok'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_margin),0) AS saldo_margin'), DB::raw('COALESCE(SUM(kop_pembiayaan.saldo_catab),0) AS saldo_catab'))
+                ->join('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+                ->groupBy('kr.nama_rembug')
+                ->orderBy('kr.nama_rembug');
+        }
+
+        $show = $show->get();
 
         return $show;
     }

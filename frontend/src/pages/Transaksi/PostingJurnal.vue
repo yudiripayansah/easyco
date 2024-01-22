@@ -267,7 +267,7 @@ export default {
         if (status) {
           data.map((item) => {
             this.opt.cabang.push({
-              text: item.nama_cabang,
+              text: `${item.kode_cabang} - ${item.nama_cabang}`,
               value: item.kode_cabang,
             });
           });

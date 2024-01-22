@@ -93,22 +93,21 @@ class KopPengajuan extends Model
         return $res;
     }
 
-    function member($kode_cabang)
+    function member($kode_cabang, $kode_rembug)
     {
-        $param = array();
+        $show = KopAnggota::select('kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kop_anggota.no_ktp', 'kr.nama_rembug', DB::raw('COUNT(kp.*) AS pembiayaan_ke'))
+            ->leftJoin('kop_pengajuan AS kp', 'kp.no_anggota', 'kop_anggota.no_anggota')
+            ->join('kop_rembug AS kr', 'kr.kode_rembug', 'kop_anggota.kode_rembug')
+            ->where('kop_anggota.status', 1)
+            ->where('kr.kode_rembug', $kode_rembug);
 
         if ($kode_cabang <> '00000') {
-            $param['kc.kode_cabang'] = $kode_cabang;
+            $show->where('kop_anggota.kode_cabang', $kode_cabang);
         }
 
-        $param['ka.status'] = 1;
+        $show->groupBy('kop_anggota.no_anggota', 'kop_anggota.nama_anggota', 'kop_anggota.no_ktp', 'kr.nama_rembug');
 
-        $show = DB::table('kop_anggota AS ka')
-            ->select('ka.no_anggota', 'ka.nama_anggota', 'ka.no_ktp', 'kr.nama_rembug')
-            ->join('kop_cabang AS kc', 'kc.kode_cabang', '=', 'ka.kode_cabang')
-            ->leftJoin('kop_rembug AS kr', 'kr.kode_rembug', '=', 'ka.kode_rembug')
-            ->where($param)
-            ->get();
+        $show = $show->get();
 
         return $show;
     }
@@ -169,6 +168,42 @@ class KopPengajuan extends Model
             ->orderBy('kc.kode_cabang', 'ASC')
             ->orderBy('kr.kode_rembug', 'ASC')
             ->orderBy('kop_pengajuan.tanggal_pengajuan', 'ASC');
+
+        $show = $show->get();
+
+        return $show;
+    }
+
+    function rekap_pengajuan($kode_cabang, $rekap_by, $from_date, $thru_date)
+    {
+        $show = KopPengajuan::join('kop_anggota AS ka', 'ka.no_anggota', 'kop_pengajuan.no_anggota')
+            ->join('kop_cabang AS kc', 'kc.kode_cabang', 'ka.kode_cabang');
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $show->where('kc.kode_cabang', $kode_cabang);
+        }
+
+        if ($rekap_by == 1) {
+            // CABANG
+            $show->select(DB::raw('kc.nama_cabang AS keterangan'), DB::raw('COUNT(ka.*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pengajuan.jumlah_pengajuan),0) AS nominal'))
+                ->groupBy('kc.nama_cabang')
+                ->orderBy('kc.nama_cabang');
+        } elseif ($rekap_by == 2) {
+            // PETUGAS
+            $show->select(DB::raw('kp.nama_pgw AS keterangan'), DB::raw('COUNT(ka.*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pengajuan.jumlah_pengajuan),0) AS nominal'))
+                ->join('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+                ->join('kop_pegawai AS kp', 'kp.kode_pgw', 'kr.kode_petugas')
+                ->groupBy('kp.nama_pgw')
+                ->orderBy('kp.nama_pgw');
+        } else {
+            // MAJELIS
+            $show->select(DB::raw('kr.nama_rembug AS keterangan'), DB::raw('COUNT(ka.*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_pengajuan.jumlah_pengajuan),0) AS nominal'))
+                ->join('kop_rembug AS kr', 'kr.kode_rembug', 'ka.kode_rembug')
+                ->groupBy('kr.nama_rembug')
+                ->orderBy('kr.nama_rembug');
+        }
+
+        $show->whereBetween('kop_pengajuan.tanggal_pengajuan', [$from_date, $thru_date]);
 
         $show = $show->get();
 

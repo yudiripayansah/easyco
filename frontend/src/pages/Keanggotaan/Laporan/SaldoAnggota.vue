@@ -18,8 +18,7 @@
               <b-input-group prepend="Petugas" class="mb-3">
                 <b-form-select
                   v-model="paging.petugas"
-                  :options="opt.petugas"
-                  @change="doGetMajelis()"
+                  :options="opt.petugas" @change="doGetRembug()"
                 />
               </b-input-group>
             </b-col>
@@ -166,14 +165,16 @@
               <th rowspan="2">Nama Cabang</th>
               <th rowspan="2">Desa</th>
               <th rowspan="2">No Telp</th>
-              <th colspan="5">Saldo</th>
+              <th colspan="7">Saldo</th>
             </tr>
             <tr class="text-center">
               <th>Simpok</th>
               <th>Minggon</th>
               <th>Sukarela</th>
-              <th>Taber & Tab 5%</th>
-              <th>Pembiayaan</th>
+              <th>Taber</th>
+              <th>Tab 5%</th>
+              <th>Pembiayaan Pokok</th>
+              <th>Pembiayaan margin</th>
             </tr>
           </thead>
           <tbody v-if="report.items.length > 0">
@@ -191,6 +192,8 @@
               <td class="text-right">Rp {{ thousand(report.simpok) }}</td>
               <td class="text-right">Rp {{ thousand(report.simwa) }}</td>
               <td class="text-right">Rp {{ thousand(report.simsuk) }}</td>
+              <td class="text-right">Rp {{ thousand(0) }}</td>
+              <td class="text-right">Rp {{ thousand(0) }}</td>
               <td class="text-right">Rp {{ thousand(0) }}</td>
               <td class="text-right">Rp {{ thousand(0) }}</td>
             </tr>
@@ -355,7 +358,9 @@ export default {
         items: [],
         loading: false,
         totalRows: 0,
-        cabang: null,
+        cabang: 0,
+        petugas: 0,
+        rembug: 0,
         from: null,
         to: null,
       },
@@ -367,8 +372,8 @@ export default {
         search: "",
         status: "~",
         cabang: null,
+        petugas: null,
         rembug: null,
-        petugas: null
       },
       opt: {
         cabang: [],
@@ -391,17 +396,19 @@ export default {
   mounted() {
     this.doGet();
     this.doGetCabang();
+    this.doGetPetugas();
+    this.doGetRembug();
   },
   methods: {
     ...helper,
-    async doGetMajelis() {
+    async doGetRembug() {
       this.opt.rembug = [];
       let payload = {
-        perPage: "~",
         page: 1,
+        perPage: "~",
         sortBy: "kode_rembug",
-        sortDir: "ASC",
         search: "",
+        sortyDir: "ASC",
         kode_cabang: this.paging.cabang,
         kode_petugas: this.paging.petugas,
       };
@@ -409,7 +416,7 @@ export default {
         let req = await easycoApi.anggotaRembug(payload, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
-          this.opt.majelis = [
+          this.opt.rembug = [
             {
               value: 0,
               text: "All",
@@ -417,7 +424,7 @@ export default {
           ];
           data.map((item) => {
             this.opt.rembug.push({
-              value: item.kode_rembug,
+              value: Number(item.kode_rembug),
               text: item.nama_rembug,
             });
           });
@@ -427,23 +434,29 @@ export default {
       }
     },
     async doGetPetugas() {
+      this.opt.petugas = [];
       let payload = {
+        page: 1,
+        perPage: "~",
+        sortBy: "kode_pgw",
+        search: "",
+        sortyDir: "ASC",
         kode_cabang: this.paging.cabang,
       };
       try {
-        let req = await easycoApi.petugasRead(payload, this.user.token);
-        let { data, status, msg } = req.data;
+        let req = await easycoApi.pegawaiRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
         if (status) {
-          this.opt.petugas = [
-            {
-              value: null,
+          this.opt.petugas = [{
+              value: 0,
               text: "All",
             },
+
           ];
           data.map((item) => {
             this.opt.petugas.push({
-              value: item.kode_petugas,
-              text: item.nama_kas_petugas,
+              value: item.kode_pgw,
+              text: `${item.kode_pgw} - ${item.nama_pgw}`,
             });
           });
         }
@@ -542,6 +555,7 @@ export default {
       }
     },
     async doGetCabang() {
+      this.opt.cabang = [];
       let payload = {
         perPage: "~",
         page: 1,
@@ -562,7 +576,7 @@ export default {
           data.map((item) => {
             this.opt.cabang.push({
               value: item.kode_cabang,
-              text: item.nama_cabang,
+              text: `${item.kode_cabang} - ${item.nama_cabang}`,
             });
           });
         }

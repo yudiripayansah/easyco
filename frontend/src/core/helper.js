@@ -40,8 +40,8 @@ const dateFormatId = (date, sepparator = '-') => {
     return null
   }
 }
-const dateFormat = (date, sepparator='-') => {
-  if(date) {
+const dateFormat = (date, sepparator = '-') => {
+  if (date) {
     let theDate = new Date(date)
     let d = theDate.getDate()
     let m = theDate.getMonth() + 1
@@ -90,6 +90,16 @@ const numberFormat = (number = 0, decimals = 2, dec_point = ',', thousands_sep =
   // Add this number to the element as text.
   return s.join(dec);
 }
+
+const areAllFieldsNotEmpty = (obj) => {
+  for (const key in obj) {
+    if (obj[key] === null || obj[key] === '' || (Array.isArray(obj[key]) && obj[key].length === 0)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export default {
   thousand,
   thousandMask,
@@ -97,5 +107,6 @@ export default {
   dateFormatId,
   maxLength,
   dateFormat,
-  numberFormat
+  numberFormat,
+  areAllFieldsNotEmpty,
 }

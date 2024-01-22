@@ -420,7 +420,7 @@ export default {
           data.map((item) => {
             this.opt.cabang.push({
               value: item.kode_cabang,
-              text: item.nama_cabang,
+              text: `${item.kode_cabang} - ${item.nama_cabang}`,
             });
           });
         }
@@ -443,7 +443,7 @@ export default {
           data.map((item) => {
             this.opt.gl.push({
               value: item.kode_gl,
-              text: item.nama_gl,
+              text: `${item.kode_gl} - ${item.nama_gl}`,
             });
           });
         }

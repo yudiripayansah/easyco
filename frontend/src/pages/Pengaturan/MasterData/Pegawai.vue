@@ -533,7 +533,7 @@ export default {
           data.map((item) => {
             this.opt.kode_cabang.push({
               value: Number(item.kode_cabang),
-              text: item.nama_cabang,
+              text: `${item.kode_cabang} - ${item.nama_cabang}`,
             });
           });
         }

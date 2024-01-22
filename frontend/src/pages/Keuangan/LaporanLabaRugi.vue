@@ -112,22 +112,22 @@ export default {
     async exportPdf() {
       // bulan berjalan
       if (this.paging.cabang && this.paging.tanggal) {
-        const url = `https://easycop.kopikoding.com/report/print_profit_loss_current_pdf/${this.paging.cabang}/20/${this.paging.tanggal}`;
+        const url = `https://easycop.kopsyahmsi.com/report/print_profit_loss_current_pdf/${this.paging.cabang}/20/${this.paging.tanggal}`;
         window.open(url, "_blank");
       } else if (this.paging.cabang && this.paging.tanggal_bulan_lalu) {
         //bulan lalu
-        const url = `https://easycop.kopikoding.com/report/print_profit_loss_pdf/${this.paging.cabang}/20/${this.paging.tanggal_bulan_lalu}`;
+        const url = `https://easycop.kopsyahmsi.com/report/print_profit_loss_pdf/${this.paging.cabang}/20/${this.paging.tanggal_bulan_lalu}`;
         window.open(url, "_blank");
       }
     },
     async exportXls() {
       // bulan berjalan
       if (this.paging.cabang && this.paging.tanggal) {
-        const url = `https://easycop.kopikoding.com/report/print_profit_loss_current_xls/${this.paging.cabang}/20/${this.paging.tanggal}`;
+        const url = `https://easycop.kopsyahmsi.com/report/print_profit_loss_current_xls/${this.paging.cabang}/20/${this.paging.tanggal}`;
         window.open(url, "_blank");
       } else if (this.paging.cabang && this.paging.tanggal_bulan_lalu) {
         //bulan lalu
-        const url = `https://easycop.kopikoding.com/report/print_profit_loss_xls/${this.paging.cabang}/20/${this.paging.tanggal_bulan_lalu}`;
+        const url = `https://easycop.kopsyahmsi.com/report/print_profit_loss_xls/${this.paging.cabang}/20/${this.paging.tanggal_bulan_lalu}`;
         window.open(url, "_blank");
       }
     },

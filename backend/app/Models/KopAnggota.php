@@ -249,4 +249,41 @@ class KopAnggota extends Model
 
         return $show;
     }
+
+    function rekap_saldo_anggota($kode_cabang, $rekap_by)
+    {
+        $show = KopAnggota::join('kop_cabang AS kc', 'kc.kode_cabang', 'kop_anggota.kode_cabang')
+            ->join('kop_pengajuan AS kp', 'kp.no_anggota', 'kop_anggota.no_anggota')
+            ->join('kop_pembiayaan AS kpb', 'kpb.no_pengajuan', 'kp.no_pengajuan');
+
+        if ($kode_cabang <> '~' and $kode_cabang <> '00000' and !empty($kode_cabang) and $kode_cabang <> null) {
+            $show->where('kc.kode_cabang', $kode_cabang);
+        }
+
+        if ($rekap_by == 1) {
+            // CABANG
+            $show->select(DB::raw('kc.nama_cabang AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_anggota.simwa),0) AS simwa'), DB::raw('COALESCE(SUM(kop_anggota.simpok),0) AS simpok'), DB::raw('COALESCE(SUM(kop_anggota.simsuk),0) AS simsuk'), DB::raw('COALESCE(SUM(kpb.saldo_pokok),0) AS saldo_pokok'), DB::raw('COALESCE(SUM(kpb.saldo_margin),0) AS saldo_margin'), DB::raw('COALESCE(SUM(kpb.saldo_catab),0) AS saldo_catab'))
+                ->groupBy('kc.nama_cabang')
+                ->orderBy('kc.nama_cabang');
+        } elseif ($rekap_by == 2) {
+            // PETUGAS
+            $show->select(DB::raw('kpg.nama_pgw AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_anggota.simwa),0) AS simwa'), DB::raw('COALESCE(SUM(kop_anggota.simpok),0) AS simpok'), DB::raw('COALESCE(SUM(kop_anggota.simsuk),0) AS simsuk'), DB::raw('COALESCE(SUM(kpb.saldo_pokok),0) AS saldo_pokok'), DB::raw('COALESCE(SUM(kpb.saldo_margin),0) AS saldo_margin'), DB::raw('COALESCE(SUM(kpb.saldo_catab),0) AS saldo_catab'))
+                ->join('kop_rembug AS kr', 'kr.kode_rembug', 'kop_anggota.kode_rembug')
+                ->join('kop_pegawai AS kpg', 'kpg.kode_pgw', 'kr.kode_petugas')
+                ->groupBy('kpg.nama_pgw')
+                ->orderBy('kpg.nama_pgw');
+        } else {
+            // MAJELIS
+            $show->select(DB::raw('kr.nama_rembug AS keterangan'), DB::raw('COUNT(*) AS jumlah_anggota'), DB::raw('COALESCE(SUM(kop_anggota.simwa),0) AS simwa'), DB::raw('COALESCE(SUM(kop_anggota.simpok),0) AS simpok'), DB::raw('COALESCE(SUM(kop_anggota.simsuk),0) AS simsuk'), DB::raw('COALESCE(SUM(kpb.saldo_pokok),0) AS saldo_pokok'), DB::raw('COALESCE(SUM(kpb.saldo_margin),0) AS saldo_margin'), DB::raw('COALESCE(SUM(kpb.saldo_catab),0) AS saldo_catab'))
+                ->join('kop_rembug AS kr', 'kr.kode_rembug', 'kop_anggota.kode_rembug')
+                ->groupBy('kr.nama_rembug')
+                ->orderBy('kr.nama_rembug');
+        }
+
+        $show->where('kop_anggota.status', 1);
+
+        $show = $show->get();
+
+        return $show;
+    }
 }

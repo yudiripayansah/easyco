@@ -1,5 +1,5 @@
 import axios from "axios";
-axios.defaults.baseURL = "https://easyco.kopikoding.com/api/api/";
+axios.defaults.baseURL = "https://easyco.kopsyahmsi.com/api/api/";
 
 /**
  * BEGIN
@@ -7,13 +7,13 @@ axios.defaults.baseURL = "https://easyco.kopikoding.com/api/api/";
  * @date 2023-09-22
  */
 export default {
-    getReportSetup(payload, token) {
-        let url = "laporan/list/get_report_setup?" + payload;
-        let config = {
-            headers: {
-                token: token,
-            },
-        };
-        return axios.get(url, config);
-    }
-}
+  getReportSetup(payload, token) {
+    let url = "laporan/list/get_report_setup?" + payload;
+    let config = {
+      headers: {
+        token: token,
+      },
+    };
+    return axios.get(url, config);
+  },
+};

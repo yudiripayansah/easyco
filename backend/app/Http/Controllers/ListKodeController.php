@@ -325,4 +325,31 @@ class ListKodeController extends Controller
 
         return $response;
     }
+
+    function get_rekap_by(Request $request)
+    {
+        $get = KopListKode::where('nama_kode', 'rekap_by')
+            ->orderBy('kode_value', 'ASC')
+            ->get();
+
+        $data = array();
+
+        foreach ($get as $gt) {
+            $data[] = array(
+                'kode_value' => $gt->kode_value,
+                'nama_kode' => $gt->nama_kode,
+                'kode_display' => $gt->kode_display
+            );
+        }
+
+        $res = array(
+            'status' => true,
+            'data' => $data,
+            'msg' => null
+        );
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
 }

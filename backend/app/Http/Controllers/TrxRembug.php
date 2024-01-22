@@ -175,7 +175,7 @@ class TrxRembug extends Controller
             }
 
             // SETORAN TABER
-            if ($trx_type == 21) {
+            if (isset($tabungan['id'])) {
                 if ($amount > 0) {
                     $get = KopTabungan::find($tabungan['id']);
                     $saldo = $tabungan['saldo'] + $amount;
@@ -195,7 +195,9 @@ class TrxRembug extends Controller
             }
 
             // PENCAIRAN PEMBIAYAAN
-            if ($trx_type == 31) {
+            $getDroping = KopPembiayaan::tpl_droping($no_anggota)->first();
+            $kdtrx_pencairan = (isset($getDroping->kdtrx_pencairan) ? $getDroping->kdtrx_pencairan : 0);
+            if ($trx_type == $kdtrx_pencairan or $trx_type == 31) {
                 if ($amount > 0) {
                     $get = KopPembiayaan::find($pembiayaan['id']);
                     $get->status_rekening = 1;
@@ -204,7 +206,11 @@ class TrxRembug extends Controller
             }
 
             // SETORAN ANGSURAN POKOK
-            if ($trx_type == 32) {
+            $getFinancing = KopPembiayaan::tpl_deposit($no_anggota)->first();
+            $kdtrx_angspokok = (isset($getFinancing->kdtrx_angspokok) ? $getFinancing->kdtrx_angspokok : 0);
+            $kdtrx_angsmargin = (isset($getFinancing->kdtrx_angsmargin) ? $getFinancing->kdtrx_angsmargin : 0);
+
+            if ($trx_type == $kdtrx_angspokok or $trx_type == 32) {
                 if ($amount > 0) {
                     $freq = round($amount / $pembiayaan['angsuran_pokok']);
                     $get = KopPembiayaan::find($pembiayaan['id']);
@@ -260,8 +266,9 @@ class TrxRembug extends Controller
             }
 
             // SETORAN ANGSURAN MARGIN
-            if ($trx_type == 33) {
+            if ($trx_type == $kdtrx_angsmargin or $trx_type == 33) {
                 if ($amount > 0) {
+                    $freq = round($amount / $pembiayaan['angsuran_margin']);
                     $get = KopPembiayaan::find($pembiayaan['id']);
                     $get->saldo_margin = $pembiayaan['saldo_margin'] - $amount;
                     $get->save();
@@ -582,6 +589,7 @@ class TrxRembug extends Controller
             $data['debit_credit'] = 'C';
         }
 
+        $data['voucher_date'] = date('Y-m-d', strtotime(str_replace('/', '-', $request->voucher_date)));
         $data['trx_date'] = date('Y-m-d');
         $data['created_at'] = date('Y-m-d H:i:s');
 
@@ -649,6 +657,57 @@ class TrxRembug extends Controller
                 'data' => $data,
                 'msg' => NULL,
                 'error' => NULL
+            );
+        }
+
+        $response = response()->json($res, 200);
+
+        return $response;
+    }
+
+    function proses_pinbuk_simsuk(Request $request)
+    {
+        $no_rekening = $request->no_rekening;
+        $amount = (int) $request->amount;
+        $trx_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->trx_date)));
+
+        if ($amount > 0) {
+            $get = KopTabungan::get_detail_saving($no_rekening);
+
+            if ($get->saldo > $amount) {
+                DB::beginTransaction();
+
+                try {
+                    KopTrxRembug::proses_pinbuk($no_rekening, $amount, $trx_date);
+
+                    $res = array(
+                        'status' => TRUE,
+                        'data' => NULL,
+                        'msg' => 'Berhasil!'
+                    );
+
+                    DB::commit();
+                } catch (Exception $e) {
+                    DB::rollBack();
+
+                    $res = array(
+                        'status' => FALSE,
+                        'data' => $request->all(),
+                        'msg' => $e->getMessage()
+                    );
+                }
+            } else {
+                $res = array(
+                    'status' => FALSE,
+                    'data' => NULL,
+                    'msg' => 'Saldo Efektif tidak mencukupi'
+                );
+            }
+        } else {
+            $res = array(
+                'status' => FALSE,
+                'data' => NULL,
+                'msg' => 'Jumlah Pinbuk tidak boleh 0'
             );
         }
 

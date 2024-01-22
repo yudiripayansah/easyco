@@ -9,7 +9,7 @@
         >
           <b-button
             variant="success"
-            @click="$bvModal.show('modal-form')"
+            @click="$bvModal.show('modal-form');doClearForm();"
             v-b-tooltip.hover
             title="Tambah Data Baru"
           >
@@ -128,10 +128,11 @@
                 v-model="form.data.kode_rembug"
                 :options="opt.rembug"
                 @change="doGetAnggota(form.data.kode_rembug)"
+                :disabled="form.data.id"
               />
             </b-form-group>
           </b-col>
-          <b-col cols="12" sm="4">
+          <b-col cols="12" sm="4" v-show="!form.data.id">
             <b-form-group label="Nama">
               <b-select
                 v-model="form.data.no_anggota"
@@ -140,7 +141,7 @@
               />
             </b-form-group>
           </b-col>
-          <b-col cols="12" sm="4">
+          <b-col cols="12" :sm="(form.data.id) ? 8 :4">
             <b-form-group label="Nama Anggota">
               <b-input v-model="pengajuan.nama_anggota" disabled />
             </b-form-group>
@@ -286,13 +287,25 @@
             <b-form-group label="Simpanan Wajib">
               <b-input :value="form.data.tabungan_persen" disabled />
             </b-form-group>
+            <b-form-group label="Sukarela">
+              <b-input v-model="form.data.tab_sukarela" type="number"/>
+            </b-form-group>
+            <b-form-group label="Tiar">
+              <b-input v-model="form.data.blokir_angsuran" type="number"/>
+            </b-form-group>
+            <b-form-group label="Dana Gotong Royong">
+              <b-input v-model="form.data.dana_gotongroyong" type="number"/>
+            </b-form-group>
             <b-form-group label="Total">
               <b-input
                 :value="
                   Number(form.data.biaya_administrasi) +
                   Number(form.data.biaya_asuransi_jiwa) +
                   Number(form.data.dana_kebajikan) +
-                  Number(form.data.tabungan_persen)
+                  Number(form.data.tabungan_persen) +
+                  Number(form.data.tab_sukarela) +
+                  Number(form.data.blokir_angsuran) +
+                  Number(form.data.dana_gotongroyong)
                 "
                 disabled
               />
@@ -919,7 +932,12 @@ export default {
         let req = await easycoApi.regisAkadReadDetail(id, this.user.token);
         let { data, status, msg } = req.data;
         if (status) {
-          this.form.data = { ...data.get, ...data.get2 };
+          this.form.data = { ...data.get, ...data.get2[0] };
+          this.pengajuan = {...data.get2[0]}
+          this.pengajuan.pembiayaan_ke = this.pengajuan.pengajuan_ke
+          this.pengajuan.no_pengajuan = this.form.data.no_pengajuan
+          this.pengajuan.peruntukan = this.form.data.peruntukan
+          this.pengajuan.jumlah_pengajuan = this.form.data.pokok
           this.doGetRembug();
           this.$bvModal.show("modal-form");
         } else {

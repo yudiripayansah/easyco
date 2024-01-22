@@ -5,17 +5,36 @@
       <b-row no-gutters>
         <b-col cols="8" class="mb-5">
           <div class="row">
-            <b-col cols="12">
-              <b-input-group prepend="Cabang" class="mb-3">
-                <b-form-select v-model="paging.cabang" :options="opt.cabang" />
-              </b-input-group>
-            </b-col>
-            <b-col>
+            <b-col cols="4">
+                  <b-input-group prepend="Cabang" class="mb-3">
+                    <b-form-select
+                      v-model="paging.cabang"
+                      :options="opt.cabang" @change="doGetPetugas()"
+                    />
+                  </b-input-group>
+                </b-col>
+                <b-col cols="4">
+                  <b-input-group prepend="Petugas" class="mb-3">
+                    <b-form-select
+                      v-model="paging.petugas"
+                      :options="opt.petugas" @change="doGetRembug()"
+                    />
+                  </b-input-group>
+                </b-col>
+                <b-col cols="4">
+                  <b-input-group prepend="Majelis" class="mb-3">
+                    <b-form-select
+                      v-model="paging.rembug"
+                      :options="opt.rembug"
+                    />
+                  </b-input-group>
+                </b-col>
+            <b-col cols="6">
               <b-input-group prepend="Dari Tanggal">
                 <b-form-datepicker v-model="paging.from" />
               </b-input-group>
             </b-col>
-            <b-col>
+            <b-col cols="6">
               <b-input-group prepend="Sampai Tanggal">
                 <b-form-datepicker v-model="paging.to" />
               </b-input-group>
@@ -271,7 +290,9 @@ export default {
         items: [],
         loading: false,
         totalRows: 0,
-        cabang: null,
+        cabang: 0,
+        petugas: 0,
+        rembug: 0,
         from: null,
         to: null,
       },
@@ -282,12 +303,16 @@ export default {
         sortBy: "kop_anggota.id",
         search: "",
         status: "~",
-        cabang: 0,
+        cabang: null,
+        petugas: null,
+        rembug: null,
         from: null,
         to: null,
       },
       opt: {
         cabang: [],
+        petugas: [],
+        rembug: [],
       },
     };
   },
@@ -305,6 +330,8 @@ export default {
   mounted() {
     this.doGet();
     this.doGetCabang();
+    this.doGetPetugas();
+    this.doGetRembug();
   },
   methods: {
     ...helper,
@@ -312,6 +339,8 @@ export default {
       let filename = "LAPORAN REGISTRASI ANGGOTA";
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
+        filename += ` - Petugas ${this.report.petugas}`;
+        filename += ` - Majelis ${this.report.rembug}`;
       }
       if (this.report.from && this.report.to) {
         filename += ` - Dari ${this.dateFormatId(
@@ -342,6 +371,8 @@ export default {
       let filename = "LAPORAN REGISTRASI ANGGOTA";
       if (this.report.cabang) {
         filename += ` - Cabang ${this.report.cabang}`;
+        filename += ` - Petugas ${this.report.petugas}`;
+        filename += ` - Majelis ${this.report.rembug}`;
       }
       if (this.report.from && this.report.to) {
         filename += ` - Dari ${this.dateFormatId(
@@ -397,6 +428,7 @@ export default {
       }
     },
     async doGetCabang() {
+      this.opt.cabang = [];
       let payload = {
         perPage: "~",
         page: 1,
@@ -417,7 +449,70 @@ export default {
           data.map((item) => {
             this.opt.cabang.push({
               value: item.kode_cabang,
-              text: item.nama_cabang,
+              text: `${item.kode_cabang} - ${item.nama_cabang}`,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doGetPetugas() {
+      this.opt.petugas = [];
+      let payload = {
+        page: 1,
+        perPage: "~",
+        sortBy: "kode_pgw",
+        search: "",
+        sortyDir: "ASC",
+        kode_cabang: this.paging.cabang,
+      };
+      try {
+        let req = await easycoApi.pegawaiRead(payload, this.user.token);
+        let { data, status, msg, total } = req.data;
+        if (status) {
+          this.opt.petugas = [{
+              value: 0,
+              text: "All",
+            },
+
+          ];
+          data.map((item) => {
+            this.opt.petugas.push({
+              value: item.kode_pgw,
+              text: `${item.kode_pgw} - ${item.nama_pgw}`,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async doGetRembug() {
+      this.opt.rembug = [];
+      let payload = {
+        page: 1,
+        perPage: "~",
+        sortBy: "kode_rembug",
+        search: "",
+        sortyDir: "ASC",
+        kode_cabang: this.paging.cabang,
+        kode_petugas: this.paging.petugas,
+      };
+      try {
+        let req = await easycoApi.anggotaRembug(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.rembug = [
+            {
+              value: 0,
+              text: "All",
+            },
+          ];
+          data.map((item) => {
+            this.opt.rembug.push({
+              value: Number(item.kode_rembug),
+              text: item.nama_rembug,
             });
           });
         }
