@@ -262,11 +262,11 @@ const menu = [
         label: 'Transaksi Kas Petugas',
         component: import('@/pages/Transaksi/TransaksiKasPetugas.vue'),
       },
-      {
-        target: 'verifikasi-transaksi-kas-petugas',
-        label: 'Verifikasi Transaksi Kas Petugas',
-        component: import('@/pages/Dummy.vue'),
-      },
+      //{
+      //  target: 'verifikasi-transaksi-kas-petugas',
+      //  label: 'Verifikasi Transaksi Kas Petugas',
+      //  component: import('@/pages/Dummy.vue'),
+      //}
       {
         target: 'transaksi-jurnal',
         label: 'Transaksi Jurnal Umum',

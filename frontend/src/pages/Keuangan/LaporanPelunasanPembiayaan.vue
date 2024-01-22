@@ -381,12 +381,9 @@ export default {
 				items: [],
 				loading: false,
 				totalRows: 0,
-				kode_cabang: '',
-				kode_petugas: '',
-				kode_rembug: '',
-				nama_cabang: '',
-				nama_petugas: '',
-				nama_rembug: '',
+				kode_cabang: 0,
+				kode_petugas: 0,
+				kode_rembug: 0,
 				from_date: '',
 				thru_date: '',
 			},
@@ -397,31 +394,16 @@ export default {
 				sortBy: "id",
 				search: "",
 				status: "~",
-				kode_cabang: '',
-				kode_petugas: '',
-				kode_rembug: '',
+				kode_cabang: null,
+				kode_petugas: null,
+				kode_rembug: null,
 				from_date: '',
 				thru_date: '',
 			},
 			opt: {
-				kode_cabang: [
-					{
-						value: '',
-						text: "All",
-					},
-				],
-				kode_petugas: [
-					{
-						value: '',
-						text: "All",
-					},
-				],
-				kode_rembug: [
-					{
-						value: '',
-						text: "All",
-					},
-				]
+				kode_cabang: [],
+        kode_petugas: [],
+        kode_rembug: [],
 			},
 			showOverlay: false,
 		};
@@ -440,6 +422,8 @@ export default {
 	mounted() {
 		this.doGet();
 		this.doGetCabang();
+		this.doGetPetugas();
+    	this.doGetMajelis();
 	},
 	methods: {
 		...helper,
@@ -594,36 +578,36 @@ export default {
 			}
 		},
 		async doGetMajelis() {
-			this.paging.kode_rembug = '';
 			this.opt.kode_rembug = [];
-			let payload = {
-				perPage: "~",
-				page: 1,
-				sortBy: "kode_rembug",
-				sortDir: "ASC",
-				search: "",
-				kode_cabang: this.paging.kode_cabang,
-			};
-			try {
-				let req = await easycoApi.rembugRead(payload, this.user.token);
-				let { data, status, msg } = req.data;
-				if (status) {
-					this.opt.kode_rembug = [
-						{
-							value: '',
-							text: "All",
-						},
-					];
-					data.map((item) => {
-						this.opt.kode_rembug.push({
-							value: item.kode_rembug,
-							text: item.nama_rembug,
-						});
-					});
-				}
-			} catch (error) {
-				console.error(error);
-			}
+      let payload = {
+        page: 1,
+        perPage: "~",
+        sortBy: "kode_rembug",
+        search: "",
+        sortyDir: "ASC",
+        kode_cabang: this.paging.kode_cabang,
+        kode_petugas: this.paging.kode_petugas,
+      };
+      try {
+        let req = await easycoApi.anggotaRembug(payload, this.user.token);
+        let { data, status, msg } = req.data;
+        if (status) {
+          this.opt.kode_rembug = [
+            {
+              value: 0,
+              text: "All",
+            },
+          ];
+          data.map((item) => {
+            this.opt.kode_rembug.push({
+              value: Number(item.kode_rembug),
+              text: item.nama_rembug,
+            });
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
 		},
 		async doGet() {
 			this.showOverlay = true;

@@ -28,7 +28,7 @@
                   <b-input-group prepend="Cabang" class="mb-3">
                     <b-form-select
                       v-model="paging.cabang"
-                      :options="opt.cabang"
+                      :options="opt.cabang" @change="doGetPetugas()"
                     />
                   </b-input-group>
                 </b-col>
@@ -429,7 +429,7 @@ export default {
           data.map((item) => {
             this.opt.cabang.push({
               value: item.kode_cabang,
-              text: item.nama_cabang,
+              text: `${item.kode_cabang} - ${item.nama_cabang}`,
             });
           });
         }
@@ -453,7 +453,7 @@ export default {
           data.map((item) => {
             this.opt.petugas.push({
               value: item.kode_kas_petugas,
-              text: item.nama_kas_petugas,
+              text: `${item.kode_kas_petugas} - ${item.nama_kas_petugas}`,
             });
           });
         }

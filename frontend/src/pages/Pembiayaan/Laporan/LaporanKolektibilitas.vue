@@ -7,7 +7,7 @@
           <b-row>
             <b-col cols="6">
               <b-input-group prepend="Cabang" class="mb-3">
-                <b-form-select v-model="paging.kode_cabang" :options="opt.cabang" @change="doGet()"/>
+                <b-form-select v-model="paging.kode_cabang" :options="opt.cabang" @change="doGetListTanggalPAR()"/>
               </b-input-group>
             </b-col>
             <!-- <b-col cols="6">
@@ -21,17 +21,8 @@
               </b-input-group>
             </b-col> -->
             <b-col cols="6">
-              <b-input-group prepend="Tanggal" class="mb-3">
-                <b-form-datepicker
-                  v-model="paging.tanggal_hitung"
-                  :date-format-options="{
-                    year: 'numeric',
-                    month: 'numeric',
-                    day: 'numeric',
-                  }"
-                  locale="id"
-                  @change="doGet()"
-                />
+              <b-input-group prepend="Tanggal">
+                <b-form-select v-model="paging.tanggal" :options="opt.tanggal"/>
               </b-input-group>
             </b-col>
             <!-- <b-col cols="6">
@@ -100,8 +91,7 @@
 				<h5 class="text-center" v-show="report.kode_petugas">Cabang: {{ report.kode_cabang }}</h5>
 				<h5 class="text-center" v-show="report.kode_petugas">Petugas: {{ report.kode_petugas }}</h5>
 				<h5 class="text-center" v-show="report.kode_rembug">Majelis: {{ report.kode_rembug }}</h5>
-				<h6 class="text-center mb-5 pb-5" v-show="report.from_date && report.thru_date"> Tanggal {{
-					dateFormatId(report.from_date) }} s.d {{ dateFormatId(report.thru_date) }}</h6>
+				<h6 class="text-center mb-5 pb-5" v-show="paging.tanggal">Tanggal: {{ dateFormatId(paging.tanggal) }}</h6>
 				<div class="table-responsive">
 					<table class="table table-bordered table-striped">
 						<thead>
@@ -522,7 +512,6 @@ export default {
 				loading: true,
 				totalRows: 0,
 				kode_cabang: null,
-				tanggal_hitung: null,
         page: 1,
 				perPage: 10,
 			},
@@ -534,12 +523,17 @@ export default {
 				search: "",
 				status: "~",
 				kode_cabang: null,
-        tanggal_hitung: null
+        tanggal: "",
       },
       loading: false,
       opt: {
         cabang: [],
-        tanggal_hitung: []
+        tanggal: [
+                    {
+                        value: "",
+                        text: "All",
+                    },
+                ],
       },
       showOverlay: false,
       loading: false,
@@ -592,7 +586,6 @@ export default {
 			if (this.paging.kode_cabang) fileName += ` - Cabang ${this.paging.kode_cabang}`;
 			if (this.paging.kode_petugas) fileName += ` - Petugas ${this.paging.kode_petugas}`;
 			if (this.paging.kode_rembug) fileName += ` - Majelis ${this.paging.kode_rembug}`;
-			if (this.paging.from_date && this.paging.thru_date) fileName += ` - Dari ${this.dateFormatId(this.paging.from_date)} Sampai ${this.dateFormatId(this.paging.thru_date)}`;
 			return fileName;
 		},
 		doPrintPdf() {
@@ -635,7 +628,7 @@ export default {
       let pPetugas = (this.paging.petugas) ? this.paging.petugas : '~'
 
       this.showOverlay = true;
-      let payload = `kode_cabang=${this.paging.kode_cabang}&tanggal_hitung=${this.paging.tanggal_hitung}`;
+      let payload = `kode_cabang=${this.paging.kode_cabang}&tanggal=${this.paging.tanggal}`;
       let req = await easycoApi.listReportKolektibilitasExportToXLSX(payload);
       console.log(req.data);
       const url = window.URL.createObjectURL(new Blob([req.data]));
@@ -653,7 +646,7 @@ export default {
       let pPetugas = (this.paging.petugas) ? this.paging.petugas : '~'
 
       this.showOverlay = true;
-      let payload = `kode_cabang=${this.paging.kode_cabang}&tanggal_hitung=${this.paging.tanggal_hitung}`;
+      let payload = `kode_cabang=${this.paging.kode_cabang}&tanggal=${this.paging.tanggal}`;
       let req = await easycoApi.listReportKolektibilitasExportToCSV(payload);
       console.log(req.data);
       const url = window.URL.createObjectURL(new Blob([req.data]));
@@ -665,29 +658,38 @@ export default {
       link.click();
       this.showOverlay = false;
     },
-    async doGetPetugas() {
-      let payload = null;
-      try {
-        let req = await easycoApi.petugasRead(payload, this.user.token);
-        let { data, status, msg } = req.data;
-        if (status) {
-          this.opt.petugas = [
-            {
-              value: null,
-              text: "All",
-            },
-          ];
-          data.map((item) => {
-            this.opt.petugas.push({
-              value: Number(item.kode_petugas),
-              text: item.nama_kas_petugas,
-            });
-          });
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
+    async doGetListTanggalPAR() {
+            let payload = { kode_cabang: this.paging.kode_cabang };
+            try {
+                let req = await easycoApi.listTanggalPAR(
+                    payload,
+                    this.user.token
+                );
+                let { data, status, msg } = req.data;
+                if (status) {
+                    if (data.length == 0) {
+                        this.opt.tanggal = [
+                            {
+                                value: "",
+                                text: "All",
+                            },
+                        ];
+                    } else {
+                        data.map((item) => {
+                            this.opt.tanggal.push({
+                                value: item.tanggal_hitung,
+                                text: this.dateFormatId(item.tanggal_hitung),
+                            });
+                        });
+                    }
+                } else {
+                    this.notify("danger", "Error", msg);
+                }
+            } catch (error) {
+                console.error(error);
+                this.notify("danger", "Error", error);
+            }
+        },
     async doGet() {
       this.showOverlay = true;
       let payload = this.paging;
